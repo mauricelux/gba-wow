@@ -1,0 +1,7 @@
+build/
+*.gba
+*.elf
+*.sav
+*.ss[0-9]
+tools/preview/
+__pycache__/
