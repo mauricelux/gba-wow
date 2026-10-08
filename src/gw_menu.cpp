@@ -26,10 +26,6 @@ namespace
 
     constexpr const char* slot_names[] = { "Head", "Chest", "Hands", "Legs", "Feet", "Main", "Off", "Range" };
 
-    constexpr const char* race_names[] = { "Human", "Dwarf", "Night Elf" };
-
-    constexpr const char* class_names[] = { "Warrior", "Mage", "Hunter" };
-
     struct destination
     {
         const char* name;
@@ -333,9 +329,9 @@ void menu::_draw_character()
     bn::string<32> line = "Level ";
     line += bn::to_string<4>(data.level);
     line += " ";
-    line += race_names[int(data.race)];
+    line += race_name(data.race);
     line += " ";
-    line += class_names[int(data.player_class)];
+    line += class_name(data.player_class);
     ui::text(2, y + 1, line, ui::color::WHITE, true);
 
     line.clear();

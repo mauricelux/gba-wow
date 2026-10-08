@@ -74,6 +74,50 @@ character_data& character()
     return data;
 }
 
+const char* race_name(race_id race)
+{
+    constexpr const char* names[] = { "Human", "Dwarf", "Night Elf" };
+    return names[int(race)];
+}
+
+const char* class_name(class_id player_class)
+{
+    constexpr const char* names[] = { "Warrior", "Mage", "Hunter" };
+    return names[int(player_class)];
+}
+
+bool class_allowed(race_id race, class_id player_class)
+{
+    switch(player_class)
+    {
+
+    case class_id::MAGE:
+        return race == race_id::HUMAN;
+
+    case class_id::HUNTER:
+        return race != race_id::HUMAN;
+
+    default:
+        return true;
+    }
+}
+
+look_id player_look(race_id race, class_id player_class)
+{
+    switch(race)
+    {
+
+    case race_id::DWARF:
+        return player_class == class_id::HUNTER ? look_id::DWARF_HUNTER : look_id::DWARF_WARRIOR;
+
+    case race_id::NIGHT_ELF:
+        return player_class == class_id::HUNTER ? look_id::ELF_HUNTER : look_id::ELF_WARRIOR;
+
+    default:
+        return player_class == class_id::MAGE ? look_id::HUMAN_MAGE : look_id::HUMAN_WARRIOR;
+    }
+}
+
 void new_character(race_id race, class_id player_class)
 {
     data = character_data();

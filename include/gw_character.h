@@ -4,6 +4,7 @@
 #include "gw_abilities.h"
 #include "gw_ids.h"
 #include "gw_items.h"
+#include "gw_look_ids.h"
 
 namespace gw
 {
@@ -72,6 +73,16 @@ enum class story_flag : uint8_t
 };
 
 [[nodiscard]] character_data& character();
+
+[[nodiscard]] const char* race_name(race_id race);
+
+[[nodiscard]] const char* class_name(class_id player_class);
+
+// The races each class is open to: humans can be warriors or mages, dwarves and night elves
+// warriors or hunters.
+[[nodiscard]] bool class_allowed(race_id race, class_id player_class);
+
+[[nodiscard]] look_id player_look(race_id race, class_id player_class);
 
 // Resets the character to a fresh level 1 of the race and class, at the start of the game.
 void new_character(race_id race, class_id player_class);

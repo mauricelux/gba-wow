@@ -9,15 +9,17 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![The character page](docs/screenshots/m5_character.png)
 ![Arms talents](docs/screenshots/m6_talents.png)
 ![The ending](docs/screenshots/m7_ending.png)
+![Creating a Night Elf Hunter](docs/screenshots/m8_creation.png)
 
 ## Status
 
-Milestone 7 (dungeon and bosses) is playable: a Human Warrior walks freely from Northshire Abbey down
-to Goldshire and on to Westfall, talks to the people living there, takes on 23 quests from Northshire
-to the Deadmines, fights with auto-attack and rage abilities, loots and equips about 140 items, buys
-and sells at vendors, learns new ranks from the class trainer, spends talent points from level 10,
-faces the elites Princess and Hogger, hearths home to an inn, fights through the Deadmines to Sneed
-and Edwin VanCleef, sees the story's end, and saves to the cartridge.
+Milestone 8 (races and classes) is playable: create a Human Warrior or Mage, a Dwarf Warrior or
+Hunter, or a Night Elf Warrior or Hunter, then walk freely from Northshire Abbey down to Goldshire and
+on to Westfall, take on 23 quests from Northshire to the Deadmines, fight with auto-attack and your
+class's abilities, loot and equip about 140 items, buy and sell at vendors, learn new ranks from your
+class trainer, spend talent points from level 10, face the elites Princess and Hogger, hearth home to
+an inn, fight through the Deadmines to Sneed and Edwin VanCleef, see the story's end, and save to the
+cartridge.
 
 | Milestone | What it adds | State |
 | --- | --- | --- |
@@ -29,8 +31,8 @@ and Edwin VanCleef, sees the story's end, and saves to the cartridge.
 | M5 Levels, gear and trainers | Stats, equipment, loot, vendors, skill trainer, saves | Done |
 | M6 Talents and second area | Warrior talent trees, Westfall-style area | Done |
 | M7 Dungeon and boss | Dungeon interior, multi-phase boss | Done |
-| M8 More races and classes | Character creation, Dwarf, Night Elf, Mage, Hunter | Next |
-| M9 Polish | Title screen, music, balance | |
+| M8 More races and classes | Character creation, Dwarf, Night Elf, Mage, Hunter | Done |
+| M9 Polish | Title screen, music, balance | Next |
 
 ## Controls
 

@@ -29,9 +29,6 @@ namespace
 
     constexpr int story_page_count = sizeof(story_pages) / sizeof(story_pages[0]);
     constexpr int page_count = story_page_count + 1;
-
-    constexpr const char* race_names[] = { "Human", "Dwarf", "Night Elf" };
-    constexpr const char* class_names[] = { "Warrior", "Mage", "Hunter" };
 }
 
 void ending::open()
@@ -87,9 +84,9 @@ void ending::_draw()
     bn::string<32> line = "Level ";
     line += bn::to_string<4>(data.level);
     line += " ";
-    line += race_names[int(data.race)];
+    line += race_name(data.race);
     line += " ";
-    line += class_names[int(data.player_class)];
+    line += class_name(data.player_class);
     ui::text(2, 4, line, ui::color::WHITE, true);
 
     int turned_in = 0;

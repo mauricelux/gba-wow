@@ -36,24 +36,6 @@ namespace
     constexpr int death_wait_frames = 150;
     constexpr int death_fade_frames = 30;
 
-    [[nodiscard]] look_id player_look()
-    {
-        const character_data& data = character();
-
-        switch(data.race)
-        {
-
-        case race_id::DWARF:
-            return data.player_class == class_id::HUNTER ? look_id::DWARF_HUNTER : look_id::DWARF_WARRIOR;
-
-        case race_id::NIGHT_ELF:
-            return data.player_class == class_id::HUNTER ? look_id::ELF_HUNTER : look_id::ELF_WARRIOR;
-
-        default:
-            return data.player_class == class_id::MAGE ? look_id::HUMAN_MAGE : look_id::HUMAN_WARRIOR;
-        }
-    }
-
     [[nodiscard]] bn::fixed_point saved_position()
     {
         return bn::fixed_point(character().x, character().y);
@@ -62,7 +44,7 @@ namespace
 
 game::game() :
     _camera(bn::camera_ptr::create(0, 0)),
-    _player(player_look(), saved_position(), _camera),
+    _player(player_look(character().race, character().player_class), saved_position(), _camera),
     _text_generator(common::variable_8x16_sprite_font),
     _banner(_text_generator),
     _texts(_camera),
