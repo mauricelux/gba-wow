@@ -14,14 +14,29 @@ class player
 {
 
 public:
+    // Hitbox around the feet, in pixels relative to the feet position. Small and low so the
+    // character can walk close to walls and behind tree tops.
+    static constexpr int hitbox_left = -5;
+    static constexpr int hitbox_right = 4;
+    static constexpr int hitbox_top = -5;
+
     // feet_position is in world pixels: the point between the character's feet.
     player(const bn::fixed_point& feet_position, const bn::camera_ptr& camera);
 
-    void update();
+    // Reads the keypad and moves the player. With input disabled the player stands still.
+    void update(bool input_enabled = true);
 
     [[nodiscard]] const bn::fixed_point& position() const
     {
         return _position;
+    }
+
+    // Moves the player instantly, for example through a door.
+    void set_position(const bn::fixed_point& feet_position);
+
+    [[nodiscard]] bool moving() const
+    {
+        return _moving;
     }
 
 private:
@@ -38,6 +53,7 @@ private:
     facing _facing = facing::DOWN;
     int _walk_counter = 0;
     int _frame = -1;
+    bool _moving = false;
 
     [[nodiscard]] bool _fits(bn::fixed x, bn::fixed y) const;
     bool _move_axis(bn::fixed dx, bn::fixed dy);

@@ -16,12 +16,6 @@ namespace
     constexpr bn::fixed run_speed = 2;
     constexpr bn::fixed diagonal_factor = 0.7071;
 
-    // Hitbox around the feet, in pixels relative to the feet position. Small and low so the
-    // character can walk close to walls and behind tree tops.
-    constexpr int hitbox_left = -5;
-    constexpr int hitbox_right = 4;
-    constexpr int hitbox_top = -5;
-
     // How far (in pixels) the player is nudged around a corner they walk into.
     constexpr int corner_tolerance = 6;
 
@@ -46,11 +40,25 @@ player::player(const bn::fixed_point& feet_position, const bn::camera_ptr& camer
     _update_sprite(false);
 }
 
-void player::update()
+void player::set_position(const bn::fixed_point& feet_position)
 {
-    int input_x = int(bn::keypad::right_held()) - int(bn::keypad::left_held());
-    int input_y = int(bn::keypad::down_held()) - int(bn::keypad::up_held());
+    _position = feet_position;
+    _update_sprite(false);
+}
+
+void player::update(bool input_enabled)
+{
+    int input_x = 0;
+    int input_y = 0;
+
+    if(input_enabled)
+    {
+        input_x = int(bn::keypad::right_held()) - int(bn::keypad::left_held());
+        input_y = int(bn::keypad::down_held()) - int(bn::keypad::up_held());
+    }
+
     bool moving = input_x || input_y;
+    _moving = moving;
 
     if(moving)
     {
