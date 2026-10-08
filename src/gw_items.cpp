@@ -11,6 +11,7 @@ namespace
     constexpr item_quality C = item_quality::COMMON;
     constexpr item_quality U = item_quality::UNCOMMON;
     constexpr item_quality R = item_quality::RARE;
+    constexpr item_quality E = item_quality::EPIC;
 
     constexpr item_type FOOD = item_type::FOOD;
     constexpr item_type DRINK = item_type::DRINK;
@@ -37,6 +38,11 @@ namespace
     [[nodiscard]] constexpr int quality_percent(item_quality quality)
     {
         return quality == P ? 80 : quality == C ? 100 : quality == U ? 115 : quality == R ? 132 : 150;
+    }
+
+    [[nodiscard]] constexpr int armor_percent(item_quality quality)
+    {
+        return quality == U ? 110 : quality == R ? 125 : quality == E ? 140 : 100;
     }
 
     // What a vendor pays: grows with the level, the quality and the kind of item.
@@ -68,8 +74,7 @@ namespace
     {
         int type_factor = type == CLOTH ? 2 : type == LEATHER ? 4 : 7;
         int slot_percent = slot == CHEST ? 100 : slot == LEGS ? 85 : slot == HEAD ? 75 : slot == FEET ? 65 : 55;
-        int value = type_factor * (level + 5) * slot_percent / 100 * (quality == U ? 110 : quality == R ? 125 : 100) /
-                100;
+        int value = type_factor * (level + 5) * slot_percent / 100 * armor_percent(quality) / 100;
         int price_percent = slot == CHEST ? 100 : slot == LEGS ? 90 : slot == HEAD ? 80 : slot == FEET ? 70 : 60;
         return { name, quality, type, slot, uint8_t(level), int16_t(value), int8_t(str), int8_t(agi), int8_t(sta),
                  int8_t(intel), int8_t(spi), 0, 0, 0, price(level, quality, price_percent), 1 };
@@ -78,7 +83,7 @@ namespace
     [[nodiscard]] constexpr item_def shield(const char* name, item_quality quality, int level, int str = 0,
                                             int agi = 0, int sta = 0, int intel = 0, int spi = 0)
     {
-        int value = 10 * (level + 5) * (quality == U ? 110 : quality == R ? 125 : 100) / 100;
+        int value = 10 * (level + 5) * armor_percent(quality) / 100;
         return { name, quality, item_type::SHIELD, equip_slot::OFF_HAND, uint8_t(level), int16_t(value),
                  int8_t(str), int8_t(agi), int8_t(sta), int8_t(intel), int8_t(spi), 0, 0, 0,
                  price(level, quality, 100), 1 };

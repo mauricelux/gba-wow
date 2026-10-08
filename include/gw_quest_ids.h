@@ -42,6 +42,10 @@ enum class quest_id : uint8_t
     THE_ROAD_TO_STORMWIND,
     AN_AUDIENCE_WITH_THE_HIGHLORD,
     LOST_TREASURES,
+    // The Stockade
+    THE_UNSENT_LETTER,
+    THE_STOCKADE_RIOTS,
+    BAZIL_THREDD,
     COUNT
 };
 

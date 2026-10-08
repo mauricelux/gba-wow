@@ -375,7 +375,7 @@ void dialog::_complete()
     _combat.gain_xp(def.xp);
     save_game();
 
-    if(_quest == quest_id::EDWIN_VANCLEEF)
+    if(_quest == quest_id::BAZIL_THREDD)
     {
         ending_requested = true;
     }

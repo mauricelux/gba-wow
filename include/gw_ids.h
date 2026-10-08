@@ -36,6 +36,7 @@ enum class map_id : uint8_t
     ECHO_RIDGE,
     FARGODEEP,
     STORMWIND,
+    STOCKADE,
     COUNT
 };
 
@@ -100,6 +101,8 @@ enum class npc_id : uint8_t
     EINRIS,
     BRANN,
     ANDER,
+    THELWATER,
+    SW_GUARD_STOCKADE,
     COUNT
 };
 
@@ -127,6 +130,13 @@ enum class enemy_id : uint8_t
     DEFIAS_PIRATE,
     VANCLEEF,
     DEFIAS_BLACKGUARD,
+    DEFIAS_PRISONER,
+    DEFIAS_CONVICT,
+    DEFIAS_INSURGENT,
+    TARGORR,
+    KAM_DEEPFURY,
+    BAZIL_THREDD,
+    DEFIAS_RIOTER,
     COUNT
 };
 

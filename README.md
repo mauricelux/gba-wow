@@ -16,21 +16,25 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![The world map](docs/screenshots/m10_world_map.png)
 ![Kobolds inside Echo Ridge Mine](docs/screenshots/m10_mine.png)
 ![Birches and pines in Elwynn Forest](docs/screenshots/m10_trees.png)
+![The Stockade gatehouse in the Mage Quarter](docs/screenshots/m11_stockade_gate.png)
+![Prisoners in the Stockade cell block](docs/screenshots/m11_stockade_cells.png)
+![Bazil Thredd throws a smoke bomb](docs/screenshots/m11_bazil.png)
+![The new ending](docs/screenshots/m11_ending.png)
 
 ## Status
 
 Every milestone of the roadmap is in. From the title screen, continue your saved hero or create a
 Human Warrior or Mage, a Dwarf Warrior or Hunter, or a Night Elf Warrior or Hunter, then walk freely from Northshire Abbey down to Goldshire,
-west to the city of Stormwind and south to Westfall, take on 26 quests from Northshire to the
-Deadmines, fight with auto-attack and your class's abilities, loot and equip about 170 items, buy and
+west to the city of Stormwind and south to Westfall, take on 29 quests from Northshire to the
+Stockade, fight with auto-attack and your class's abilities, loot and equip about 170 items, buy and
 sell at vendors, learn new ranks from your class trainer, spend talent points from level 10, face the
-elites Princess and Hogger, clear the kobolds out of Echo Ridge and Fargodeep mines, hunt for 16
+elites Princess and Hogger, clear the kobolds out of Echo Ridge and Fargodeep mines, hunt for 17
 hidden treasure chests, hearth home to an inn, fight through the Deadmines to Sneed and Edwin
-VanCleef, see the story's end, and save to the cartridge. Every zone has its own music, and elite
-fights switch to a boss tune.
+VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, see the story's
+end, and save to the cartridge. Every zone has its own music, and elite fights switch to a boss tune.
 
-Following the quests in order takes a hero to about level 17 at the Deadmines and close to level 20 by
-the end, without grinding.
+Following the quests in order takes a hero to about level 17 at the Deadmines and to level 20 in the
+Stockade, without grinding.
 
 | Milestone | What it adds | State |
 | --- | --- | --- |
@@ -45,6 +49,7 @@ the end, without grinding.
 | M8 More races and classes | Character creation, Dwarf, Night Elf, Mage, Hunter | Done |
 | M9 Polish | Title screen, music, sound effects, balance | Done |
 | M10 Stormwind and exploration | Stormwind city, mine maps, hidden chests, world map, more trees and bushes | Done |
+| M11 The Stockade | Second dungeon under Stormwind, three bosses, final quest chain and new ending | Done |
 
 ## Controls
 
@@ -72,12 +77,19 @@ Treasure chests are hidden around the world: under roofs, behind buildings, at t
 tunnels, and in clearings reached by secret paths through the forests (look for gaps between tree
 trunks). Walk up to a chest and press A to open it for money, an item and sometimes a potion. Each
 chest opens once per hero. The world map (Start, then the World Map page) shows where you are, quest
-givers with a `!` or `?`, the chests you have already opened, and how many of the 16 you have found;
+givers with a `!` or `?`, the chests you have already opened, and how many of the 17 you have found;
 left and right show the other zones. Brann Bronzebeard in Stormwind pays for five opened chests.
 
 Bosses: Sneed calls an engineer at two thirds of his health and, from half health, throws saw blades
 at the spot marked on the ground under you. Edwin VanCleef calls a Blackguard at 70% and 30% and, from
 half health, marks a whirl of blades around himself. Step out of the red circle before it goes off.
+
+The Stockade: after Edwin VanCleef, Gryan Stoutmantle hands you a letter for Warden Thelwater, who
+waits at the prison gatehouse in Stormwind's Mage Quarter. The riot inside is level 20 content.
+Targorr goes into a frenzy at half health, Kam Deepfury raises his shield before a heavy Shield
+Slam, and Bazil Thredd throws smoke bombs at your feet from the start of the fight, calls a rioter
+at two thirds and one third of his health, and frenzies near the end. Clear his two guards first and
+bring healing potions. Bring his head to Highlord Bolvar to finish the story.
 
 Auto-attack keeps going after a kill if another enemy is on you, and turns to whoever is hitting you
 when your target is out of reach.
@@ -86,7 +98,8 @@ On the title screen, Continue loads your hero; New Game asks before it replaces 
 out of character creation returns to the title.
 
 The game saves itself whenever you change zones or turn in a quest, and from the system page. The
-system page also has debug options for testing: teleport, level up, extra gold and gear for your level.
+system page also has debug options for testing: teleport, level up, extra gold and gear for your level
+(without the epic quest rewards).
 
 ## Building
 

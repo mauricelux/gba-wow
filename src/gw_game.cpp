@@ -227,6 +227,11 @@ void game::_on_kill(void* context, int index)
         self._hud.message("The Brotherhood is broken!", ui::color::YELLOW);
         break;
 
+    case enemy_id::BAZIL_THREDD:
+        set_flag(story_flag::BAZIL_KILLED);
+        self._hud.message("The riot is over!", ui::color::YELLOW);
+        break;
+
     default:
         break;
     }

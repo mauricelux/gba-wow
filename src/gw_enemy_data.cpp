@@ -32,6 +32,13 @@ namespace
         { "Defias Pirate", l::DEFIAS_PIRATE, 18, 19, 0, 130, 110, 20, 100, 90, 13 },
         { "Edwin VanCleef", l::VANCLEEF, 21, 21, ELITE | BOSS | NO_RESPAWN, 300, 110, 18, 140, 0, 16 },
         { "Blackguard", l::DEFIAS_BLACKGUARD, 19, 19, NO_RESPAWN, 70, 75, 20, 100, 0, 0 },
+        { "Defias Prisoner", l::DEFIAS_PRISONER, 19, 20, 0, 120, 100, 20, 100, 90, 17 },
+        { "Defias Convict", l::DEFIAS_CONVICT, 19, 20, 0, 130, 105, 20, 100, 90, 17 },
+        { "Defias Insurgent", l::DEFIAS_INSURGENT, 20, 21, 0, 135, 110, 20, 100, 90, 17 },
+        { "Targorr", l::TARGORR, 20, 20, ELITE | NO_RESPAWN, 260, 135, 22, 135, 0, 18 },
+        { "Kam Deepfury", l::KAM_DEEPFURY, 21, 21, ELITE | NO_RESPAWN, 280, 125, 22, 115, 0, 19 },
+        { "Bazil Thredd", l::BAZIL_THREDD, 21, 21, ELITE | BOSS | NO_RESPAWN, 250, 95, 18, 140, 0, 20 },
+        { "Defias Rioter", l::DEFIAS_CONVICT, 19, 19, NO_RESPAWN, 60, 70, 20, 100, 0, 0 },
     };
 
     static_assert(sizeof(enemies) / sizeof(enemies[0]) == int(enemy_id::COUNT));

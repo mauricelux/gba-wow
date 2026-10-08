@@ -12,6 +12,8 @@
 #include "bn_regular_bg_items_map_fargodeep_overhead.h"
 #include "bn_regular_bg_items_map_inn_ground.h"
 #include "bn_regular_bg_items_map_inn_overhead.h"
+#include "bn_regular_bg_items_map_stockade_ground.h"
+#include "bn_regular_bg_items_map_stockade_overhead.h"
 #include "bn_regular_bg_items_map_stormwind_ground.h"
 #include "bn_regular_bg_items_map_stormwind_overhead.h"
 #include "bn_regular_bg_items_map_westfall_ground.h"
@@ -23,6 +25,7 @@
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
 #include "gw_map_inn.h"
+#include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
 
@@ -47,6 +50,7 @@ namespace
     constexpr point_def echo_ridge_graveyards[] = { map_data::echo_ridge::respawn };
     constexpr point_def fargodeep_graveyards[] = { map_data::fargodeep::respawn };
     constexpr point_def stormwind_graveyards[] = { map_data::stormwind::respawn };
+    constexpr point_def stockade_graveyards[] = { map_data::stockade::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON) \
     map_info{ \
@@ -76,6 +80,7 @@ namespace
         GW_MAP_INFO(ECHO_RIDGE, echo_ridge, true),
         GW_MAP_INFO(FARGODEEP, fargodeep, true),
         GW_MAP_INFO(STORMWIND, stormwind, false),
+        GW_MAP_INFO(STOCKADE, stockade, true),
     };
 
     [[nodiscard]] int count_chests()

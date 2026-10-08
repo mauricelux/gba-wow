@@ -4,7 +4,7 @@
 namespace gw
 {
 
-// The story's end, shown after turning in Edwin VanCleef: a few pages of epilogue and the
+// The story's end, shown after turning in Bazil Thredd: a few pages of epilogue and the
 // player's numbers. The world stays open afterwards.
 class ending
 {

@@ -23,9 +23,12 @@ namespace
         { "Westfall Is Free",
           "Edwin VanCleef is dead and the Defias Brotherhood is broken. The farmers of Westfall "
           "return to their fields, and the People's Militia raises its banner over Sentinel Hill." },
-        { "A Hero of Elwynn",
-          "Word of your deeds reaches Stormwind. Children in Goldshire play at being you, and "
-          "Marshal Dughan buys the first round at the Lion's Pride Inn." },
+        { "Quiet in the Stockade",
+          "With Bazil Thredd dead, the riot dies with him. The last of VanCleef's plots ends in "
+          "Stormwind's own prison, and Warden Thelwater locks the cells once more." },
+        { "Champion of Stormwind",
+          "Highlord Bolvar names you a champion of the Alliance. Children in Goldshire play at being "
+          "you, and Marshal Dughan buys the first round at the Lion's Pride Inn." },
     };
 
     constexpr int story_page_count = sizeof(story_pages) / sizeof(story_pages[0]);

@@ -172,7 +172,9 @@ private:
     [[nodiscard]] int _target_distance() const;
     [[nodiscard]] bn::fixed_point _head(const bn::fixed_point& feet, int height) const;
     void _summon_add(const enemy& boss, enemy_id add);
-    bool _update_telegraph(enemy& boss, bool around_boss, int radius);
+    bool _update_telegraph(enemy& boss, bool around_boss, int radius, const char* name, projectile_kind kind);
+    bool _update_wind_up(int index, bool in_melee, const char* name, const char* message);
+    void _update_frenzy(enemy& boss, int health_percent, int below, int phase, const char* name);
     void _gain_rage(int damage, bool dealt);
     void _spend(int cost);
     [[nodiscard]] int _power() const;

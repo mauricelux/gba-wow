@@ -71,7 +71,8 @@ enum class story_flag : uint8_t
     PRINCESS_KILLED,
     VANCLEEF_KILLED,
     SNEED_KILLED,
-    SEEN_INTRO
+    SEEN_INTRO,
+    BAZIL_KILLED
 };
 
 [[nodiscard]] character_data& character();

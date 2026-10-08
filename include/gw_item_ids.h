@@ -193,7 +193,24 @@
     /* Brann Bronzebeard's treasure hunt */ \
     X(TRAILBLAZER_BOOTS, armor("Trailblazer Boots", U, LEATHER, FEET, 10, 0, 3, 1, 0, 0)) \
     X(PATHFINDER_GREAVES, armor("Pathfinder Greaves", U, MAIL, FEET, 10, 2, 0, 2, 0, 0)) \
-    X(WANDERER_SANDALS, armor("Wanderer's Sandals", U, CLOTH, FEET, 10, 0, 0, 1, 3, 1))
+    X(WANDERER_SANDALS, armor("Wanderer's Sandals", U, CLOTH, FEET, 10, 0, 0, 1, 3, 1)) \
+    /* The Stockade: quest rewards */ \
+    X(RIOTGUARD_HELM, armor("Riotguard Helm", R, MAIL, HEAD, 20, 5, 0, 5, 0, 0)) \
+    X(JAILERS_COWL, armor("Jailer's Cowl", R, CLOTH, HEAD, 20, 0, 0, 3, 7, 4)) \
+    X(TURNKEY_CAP, armor("Turnkey's Cap", R, LEATHER, HEAD, 20, 0, 6, 4, 0, 0)) \
+    X(LIONHEART_BLADE, weapon("Lionheart Blade", E, TWO_HANDED, 20, 36, 9, 0, 7, 0, 0)) \
+    X(STAFF_OF_THE_LION, weapon("Staff of the Lion", E, STAFF, 20, 32, 0, 0, 5, 11, 6)) \
+    X(LIONHEART_LONGBOW, weapon("Lionheart Longbow", E, BOW, 20, 28, 0, 8, 4, 0, 0)) \
+    /* The Stockade: boss drops */ \
+    X(LUCINE_LONGSWORD, weapon("Lucine Longsword", R, SWORD, 20, 27, 4, 0, 3, 0, 0)) \
+    X(KNUCKLE_WRAPS, armor("Dirty Knuckle Wraps", R, LEATHER, HANDS, 20, 0, 5, 3, 0, 0)) \
+    X(SHACKLED_MITTS, armor("Shackled Mitts", R, CLOTH, HANDS, 20, 0, 0, 3, 5, 3)) \
+    X(DEEPFURY_SHIELD, shield("Deepfury Shield", R, 20, 3, 0, 5, 0, 0)) \
+    X(EMBERWEAVE_ROBE, armor("Emberweave Robe", R, CLOTH, CHEST, 20, 0, 0, 4, 8, 4)) \
+    X(DARK_IRON_RIFLE, weapon("Dark Iron Rifle", R, GUN, 20, 28, 0, 5, 2, 0, 0)) \
+    X(THREDDS_DUSKBLADE, weapon("Thredd's Duskblade", R, SWORD, 20, 26, 5, 2, 4, 0, 0)) \
+    X(SMOKEWEAVE_PANTS, armor("Smokeweave Pants", R, CLOTH, LEGS, 20, 0, 0, 4, 8, 5)) \
+    X(SHADOWHIDE_BOOTS, armor("Shadowhide Boots", R, LEATHER, FEET, 20, 0, 7, 4, 0, 0))
 
 namespace gw
 {

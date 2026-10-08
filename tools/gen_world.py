@@ -11,6 +11,7 @@ Maps:
   echo_ridge kobold mine in Northshire Valley
   fargodeep  kobold mine south of Goldshire
   stormwind  1024x1024 capital: Valley of Heroes, Trade District, the Keep, Cathedral, Mage Quarter
+  stockade   Stormwind's prison, entered from the Mage Quarter
 """
 
 import numpy as np
@@ -865,6 +866,41 @@ def stall(m, x, y, colors=('red_m', 'canvas')):
     m.block(x + 4, y + 18, 32, 10)
 
 
+def stockade_house(m, x, y):
+    """The Stockade's gatehouse: a squat stone block with barred windows, an iron gate and a slate
+    roof. 144x96. Returns the gate's bottom-center point."""
+    W, H = 144, 96
+    g = m.ground
+    wall_y = y + 48
+    wg.bricks(m, g, x, wall_y, W, H - 48, 'stone_d', 'stone_m', 'stone_l')
+    g[wall_y:wall_y + 2, x:x + W] = m.g('stone_h')
+    g[y + H - 2:y + H, x:x + W] = m.g('stone_d')
+    g[wall_y:y + H, x] = m.g('outline')
+    g[wall_y:y + H, x + W - 1] = m.g('outline')
+    for wx in (x + 16, x + 40, x + 96, x + 120):
+        g[wall_y + 10:wall_y + 22, wx:wx + 8] = m.g('outline')
+        g[wall_y + 11:wall_y + 21, wx + 1:wx + 7] = m.g('glass_d')
+        g[wall_y + 11:wall_y + 21, wx + 2:wx + 7:2] = m.g('stone_l')
+    cx = x + W // 2
+    g[wall_y + 8:y + H, cx - 16:cx + 16] = m.g('outline')
+    g[wall_y + 10:y + H, cx - 14:cx + 14] = m.g('glass_d')
+    for px in range(cx - 13, cx + 14, 4):
+        g[wall_y + 10:y + H - 10, px] = m.g('stone_l')
+    for py in range(wall_y + 13, y + H - 10, 6):
+        g[py, cx - 14:cx + 14] = m.g('stone_l')
+    g[y + H - 11, cx - 14:cx + 14] = m.g('stone_d')
+    g[wall_y + 6:wall_y + 10, cx - 20:cx + 20] = m.g('stone_h')
+    for bx in (cx - 32, cx + 24):
+        g[wall_y + 8:wall_y + 36, bx:bx + 8] = m.g('banner')
+        g[wall_y + 8:wall_y + 36, bx] = m.g('banner_d')
+        g[wall_y + 8:wall_y + 10, bx:bx + 8] = m.g('gold')
+        g[wall_y + 18:wall_y + 24, bx + 2:bx + 6] = m.g('gold')
+    wg.roof(m, x, y, W, 48, SLATE['roof_colors'], SLATE['roof_ridge'], SLATE['roof_outline'])
+    m.block(x, y + 16, W, H - 16)
+    m.unblock(cx - 12, y + H - 16, 24, 16)
+    return (cx, y + H)
+
+
 def gen_stormwind():
     m = Map('stormwind', 1024, 1024,
             Palette([wg.TERRAIN_ELWYNN, wg.BUILDINGS, CITY]),
@@ -953,10 +989,15 @@ def gen_stormwind():
     m.npc('JENNEA', tower_door[0] - 32, tower_door[1])
     wg.house(m, 56, 768, 96, 96, style='stone', **PURPLE)
     wg.house(m, 176, 768, 96, 96, style='timber', **PURPLE)
-    wg.house(m, 56, 872, 112, 96, style='stone', **PURPLE)
+    gate = stockade_house(m, 40, 872)
+    m.warp(gate[0] - 12, gate[1] - 8, 24, 8, 'stockade', 'entry')
+    m.point('stockade_exit', gate[0], gate[1] + 12)
+    m.npc('THELWATER', gate[0] + 32, gate[1] + 8)
+    m.npc('SW_GUARD_STOCKADE', gate[0] - 32, gate[1] + 8)
+    m.area(32, 856, 176, 136, 'The Stockade')
     wg.house(m, 552, 776, 88, 96, style='stone', **PURPLE)
     wg.house(m, 552, 888, 88, 80, style='timber', **PURPLE)
-    wg.grove(m, trees, [(192, 888), (232, 912), (400, 904), (512, 920), (272, 880)], seed=2,
+    wg.grove(m, trees, [(240, 912), (400, 904), (512, 920), (272, 880)], seed=2,
              kinds=('birch', 'oak', 'pine'))
     m.chest(9, 632, 984, 9)
     m.area(32, 704, 624, 288, 'Mage Quarter')
@@ -1281,6 +1322,311 @@ def gen_fargodeep():
     return m
 
 
+# ---------------------------------------------------------------------------------------------
+# The Stockade: Stormwind's prison, in the Mage Quarter
+# ---------------------------------------------------------------------------------------------
+
+PRISON = [
+    ('outline', (16, 14, 20)), ('top_d', (30, 30, 40)), ('top_m', (46, 46, 60)),
+    ('wall_d', (58, 58, 72)), ('wall_m', (88, 88, 104)), ('wall_l', (124, 124, 140)),
+    ('floor_d', (72, 68, 68)), ('floor_m', (100, 96, 92)), ('floor_l', (128, 124, 116)),
+    ('iron_d', (36, 40, 48)), ('iron_l', (152, 156, 172)), ('straw', (176, 144, 64)),
+    ('wood', (112, 74, 44)), ('flame', (248, 196, 80)), ('red', (152, 36, 40)),
+]
+
+PRISON_OVERHEAD = [
+    ('outline', (16, 14, 20)), ('top_d', (30, 30, 40)), ('top_m', (46, 46, 60)),
+    ('wall_d', (58, 58, 72)), ('wall_m', (88, 88, 104)), ('wall_l', (124, 124, 140)),
+]
+
+
+class Prison(Cave):
+    """Stone corridors and cells. Like a cave, the floor is one flag per 8x8 cell, but walls are
+    brick faces 24 px tall and the floor is flagstones. Cells line the north side of corridors:
+    their bars stand where the corridor's wall face would be."""
+
+    FACE = 3
+
+    def __init__(self, name, width, height):
+        self.m = Map(name, width, height, Palette([PRISON]), Palette([PRISON_OVERHEAD]))
+        self.floor = np.zeros((height // 8, width // 8), dtype=bool)
+        self.face = np.zeros_like(self.floor)
+
+    def _top(self, layer, x, y, w, h, pal):
+        """The tops of the walls: big dark blocks."""
+        ys, xs = np.mgrid[y:y + h, x:x + w]
+        pattern = np.full((h, w), pal('top_m'), dtype=np.uint8)
+        pattern[(ys % 16 == 15) | ((xs + (ys // 16 % 2) * 8) % 16 == 15)] = pal('top_d')
+        layer[y:y + h, x:x + w] = pattern
+
+    def _face(self, layer, x, y, w, row, pal):
+        """One 8 px band of brick face; row 0 is the top band, FACE - 1 the bottom one."""
+        wg.bricks(self.m, layer, x, y, w, 8, 'wall_d', 'wall_m', 'wall_l', palette=pal)
+        if row == 0:
+            layer[y, x:x + w] = pal('outline')
+        if row == self.FACE - 1:
+            layer[y + 6, x:x + w] = pal('wall_d')
+            layer[y + 7, x:x + w] = pal('outline')
+
+    def render(self):
+        m, g, f = self.m, self.m.ground, self.floor
+        rows, cols = f.shape
+        self._top(g, 0, 0, m.width, m.height, m.g)
+        m.block(0, 0, m.width, m.height)
+        above = np.zeros_like(f)
+        above[1:] = f[:-1]
+        face_row = np.full(f.shape, -1, dtype=np.int8)
+        band = f & ~above
+        for r in range(self.FACE):
+            face_row[band & (face_row < 0)] = r
+            nxt = np.zeros_like(band)
+            nxt[1:] = band[:-1]
+            band = nxt & f
+        self.face = face_row >= 0
+        ys, xs = np.mgrid[0:16, 0:16]
+        stone = np.full((16, 16), m.g('floor_m'), dtype=np.uint8)
+        stone[(ys == 15) | (xs == 15)] = m.g('floor_d')
+        stone[(ys == 0) & (xs < 14)] = m.g('floor_l')
+        stone[(xs == 0) & (ys < 14)] = m.g('floor_l')
+        cracked = stone.copy()
+        cracked[5, 4:7] = m.g('floor_d')
+        cracked[6, 7:10] = m.g('floor_d')
+        cracked[7, 10] = m.g('floor_d')
+        for cy in range(rows):
+            for cx in range(cols):
+                if not f[cy, cx]:
+                    continue
+                x, y = cx * 8, cy * 8
+                cell = g[y:y + 8, x:x + 8]
+                if face_row[cy, cx] >= 0:
+                    self._face(g, x, y, 8, face_row[cy, cx], m.g)
+                else:
+                    sx, sy = cx // 2, cy // 2
+                    src = cracked if wg.tile_hash(sx, sy, 9) % 7 == 0 else stone
+                    cell[:] = src[(y % 16):(y % 16) + 8, (x % 16):(x % 16) + 8]
+                    m.unblock(x, y, 8, 8)
+                if cx > 0 and not f[cy, cx - 1]:
+                    cell[:, 0] = m.g('outline')
+                if cx + 1 < cols and not f[cy, cx + 1]:
+                    cell[:, 7] = m.g('outline')
+                if cy + 1 < rows and not f[cy + 1, cx]:
+                    cell[7, :] = m.g('outline')
+                    g[y + 8:y + 10, x:x + 8] = m.g('wall_l')
+                    g[y + 10, x:x + 8] = m.g('wall_d')
+
+    # --- props (prison bank) --------------------------------------------------------------------
+
+    def bars(self, x, y, w, door=None):
+        """A cell front across a corridor's face band (y is the band's top, 24 px tall). door is
+        the x of a 16 px opening, or None for a locked cell."""
+        g, m = self.m.ground, self.m
+        g[y:y + 4, x:x + w] = m.g('wall_m')
+        g[y, x:x + w] = m.g('outline')
+        g[y + 3, x:x + w] = m.g('wall_d')
+        for bx in range(x, x + w, 4):
+            if door is not None and door <= bx < door + 16:
+                continue
+            g[y + 4:y + 24, bx + 1] = m.g('iron_l')
+            g[y + 4:y + 24, bx + 2] = m.g('iron_d')
+        for ry in (y + 9, y + 19):
+            for bx in range(x, x + w, 8):
+                if door is not None and door <= bx < door + 16:
+                    continue
+                g[ry, bx:bx + 8] = m.g('iron_l')
+                g[ry + 1, bx:bx + 8] = m.g('iron_d')
+        g[y + 23, x:x + w] = m.g('outline')
+        m.block(x, y + 8, w, 16)
+        if door is not None:
+            g[y + 4:y + 24, door] = m.g('iron_d')
+            g[y + 4:y + 24, door + 15] = m.g('iron_d')
+            g[y + 23, door:door + 16] = m.g('floor_d')
+            m.unblock(door, y + 8, 16, 16)
+
+    def straw(self, x, y):
+        g, m = self.m.ground, self.m
+        g[y + 2:y + 8, x:x + 24] = m.g('straw')
+        g[y + 1, x + 3:x + 21] = m.g('straw')
+        for sx in range(x + 1, x + 23, 3):
+            g[y + 3 + sx % 4, sx] = m.g('wood')
+        g[y + 7, x:x + 24] = m.g('wood')
+
+    def bucket(self, x, y):
+        g, m = self.m.ground, self.m
+        g[y + 1:y + 8, x + 1:x + 7] = m.g('outline')
+        g[y + 2:y + 7, x + 2:x + 6] = m.g('wood')
+        g[y + 4, x + 1:x + 7] = m.g('iron_d')
+        self.m.block(x, y + 4, 8, 4)
+
+    def chains(self, x, y):
+        """Shackles hanging on a wall face."""
+        g, m = self.m.ground, self.m
+        for cx in (x, x + 6):
+            for cy in range(y, y + 10, 2):
+                g[cy, cx] = m.g('iron_l')
+                g[cy + 1, cx + 1] = m.g('iron_d')
+            g[y + 10:y + 12, cx - 1:cx + 3] = m.g('iron_l')
+
+    def torch(self, x, y):
+        """A torch in an iron bracket on a wall face."""
+        g, m = self.m.ground, self.m
+        g[y + 6:y + 12, x + 3:x + 5] = m.g('wood')
+        g[y + 9, x + 1:x + 7] = m.g('iron_d')
+        g[y + 2:y + 6, x + 2:x + 6] = m.g('flame')
+        g[y:y + 2, x + 3:x + 5] = m.g('flame')
+        g[y + 5, x + 2:x + 6] = m.g('red')
+
+    def banner(self, x, y):
+        """A red Defias rag hung over a wall face, 8x16."""
+        g, m = self.m.ground, self.m
+        g[y:y + 16, x:x + 8] = m.g('red')
+        g[y:y + 16, x] = m.g('outline')
+        g[y:y + 16, x + 7] = m.g('outline')
+        g[y, x:x + 8] = m.g('iron_d')
+        g[y + 14:y + 16, x + 2:x + 6] = m.g('outline')
+        g[y + 6:y + 9, x + 3:x + 5] = m.g('top_d')
+
+    def desk(self, x, y, w=48, h=24):
+        g, m = self.m.ground, self.m
+        g[y:y + h, x:x + w] = m.g('outline')
+        g[y + 1:y + h - 5, x + 1:x + w - 1] = m.g('wood')
+        g[y + h - 5:y + h - 1, x + 1:x + w - 1] = m.g('top_m')
+        g[y + 3:y + 6, x + 6:x + 14] = m.g('floor_l')
+        g[y + 4:y + 7, x + w - 12:x + w - 8] = m.g('flame')
+        self.m.block(x, y + 4, w, h - 4)
+
+    def barrel(self, x, y):
+        g, m = self.m.ground, self.m
+        g[y:y + 16, x + 1:x + 15] = m.g('outline')
+        g[y + 1:y + 15, x + 2:x + 14] = m.g('wood')
+        g[y + 1:y + 4, x + 3:x + 13] = m.g('straw')
+        for by in (y + 5, y + 11):
+            g[by, x + 2:x + 14] = m.g('iron_d')
+        self.m.block(x, y + 6, 16, 10)
+
+    def crate(self, x, y):
+        g, m = self.m.ground, self.m
+        g[y:y + 16, x:x + 16] = m.g('outline')
+        g[y + 1:y + 15, x + 1:x + 15] = m.g('wood')
+        g[y + 1:y + 3, x + 1:x + 15] = m.g('straw')
+        for d in range(1, 15):
+            g[y + d, x + d] = m.g('top_m')
+        self.m.block(x, y + 4, 16, 12)
+
+    def rack(self, x, y):
+        """A weapon rack against a wall, 24x24."""
+        g, m = self.m.ground, self.m
+        g[y + 4:y + 6, x:x + 24] = m.g('wood')
+        g[y + 18:y + 20, x:x + 24] = m.g('wood')
+        for bx in (x + 4, x + 11, x + 18):
+            g[y:y + 20, bx] = m.g('iron_l')
+            g[y:y + 20, bx + 1] = m.g('iron_d')
+            g[y + 14:y + 16, bx - 1:bx + 3] = m.g('wood')
+        self.m.block(x, y + 16, 24, 8)
+
+    def secret(self, x, y, w, rock_h):
+        """A passage hidden by the overhead layer: rock_h px of wall top, then a brick face. It looks
+        like the wall around it, but the player walks under it."""
+        o, m = self.m.overhead, self.m
+        self._top(o, x, y, w, rock_h, m.o)
+        for r in range(self.FACE):
+            self._face(o, x, y + rock_h + r * 8, w, r, m.o)
+
+    def exit(self, x, y, target, point):
+        """Stairs up to the street at the bottom edge of the map, 48 px wide."""
+        g, m = self.m.ground, self.m
+        for r, sy in enumerate(range(y - 8, y + 8, 4)):
+            g[sy:sy + 4, x:x + 48] = m.g('wall_l' if r % 2 == 0 else 'wall_m')
+            g[sy + 3, x:x + 48] = m.g('wall_d')
+        g[y - 8:y + 8, x] = m.g('outline')
+        g[y - 8:y + 8, x + 47] = m.g('outline')
+        m.unblock(x, y - 8, 48, 16)
+        m.warp(x, y, 48, 8, target, point)
+        m.point('entry', x + 24, y - 24)
+        m.point('respawn', x + 24, y - 24)
+
+
+def gen_stockade():
+    c = Prison('stockade', 1024, 512)
+    m = c.m
+    west_cells = (120, 176, 232, 288, 344)
+    east_cells = (632, 688, 744, 800, 856)
+    c.rect(432, 384, 160, 112)      # entry hall
+    c.rect(488, 496, 48, 16)        # stairs up to the street
+    c.rect(480, 272, 64, 120)       # corridor north
+    c.rect(400, 176, 224, 104)      # guard room
+    c.rect(104, 216, 304, 64)       # west cell block
+    c.rect(624, 216, 304, 64)       # east cell block
+    for x in west_cells + east_cells:
+        c.rect(x, 136, 48, 80)
+    c.rect(24, 120, 80, 264)        # the west hall
+    c.rect(920, 40, 80, 344)        # the east hall
+    c.rect(664, 40, 264, 64)        # north passage
+    c.rect(344, 16, 328, 104)       # the warden's hall, where Bazil Thredd holds out
+    c.rect(480, 120, 64, 56)        # barred window from the guard room into the hall
+    c.rect(32, 32, 72, 64)          # a hidden cell above the west hall
+    c.rect(48, 96, 32, 24)
+    c.render()
+    c.exit(488, 504, 'stormwind', 'stockade_exit')
+
+    # Cells: most locked, a few broken open by the riot.
+    open_cells = {176: 192, 288: 304, 688: 704, 800: 816}
+    for x in west_cells + east_cells:
+        c.bars(x, 216, 48, open_cells.get(x))
+        c.straw(x + 4 + (x // 8 % 3) * 4, 176)
+        c.bucket(x + 36, 196)
+        c.chains(x + 20, 140)
+    c.bars(480, 176, 64)
+    # Torches on the faces, banners where the Defias took over.
+    for x, y in ((448, 392), (568, 392), (424, 184), (592, 184), (32, 124), (88, 124), (952, 44),
+                 (976, 44), (712, 44), (816, 44), (376, 20), (632, 20)):
+        c.torch(x, y)
+    for x in (108, 396, 624, 912):
+        c.torch(x, 224)
+    for x, y in ((448, 20), (568, 20), (936, 44), (408, 184), (608, 184)):
+        c.banner(x, y)
+    # The guard room: the warden's desk, overturned crates.
+    c.desk(424, 216)
+    c.crate(584, 216)
+    c.crate(600, 232)
+    c.barrel(408, 256)
+    # The west and east halls.
+    c.crate(32, 352)
+    c.barrel(80, 360)
+    c.rack(960, 360)
+    c.crate(928, 360)
+    c.barrel(944, 48 + 24)
+    # The warden's hall.
+    c.desk(488, 56, 48, 24)
+    for x in (360, 392, 624):
+        c.barrel(x, 96)
+    c.rack(600, 44)
+    c.rack(400, 44)
+    c.crate(440, 64)
+    # The hidden cell: its way in is behind the west hall's back wall.
+    c.straw(40, 72)
+    c.secret(48, 96, 32, 24)
+    m.chest(17, 80, 72, 20)
+
+    for x, y in ((440, 248), (592, 256), (512, 300)):
+        m.spawn('DEFIAS_CONVICT', x, y)
+    for x, y in ((168, 256), (256, 264), (352, 252), (200, 184), (312, 184)):
+        m.spawn('DEFIAS_PRISONER' if x % 3 else 'DEFIAS_CONVICT', x, y)
+    for x, y in ((680, 256), (776, 264), (872, 252), (712, 184), (824, 184)):
+        m.spawn('DEFIAS_CONVICT' if x % 3 else 'DEFIAS_PRISONER', x, y)
+    for x, y in ((48, 180), (80, 232), (952, 136), (976, 216), (744, 84), (856, 84)):
+        m.spawn('DEFIAS_INSURGENT', x, y)
+    m.spawn('TARGORR', 64, 320)
+    m.spawn('KAM_DEEPFURY', 960, 300)
+    for x, y in ((408, 84), (616, 84)):
+        m.spawn('DEFIAS_INSURGENT', x, y)
+    m.spawn('BAZIL_THREDD', 512, 96)
+    m.area(0, 0, 1024, 512, 'The Stockade')
+    m.area(344, 16, 328, 104, "The Warden's Hall")
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
 GENERATORS = {
     'abbey': gen_abbey,
     'inn': gen_inn,
@@ -1290,6 +1636,7 @@ GENERATORS = {
     'echo_ridge': gen_echo_ridge,
     'fargodeep': gen_fargodeep,
     'stormwind': gen_stormwind,
+    'stockade': gen_stockade,
 }
 
 
@@ -1307,7 +1654,7 @@ def main():
 
 # Maps with a picture on the world map page, in the order D-pad left and right go through them.
 # Interiors show the map their door leads to.
-MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'echo_ridge', 'fargodeep', 'deadmines']
+MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'echo_ridge', 'fargodeep', 'deadmines', 'stockade']
 
 
 def write_minimaps(maps):
