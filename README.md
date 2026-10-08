@@ -20,6 +20,8 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Prisoners in the Stockade cell block](docs/screenshots/m11_stockade_cells.png)
 ![Bazil Thredd throws a smoke bomb](docs/screenshots/m11_bazil.png)
 ![The new ending](docs/screenshots/m11_ending.png)
+![Resting at the Lion's Pride Inn](docs/screenshots/m12_rest.png)
+![A rested kill gives double experience](docs/screenshots/m12_rested_kill.png)
 
 ## Status
 
