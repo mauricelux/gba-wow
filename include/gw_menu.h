@@ -1,0 +1,106 @@
+#ifndef GW_MENU_H
+#define GW_MENU_H
+
+#include "gw_ids.h"
+#include "gw_list_cursor.h"
+#include "gw_quest_ids.h"
+#include "gw_status_line.h"
+#include "gw_text_page.h"
+
+namespace gw
+{
+
+class combat;
+class hud;
+class npcs;
+
+// A place the debug page can send the player.
+struct teleport_request
+{
+    map_id map = map_id::NONE;
+    int x = 0;
+    int y = 0;
+};
+
+// The pause menu opened with Start: character, bags, spellbook, talents, quest log and system pages.
+// L and R switch pages; B closes it.
+class menu
+{
+
+public:
+    menu(combat& combat_ref, hud& hud_ref, npcs& npcs_ref);
+
+    void open();
+
+    [[nodiscard]] bool is_open() const
+    {
+        return _open;
+    }
+
+    // Reads input and redraws. Returns false once the menu closed.
+    bool update();
+
+    // Set by the debug page; the game moves the player there once the menu closed.
+    teleport_request teleport;
+
+private:
+    enum class tab : uint8_t
+    {
+        CHARACTER,
+        BAGS,
+        SPELLS,
+        TALENTS,
+        QUESTS,
+        SYSTEM,
+        COUNT
+    };
+
+    combat& _combat;
+    hud& _hud;
+    npcs& _npcs;
+    bool _open = false;
+    bool _dirty = true;
+    tab _tab = tab::CHARACTER;
+    list_cursor _cursor;
+    status_line _status;
+    text_page _page;
+    int _page_scroll = 0;
+    int _talent_tree = 0;
+
+    // Sub-modes (L, R and B belong to the page while one is active)
+    quest_id _quest = quest_id::NONE;   // quest whose details are shown
+    bool _confirm = false;              // abandon quest or drop item
+    int _assign_slot = -1;              // spellbook: choosing an action bar slot
+    bool _teleport_list = false;        // system: choosing a destination
+
+    [[nodiscard]] bool _in_submode() const;
+    void _switch_tab(int direction);
+    void _draw_frame();
+
+    void _update_character();
+    void _draw_character();
+
+    void _update_bags();
+    void _draw_bags();
+    [[nodiscard]] int _bag_slot(int row) const;
+    void _use_hearthstone();
+
+    void _update_spells();
+    void _draw_spells();
+    [[nodiscard]] int _known_count() const;
+    [[nodiscard]] int _known_at(int row) const;
+
+    void _update_talents();
+    void _draw_talents();
+
+    void _update_quests();
+    void _draw_quests();
+    void _show_quest_details(quest_id quest);
+
+    void _update_system();
+    void _draw_system();
+};
+
+}
+
+#endif

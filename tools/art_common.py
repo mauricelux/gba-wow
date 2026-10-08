@@ -20,14 +20,14 @@ def gba_color(r, g, b):
     return (r & 0xF8, g & 0xF8, b & 0xF8)
 
 
-def save_indexed_bmp(path, pixels, palette, pad_to_256=False):
+def save_indexed_bmp(path, pixels, palette, pad_to_256=False, allow_duplicates=False):
     """Save a 2D array of palette indices as an indexed BMP.
 
     palette is a list of (r, g, b) tuples. With pad_to_256 the palette is padded with unique
     filler colors, which Butano needs for images using more than 16 colors.
     """
     palette = [gba_color(*c) for c in palette]
-    if len(set(palette)) != len(palette):
+    if not allow_duplicates and len(set(palette)) != len(palette):
         raise ValueError(f'{path}: palette has duplicate colors')
     if pad_to_256:
         filler = 0

@@ -114,6 +114,11 @@ int main(int argc, char** argv)
             }
             core->setKeys(core, 0);
         }
+        else if(strcmp(command, "reset") == 0)
+        {
+            // Restarts the game; save data in memory survives, like turning the console off and on.
+            core->reset(core);
+        }
         else if(strncmp(command, "shot:", 5) == 0)
         {
             FILE* file = fopen(command + 5, "wb");

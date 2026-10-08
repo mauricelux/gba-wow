@@ -1,37 +1,29 @@
-#include "bn_camera_ptr.h"
 #include "bn_core.h"
-#include "bn_display.h"
-#include "bn_math.h"
-#include "bn_regular_bg_ptr.h"
-#include "bn_sprite_text_generator.h"
+#include "bn_keypad.h"
+#include "bn_unique_ptr.h"
 
-#include "bn_regular_bg_items_northshire_ground.h"
-#include "bn_regular_bg_items_northshire_overhead.h"
-
-#include "common_variable_8x16_sprite_font.h"
-
-#include "gw_player.h"
-#include "gw_world.h"
-#include "gw_zone_banner.h"
+#include "gw_character.h"
+#include "gw_character_creation.h"
+#include "gw_fade.h"
+#include "gw_game.h"
+#include "gw_save.h"
+#include "gw_title_screen.h"
 
 namespace
 {
-    // Background priorities: lower numbers are drawn on top. Characters use priority 2.
-    constexpr int ground_priority = 3;
-    constexpr int overhead_priority = 1;
-
-    // In front of the abbey doors.
-    constexpr bn::fixed_point player_start(512, 262);
-
-    void follow(bn::camera_ptr& camera, const gw::player& player)
+    // Each scene is gone before the next one takes the screen.
+    template<typename Scene>
+    [[nodiscard]] typename Scene::result run_scene(typename Scene::result waiting)
     {
-        constexpr int max_x = (gw::world::width - bn::display::width()) / 2;
-        constexpr int max_y = (gw::world::height - bn::display::height()) / 2;
+        bn::unique_ptr<Scene> scene(new Scene());
+        typename Scene::result result = waiting;
 
-        bn::fixed_point target = gw::world::to_screen_space(player.position());
-        int x = bn::clamp(target.x().floor_integer(), -max_x, max_x);
-        int y = bn::clamp(target.y().floor_integer(), -max_y, max_y);
-        camera.set_position(x, y);
+        while((result = scene->update()) == waiting)
+        {
+            bn::core::update();
+        }
+
+        return result;
     }
 }
 
@@ -39,28 +31,37 @@ int main()
 {
     bn::core::init();
 
-    bn::camera_ptr camera = bn::camera_ptr::create(0, 0);
+    while(true)
+    {
+        if(run_scene<gw::title_screen>(gw::title_screen::result::WAITING) == gw::title_screen::result::CONTINUE)
+        {
+            break;
+        }
 
-    bn::regular_bg_ptr ground = bn::regular_bg_items::northshire_ground.create_bg(0, 0);
-    ground.set_priority(ground_priority);
-    ground.set_camera(camera);
+        gw::set_fade(0);
 
-    bn::regular_bg_ptr overhead = bn::regular_bg_items::northshire_overhead.create_bg(0, 0);
-    overhead.set_priority(overhead_priority);
-    overhead.set_camera(camera);
+        if(run_scene<gw::character_creation>(gw::character_creation::result::CHOOSING) ==
+           gw::character_creation::result::CREATED)
+        {
+            break;
+        }
 
-    gw::player player(player_start, camera);
-    follow(camera, player);
+        // Backed out: the title screen loads the save again.
+    }
 
-    bn::sprite_text_generator text_generator(common::variable_8x16_sprite_font);
-    gw::zone_banner banner(text_generator);
-    banner.show("Northshire Abbey");
+    gw::set_fade(0);
+
+    // The press that began the game shouldn't also talk to whoever stands at the start.
+    while(bn::keypad::a_held())
+    {
+        bn::core::update();
+    }
+
+    bn::unique_ptr<gw::game> game(new gw::game());
 
     while(true)
     {
-        player.update();
-        follow(camera, player);
-        banner.update();
+        game->update();
         bn::core::update();
     }
 }

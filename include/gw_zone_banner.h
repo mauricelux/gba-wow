@@ -21,6 +21,13 @@ public:
 
     void update();
 
+    // Removes the banner at once (menus).
+    void hide()
+    {
+        _sprites.clear();
+        _frames_left = 0;
+    }
+
 private:
     bn::sprite_text_generator& _text_generator;
     bn::vector<bn::sprite_ptr, 8> _sprites;

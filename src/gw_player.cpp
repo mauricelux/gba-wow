@@ -3,8 +3,6 @@
 #include "bn_keypad.h"
 #include "bn_math.h"
 
-#include "bn_sprite_items_warrior.h"
-
 #include "gw_world.h"
 
 namespace gw
@@ -14,47 +12,66 @@ namespace
 {
     constexpr bn::fixed walk_speed = 1.25;
     constexpr bn::fixed run_speed = 2;
+    constexpr bn::fixed dash_speed = 5;
     constexpr bn::fixed diagonal_factor = 0.7071;
-
-    // Hitbox around the feet, in pixels relative to the feet position. Small and low so the
-    // character can walk close to walls and behind tree tops.
-    constexpr int hitbox_left = -5;
-    constexpr int hitbox_right = 4;
-    constexpr int hitbox_top = -5;
 
     // How far (in pixels) the player is nudged around a corner they walk into.
     constexpr int corner_tolerance = 6;
-
-    // The 32x32 frame has the feet on row 29, so the sprite center sits 13 pixels above them.
-    constexpr bn::fixed sprite_offset_y = -13;
-
-    constexpr int walk_frame_ticks = 8;
-    constexpr int frames_per_direction = 4;
-    constexpr int down_frames = 0;
-    constexpr int up_frames = 4;
-    constexpr int side_frames = 8;
-
-    constexpr int sprite_bg_priority = 2;   // between the ground (3) and the overhead layer (1)
 }
 
-player::player(const bn::fixed_point& feet_position, const bn::camera_ptr& camera) :
+player::player(look_id look, const bn::fixed_point& feet_position, const bn::camera_ptr& camera) :
     _position(feet_position),
-    _sprite(bn::sprite_items::warrior.create_sprite(0, 0))
+    _sprite(look, camera)
 {
-    _sprite.set_camera(camera);
-    _sprite.set_bg_priority(sprite_bg_priority);
-    _update_sprite(false);
+    _sprite.update(_position, _facing, false, 0);
 }
 
-void player::update()
+void player::set_position(const bn::fixed_point& feet_position)
 {
-    int input_x = int(bn::keypad::right_held()) - int(bn::keypad::left_held());
-    int input_y = int(bn::keypad::down_held()) - int(bn::keypad::up_held());
+    _position = feet_position;
+    _dashing = false;
+    _sprite.update(_position, _facing, false, 0);
+}
+
+void player::face(const bn::fixed_point& target)
+{
+    _facing = facing_towards(_position, target);
+}
+
+void player::dash_to(const bn::fixed_point& target, int stop_distance)
+{
+    _dash_target = target;
+    _dash_stop = stop_distance;
+    _dash_frames = 0;
+    _dashing = true;
+    face(target);
+}
+
+void player::update(bool input_enabled, bool can_run)
+{
+    if(_dashing)
+    {
+        _update_dash();
+        _sprite.update(_position, _facing, true, _walk_counter);
+        return;
+    }
+
+    int input_x = 0;
+    int input_y = 0;
+
+    if(input_enabled)
+    {
+        input_x = int(bn::keypad::right_held()) - int(bn::keypad::left_held());
+        input_y = int(bn::keypad::down_held()) - int(bn::keypad::up_held());
+    }
+
     bool moving = input_x || input_y;
+    bool running = can_run && bn::keypad::b_held();
+    _moving = moving;
 
     if(moving)
     {
-        bn::fixed speed = bn::keypad::b_held() ? run_speed : walk_speed;
+        bn::fixed speed = running ? run_speed : walk_speed;
 
         if(input_x && input_y)
         {
@@ -75,14 +92,40 @@ void player::update()
         }
 
         _update_facing(input_x, input_y);
-        _walk_counter += bn::keypad::b_held() ? 2 : 1;
+        _walk_counter += running ? 2 : 1;
     }
     else
     {
         _walk_counter = 0;
     }
 
-    _update_sprite(moving);
+    _sprite.update(_position, _facing, moving, _walk_counter);
+}
+
+void player::_update_dash()
+{
+    bn::fixed dx = _dash_target.x() - _position.x();
+    bn::fixed dy = _dash_target.y() - _position.y();
+    bn::fixed length = bn::sqrt(dx * dx + dy * dy);
+    ++_dash_frames;
+    _walk_counter += 3;
+
+    if(length <= _dash_stop || _dash_frames > 60)
+    {
+        _dashing = false;
+        return;
+    }
+
+    bn::fixed step = bn::min(dash_speed, length - _dash_stop);
+    bn::fixed sx = dx * step / length;
+    bn::fixed sy = dy * step / length;
+    bool moved_x = sx == 0 || _move_axis(sx, 0);
+    bool moved_y = sy == 0 || _move_axis(0, sy);
+
+    if(! moved_x && ! moved_y)
+    {
+        _dashing = false;
+    }
 }
 
 bool player::_fits(bn::fixed x, bn::fixed y) const
@@ -159,46 +202,6 @@ void player::_update_facing(int input_x, int input_y)
     {
         _facing = input_y < 0 ? facing::UP : facing::DOWN;
     }
-}
-
-void player::_update_sprite(bool moving)
-{
-    int first_frame = down_frames;
-
-    switch(_facing)
-    {
-
-    case facing::UP:
-        first_frame = up_frames;
-        break;
-
-    case facing::LEFT:
-    case facing::RIGHT:
-        first_frame = side_frames;
-        break;
-
-    default:
-        break;
-    }
-
-    int frame = first_frame;
-
-    if(moving)
-    {
-        frame += ((_walk_counter / walk_frame_ticks) + 1) % frames_per_direction;
-    }
-
-    if(frame != _frame)
-    {
-        _sprite.set_tiles(bn::sprite_items::warrior.tiles_item(), frame);
-        _frame = frame;
-    }
-
-    _sprite.set_horizontal_flip(_facing == facing::RIGHT);
-
-    // Whole pixels only, so the character never shimmers against the background.
-    bn::fixed_point screen = world::to_screen_space(_position);
-    _sprite.set_position(screen.x().floor_integer(), (screen.y() + sprite_offset_y).floor_integer());
 }
 
 }
