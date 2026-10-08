@@ -17,10 +17,11 @@ namespace
     using qid = quest_id;
     using i = item_id;
 
-    // Experience for a quest of the level, in percent of a standard quest.
+    // Experience for a quest of the level, in percent of a standard quest. Later quests give a little
+    // more, so following the quests reaches the Deadmines without grinding.
     [[nodiscard]] constexpr int16_t xp(int level, int percent = 100)
     {
-        return int16_t((60 + 90 * level) * percent / 100);
+        return int16_t((60 + 90 * level) * (100 + 3 * level) / 100 * percent / 100);
     }
 
     [[nodiscard]] constexpr int16_t money(int level)
@@ -280,11 +281,11 @@ namespace
         { "Red Silk Bandanas",
           "The Defias deep in their mine wear red silk, not leather. Bring me their bandanas and "
           "I'll make you a rich adventurer.",
-          "Bring 10 Red Silk Bandanas from the Deadmines to Scout Galiaan.",
+          "Bring 8 Red Silk Bandanas from the Deadmines to Scout Galiaan.",
           "The Deadmines are dangerous. Take your time.",
           "Silk! So you made it into their mine. Impressive.",
           n::GUARD_WF, n::GUARD_WF, 17, 15, qid::RED_LEATHER_BANDANAS,
-          { collect(e::DEFIAS_MINER, 10, 50, "Red Silk Bandana", e::DEFIAS_PIRATE), none, none },
+          { collect(e::DEFIAS_MINER, 8, 60, "Red Silk Bandana", e::DEFIAS_PIRATE), none, none },
           xp(17), money(17),
           { i::MILITIA_LEGPLATES, i::SILK_TROUSERS, i::DEFIAS_LEGGINGS } },
 

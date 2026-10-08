@@ -14,8 +14,8 @@ namespace
 
     // Experience per level: classic values scaled down for a handheld session.
     constexpr int xp_table[max_level] = {
-        160, 360, 560, 840, 1120, 1440, 1800, 2160, 2600, 3040,
-        3520, 4040, 4560, 5160, 5760, 6400, 7080, 7760, 8520, 0
+        160, 360, 560, 840, 1120, 1440, 1800, 2160, 2600, 2950,
+        3250, 3550, 3850, 4150, 4450, 4800, 5150, 5500, 5900, 0
     };
 
     struct class_base

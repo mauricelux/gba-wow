@@ -489,11 +489,16 @@ def gen_deadmines():
     m.warp(*exit_rect, 'westfall', 'deadmines_exit')
     m.point('entry', 120, 452)
     m.point('respawn', 120, 452)
-    m.spawn_group('DEFIAS_MINER', 120, 420, 3, 40, seed=31)
-    m.spawn_group('DEFIAS_MINER', 480, 400, 5, 60, seed=32)
-    m.spawn_group('GOBLIN_ENGINEER', 770, 360, 5, 60, seed=33)
+    # Enemies stand alone or in pairs, far enough apart to be pulled one group at a time.
+    for x, y in ((90, 396), (172, 410)):
+        m.spawn('DEFIAS_MINER', x, y)
+    for x, y in ((440, 352), (466, 368), (432, 444), (548, 440)):
+        m.spawn('DEFIAS_MINER', x, y)
+    for x, y in ((716, 420), (744, 432), (840, 424), (722, 330)):
+        m.spawn('GOBLIN_ENGINEER', x, y)
     m.spawn('SNEED', 800, 300)
-    m.spawn_group('DEFIAS_PIRATE', 640, 140, 3, 30, seed=34)
+    for x, y in ((600, 132), (676, 124), (700, 150)):
+        m.spawn('DEFIAS_PIRATE', x, y)
     m.spawn('VANCLEEF', 784, 132)
     m.area(0, 0, 1024, 512, 'The Deadmines')
     m.area(560, 32, 432, 144, 'Ironclad Cove', 'IRONCLAD_COVE')

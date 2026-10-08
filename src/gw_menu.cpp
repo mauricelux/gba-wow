@@ -41,8 +41,8 @@ namespace
         { "Sentinel Hill", map_id::WESTFALL, map_data::westfall::sentinel_respawn },
         { "Moonbrook", map_id::WESTFALL, map_data::westfall::deadmines_exit },
         { "The Deadmines", map_id::DEADMINES, map_data::deadmines::entry },
-        { "Goblin Foundry", map_id::DEADMINES, { 704, 430 } },
-        { "Ironclad Cove", map_id::DEADMINES, { 600, 164 } },
+        { "Goblin Foundry", map_id::DEADMINES, { 640, 390 } },
+        { "Ironclad Cove", map_id::DEADMINES, { 744, 200 } },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);
