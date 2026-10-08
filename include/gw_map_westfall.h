@@ -156,6 +156,8 @@ namespace gw::map_data::westfall
         { npc_id::GRYAN, 560, 330 },
         { npc_id::GUARD_WF, 470, 330 },
         { npc_id::SALMA, 420, 360 },
+        { npc_id::LEWIS, 600, 360 },
+        { npc_id::FURLBROW, 860, 410 },
     };
 
     constexpr spawn_def spawns[] = {
@@ -197,7 +199,7 @@ namespace gw::map_data::westfall
         { 380, 140, 260, 260, area_id::NONE, "Sentinel Hill" },
         { 64, 280, 300, 480, area_id::NONE, "Saldean's Farm" },
         { 620, 120, 260, 300, area_id::NONE, "Jangolode Farm" },
-        { 300, 700, 500, 300, area_id::NONE, "Moonbrook" },
+        { 300, 700, 500, 300, area_id::MOONBROOK, "Moonbrook" },
         { 0, 0, 1024, 1024, area_id::NONE, "Westfall" },
     };
 }

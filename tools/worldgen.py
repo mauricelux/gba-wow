@@ -209,6 +209,9 @@ class Map:
               f'overhead {overhead_tiles} tiles')
         if ground_tiles > max_ground_tiles or overhead_tiles > 1024:
             raise SystemExit(f'{self.name}: too many unique tiles')
+        for npc_id, x, y in self.npcs:
+            if not self.area_free(x - 6, y - 4, 12, 4):
+                raise SystemExit(f'{self.name}: NPC {npc_id} at ({x}, {y}) stands in a wall')
 
         save_indexed_bmp(GRAPHICS / f'map_{self.name}_ground.bmp', self.ground, self.gp.colors,
                          pad_to_256=self.gp.banks > 1)

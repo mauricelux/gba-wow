@@ -46,6 +46,9 @@ void clear();
 
 void clear_rect(int x, int y, int width, int height);
 
+// Fills a rectangle with the panel background (erases text on a panel).
+void fill_panel(int x, int y, int width, int height);
+
 // Writes text at a cell and returns the number of cells used. On a panel the glyphs are drawn over
 // the panel fill instead of the map. Text is clipped at the right edge of the screen.
 int text(int x, int y, const bn::string_view& text, color text_color = color::WHITE, bool on_panel = false);
@@ -56,6 +59,10 @@ void text_right(int right_x, int y, const bn::string_view& text, color text_colo
 
 // Centered on the screen width.
 void text_center(int y, const bn::string_view& text, color text_color = color::WHITE, bool on_panel = false);
+
+// Finds where the line starting at start ends when wrapping text at width cells, breaking at the
+// last space that fits or at a line break. Sets next to the start of the following line.
+int wrap_line(const bn::string_view& text, int start, int width, int& next);
 
 // Writes text wrapped at word boundaries within width cells. Returns the number of lines used.
 int text_wrapped(int x, int y, int width, int max_lines, const bn::string_view& text,

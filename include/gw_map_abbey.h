@@ -58,6 +58,8 @@ namespace gw::map_data::abbey
         { npc_id::MCBRIDE, 128, 80 },
         { npc_id::LLANE, 60, 70 },
         { npc_id::DANIL, 196, 70 },
+        { npc_id::KHELDEN, 56, 222 },
+        { npc_id::THORGAS, 200, 222 },
     };
 
     constexpr spawn_def spawns[] = {

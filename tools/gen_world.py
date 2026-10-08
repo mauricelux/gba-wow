@@ -126,6 +126,8 @@ def gen_abbey():
     m.npc('MCBRIDE', 128, 80)
     m.npc('LLANE', 60, 70)
     m.npc('DANIL', 196, 70)
+    m.npc('KHELDEN', 56, 222)
+    m.npc('THORGAS', 200, 222)
     m.area(0, 0, 256, 256, 'Northshire Abbey')
     m.music = 'TOWN'
     m.save()
@@ -217,11 +219,13 @@ def gen_elwynn():
     m.point('abbey_exit', 1024, 304)
     m.point('start', door[0], 330)
     m.point('northshire_respawn', 1060, 340)
-    m.npc('WILLEM', 1064, 330)
+    m.npc('WILLEM', 1054, 328)
     m.npc('GUARD_NS', 1000, 820)
+    m.npc('EAGAN', 1120, 380)
+    m.npc('MILLY', 864, 452)
 
     mine = wg.mine_entrance(m, 680, 96)
-    m.area(640, 64, 240, 220, 'Echo Ridge Mine')
+    m.area(640, 64, 240, 220, 'Echo Ridge Mine', 'ECHO_RIDGE')
     m.spawn_group('KOBOLD_VERMIN', 780, 240, 8, 90, seed=1)
 
     wg.crop_field(m, 672, 400, 160, 112)
@@ -232,8 +236,8 @@ def gen_elwynn():
     m.spawn_group('DEFIAS_THUG', 760, 600, 6, 70, seed=2)
     m.spawn_group('DEFIAS_THUG', 860, 520, 3, 40, seed=3)
 
-    m.spawn_group('YOUNG_WOLF', 1240, 420, 8, 110, seed=4)
-    m.spawn_group('YOUNG_WOLF', 1220, 650, 5, 80, seed=5)
+    m.spawn_group('YOUNG_WOLF', 1250, 430, 6, 130, seed=4)
+    m.spawn_group('YOUNG_WOLF', 1220, 650, 4, 100, seed=5)
     wg.grove(m, trees, [(720, 320), (872, 360), (1160, 240), (1300, 280), (1336, 560),
                        (1160, 720), (880, 760), (1288, 740), (680, 720), (1100, 560)], seed=1)
     for bx, by in ((960, 400), (1080, 380), (920, 520), (1120, 600), (1300, 380), (860, 300)):
@@ -259,6 +263,7 @@ def gen_elwynn():
     m.npc('LYRIA', 960, 1224)
     m.npc('CORINA', 1176, 1200)
     m.npc('GUARD_GS', 1060, 1000)
+    m.npc('ANDREW', 1136, 1222)
     m.point('goldshire_respawn', 1024, 1260)
     wg.grove(m, trees, [(760, 1000), (1300, 1000), (1320, 1300), (720, 1380), (1180, 1340)], seed=3)
     m.area(780, 980, 560, 420, 'Goldshire')
@@ -371,6 +376,7 @@ def gen_westfall():
     m.npc('GRYAN', 560, 330)
     m.npc('GUARD_WF', 470, 330)
     m.npc('SALMA', 420, 360)
+    m.npc('LEWIS', 600, 360)
     m.point('sentinel_respawn', 512, 370)
     m.area(380, 140, 260, 260, 'Sentinel Hill')
 
@@ -397,7 +403,7 @@ def gen_westfall():
     m.point('deadmines_exit', entrance[0], entrance[1] + 24)
     m.spawn_group('DEFIAS_TRAPPER', 520, 760, 6, 100, seed=23)
     m.spawn_group('DEFIAS_SMUGGLER', 700, 880, 5, 60, seed=24)
-    m.area(300, 700, 500, 300, 'Moonbrook')
+    m.area(300, 700, 500, 300, 'Moonbrook', 'MOONBROOK')
 
     m.spawn_group('GNOLL_BRUTE', 760, 600, 5, 90, seed=25)
     m.spawn_group('GNOLL_BRUTE', 260, 860, 3, 50, seed=26)
@@ -411,6 +417,7 @@ def gen_westfall():
             wg.tree(m, trees, x, y, int(rng.integers(0, 3)))
 
     m.point('from_elwynn', 1000, 448)
+    m.npc('FURLBROW', 860, 410)
     m.warp(1016, 424, 8, 48, 'elwynn', 'from_westfall')
     m.area(0, 0, 1024, 1024, 'Westfall')
     m.music = 'WESTFALL'

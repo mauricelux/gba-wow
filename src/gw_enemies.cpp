@@ -448,6 +448,11 @@ void enemies::_update_sprite(enemy& item, const bn::fixed_point& player_feet)
 
     if(! item.sprite)
     {
+        if(! actor_sprite::can_create(item.def->look))
+        {
+            return;
+        }
+
         item.sprite.emplace(item.def->look, _camera, bn::fixed(item.def->scale_percent) / 100);
     }
 

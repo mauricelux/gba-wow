@@ -14,8 +14,8 @@ namespace gw
 
 namespace
 {
-    constexpr int message_frames = 120;
-    constexpr int message_row = 5;
+    constexpr int message_frames = 150;
+    constexpr int message_row = 3;      // the first of the message lines
     constexpr int cast_row = 13;
     constexpr int action_label_row = 18;
     constexpr int xp_row = 19;
@@ -37,9 +37,23 @@ hud::hud() = default;
 
 void hud::message(const bn::string_view& text, ui::color color)
 {
-    _message = text.substr(0, bn::min(text.size(), 28));
-    _message_color = color;
-    _message_frames = message_frames;
+    // The same message again just stays longer.
+    line& last = _messages[message_lines - 1];
+
+    if(last.frames > 0 && last.text == text.substr(0, bn::min(text.size(), 30)))
+    {
+        last.frames = message_frames;
+        return;
+    }
+
+    for(int index = 0; index < message_lines - 1; ++index)
+    {
+        _messages[index] = _messages[index + 1];
+    }
+
+    last.text = text.substr(0, bn::min(text.size(), 30));
+    last.color = color;
+    last.frames = message_frames;
     _message_dirty = true;
 }
 
@@ -116,10 +130,13 @@ void hud::update(const combat& combat_ref, const enemies& enemies_ref)
 
     _draw_cast(combat_ref);
 
-    if(_message_frames > 0 && --_message_frames == 0)
+    for(line& message : _messages)
     {
-        _message.clear();
-        _message_dirty = true;
+        if(message.frames > 0 && --message.frames == 0)
+        {
+            message.text.clear();
+            _message_dirty = true;
+        }
     }
 
     if(_message_dirty)
@@ -229,11 +246,20 @@ void hud::_draw_cast(const combat& combat_ref)
 
 void hud::_draw_message()
 {
-    ui::clear_rect(0, message_row, ui::columns, 1);
+    ui::clear_rect(0, message_row, ui::columns, message_lines);
 
-    if(! _message.empty())
+    // Messages stack upwards from the bottom line, newest at the bottom.
+    int row = message_row + message_lines - 1;
+
+    for(int index = message_lines - 1; index >= 0; --index)
     {
-        ui::text_center(message_row, _message, _message_color);
+        const line& message = _messages[index];
+
+        if(! message.text.empty())
+        {
+            ui::text_center(row, message.text, message.color);
+            --row;
+        }
     }
 }
 

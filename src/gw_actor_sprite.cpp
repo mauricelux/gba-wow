@@ -1,6 +1,9 @@
 #include "gw_actor_sprite.h"
 
 #include "bn_sprite_double_size_mode.h"
+#include "bn_sprite_palette_ptr.h"
+#include "bn_sprite_palettes.h"
+#include "bn_sprite_tiles_ptr.h"
 
 #include "gw_world.h"
 
@@ -35,12 +38,20 @@ namespace
     }
 }
 
+bool actor_sprite::can_create(look_id look)
+{
+    // Keep two palettes free for effects, icons and floating text.
+    int needed = get_look(look).palette.find_palette() ? 32 : 48;
+    return bn::sprite_palettes::available_colors_count() >= needed;
+}
+
 actor_sprite::actor_sprite(look_id look, const bn::camera_ptr& camera, bn::fixed scale) :
-    _sprite(get_look(look).sheet.create_sprite(0, 0)),
+    _sprite(bn::sprite_ptr::create(0, 0, get_look(look).sheet.shape_size(),
+                                   get_look(look).sheet.tiles_item().create_tiles(0),
+                                   get_look(look).palette.create_palette())),
     _look(&get_look(look)),
     _scale(scale)
 {
-    _sprite.set_palette(_look->palette);
     _sprite.set_camera(camera);
     _sprite.set_bg_priority(character_bg_priority);
 

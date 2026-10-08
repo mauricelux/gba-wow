@@ -53,9 +53,15 @@ private:
     int _level = -1;
     int _cast = -1;
     int _buff_mask = -1;
-    bn::string<28> _message;
-    ui::color _message_color = ui::color::WHITE;
-    int _message_frames = 0;
+    struct line
+    {
+        bn::string<30> text;
+        ui::color color = ui::color::WHITE;
+        int frames = 0;
+    };
+
+    static constexpr int message_lines = 3;
+    line _messages[message_lines];   // newest last
     bool _message_dirty = false;
     bool _action_bar_shown = false;
     int _action_bar_state[7] = {};

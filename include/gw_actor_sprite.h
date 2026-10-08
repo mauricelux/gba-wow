@@ -19,6 +19,9 @@ class actor_sprite
 public:
     actor_sprite(look_id look, const bn::camera_ptr& camera, bn::fixed scale = 1);
 
+    // False when creating one now could run out of sprite palettes; try again later.
+    [[nodiscard]] static bool can_create(look_id look);
+
     void set_look(look_id look);
 
     // feet is in world pixels.

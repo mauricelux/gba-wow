@@ -7,11 +7,14 @@
 #include "bn_sprite_text_generator.h"
 
 #include "gw_combat.h"
+#include "gw_dialog.h"
 #include "gw_effects.h"
 #include "gw_enemies.h"
 #include "gw_floating_text.h"
 #include "gw_hud.h"
 #include "gw_maps.h"
+#include "gw_menu.h"
+#include "gw_npcs.h"
 #include "gw_player.h"
 #include "gw_zone_banner.h"
 
@@ -38,8 +41,11 @@ private:
     floating_texts _texts;
     effects _effects;
     enemies _enemies;
+    npcs _npcs;
     hud _hud;
     combat _combat;
+    dialog _dialog;
+    menu _menu;
     const area_def* _area = nullptr;
     const warp_def* _warp = nullptr;
     int _warp_frames = 0;
@@ -52,6 +58,9 @@ private:
     void _update_warp();
     void _check_area(bool force);
     void _interact();
+    bool _update_overlays();
+    void _set_paused(bool paused);
+    static void _on_kill(void* context, int index);
     void _loot(int index);
     void _update_death();
     void _save_position();

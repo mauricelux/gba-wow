@@ -5,12 +5,14 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 
 ![Northshire Abbey](docs/screenshots/m1_abbey.png)
 ![Fighting wolves with the action bar open](docs/screenshots/m3_combat.png)
+![A quest from Deputy Willem](docs/screenshots/m4_quest.png)
 
 ## Status
 
-Milestone 3 (combat) is playable: a Human Warrior walks freely from Northshire Abbey down to
-Goldshire and on to Westfall, fights the creatures living there with auto-attack and rage abilities,
-earns experience and money, and revives at the nearest graveyard after dying.
+Milestone 4 (quests) is playable: a Human Warrior walks freely from Northshire Abbey down to
+Goldshire and on to Westfall, talks to the people living there, takes on 23 quests from Northshire to
+the Deadmines, fights with auto-attack and rage abilities, earns experience and money, and revives at
+the nearest graveyard after dying.
 
 | Milestone | What it adds | State |
 | --- | --- | --- |
@@ -18,8 +20,8 @@ earns experience and money, and revives at the nearest graveyard after dying.
 | M1 Free movement | 8-direction pixel movement, collision, camera | Done |
 | M2 Open world | Elwynn Forest, Westfall, interiors, doors, area names | Done |
 | M3 First playable: combat | Auto-attack, Heroic Strike, rage, wolves | Done |
-| M4 Quests and NPCs | Dialogue, quest log, XP rewards | Next |
-| M5 Levels, gear and trainers | Stats, equipment, loot, vendors, skill trainer, saves | |
+| M4 Quests and NPCs | Dialogue, quest log, XP rewards | Done |
+| M5 Levels, gear and trainers | Stats, equipment, loot, vendors, skill trainer, saves | Next |
 | M6 Talents and second area | Warrior talent trees, Westfall-style area | |
 | M7 Dungeon and boss | Dungeon interior, multi-phase boss | |
 | M8 More races and classes | Character creation, Dwarf, Night Elf, Mage, Hunter | |
@@ -31,9 +33,10 @@ earns experience and money, and revives at the nearest graveyard after dying.
 | --- | --- |
 | D-pad | Walk (8 directions) |
 | B (hold) | Run (out of combat) |
-| A | Attack the nearest enemy, or loot a corpse you stand next to |
+| A | Talk to someone next to you, loot a corpse, or attack the nearest enemy |
 | L | Switch target |
 | R (hold) | Show the action bar; then A, B, L or a D-pad direction uses that slot |
+| Start | Quest log (Select abandons the quest shown) |
 
 ## Building
 

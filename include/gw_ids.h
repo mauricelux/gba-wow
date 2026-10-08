@@ -51,7 +51,9 @@ enum class area_id : uint8_t
 {
     NONE,
     FARGODEEP,
-    IRONCLAD_COVE
+    IRONCLAD_COVE,
+    ECHO_RIDGE,
+    MOONBROOK
 };
 
 enum class npc_id : uint8_t
@@ -73,6 +75,13 @@ enum class npc_id : uint8_t
     GRYAN,
     SALMA,
     GUARD_WF,
+    KHELDEN,
+    THORGAS,
+    EAGAN,
+    MILLY,
+    ANDREW,
+    FURLBROW,
+    LEWIS,
     COUNT
 };
 

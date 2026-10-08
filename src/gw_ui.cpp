@@ -127,6 +127,17 @@ void clear_rect(int x, int y, int width, int height)
     }
 }
 
+void fill_panel(int x, int y, int width, int height)
+{
+    for(int row = y; row < y + height; ++row)
+    {
+        for(int column = x; column < x + width; ++column)
+        {
+            put(column, row, panel_fill, 0);
+        }
+    }
+}
+
 int text(int x, int y, const bn::string_view& string, color text_color, bool on_panel)
 {
     int palette = int(text_color);
@@ -151,6 +162,42 @@ void text_center(int y, const bn::string_view& string, color text_color, bool on
     text((columns - string.size()) / 2, y, string, text_color, on_panel);
 }
 
+int wrap_line(const bn::string_view& string, int start, int width, int& next)
+{
+    int size = string.size();
+    int end = start;
+    int last_space = -1;
+
+    while(end < size && end - start < width && string[end] != '\n')
+    {
+        if(string[end] == ' ')
+        {
+            last_space = end;
+        }
+
+        ++end;
+    }
+
+    next = end;
+
+    if(end < size && string[end] == '\n')
+    {
+        next = end + 1;
+    }
+    else if(end < size && string[end] == ' ')
+    {
+        // The line is exactly full: skip the space that follows.
+        next = end + 1;
+    }
+    else if(end < size && last_space > start)
+    {
+        end = last_space;
+        next = last_space + 1;
+    }
+
+    return end;
+}
+
 int text_wrapped(int x, int y, int width, int max_lines, const bn::string_view& string, color text_color,
                  bool on_panel)
 {
@@ -160,32 +207,8 @@ int text_wrapped(int x, int y, int width, int max_lines, const bn::string_view& 
 
     while(start < size && line < max_lines)
     {
-        // Explicit line breaks win; otherwise break at the last space that fits.
-        int end = start;
-        int last_space = -1;
-
-        while(end < size && end - start < width && string[end] != '\n')
-        {
-            if(string[end] == ' ')
-            {
-                last_space = end;
-            }
-
-            ++end;
-        }
-
-        int next = end;
-
-        if(end < size && string[end] != '\n' && last_space > start)
-        {
-            end = last_space;
-            next = last_space + 1;
-        }
-        else if(end < size && string[end] == '\n')
-        {
-            next = end + 1;
-        }
-
+        int next;
+        int end = wrap_line(string, start, width, next);
         text(x, y + line, string.substr(start, end - start), text_color, on_panel);
         start = next;
         ++line;

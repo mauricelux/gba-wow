@@ -11,6 +11,9 @@
 
 #include "gw_character.h"
 #include "gw_fade.h"
+#include "gw_input.h"
+#include "gw_npc_data.h"
+#include "gw_quests.h"
 #include "gw_ui.h"
 #include "gw_world.h"
 
@@ -26,6 +29,7 @@ namespace
     constexpr int warp_fade_frames = 16;
     constexpr int area_check_interval = 15;
     constexpr int loot_range = 24;
+    constexpr int talk_range = 32;
 
     constexpr int death_gray_frames = 60;
     constexpr int death_wait_frames = 150;
@@ -63,16 +67,29 @@ game::game() :
     _texts(_camera),
     _effects(_camera),
     _enemies(_camera),
-    _combat(_player, _enemies, _texts, _effects, _hud)
+    _npcs(_camera),
+    _combat(_player, _enemies, _texts, _effects, _hud),
+    _dialog(_combat, _hud, _npcs),
+    _menu(_combat, _hud, _npcs)
 {
     // The UI layer goes first so it owns the first palette banks and tile block.
     ui::init();
     _enemies.set_combat(_combat);
+    _combat.on_kill = _on_kill;
+    _combat.callback_context = this;
     _load_map(character().map, saved_position());
 }
 
 void game::update()
 {
+    input::update();
+
+    if(_update_overlays())
+    {
+        ui::commit();
+        return;
+    }
+
     bool warping = _warp != nullptr;
     bool dead = _combat.dead();
     bool input = ! warping && ! dead;
@@ -81,10 +98,25 @@ void game::update()
     if(input && ! abilities_held && bn::keypad::a_pressed())
     {
         _interact();
+
+        if(_dialog.is_open())
+        {
+            ui::commit();
+            return;
+        }
+    }
+
+    if(input && bn::keypad::start_pressed())
+    {
+        _set_paused(true);
+        _menu.open();
+        ui::commit();
+        return;
     }
 
     _player.update(input && ! abilities_held, ! _combat.in_combat());
     _enemies.update(_player.position(), ! dead);
+    _npcs.update(_player.position());
     _combat.update(input);
 
     if(warping)
@@ -108,8 +140,68 @@ void game::update()
     ui::commit();
 }
 
+bool game::_update_overlays()
+{
+    if(_dialog.is_open())
+    {
+        if(! _dialog.update())
+        {
+            _set_paused(false);
+        }
+
+        return true;
+    }
+
+    if(_menu.is_open())
+    {
+        if(! _menu.update())
+        {
+            _set_paused(false);
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+void game::_set_paused(bool paused)
+{
+    // The UI layer belongs to the dialog or menu while paused; the hud redraws itself after.
+    _hud.set_visible(! paused);
+    ui::clear();
+
+    if(paused)
+    {
+        _banner.hide();
+    }
+}
+
+void game::_on_kill(void* context, int index)
+{
+    game& self = *static_cast<game*>(context);
+
+    if(quests_on_kill(self._enemies.at(index).id, self._hud))
+    {
+        self._npcs.refresh_markers();
+    }
+}
+
 void game::_interact()
 {
+    int npc_index = _npcs.nearest(_player.position(), talk_range);
+
+    if(npc_index >= 0 && ! _combat.in_combat())
+    {
+        const npc& target = _npcs.at(npc_index);
+        _player.face(target.position);
+        _player.update(false, false);
+        _combat.clear_target();
+        _set_paused(true);
+        _dialog.open(target.id);
+        return;
+    }
+
     int corpse = _enemies.nearest_corpse(_player.position(), loot_range);
 
     if(corpse >= 0)
@@ -213,6 +305,7 @@ void game::_load_map(map_id map, const bn::fixed_point& position)
     _overhead->set_camera(_camera);
 
     _enemies.load(info);
+    _npcs.load(info);
     _player.set_position(position);
     _save_position();
     _follow_camera();
@@ -335,6 +428,12 @@ void game::_check_area(bool force)
     if(area && area != _area && (force || ! _area || area->name != _area->name))
     {
         _banner.show(area->name);
+    }
+
+    if(quests_on_explore(world::map(), _player.position().x().floor_integer(),
+                         _player.position().y().floor_integer(), _hud))
+    {
+        _npcs.refresh_markers();
     }
 
     _area = area;

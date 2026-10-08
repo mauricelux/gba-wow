@@ -131,7 +131,7 @@ private:
     ability_id _cast_ability = ability_id::NONE;
     int _cast_frames = 0;
     int _cast_total = 0;
-    int _combat_frames = 0;                  // frames since the last hit dealt or taken
+    int _combat_frames = 3600;               // frames since the last hit dealt or taken
     int _since_cast = 999;                   // frames since mana was spent (five second rule)
     int _regen_timer = 0;
     int _eat_health = 0;
