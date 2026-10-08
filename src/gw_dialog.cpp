@@ -4,6 +4,7 @@
 #include "bn_math.h"
 #include "bn_string.h"
 
+#include "gw_audio.h"
 #include "gw_combat.h"
 #include "gw_homes.h"
 #include "gw_hud.h"
@@ -362,6 +363,7 @@ void dialog::_complete()
     bn::string<48> text = def.title;
     text += " completed";
     _hud.message(text, ui::color::GREEN);
+    play_sound(sound_id::QUEST);
 
     if(_reward_count)
     {

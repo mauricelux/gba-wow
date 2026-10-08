@@ -9,6 +9,7 @@
 
 #include "common_variable_8x16_sprite_font.h"
 
+#include "gw_audio.h"
 #include "gw_character.h"
 #include "gw_fade.h"
 #include "gw_input.h"
@@ -128,6 +129,7 @@ void game::update()
         _check_area(false);
     }
 
+    play_music(_enemies.elite_in_combat() && ! _combat.dead() ? music_id::BOSS : world::map().music);
     _follow_camera();
     _texts.update();
     _banner.update();
@@ -267,6 +269,7 @@ void game::_loot(int index)
     if(item.loot_money)
     {
         data.money += item.loot_money;
+        play_sound(sound_id::COIN);
         bn::string<28> text = "You loot ";
         int money = item.loot_money;
 

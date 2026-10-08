@@ -3,6 +3,7 @@
 #include "bn_keypad.h"
 #include "bn_string.h"
 
+#include "gw_audio.h"
 #include "gw_character.h"
 #include "gw_item_text.h"
 #include "gw_npc_data.h"
@@ -138,6 +139,7 @@ void vendor_screen::_buy()
     }
 
     data.money -= price;
+    play_sound(sound_id::COIN);
     bn::string<48> text = "Bought ";
     text += get_item(item).name;
     _status.show(text, ui::color::YELLOW);
@@ -161,6 +163,7 @@ void vendor_screen::_sell()
     }
 
     character().money += sell_price(slot.item) * slot.count;
+    play_sound(sound_id::COIN);
     bn::string<48> text = "Sold ";
     text += get_item(slot.item).name;
     _status.show(text, ui::color::YELLOW);
@@ -187,6 +190,7 @@ void vendor_screen::_sell_junk()
     }
 
     character().money += total;
+    play_sound(sound_id::COIN);
     _status.show("Sold all junk", ui::color::YELLOW);
 }
 

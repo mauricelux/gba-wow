@@ -4,28 +4,57 @@
 
 #include "gw_character.h"
 #include "gw_character_creation.h"
+#include "gw_fade.h"
 #include "gw_game.h"
 #include "gw_save.h"
+#include "gw_title_screen.h"
+
+namespace
+{
+    // Each scene is gone before the next one takes the screen.
+    template<typename Scene>
+    [[nodiscard]] typename Scene::result run_scene(typename Scene::result waiting)
+    {
+        bn::unique_ptr<Scene> scene(new Scene());
+        typename Scene::result result = waiting;
+
+        while((result = scene->update()) == waiting)
+        {
+            bn::core::update();
+        }
+
+        return result;
+    }
+}
 
 int main()
 {
     bn::core::init();
 
-    if(! gw::load_game())
+    while(true)
     {
-        // The creation scene is gone before the game takes the screen.
-        bn::unique_ptr<gw::character_creation> creation(new gw::character_creation());
-
-        while(creation->update() != gw::character_creation::result::CREATED)
+        if(run_scene<gw::title_screen>(gw::title_screen::result::WAITING) == gw::title_screen::result::CONTINUE)
         {
-            bn::core::update();
+            break;
         }
 
-        // The press that began the game shouldn't also talk to whoever stands at the start.
-        while(bn::keypad::a_held())
+        gw::set_fade(0);
+
+        if(run_scene<gw::character_creation>(gw::character_creation::result::CHOOSING) ==
+           gw::character_creation::result::CREATED)
         {
-            bn::core::update();
+            break;
         }
+
+        // Backed out: the title screen loads the save again.
+    }
+
+    gw::set_fade(0);
+
+    // The press that began the game shouldn't also talk to whoever stands at the start.
+    while(bn::keypad::a_held())
+    {
+        bn::core::update();
     }
 
     bn::unique_ptr<gw::game> game(new gw::game());

@@ -4,6 +4,7 @@
 #include "bn_math.h"
 #include "bn_string.h"
 
+#include "gw_audio.h"
 #include "gw_enemies.h"
 #include "gw_floating_text.h"
 #include "gw_hud.h"
@@ -619,6 +620,12 @@ bool combat::damage_enemy(int index, int amount, bool crit, bool periodic)
 
     _combat_frames = 0;
     int height = target.sprite ? target.sprite->height() : 24;
+
+    if(! periodic)
+    {
+        play_sound(sound_id::HIT);
+    }
+
     _texts.show_number(_head(target.position, height), amount,
                        crit ? floating_texts::style::CRIT : floating_texts::style::DAMAGE_DEALT);
 
@@ -879,6 +886,7 @@ void combat::_apply_ability(ability_id ability, int target_index)
     character_data& data = character();
     int level = data.level;
     bn::fixed_point from = _head(_player.position(), 8);
+    play_sound(sound_id::SPELL);
 
     switch(ability)
     {
@@ -1396,6 +1404,7 @@ void combat::damage_player(int amount, const bn::fixed_point& from)
 
     _gain_rage(amount, false);
     _player.sprite().flash();
+    play_sound(sound_id::HIT);
     _texts.show_number(head, amount, floating_texts::style::DAMAGE_TAKEN);
 
     character_data& data = character();
@@ -1429,6 +1438,7 @@ void combat::heal_player(int amount)
 void combat::_die()
 {
     _dead = true;
+    play_sound(sound_id::DEATH);
     _cast_ability = ability_id::NONE;
     _player.sprite().set_casting(false);
     _player.sprite().set_dead(true);
@@ -1528,6 +1538,7 @@ void combat::gain_xp(int amount)
         text += bn::to_string<4>(data.level);
         text += "!";
         _texts.show(_head(_player.position(), 34), text, floating_texts::style::CRIT);
+        play_sound(sound_id::LEVEL_UP);
 
         for(int index = 1; index < ability_count; ++index)
         {

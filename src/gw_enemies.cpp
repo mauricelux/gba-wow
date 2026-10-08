@@ -685,6 +685,19 @@ bool enemies::any_in_combat() const
     return false;
 }
 
+bool enemies::elite_in_combat() const
+{
+    for(const enemy& item : _enemies)
+    {
+        if(item.state == enemy_state::CHASE && item.elite())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void enemies::reset_combat()
 {
     for(enemy& item : _enemies)

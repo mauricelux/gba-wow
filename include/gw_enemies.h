@@ -148,6 +148,9 @@ public:
     // True while any enemy is fighting the player.
     [[nodiscard]] bool any_in_combat() const;
 
+    // True while an elite or a boss is fighting the player.
+    [[nodiscard]] bool elite_in_combat() const;
+
     // Called when the player dies: everyone goes home.
     void reset_combat();
 

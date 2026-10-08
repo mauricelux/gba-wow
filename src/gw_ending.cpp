@@ -3,6 +3,7 @@
 #include "bn_keypad.h"
 #include "bn_string.h"
 
+#include "gw_audio.h"
 #include "gw_character.h"
 #include "gw_quests.h"
 #include "gw_ui.h"
@@ -37,6 +38,7 @@ void ending::open()
     _dirty = true;
     _page = 0;
     ui::clear();
+    play_music(music_id::TITLE);
 }
 
 bool ending::update()

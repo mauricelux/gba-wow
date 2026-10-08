@@ -2,6 +2,7 @@
 
 #include "bn_math.h"
 
+#include "gw_audio.h"
 #include "gw_input.h"
 
 namespace gw
@@ -21,7 +22,14 @@ bool list_cursor::update(int count, int visible)
     }
 
     clamp(count, visible);
-    return index != old_index;
+
+    if(index != old_index)
+    {
+        play_sound(sound_id::SELECT);
+        return true;
+    }
+
+    return false;
 }
 
 void list_cursor::clamp(int count, int visible)
