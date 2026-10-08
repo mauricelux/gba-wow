@@ -30,8 +30,8 @@ namespace
         { "Goblin Engineer", l::GOBLIN_ENGINEER, 17, 18, 0, 125, 110, 20, 100, 90, 14 },
         { "Sneed", l::SNEED, 19, 19, ELITE | BOSS | NO_RESPAWN, 260, 130, 20, 160, 0, 15 },
         { "Defias Pirate", l::DEFIAS_PIRATE, 18, 19, 0, 130, 110, 20, 100, 90, 13 },
-        { "Edwin VanCleef", l::VANCLEEF, 21, 21, ELITE | BOSS | NO_RESPAWN, 420, 125, 18, 140, 0, 16 },
-        { "Blackguard", l::DEFIAS_BLACKGUARD, 19, 19, NO_RESPAWN, 100, 90, 20, 100, 0, 0 },
+        { "Edwin VanCleef", l::VANCLEEF, 21, 21, ELITE | BOSS | NO_RESPAWN, 330, 110, 18, 140, 0, 16 },
+        { "Blackguard", l::DEFIAS_BLACKGUARD, 19, 19, NO_RESPAWN, 70, 75, 20, 100, 0, 0 },
     };
 
     static_assert(sizeof(enemies) / sizeof(enemies[0]) == int(enemy_id::COUNT));

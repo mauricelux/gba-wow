@@ -8,15 +8,16 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![A quest from Deputy Willem](docs/screenshots/m4_quest.png)
 ![The character page](docs/screenshots/m5_character.png)
 ![Arms talents](docs/screenshots/m6_talents.png)
+![The ending](docs/screenshots/m7_ending.png)
 
 ## Status
 
-Milestone 6 (talents) is playable: a Human Warrior walks freely from Northshire Abbey down to
-Goldshire and on to Westfall, talks to the people living there, takes on 23 quests from Northshire to
-the Deadmines, fights with auto-attack and rage abilities, loots and equips about 140 items, buys and
-sells at vendors, learns new ranks from the class trainer, spends talent points from level 10 in three
-trees per class, faces the elites Princess and Hogger, hearths home to an inn, and saves to the
-cartridge.
+Milestone 7 (dungeon and bosses) is playable: a Human Warrior walks freely from Northshire Abbey down
+to Goldshire and on to Westfall, talks to the people living there, takes on 23 quests from Northshire
+to the Deadmines, fights with auto-attack and rage abilities, loots and equips about 140 items, buys
+and sells at vendors, learns new ranks from the class trainer, spends talent points from level 10,
+faces the elites Princess and Hogger, hearths home to an inn, fights through the Deadmines to Sneed
+and Edwin VanCleef, sees the story's end, and saves to the cartridge.
 
 | Milestone | What it adds | State |
 | --- | --- | --- |
@@ -27,8 +28,8 @@ cartridge.
 | M4 Quests and NPCs | Dialogue, quest log, XP rewards | Done |
 | M5 Levels, gear and trainers | Stats, equipment, loot, vendors, skill trainer, saves | Done |
 | M6 Talents and second area | Warrior talent trees, Westfall-style area | Done |
-| M7 Dungeon and boss | Dungeon interior, multi-phase boss | Next |
-| M8 More races and classes | Character creation, Dwarf, Night Elf, Mage, Hunter | |
+| M7 Dungeon and boss | Dungeon interior, multi-phase boss | Done |
+| M8 More races and classes | Character creation, Dwarf, Night Elf, Mage, Hunter | Next |
 | M9 Polish | Title screen, music, balance | |
 
 ## Controls
@@ -50,8 +51,15 @@ Last Stand for warriors). Class trainers unlearn talents for 10 silver.
 The hearthstone in your bags takes you back to your home inn every ten minutes; innkeepers in
 Goldshire and at Sentinel Hill can make their inn your home.
 
+Bosses: Sneed calls an engineer at two thirds of his health and, from half health, throws saw blades
+at the spot marked on the ground under you. Edwin VanCleef calls a Blackguard at 70% and 30% and, from
+half health, marks a whirl of blades around himself. Step out of the red circle before it goes off.
+
+Auto-attack keeps going after a kill if another enemy is on you, and turns to whoever is hitting you
+when your target is out of reach.
+
 The game saves itself whenever you change zones or turn in a quest, and from the system page. The
-system page also has debug options for testing: teleport, level up and extra gold.
+system page also has debug options for testing: teleport, level up, extra gold and gear for your level.
 
 ## Building
 

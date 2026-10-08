@@ -372,6 +372,12 @@ void dialog::_complete()
 
     _combat.gain_xp(def.xp);
     save_game();
+
+    if(_quest == quest_id::EDWIN_VANCLEEF)
+    {
+        ending_requested = true;
+    }
+
     _close_or_continue();
 }
 

@@ -34,6 +34,9 @@ public:
     // Reads input and redraws. Returns false once the dialog closed.
     bool update();
 
+    // Set when the last quest was turned in; the game shows the ending once the dialog closes.
+    bool ending_requested = false;
+
 private:
     enum class state : uint8_t
     {

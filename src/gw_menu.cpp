@@ -45,6 +45,7 @@ namespace
         { "Sentinel Hill", map_id::WESTFALL, map_data::westfall::sentinel_respawn },
         { "Moonbrook", map_id::WESTFALL, map_data::westfall::deadmines_exit },
         { "The Deadmines", map_id::DEADMINES, map_data::deadmines::entry },
+        { "Goblin Foundry", map_id::DEADMINES, { 704, 430 } },
         { "Ironclad Cove", map_id::DEADMINES, { 600, 164 } },
     };
 
@@ -57,10 +58,53 @@ namespace
         TELEPORT,
         LEVEL_UP,
         GOLD,
+        GEAR,
         COUNT
     };
 
-    constexpr const char* system_names[] = { "Save game", "Debug: teleport", "Debug: level up", "Debug: +10 gold" };
+    constexpr const char* system_names[] = { "Save game", "Debug: teleport", "Debug: level up", "Debug: +10 gold",
+                                             "Debug: gear up" };
+
+    // Equips the best item the character can use in every slot, for testing later content.
+    void gear_up()
+    {
+        character_data& data = character();
+        int best_level[int(equip_slot::COUNT)] = {};
+
+        for(int slot = 0; slot < int(equip_slot::COUNT); ++slot)
+        {
+            item_id equipped = data.equipment[slot];
+            best_level[slot] = equipped == item_id::NONE ? -1 : get_item(equipped).level * 4 +
+                                                                int(get_item(equipped).quality);
+        }
+
+        for(int index = 1; index < int(item_id::COUNT); ++index)
+        {
+            const item_def& def = get_item(item_id(index));
+
+            if(def.slot == equip_slot::NONE || def.level > data.level || ! can_equip(data.player_class, def))
+            {
+                continue;
+            }
+
+            int score = def.level * 4 + int(def.quality);
+            int slot = int(def.slot);
+
+            if(score > best_level[slot])
+            {
+                best_level[slot] = score;
+                data.equipment[slot] = item_id(index);
+            }
+        }
+
+        // No shield next to a two-handed weapon.
+        item_id main_hand = data.equipment[int(equip_slot::MAIN_HAND)];
+
+        if(main_hand != item_id::NONE && is_two_handed(get_item(main_hand)))
+        {
+            data.equipment[int(equip_slot::OFF_HAND)] = item_id::NONE;
+        }
+    }
 
     void stat(bn::string<32>& text, const char* name, int value)
     {
@@ -399,6 +443,12 @@ void menu::_update_system()
     case system_entry::GOLD:
         data.money += 100000;
         _status.show("+10 gold", ui::color::YELLOW);
+        break;
+
+    case system_entry::GEAR:
+        gear_up();
+        _combat.refresh_stats();
+        _status.show("Geared up for your level", ui::color::YELLOW);
         break;
 
     default:

@@ -10,6 +10,7 @@
 #include "gw_dialog.h"
 #include "gw_effects.h"
 #include "gw_enemies.h"
+#include "gw_ending.h"
 #include "gw_floating_text.h"
 #include "gw_hud.h"
 #include "gw_maps.h"
@@ -46,6 +47,7 @@ private:
     combat _combat;
     dialog _dialog;
     menu _menu;
+    ending _ending;
     const area_def* _area = nullptr;
     const warp_def* _warp = nullptr;
     warp_def _teleport = {};

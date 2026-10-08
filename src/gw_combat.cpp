@@ -20,6 +20,11 @@ namespace
     constexpr int target_range = 120;
     constexpr int gore_interval = 9 * seconds;
     constexpr int gore_windup = 50;
+    constexpr int out_of_reach_switch_frames = 60;
+    constexpr int telegraph_interval = 7 * seconds;
+    constexpr int telegraph_windup = 90;
+    constexpr int saw_radius = 28;
+    constexpr int flurry_radius = 40;
     constexpr int lose_target_range = 220;
     constexpr int combat_timeout = 5 * seconds;
     constexpr int potion_cooldown_frames = 60 * seconds;
@@ -698,6 +703,27 @@ void combat::_update_auto_attack()
 
     int d = _target_distance();
 
+    // A target out of reach while someone else hits the player in melee: turn to that one.
+    if(d > melee_range && ! (_stats.has_ranged && character().player_class == class_id::HUNTER))
+    {
+        if(++_out_of_reach_frames > out_of_reach_switch_frames)
+        {
+            int closer = _enemies.nearest(_player.position(), melee_range, _target, true);
+
+            if(closer >= 0)
+            {
+                _target = closer;
+                d = _target_distance();
+            }
+
+            _out_of_reach_frames = 0;
+        }
+    }
+    else
+    {
+        _out_of_reach_frames = 0;
+    }
+
     if(d <= melee_range)
     {
         if(_swing_timer <= 0)
@@ -1293,10 +1319,11 @@ void combat::enemy_attacks(int index, int percent)
 
     _combat_frames = 0;
 
-    // Getting hit while not targeting anything targets the attacker.
+    // Getting hit while not targeting anything targets the attacker and fights back.
     if(! _target_valid())
     {
         _target = index;
+        _auto_attack = true;
     }
 
     bn::fixed_point head = _head(_player.position(), 26);
@@ -1435,7 +1462,16 @@ void combat::enemy_killed(int index)
 
     if(index == _target)
     {
+        // Keep fighting whoever else is on the player, like a pet would.
+        bool attacking = _auto_attack;
         clear_target();
+        int next = _enemies.nearest(_player.position(), target_range, index, true);
+
+        if(next >= 0)
+        {
+            _target = next;
+            _auto_attack = attacking;
+        }
     }
 
     if(! item.tapped)
@@ -1521,6 +1557,59 @@ void combat::gain_xp(int amount)
     }
 }
 
+void combat::_summon_add(const enemy& boss, enemy_id add)
+{
+    // One add at a time: there is no group to pick them up.
+    int side = boss.position.x() < _player.position().x() ? -1 : 1;
+    bn::fixed_point position(boss.position.x() + side * 28, boss.position.y() + 8);
+
+    if(! _enemies.fits(position.x(), position.y()))
+    {
+        position = boss.position;
+    }
+
+    _enemies.summon(add, position);
+}
+
+bool combat::_update_telegraph(enemy& boss, bool around_boss, int radius)
+{
+    if(boss.telegraph_frames > 0)
+    {
+        if(--boss.telegraph_frames > 0)
+        {
+            // The boss holds still while it winds up a whirl around itself.
+            if(around_boss)
+            {
+                boss.moving = false;
+                return true;
+            }
+
+            return false;
+        }
+
+        _effects.burst(boss.special_position, around_boss ? projectile_kind::ARCANE : projectile_kind::FIRE);
+
+        if(distance_squared(_player.position(), boss.special_position) <= radius * radius)
+        {
+            damage_player(boss.damage * 3, boss.special_position);
+        }
+
+        boss.special_timer = telegraph_interval;
+        return false;
+    }
+
+    if(boss.special_timer == 0)
+    {
+        boss.special_position = around_boss ? boss.position : _player.position();
+        boss.telegraph_frames = telegraph_windup;
+        _effects.circle(boss.special_position, radius, telegraph_windup, false);
+        _texts.show(_head(boss.position, 44), around_boss ? "Blade Flurry" : "Saw Blade",
+                    floating_texts::style::DAMAGE_TAKEN);
+    }
+
+    return false;
+}
+
 bool combat::boss_update(int index)
 {
     enemy& boss = _enemies.at(index);
@@ -1570,6 +1659,59 @@ bool combat::boss_update(int index)
 
             boss.phase = 1;
             boss.special_timer = gore_interval;
+        }
+        break;
+
+    case enemy_id::SNEED:
+        // Calls engineers at two thirds of his health; from half health, hurls saw blades at where
+        // the player stands, marked on the ground a moment before they land.
+        if(boss.phase == 0)
+        {
+            boss.phase = 1;
+            boss.special_timer = 6 * seconds;
+            _hud.message("Sneed: Get out of my mine!", ui::color::RED);
+        }
+
+        if(boss.phase == 1 && health_percent <= 66)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::GOBLIN_ENGINEER);
+            _hud.message("Sneed: Engineers, to me!", ui::color::RED);
+        }
+
+        if(boss.phase >= 2 && health_percent <= 50 && _update_telegraph(boss, false, saw_radius))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::VANCLEEF:
+        // A Blackguard at 70% and 30% of his health; from half health, a whirl of blades around him
+        // that the player has to step away from.
+        if(boss.phase == 0)
+        {
+            boss.phase = 1;
+            boss.special_timer = 6 * seconds;
+            _hud.message("VanCleef: Who dares?", ui::color::RED);
+        }
+
+        if(boss.phase == 1 && health_percent <= 70)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::DEFIAS_BLACKGUARD);
+            _hud.message("VanCleef: Lapdogs, to me!", ui::color::RED);
+        }
+
+        if(boss.phase == 2 && health_percent <= 30)
+        {
+            boss.phase = 3;
+            _summon_add(boss, enemy_id::DEFIAS_BLACKGUARD);
+            _hud.message("VanCleef: For the Brotherhood!", ui::color::RED);
+        }
+
+        if(health_percent <= 50 && _update_telegraph(boss, true, flurry_radius))
+        {
+            return true;
         }
         break;
 

@@ -145,6 +145,7 @@ private:
     int _since_cast = 999;                   // frames since mana was spent (five second rule)
     int _regen_timer = 0;
     int _potion_cooldown = 0;
+    int _out_of_reach_frames = 0;
     int _eat_health = 0;
     int _eat_mana = 0;
     bool _charging = false;
@@ -170,6 +171,8 @@ private:
     [[nodiscard]] bool _target_valid() const;
     [[nodiscard]] int _target_distance() const;
     [[nodiscard]] bn::fixed_point _head(const bn::fixed_point& feet, int height) const;
+    void _summon_add(const enemy& boss, enemy_id add);
+    bool _update_telegraph(enemy& boss, bool around_boss, int radius);
     void _gain_rage(int damage, bool dealt);
     void _spend(int cost);
     [[nodiscard]] int _power() const;

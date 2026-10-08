@@ -41,6 +41,11 @@ namespace
     }
 }
 
+bool enemies::fits(bn::fixed x, bn::fixed y)
+{
+    return gw::fits(x, y);
+}
+
 bool enemy::has_loot() const
 {
     if(loot_money)
@@ -105,6 +110,7 @@ void enemies::_spawn(enemy& item)
     item.marked_frames = 0;
     item.phase = 0;
     item.special_timer = 0;
+    item.telegraph_frames = 0;
     item.loot_money = 0;
 
     for(loot_slot& slot : item.loot)
@@ -428,6 +434,7 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
             item.tapped = false;
             item.phase = 0;
             item.special_timer = 0;
+            item.telegraph_frames = 0;
 
             if(item.summoned)
             {
@@ -491,7 +498,7 @@ void enemies::_update_sprite(enemy& item, const bn::fixed_point& player_feet)
     item.sparkle->set_position(screen.x().floor_integer() + 6, screen.y().floor_integer() - 10);
 }
 
-int enemies::nearest(const bn::fixed_point& from, int max_distance, int exclude) const
+int enemies::nearest(const bn::fixed_point& from, int max_distance, int exclude, bool fighting_only) const
 {
     int best = -1;
     int best_distance = max_distance * max_distance + 1;
@@ -500,7 +507,8 @@ int enemies::nearest(const bn::fixed_point& from, int max_distance, int exclude)
     {
         const enemy& item = _enemies[index];
 
-        if(index == exclude || ! item.alive() || item.state == enemy_state::EVADE)
+        if(index == exclude || ! item.alive() || item.state == enemy_state::EVADE ||
+           (fighting_only && item.state != enemy_state::CHASE))
         {
             continue;
         }

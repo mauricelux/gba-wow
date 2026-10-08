@@ -160,6 +160,23 @@ bool game::_update_overlays()
         if(! _dialog.update())
         {
             _set_paused(false);
+
+            if(_dialog.ending_requested)
+            {
+                _dialog.ending_requested = false;
+                _set_paused(true);
+                _ending.open();
+            }
+        }
+
+        return true;
+    }
+
+    if(_ending.is_open())
+    {
+        if(! _ending.update())
+        {
+            _set_paused(false);
         }
 
         return true;
@@ -203,6 +220,30 @@ void game::_set_paused(bool paused)
 void game::_on_kill(void* context, int index)
 {
     game& self = *static_cast<game*>(context);
+
+    switch(self._enemies.at(index).id)
+    {
+
+    case enemy_id::PRINCESS:
+        set_flag(story_flag::PRINCESS_KILLED);
+        break;
+
+    case enemy_id::HOGGER:
+        set_flag(story_flag::HOGGER_KILLED);
+        break;
+
+    case enemy_id::SNEED:
+        set_flag(story_flag::SNEED_KILLED);
+        break;
+
+    case enemy_id::VANCLEEF:
+        set_flag(story_flag::VANCLEEF_KILLED);
+        self._hud.message("The Brotherhood is broken!", ui::color::YELLOW);
+        break;
+
+    default:
+        break;
+    }
 
     if(quests_on_kill(self._enemies.at(index).id, self._hud))
     {

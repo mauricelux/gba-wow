@@ -64,6 +64,7 @@ struct enemy
     // Boss fights
     int phase = 0;
     int special_timer = 0;
+    int telegraph_frames = 0;   // a marked area goes off when this reaches zero
     bn::fixed_point special_position;
     bool summoned = false;      // added during a fight, removed when it ends
     // Loot, rolled on death
@@ -124,8 +125,10 @@ public:
         return _enemies[index];
     }
 
-    // The closest living enemy within max_distance pixels, skipping exclude; -1 if none.
-    [[nodiscard]] int nearest(const bn::fixed_point& from, int max_distance, int exclude = -1) const;
+    // The closest living enemy within max_distance pixels, skipping exclude; -1 if none. With
+    // fighting_only, only enemies fighting the player count.
+    [[nodiscard]] int nearest(const bn::fixed_point& from, int max_distance, int exclude = -1,
+                              bool fighting_only = false) const;
 
     // The closest lootable corpse within max_distance pixels; -1 if none.
     [[nodiscard]] int nearest_corpse(const bn::fixed_point& from, int max_distance) const;
@@ -138,6 +141,9 @@ public:
 
     // Adds an enemy during a fight (boss adds). Returns its index or -1.
     int summon(enemy_id id, const bn::fixed_point& position);
+
+    // Whether an enemy could stand with its feet at the position.
+    [[nodiscard]] static bool fits(bn::fixed x, bn::fixed y);
 
     // True while any enemy is fighting the player.
     [[nodiscard]] bool any_in_combat() const;
