@@ -129,6 +129,7 @@ class Map:
         self.metas_x, self.metas_y = width // META, height // META
         self.corners = {}
         self.warps, self.npcs, self.spawns, self.areas, self.points = [], [], [], [], {}
+        self.chests = []
         self.music = 'NONE'
 
     # --- helpers -------------------------------------------------------------------------------
@@ -190,12 +191,53 @@ class Map:
     def point(self, name, x, y):
         self.points[name] = (x, y)
 
+    def chest(self, chest_id, x, y, level):
+        """A treasure chest standing with its bottom-center at (x, y). Ids are saved: never reuse one."""
+        self.chests.append((chest_id, x, y, level))
+        self.block(x - 8, y - 8, 16, 8)
+
     def area_free(self, x, y, w, h):
         x0, y0 = x // CELL, y // CELL
         x1, y1 = (x + w) // CELL, (y + h) // CELL
         if x0 < 0 or y0 < 0 or x1 >= self.solid.shape[1] or y1 >= self.solid.shape[0]:
             return False
         return not self.solid[y0:y1 + 1, x0:x1 + 1].any()
+
+    def reachable_from(self, x, y, step=4):
+        """Where the player's feet can get to from (x, y), on a grid of step pixels.
+
+        Uses the player's hitbox (10x6 pixels above the feet), like the game.
+        """
+        solid = np.kron(self.solid, np.ones((CELL, CELL), dtype=np.int32))
+        summed = np.pad(solid.cumsum(0).cumsum(1), ((1, 0), (1, 0)))
+        ys = np.arange(0, self.height, step)[:, None]
+        xs = np.arange(0, self.width, step)[None, :]
+        x0, x1 = np.clip(xs - 5, 0, self.width), np.clip(xs + 5, 0, self.width)
+        y0, y1 = np.clip(ys - 5, 0, self.height), np.clip(ys + 1, 0, self.height)
+        blocked = summed[y1, x1] - summed[y0, x1] - summed[y1, x0] + summed[y0, x0]
+        free = (blocked == 0) & (xs >= 5) & (xs < self.width - 5) & (ys >= 6)
+        reach = np.zeros_like(free)
+        reach[y // step, x // step] = free[y // step, x // step]
+        while True:
+            grown = reach.copy()
+            grown[1:] |= reach[:-1]
+            grown[:-1] |= reach[1:]
+            grown[:, 1:] |= reach[:, :-1]
+            grown[:, :-1] |= reach[:, 1:]
+            grown &= free
+            if (grown == reach).all():
+                return reach
+            reach = grown
+
+    def check_reachable(self, start, step=4):
+        """Every chest and NPC must be in range of a spot the player can walk to from start."""
+        reach = self.reachable_from(*self.points[start], step=step)
+        ys, xs = np.nonzero(reach)
+        targets = [(f'chest {c}', x, y - 4, 20) for c, x, y, _ in self.chests]
+        targets += [(npc, x, y, 28) for npc, x, y in self.npcs]
+        for name, x, y, distance in targets:
+            if not (np.hypot(xs * step - x, ys * step - y) < distance).any():
+                raise SystemExit(f'{self.name}: {name} at ({x}, {y}) cannot be reached')
 
     # --- output --------------------------------------------------------------------------------
 
@@ -290,8 +332,52 @@ class Map:
         if not self.areas:
             out.append('        { 0, 0, 0, 0, area_id::NONE, "" },')
         out.append('    };')
+        out.append('')
+        out.append('    constexpr chest_def chests[] = {')
+        for chest_id, x, y, level in self.chests:
+            out.append(f'        {{ {chest_id}, {level}, {x}, {y} }},')
+        if not self.chests:
+            out.append('        { chest_def::none, 0, 0, 0 },')
+        out.append('    };')
         out += ['}', '', '#endif', '']
         (INCLUDE / f'gw_map_{n}.h').write_text('\n'.join(out))
+
+    def rgb(self):
+        """The map as the player sees it: ground with the overhead layer on top."""
+        lut_g = np.array(self.gp.colors + [(0, 0, 0)] * (256 - len(self.gp.colors)), dtype=np.uint8)
+        lut_o = np.array(self.op.colors + [(0, 0, 0)] * (256 - len(self.op.colors)), dtype=np.uint8)
+        rgb = lut_g[self.ground]
+        over = self.overhead != 0
+        rgb[over] = lut_o[self.overhead][over]
+        return rgb
+
+    def save_minimap(self, picture=128, content=112):
+        """A small picture of the whole map for the world map page: graphics/minimap_<name>.bmp.
+
+        The map is shrunk to fit content pixels, centered in a transparent picture x picture square
+        and cut into four 64x64 sprite frames (top-left, top-right, bottom-left, bottom-right).
+        Returns (left, top, size): picture pixel = left + world pixel * content // size.
+        """
+        size = max(self.width, self.height)
+        w, h = round(self.width * content / size), round(self.height * content / size)
+        small = Image.fromarray(self.rgb(), 'RGB').resize((w, h), Image.BOX)
+        # Boost the contrast a little so roads and roofs stand out at this size.
+        arr = np.asarray(small).astype(float)
+        arr = np.clip((arr - 128) * 1.15 + 128, 0, 255).astype(np.uint8)
+        indexed = Image.fromarray(arr, 'RGB').quantize(15, method=Image.Quantize.MEDIANCUT)
+        colors = [tuple(c) for c in np.array(indexed.getpalette()[:45]).reshape(15, 3)]
+        left, top = (picture - w) // 2, (picture - h) // 2
+        pixels = np.zeros((picture, picture), dtype=np.uint8)
+        pixels[top:top + h, left:left + w] = np.asarray(indexed) + 1
+        frames = [pixels[fy:fy + 64, fx:fx + 64] for fy in (0, 64) for fx in (0, 64)]
+        palette = [(255, 0, 255)] + colors
+        save_indexed_bmp(GRAPHICS / f'minimap_{self.name}.bmp', np.concatenate(frames, axis=0), palette,
+                         allow_duplicates=True)
+        (GRAPHICS / f'minimap_{self.name}.json').write_text('{\n    "type": "sprite",\n    "height": 64\n}\n')
+        lut = np.array([(40, 40, 40)] + [c for c in colors], dtype=np.uint8)
+        Image.fromarray(lut[pixels], 'RGB').resize((picture * 2, picture * 2), Image.NEAREST).save(
+            PREVIEW / f'minimap_{self.name}.png')
+        return left, top, size
 
     def _write_preview(self):
         lut_g = np.array(self.gp.colors + [(0, 0, 0)] * (256 - len(self.gp.colors)), dtype=np.uint8)
@@ -310,6 +396,8 @@ class Map:
             tinted[max(0, y - 2):y + 2, max(0, x - 2):x + 2] = (255, 0, 255)
         for _, x, y in self.npcs:
             tinted[max(0, y - 3):y + 3, max(0, x - 3):x + 3] = (0, 255, 255)
+        for _, x, y, _ in self.chests:
+            tinted[max(0, y - 12):y, max(0, x - 6):x + 6] = (255, 255, 0)
         Image.fromarray(tinted, 'RGB').save(PREVIEW / f'{self.name}_debug.png')
 
 
@@ -461,22 +549,20 @@ def paint_water(m, kind='water'):
 
 TREE_W, TREE_H, CANOPY_H = 32, 48, 28
 
+LEAVES = ('outline', 'leaf_0', 'leaf_1', 'leaf_2', 'leaf_3', 'leaf_4')
+BIRCH_LEAVES = ('outline', 'leaf_1', 'leaf_2', 'leaf_3', 'leaf_4', 'leaf_4')
+DEAD_LEAVES = ('o2', 'dead_0', 'dead_1', 'dead_2', 'dead_3', 'dead_3')
+AUTUMN_LEAVES = ('o2', 'red_d', 'red_m', 'thatch_m', 'red_l', 'thatch_l')
 
-def make_canopy(op, seed, palette=('outline', 'leaf_0', 'leaf_1', 'leaf_2', 'leaf_3', 'leaf_4')):
-    local = np.random.default_rng(seed)
-    canopy = np.zeros((CANOPY_H, TREE_W), dtype=np.uint8)
-    clumps = [(16, 14, 13)] + [(local.uniform(8, 24), local.uniform(7, 20), local.uniform(6, 8))
-                               for _ in range(7)]
-    ys, xs = np.mgrid[0:CANOPY_H, 0:TREE_W]
-    inside = np.zeros_like(canopy, dtype=bool)
-    shade = np.zeros(canopy.shape)
-    for cx, cy, r in clumps:
-        d = np.hypot(xs + 0.5 - cx, (ys + 0.5 - cy) * 1.1)
-        mask = d < r
-        light = 1 - np.hypot(xs + 0.5 - (cx - r * 0.45), ys + 0.5 - (cy - r * 0.5)) / (r * 1.6)
-        shade = np.where(mask & inside, np.maximum(shade, light), shade)
-        shade[mask & ~inside] = light[mask & ~inside]
-        inside |= mask
+
+def outline_of(inside):
+    padded = np.pad(inside, 1)
+    return inside & ~(padded[:-2, 1:-1] & padded[2:, 1:-1] & padded[1:-1, :-2] & padded[1:-1, 2:])
+
+
+def color_canopy(op, inside, shade, palette, local, height, width):
+    """Turns a mask and a 0..1 light value into leaf colors with dither and an outline."""
+    canopy = np.zeros((height, width), dtype=np.uint8)
     levels = np.digitize(shade, [0.05, 0.3, 0.55, 0.8])
     leaf = [op[p] for p in palette[1:]]
     for i, value in enumerate(leaf):
@@ -484,89 +570,352 @@ def make_canopy(op, seed, palette=('outline', 'leaf_0', 'leaf_1', 'leaf_2', 'lea
     dither = local.random(canopy.shape) < 0.12
     for i in range(1, len(leaf)):
         canopy[inside & dither & (canopy == leaf[i])] = leaf[i - 1]
-    padded = np.pad(inside, 1)
-    edge = inside & ~(padded[:-2, 1:-1] & padded[2:, 1:-1] & padded[1:-1, :-2] & padded[1:-1, 2:])
-    canopy[edge] = op[palette[0]]
+    canopy[outline_of(inside)] = op[palette[0]]
     return canopy
 
 
-def make_trunk(m):
-    trunk = np.zeros((TREE_H - CANOPY_H + 4, TREE_W), dtype=np.uint8)
-    for y in range(trunk.shape[0]):
-        flare = 1 if y > trunk.shape[0] - 5 else 0
-        x0, x1 = 12 - flare, 20 + flare
-        trunk[y, x0:x1] = m.g('trunk_m')
-        trunk[y, x0] = m.g('trunk_d')
-        trunk[y, x1 - 1] = m.g('trunk_d')
-        trunk[y, x0 + 3] = m.g('trunk_d') if y % 5 == 2 else m.g('trunk_m')
-    bottom = trunk.shape[0] - 1
-    trunk[bottom, 9:23] = m.g('shadow')
-    trunk[bottom - 1, 10:12] = m.g('trunk_d')
-    trunk[bottom - 1, 20:22] = m.g('trunk_d')
-    trunk[bottom, 11:21] = m.g('trunk_d')
+def make_canopy(op, seed, palette=LEAVES, main=(16, 14, 13), spread=((8, 24), (7, 20), (6, 8)), count=7,
+                height=CANOPY_H):
+    """A round leafy crown made of overlapping clumps lit from the top left."""
+    local = np.random.default_rng(seed)
+    clumps = [main] + [(local.uniform(*spread[0]), local.uniform(*spread[1]), local.uniform(*spread[2]))
+                       for _ in range(count)]
+    ys, xs = np.mgrid[0:height, 0:TREE_W]
+    inside = np.zeros((height, TREE_W), dtype=bool)
+    shade = np.zeros((height, TREE_W))
+    for cx, cy, r in clumps:
+        d = np.hypot(xs + 0.5 - cx, (ys + 0.5 - cy) * 1.1)
+        mask = d < r
+        light = 1 - np.hypot(xs + 0.5 - (cx - r * 0.45), ys + 0.5 - (cy - r * 0.5)) / (r * 1.6)
+        shade = np.where(mask & inside, np.maximum(shade, light), shade)
+        shade[mask & ~inside] = light[mask & ~inside]
+        inside |= mask
+    return color_canopy(op, inside, shade, palette, local, height, TREE_W)
+
+
+def make_pine(op, seed, palette=LEAVES, height=38):
+    """A conifer: stacked tiers that get wider towards the bottom, each darker at its lower edge."""
+    local = np.random.default_rng(seed)
+    ys, xs = np.mgrid[0:height, 0:TREE_W]
+    inside = np.zeros((height, TREE_W), dtype=bool)
+    shade = np.zeros((height, TREE_W))
+    tiers = [(14, 38, 15), (8, 29, 12), (3, 20, 9), (0, 11, 5)]
+    jag = local.integers(0, 2, size=height)
+    for top, bottom, half in tiers:
+        t = (ys + 0.5 - top) / (bottom - top)
+        width = 1 + t * (half - 1) + jag[ys] * (t > 0.3)
+        mask = (t >= 0) & (t <= 1) & (np.abs(xs + 0.5 - 16) <= width)
+        light = 0.95 - 0.6 * (xs + 0.5 - (16 - width)) / (2 * width + 1) - 0.35 * t
+        shade[mask] = light[mask]
+        inside |= mask
+    return color_canopy(op, inside, shade, palette, local, height, TREE_W)
+
+
+def make_trunk(m, height=24, width=8, bark='trunk_m', edge='trunk_d', marks='trunk_d', mark_every=5):
+    """A trunk centered in the 32 px tree with a shadow at its foot."""
+    trunk = np.zeros((height, TREE_W), dtype=np.uint8)
+    left = 16 - width // 2
+    for y in range(height):
+        flare = 1 if y > height - 5 else 0
+        x0, x1 = left - flare, left + width + flare
+        trunk[y, x0:x1] = m.g(bark)
+        trunk[y, x0] = m.g(edge)
+        trunk[y, x1 - 1] = m.g(edge)
+        if y % mark_every == 2:
+            trunk[y, x0 + 2:x0 + 2 + max(1, width // 3)] = m.g(marks)
+    bottom = height - 1
+    trunk[bottom, left - 3:left + width + 3] = m.g('shadow')
+    trunk[bottom, left - 1:left + width + 1] = m.g('trunk_d')
     return trunk
 
 
 class Trees:
+    """Every kind of tree a map can use: (canopy, canopy top, trunk, trunk top) per variant.
+
+    All kinds are 48 px tall and stand on the same 16x16 foot, so they collide alike.
+    """
+
     def __init__(self, m, dead=False):
-        palette = ('o2', 'dead_0', 'dead_1', 'dead_2', 'dead_3', 'dead_3') if dead else \
-            ('outline', 'leaf_0', 'leaf_1', 'leaf_2', 'leaf_3', 'leaf_4')
-        self.canopies = [make_canopy(m.op, s, palette) for s in (11, 12, 13)]
-        self.trunk = make_trunk(m)
+        op = m.op
+        oak_trunk = make_trunk(m)
+        pine_trunk = make_trunk(m, height=14, width=6)
+        small_trunk = make_trunk(m, height=22, width=4)
+        if dead:
+            leaves, birch = DEAD_LEAVES, DEAD_LEAVES
+        else:
+            leaves, birch = LEAVES, BIRCH_LEAVES
+        birch_trunk = make_trunk(m, height=24, width=6, bark='foam', edge='trunk_d', marks='shadow',
+                                 mark_every=4)
+        small = dict(main=(16, 13, 9), spread=((11, 21), (8, 17), (4, 6)), count=5, height=24)
+        self.kinds = {
+            'oak': [(make_canopy(op, s, leaves), 0, oak_trunk, 24) for s in (11, 12, 13)],
+            'pine': [(make_pine(op, s, leaves), 0, pine_trunk, 34) for s in (21, 22)],
+            'small': [(make_canopy(op, s, leaves, **small), 6, small_trunk, 26) for s in (31, 32)],
+            'autumn': [(make_canopy(op, s, AUTUMN_LEAVES), 0, oak_trunk, 24) for s in (41, 42)],
+        }
+        if not dead:
+            self.kinds['birch'] = [(make_canopy(op, s, birch, main=(16, 13, 11), spread=((9, 23), (6, 18), (5, 7))),
+                                    0, birch_trunk, 24) for s in (51, 52)]
+        self.forest_mix = ('oak', 'pine') if not dead else ('oak', 'small')
 
 
-def tree(m, trees, x, y, variant=0, collide=True):
-    """Tree with its top-left at (x, y), snapped to 8 px."""
+def bank_fits(layer, part, x, y):
+    """True if stamping part at (x, y) keeps every 8x8 tile of the layer inside one palette bank."""
+    h, w = part.shape
+    banks = set(int(v) // 16 for v in np.unique(part) if v % 16)
+    for ty in range(max(0, y) // 8, min(layer.shape[0], y + h + 7) // 8):
+        for tx in range(max(0, x) // 8, min(layer.shape[1], x + w + 7) // 8):
+            py0, px0 = ty * 8 - y, tx * 8 - x
+            local = part[max(0, py0):max(0, py0 + 8), max(0, px0):max(0, px0 + 8)]
+            if not local.any():
+                continue
+            existing = layer[ty * 8:ty * 8 + 8, tx * 8:tx * 8 + 8]
+            used = set(int(v) // 16 for v in np.unique(existing) if v % 16)
+            if len(used | banks) > 1:
+                return False
+    return True
+
+
+def tree(m, trees, x, y, variant=0, collide=True, kind='oak', trunk=True):
+    """Tree with its top-left at (x, y), snapped to 8 px. Returns False if it couldn't be drawn.
+
+    A crown that would share a tile with a crown of another palette bank falls back to an oak.
+    """
     x, y = x // 8 * 8, y // 8 * 8
-    plain_grass_under(m, x + 8, y + CANOPY_H - 4, 16, TREE_H - CANOPY_H + 4)
-    m.stamp(m.ground, trees.trunk, x, y + CANOPY_H - 4)
-    m.stamp(m.overhead, trees.canopies[variant % len(trees.canopies)], x, y)
+    options = trees.kinds.get(kind, trees.kinds['oak'])
+    canopy, canopy_y, trunk_part, trunk_y = options[variant % len(options)]
+    if not bank_fits(m.overhead, canopy, x, y + canopy_y):
+        canopy, canopy_y, trunk_part, trunk_y = trees.kinds['oak'][variant % 3]
+        if not bank_fits(m.overhead, canopy, x, y + canopy_y):
+            return False
+    plain_grass_under(m, x + 8, y + trunk_y, 16, trunk_part.shape[0])
+    if trunk:
+        m.stamp(m.ground, trunk_part, x, y + trunk_y)
+    m.stamp(m.overhead, canopy, x, y + canopy_y)
     if collide:
         m.block(x + 8, y + 32, 16, 16)
+    return True
 
 
-def forest(m, trees, x, y, w, h, seed=0, solid=True, dense=True):
-    """Fill a rectangle with staggered rows of trees and (optionally) make it solid."""
+def overlaps(a, b):
+    return a[0] < b[0] + b[2] and b[0] < a[0] + a[2] and a[1] < b[1] + b[3] and b[1] < a[1] + a[3]
+
+
+def forest(m, trees, x, y, w, h, seed=0, solid=True, dense=True, holes=(), kinds=None, secrets=()):
+    """Fill a rectangle with staggered rows of trees and (optionally) make it solid.
+
+    kinds cycle in a regular pattern (a checkerboard for two kinds), which keeps the number of
+    unique tiles down. holes are rectangles left open: no tree stands in them and they stay
+    walkable, which makes clearings. secrets are walkable too, but keep their tree tops: a hidden
+    path the player walks under the leaves.
+    """
     step_y = 24 if dense else 40
+    mix = kinds or trees.forest_mix
     for row, ty in enumerate(range(y - 24, y + h - 24, step_y)):
         for tx in range(x - 16 + (row % 2) * 16, x + w, 32):
-            tree(m, trees, tx, ty, row + tx // 32 + seed, collide=False)
+            foot = (tx + 4, ty + 20, 24, 28)
+            if any(overlaps(foot, hole) for hole in holes):
+                continue
+            kind = mix[(row + tx // 32 + seed) % len(mix)]
+            hidden = any(overlaps(foot, secret) for secret in secrets)
+            tree(m, trees, tx, ty, row + tx // 32 + seed, collide=False, kind=kind, trunk=not hidden)
     if solid:
         m.block(x, y, w, h)
+        for hole in list(holes) + list(secrets):
+            m.unblock(*hole)
 
 
-def grove(m, trees, positions, seed=0):
+def grove(m, trees, positions, seed=0, kinds=('oak',)):
     for i, (x, y) in enumerate(positions):
-        tree(m, trees, x, y, i + seed)
+        tree(m, trees, x, y, i + seed, kind=kinds[(i + seed) % len(kinds)])
+
+
+# --- small props, all in the terrain bank ------------------------------------------------------
+
+def _prop(m, x, y, w, h):
+    """Snaps to metatiles, puts plain grass under the prop and returns (x, y, ground view).
+
+    Props always line up with the 16 px grass pattern, so each kind adds the same few tiles.
+    """
+    x, y = x // META * META, y // META * META
+    plain_grass_under(m, x, y, w, h)
+    return x, y, m.ground[y:y + h, x:x + w]
+
+
+def _blob(w, h, lobes):
+    ys, xs = np.mgrid[0:h, 0:w]
+    inside = np.zeros((h, w), dtype=bool)
+    light = np.zeros((h, w))
+    for cx, cy, rx, ry in lobes:
+        d = np.hypot((xs + 0.5 - cx) / rx, (ys + 0.5 - cy) / ry)
+        mask = d < 1
+        l = 1 - np.hypot((xs + 0.5 - (cx - rx * 0.4)) / rx, (ys + 0.5 - (cy - ry * 0.5)) / ry) / 1.6
+        light = np.where(mask, np.maximum(light, l), light)
+        inside |= mask
+    return inside, light
+
+
+def _leafy(m, tile, inside, light):
+    tile[inside] = np.where(light[inside] > 0.55, m.g('grass_h'),
+                            np.where(light[inside] > 0.25, m.g('grass_l'), m.g('grass_d')))
+    tile[outline_of(inside)] = m.g('shadow')
 
 
 def bush(m, x, y):
-    x, y = x // 8 * 8, y // 8 * 8
-    plain_grass_under(m, x, y, 16, 16)
-    ys, xs = np.mgrid[0:16, 0:16]
-    d = np.hypot(xs + 0.5 - 8, (ys + 0.5 - 9) * 1.2)
-    inside = d < 7.5
-    light = 1 - np.hypot(xs - 5, ys - 5) / 12
-    tile = m.ground[y:y + 16, x:x + 16]
-    tile[inside] = np.where(light[inside] > 0.55, m.g('grass_h'),
-                            np.where(light[inside] > 0.25, m.g('grass_l'), m.g('grass_d')))
-    padded = np.pad(inside, 1)
-    edge = inside & ~(padded[:-2, 1:-1] & padded[2:, 1:-1] & padded[1:-1, :-2] & padded[1:-1, 2:])
-    tile[edge] = m.g('shadow')
+    x, y, tile = _prop(m, x, y, 16, 16)
+    inside, light = _blob(16, 16, [(8, 9, 7.5, 6.25)])
+    _leafy(m, tile, inside, light)
     tile[15, 3:13] = m.g('shadow')
     m.block(x + 2, y + 8, 12, 8)
 
 
+def flower_bush(m, x, y):
+    """A bush dotted with blossoms."""
+    x, y, tile = _prop(m, x, y, 16, 16)
+    inside, light = _blob(16, 16, [(8, 9, 7.5, 6.25)])
+    _leafy(m, tile, inside, light)
+    for fx, fy in ((5, 6), (10, 5), (7, 10), (12, 9), (4, 11)):
+        tile[fy, fx] = m.g('flower')
+        tile[fy + 1, fx] = m.g('grass_d')
+    tile[15, 3:13] = m.g('shadow')
+    m.block(x + 2, y + 8, 12, 8)
+
+
+def wide_bush(m, x, y):
+    """A hedge-like bush of three lobes, 32x16."""
+    x, y, tile = _prop(m, x, y, 32, 16)
+    inside, light = _blob(32, 16, [(8, 10, 7, 5.5), (16, 8, 8, 6.5), (24, 10, 7, 5.5)])
+    _leafy(m, tile, inside, light)
+    tile[15, 3:29] = m.g('shadow')
+    m.block(x + 2, y + 8, 28, 8)
+
+
+def fern(m, x, y):
+    """Fronds fanning out from the ground. Walkable."""
+    x, y, tile = _prop(m, x, y, 16, 16)
+    for angle, length in ((-2.4, 7), (-1.9, 8), (-1.57, 8), (-1.2, 8), (-0.7, 7)):
+        for i in range(length):
+            px = int(round(8 + np.cos(angle) * i))
+            py = int(round(14 + np.sin(angle) * i))
+            if 0 <= px < 16 and 0 <= py < 16:
+                tile[py, px] = m.g('grass_l') if i < length - 2 else m.g('grass_h')
+                if i % 2 and 0 <= px + 1 < 16:
+                    tile[py, px + 1] = m.g('grass_d')
+    tile[15, 5:11] = m.g('shadow')
+
+
+def tall_grass(m, x, y):
+    """A tuft of long grass blades. Walkable."""
+    x, y, tile = _prop(m, x, y, 16, 16)
+    for bx, top in ((3, 6), (5, 3), (7, 5), (9, 2), (11, 4), (13, 7)):
+        tile[top:15, bx] = m.g('grass_d')
+        tile[top:top + 3, bx] = m.g('grass_h')
+        tile[top + 3:15, bx + 1 if bx < 15 else bx] = m.g('grass_l')
+    tile[15, 2:15] = m.g('shadow')
+
+
+def flowers(m, x, y):
+    """A patch of flowers in the grass. Walkable."""
+    x, y, tile = _prop(m, x, y, 16, 16)
+    for fx, fy, c in ((3, 4, 'flower'), (8, 2, 'foam'), (12, 5, 'flower'), (5, 9, 'foam'), (10, 10, 'flower'),
+                      (2, 13, 'flower'), (13, 12, 'foam')):
+        tile[fy, fx] = m.g(c)
+        tile[fy - 1, fx] = m.g(c)
+        tile[fy, fx - 1] = m.g(c)
+        tile[fy + 1, fx] = m.g('grass_d')
+        tile[fy + 2, fx] = m.g('grass_d')
+
+
+def _stone(m, tile, inside, light):
+    tile[inside] = np.where(light[inside] > 0.8, m.g('foam'),
+                            np.where(light[inside] > 0.5, m.g('dirt_l'),
+                                     np.where(light[inside] > 0.2, m.g('dirt_m'), m.g('dirt_d'))))
+    tile[outline_of(inside)] = m.g('shadow')
+
+
+def rock(m, x, y):
+    """A boulder, 16x16."""
+    x, y, tile = _prop(m, x, y, 16, 16)
+    inside, light = _blob(16, 16, [(8, 11, 7, 4.5), (6, 9, 4.5, 4), (11, 9, 4, 3.5)])
+    _stone(m, tile, inside, light)
+    tile[15, 3:13] = m.g('shadow')
+    m.block(x + 2, y + 8, 12, 8)
+
+
+def big_rock(m, x, y):
+    """A large boulder with a smaller one beside it, 32x24."""
+    x, y, tile = _prop(m, x, y, 32, 24)
+    inside, light = _blob(32, 24, [(14, 15, 12, 7.5), (9, 11, 7, 6), (17, 10, 6, 5), (27, 19, 4.5, 3.5)])
+    _stone(m, tile, inside, light)
+    for cx, cy in ((13, 8), (14, 9), (14, 10), (15, 11), (15, 12), (16, 13)):
+        tile[cy, cx] = m.g('dirt_d')
+    tile[23, 3:31] = m.g('shadow')
+    m.block(x + 2, y + 10, 28, 14)
+
+
+def log(m, x, y):
+    """A fallen trunk lying across the grass, 32x16."""
+    x, y, tile = _prop(m, x, y, 32, 16)
+    tile[6:13, 2:28] = m.g('trunk_m')
+    tile[6, 2:28] = m.g('trunk_d')
+    tile[12, 2:28] = m.g('trunk_d')
+    for bx in range(5, 26, 6):
+        tile[8:10, bx:bx + 3] = m.g('trunk_d')
+    tile[6:13, 27:31] = m.g('dirt_l')
+    tile[8:11, 28:30] = m.g('trunk_m')
+    tile[6:13, 30] = m.g('trunk_d')
+    tile[13, 2:30] = m.g('shadow')
+    tile[4:6, 9:12] = m.g('grass_l')
+    m.block(x + 2, y + 6, 28, 8)
+
+
 def stump(m, x, y):
-    x, y = x // 8 * 8, y // 8 * 8
-    plain_grass_under(m, x, y, 16, 16)
-    t = m.ground[y:y + 16, x:x + 16]
+    x, y, t = _prop(m, x, y, 16, 16)
     t[6:14, 3:13] = m.g('trunk_m')
     t[6:8, 3:13] = m.g('dirt_l')
     t[6:14, 3] = m.g('trunk_d')
     t[6:14, 12] = m.g('trunk_d')
     t[14, 2:14] = m.g('shadow')
     m.block(x + 2, y + 8, 12, 6)
+
+
+PROPS = {'bush': bush, 'flower_bush': flower_bush, 'wide_bush': wide_bush, 'fern': fern,
+         'tall_grass': tall_grass, 'flowers': flowers, 'rock': rock, 'big_rock': big_rock, 'log': log,
+         'stump': stump}
+PROP_SIZES = {'wide_bush': (32, 16), 'big_rock': (32, 24), 'log': (32, 16)}
+
+
+def scatter_props(m, rng, count, kinds, area, avoid=()):
+    """Drops props at random free spots of area (x, y, w, h), away from roads, water and avoid rects."""
+    x0, y0, w, h = area
+    # Keep clear of everyone standing on the map and of every doorway.
+    avoid = list(avoid) + [(x - 16, y - 24, 32, 32) for _, x, y in m.npcs + m.spawns]
+    avoid += [(x - 16, y - 24, 32, 40) for x, y in m.points.values()]
+    avoid += [(x - 16, y - 16, w + 32, h + 32) for x, y, w, h, *_ in m.warps]
+    path = corners(m, 'path')
+    water = corners(m, 'water')
+    placed = 0
+    for i in range(count * 4):
+        if placed >= count:
+            break
+        kind = kinds[i % len(kinds)]
+        pw, ph = PROP_SIZES.get(kind, (16, 16))
+        x, y = int(rng.uniform(x0, x0 + w - pw)), int(rng.uniform(y0, y0 + h - ph))
+        mx, my = x // 16, y // 16
+        if not m.area_free(x - 8, y - 8, pw + 16, ph + 16):
+            continue
+        if path[max(0, my - 2):my + 4, max(0, mx - 2):mx + 4].max() or \
+                water[max(0, my - 2):my + 4, max(0, mx - 2):mx + 4].max():
+            continue
+        if any(overlaps((x, y, pw, ph), r) for r in avoid):
+            continue
+        # Props never share a tile with roofs, fields or camps of other banks.
+        tile = m.ground[y // 8 * 8:(y + ph + 7) // 8 * 8, x // 8 * 8:(x + pw + 7) // 8 * 8]
+        if (tile >= 16).any():
+            continue
+        PROPS[kind](m, x, y)
+        placed += 1
+    return placed
 
 
 def fence(m, x, y, length, vertical=False):

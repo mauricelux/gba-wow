@@ -49,6 +49,17 @@ struct area_def
     const char* name;
 };
 
+// A treasure chest standing with its bottom-center at (x, y). The id is the chest's bit in the save.
+struct chest_def
+{
+    static constexpr uint8_t none = 255;
+
+    uint8_t id;
+    uint8_t level;      // what it holds is rolled for this level
+    int16_t x;
+    int16_t y;
+};
+
 }
 
 #endif

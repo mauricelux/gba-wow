@@ -15,6 +15,7 @@ constexpr int action_slots = 7;
 constexpr int max_quests = 32;
 constexpr int max_talents = 24;
 constexpr int quest_objectives = 3;
+constexpr int max_chests = 64;
 
 struct item_stack
 {
@@ -60,6 +61,7 @@ struct character_data
     uint32_t play_frames = 0;
     uint8_t home = 0;               // home_id the hearthstone returns to
     uint32_t hearthstone_ready = 0; // play_frames when it can be used again
+    uint32_t chests_opened[max_chests / 32] = {};   // bit per chest_def::id
 };
 
 // One-off story events.
@@ -90,6 +92,12 @@ void new_character(race_id race, class_id player_class);
 [[nodiscard]] bool has_flag(story_flag flag);
 
 void set_flag(story_flag flag);
+
+[[nodiscard]] bool chest_opened(int chest);
+
+void set_chest_opened(int chest);
+
+[[nodiscard]] int opened_chest_count();
 
 [[nodiscard]] bool knows_ability(ability_id ability);
 

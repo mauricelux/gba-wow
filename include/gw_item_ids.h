@@ -163,7 +163,37 @@
     X(CINDERCLOTH_ROBE, armor("Cindercloth Robe", U, CLOTH, CHEST, 18, 0, 0, 2, 4, 2)) \
     X(POLISHED_BOOTS, armor("Polished Chain Boots", U, MAIL, FEET, 18, 3, 0, 3, 0, 0)) \
     X(MINERS_REVENGE, weapon("Miner's Revenge", U, TWO_HANDED, 18, 35, 4, 0, 2, 0, 0)) \
-    X(HEARTHSTONE, special("Hearthstone", HEARTHSTONE))
+    X(HEARTHSTONE, special("Hearthstone", HEARTHSTONE)) \
+    /* Gunther Weller, Stormwind */ \
+    X(LONGSWORD, weapon("Longsword", C, SWORD, 9, 25)) \
+    X(WAR_AXE, weapon("War Axe", C, AXE, 9, 24)) \
+    X(FLANGED_MACE, weapon("Flanged Mace", C, MACE, 9, 26)) \
+    X(KRIS, weapon("Kris", C, DAGGER, 9, 17)) \
+    X(QUARTERSTAFF, weapon("Quarterstaff", C, STAFF, 9, 30)) \
+    X(GREATSWORD, weapon("Greatsword", C, TWO_HANDED, 9, 34)) \
+    X(COMPOSITE_BOW, weapon("Composite Bow", C, BOW, 9, 27)) \
+    X(FLINTLOCK, weapon("Flintlock Rifle", C, GUN, 9, 28)) \
+    X(KITE_SHIELD, shield("Kite Shield", C, 9)) \
+    /* Lina Stover, Stormwind */ \
+    X(PADDED_HOOD, armor("Padded Hood", C, CLOTH, HEAD, 9)) \
+    X(PADDED_ROBE, armor("Padded Robe", C, CLOTH, CHEST, 9)) \
+    X(PADDED_GLOVES, armor("Padded Gloves", C, CLOTH, HANDS, 9)) \
+    X(PADDED_PANTS, armor("Padded Pants", C, CLOTH, LEGS, 9)) \
+    X(PADDED_BOOTS, armor("Padded Boots", C, CLOTH, FEET, 9)) \
+    X(STUDDED_CAP, armor("Studded Cap", C, LEATHER, HEAD, 9)) \
+    X(STUDDED_VEST, armor("Studded Vest", C, LEATHER, CHEST, 9)) \
+    X(STUDDED_GLOVES, armor("Studded Gloves", C, LEATHER, HANDS, 9)) \
+    X(STUDDED_PANTS, armor("Studded Pants", C, LEATHER, LEGS, 9)) \
+    X(STUDDED_BOOTS, armor("Studded Boots", C, LEATHER, FEET, 9)) \
+    X(RINGMAIL_COIF, armor("Ringmail Coif", C, MAIL, HEAD, 9)) \
+    X(RINGMAIL_VEST, armor("Ringmail Vest", C, MAIL, CHEST, 9)) \
+    X(RINGMAIL_GLOVES, armor("Ringmail Gloves", C, MAIL, HANDS, 9)) \
+    X(RINGMAIL_LEGGINGS, armor("Ringmail Leggings", C, MAIL, LEGS, 9)) \
+    X(RINGMAIL_BOOTS, armor("Ringmail Boots", C, MAIL, FEET, 9)) \
+    /* Brann Bronzebeard's treasure hunt */ \
+    X(TRAILBLAZER_BOOTS, armor("Trailblazer Boots", U, LEATHER, FEET, 10, 0, 3, 1, 0, 0)) \
+    X(PATHFINDER_GREAVES, armor("Pathfinder Greaves", U, MAIL, FEET, 10, 2, 0, 2, 0, 0)) \
+    X(WANDERER_SANDALS, armor("Wanderer's Sandals", U, CLOTH, FEET, 10, 0, 0, 1, 3, 1))
 
 namespace gw
 {

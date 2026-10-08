@@ -33,6 +33,9 @@ enum class map_id : uint8_t
     INN,
     WESTFALL,
     DEADMINES,
+    ECHO_RIDGE,
+    FARGODEEP,
+    STORMWIND,
     COUNT
 };
 
@@ -83,6 +86,20 @@ enum class npc_id : uint8_t
     FURLBROW,
     LEWIS,
     HEATHER,
+    MARCUS_JONATHAN,
+    SW_GUARD_GATE,
+    SW_GUARD_KEEP,
+    SW_GUARD_TRADE,
+    BOLVAR,
+    BENEDICTUS,
+    ALLISON,
+    GUNTHER,
+    LINA,
+    THURMAN,
+    JENNEA,
+    EINRIS,
+    BRANN,
+    ANDER,
     COUNT
 };
 

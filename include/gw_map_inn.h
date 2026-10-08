@@ -66,6 +66,10 @@ namespace gw::map_data::inn
     constexpr area_def areas[] = {
         { 0, 0, 256, 256, area_id::NONE, "Lion's Pride Inn" },
     };
+
+    constexpr chest_def chests[] = {
+        { chest_def::none, 0, 0, 0 },
+    };
 }
 
 #endif

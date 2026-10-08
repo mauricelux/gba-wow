@@ -213,6 +213,91 @@ def markers():
     return [mark(False, False), mark(True, False), mark(True, True), sparkle(0), sparkle(1)]
 
 
+# --- treasure chest (16x16): closed and open ---------------------------------------------------------
+
+CH = {'out': 1, 'wood_d': 2, 'wood': 3, 'wood_l': 4, 'iron_d': 5, 'iron': 6, 'gold_d': 7, 'gold': 8,
+      'gold_l': 9, 'inside': 10, 'shadow': 11}
+CHEST_PALETTE = [(255, 0, 255), (24, 16, 16), (88, 48, 24), (136, 80, 40), (176, 112, 56), (72, 72, 88),
+                 (136, 136, 152), (176, 120, 24), (232, 184, 48), (248, 232, 136), (40, 24, 16),
+                 (40, 48, 32)] + [(0, 0, 0)] * 4
+
+
+def chest(opened):
+    c = Canvas(16)
+    img = c.img
+    img[14:16, 2:14] = CH['shadow']
+    # Body: planks with iron bands.
+    img[8:15, 2:14] = CH['wood']
+    img[8:15, 2] = CH['out']
+    img[8:15, 13] = CH['out']
+    img[14, 2:14] = CH['out']
+    img[10, 3:13] = CH['wood_d']
+    img[12, 3:13] = CH['wood_d']
+    img[8:14, 4] = CH['iron']
+    img[8:14, 11] = CH['iron']
+    if opened:
+        # The lid stands up behind the body and the inside is dark and empty.
+        img[2:8, 2:14] = CH['wood_d']
+        img[2, 2:14] = CH['out']
+        img[2:8, 2] = CH['out']
+        img[2:8, 13] = CH['out']
+        img[3:7, 4] = CH['iron_d']
+        img[3:7, 11] = CH['iron_d']
+        img[7:9, 3:13] = CH['inside']
+        img[8, 2:14] = CH['out']
+        img[9:11, 7:9] = CH['gold_d']
+    else:
+        # A rounded lid with a gold lock.
+        img[4:8, 3:13] = CH['wood_l']
+        img[3, 4:12] = CH['out']
+        img[4:8, 2] = CH['out']
+        img[4:8, 13] = CH['out']
+        img[4, 3] = CH['out']
+        img[4, 12] = CH['out']
+        img[5, 4:12] = CH['wood']
+        img[4:8, 4] = CH['iron']
+        img[4:8, 11] = CH['iron']
+        img[8, 2:14] = CH['out']
+        img[7:11, 7:9] = CH['gold']
+        img[7, 7] = CH['gold_l']
+        img[10, 7:9] = CH['gold_d']
+    return img
+
+
+# --- world map marks (8x8): the player, quest givers and found chests ---------------------------------
+
+def map_marks():
+    frames = []
+    for color in ('white', 'y_l'):
+        c = Canvas(8)
+        c.fill(c.ellipse(4, 4, 2.6, 2.6), M[color], M['out'])
+        c.px(3, 3, M['cyan'] if color == 'white' else M['white'])
+        frames.append(c.img)
+    c = Canvas(8)
+    c.img[0:4, 3:5] = M['y']
+    c.img[5:7, 3:5] = M['y']
+    frames.append(c.img)
+    c = Canvas(8)
+    c.img[1, 2:6] = M['y']
+    c.img[2:4, 5] = M['y']
+    c.img[2, 2] = M['y']
+    c.img[4, 3:5] = M['y']
+    c.img[6, 3:5] = M['y']
+    frames.append(c.img)
+    for img in frames[2:]:
+        mask = img > 0
+        img[neighbors(mask) & ~mask] = M['out']
+    c = Canvas(8)
+    c.img[2:7, 1:7] = M['y_d']
+    c.img[2, 1:7] = M['y_l']
+    c.img[2:7, 1] = M['out']
+    c.img[2:7, 6] = M['out']
+    c.img[6, 1:7] = M['out']
+    c.img[3:5, 3:5] = M['white']
+    frames.append(c.img)
+    return frames
+
+
 # --- area circle (64x64): telegraphed boss attacks and frost nova -------------------------------------
 
 def circle():
@@ -413,6 +498,8 @@ def main():
     write('projectiles', projectiles(), PROJECTILE_PALETTE, 16)
     write('markers', markers(), MARKER_PALETTE, 16)
     write('circle', circle(), CIRCLE_PALETTE, 64)
+    write('chest', [chest(False), chest(True)], CHEST_PALETTE, 16)
+    write('map_marks', map_marks(), MARKER_PALETTE, 8)
     icon_map = icons()
     write('icons', [c.img for c in icon_map.values()], ICON_PALETTE, 16)
 

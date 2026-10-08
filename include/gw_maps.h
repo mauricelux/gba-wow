@@ -25,7 +25,14 @@ struct map_info
     bn::span<const spawn_def> spawns;
     bn::span<const area_def> areas;
     bn::span<const point_def> graveyards;   // where the player comes back to life after dying
+    bn::span<const chest_def> chests;
 };
+
+// Every map, in map_id order (without NONE).
+[[nodiscard]] bn::span<const map_info> all_maps();
+
+// Treasure chests in the whole world.
+[[nodiscard]] int total_chests();
 
 [[nodiscard]] const map_info& get_map(map_id id);
 

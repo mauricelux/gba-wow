@@ -1,5 +1,6 @@
 #include "gw_quests.h"
 
+#include "bn_math.h"
 #include "bn_string.h"
 
 #include "gw_hud.h"
@@ -47,6 +48,11 @@ namespace
         return { o::EXPLORE, 1, e::NONE, e::NONE, 0, area, name };
     }
 
+    [[nodiscard]] constexpr objective_def treasure(int count, const char* name)
+    {
+        return { o::TREASURE, uint8_t(count), e::NONE, e::NONE, 0, area_id::NONE, name };
+    }
+
     constexpr quest_def quests[] = {
         { "", "", "", "", "", n::NONE, n::NONE, 0, 0, qid::NONE, { none, none, none }, 0, 0,
           { i::NONE, i::NONE, i::NONE } },
@@ -66,8 +72,8 @@ namespace
         { "Kobold Camp Cleanup",
           "Kobolds have dug into Echo Ridge Mine, north-west of the abbey. They steal tools, frighten "
           "the miners and breed like rats.\n\n"
-          "Thin their numbers. Kill the vermin crawling around the mine entrance.",
-          "Kill 8 Kobold Vermin at Echo Ridge Mine.",
+          "Go down into the mine and thin their numbers.",
+          "Kill 8 Kobold Vermin inside Echo Ridge Mine.",
           "Are the kobolds dealt with? The miners are waiting.",
           "Well done. The miners can work again, at least for a while.",
           n::MCBRIDE, n::MCBRIDE, 2, 1, qid::A_THREAT_WITHIN,
@@ -120,13 +126,13 @@ namespace
 
         { "The Fargodeep Mine",
           "Our miners fled Fargodeep Mine to the south. They speak of kobolds digging deeper "
-          "tunnels, in numbers we have never seen.\n\n"
-          "Go and see for yourself, then report back.",
-          "Explore Fargodeep Mine, south of Goldshire.",
+          "tunnels, in numbers we have never seen, all the way down to the old gold vein.\n\n"
+          "Go down to the deepest tunnel and see for yourself, then report back.",
+          "Find the Deep Vein at the bottom of Fargodeep Mine, south of Goldshire.",
           "What did you find in the mine?",
           "As bad as that? I will send word to Stormwind. Thank you, friend.",
           n::DUGHAN, n::DUGHAN, 7, 5, qid::NONE,
-          { explore(area_id::FARGODEEP, "Fargodeep Mine explored"), none, none }, xp(7, 60), money(5),
+          { explore(area_id::FARGODEEP, "Deep Vein found"), none, none }, xp(7, 60), money(5),
           { i::NONE, i::NONE, i::NONE } },
 
         { "Gold Dust Exchange",
@@ -311,6 +317,43 @@ namespace
           n::GRYAN, n::GRYAN, 20, 17, qid::THE_DEFIAS_BROTHERHOOD,
           { collect(e::VANCLEEF, 1, 100, "Head of VanCleef"), none, none }, xp(20, 200), money(20),
           { i::CHAUSSES_OF_WESTFALL, i::TUNIC_OF_WESTFALL, i::STAFF_OF_WESTFALL } },
+
+        // --- Stormwind ------------------------------------------------------------------------------
+
+        { "The Road to Stormwind",
+          "Stormwind must hear what is happening in Elwynn: thieves in the vineyards, kobolds in "
+          "every mine, gnolls at the border.\n\n"
+          "Take the road north-west from Goldshire to the city gates and give my report to General "
+          "Marcus Jonathan.",
+          "Report to General Marcus Jonathan at the gates of Stormwind.",
+          "",
+          "Dughan's report, at last. Welcome to Stormwind, friend. The Highlord will want to hear "
+          "this from you himself.",
+          n::DUGHAN, n::MARCUS_JONATHAN, 6, 5, qid::NONE, { none, none, none }, xp(6, 40), money(3),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "An Audience with the Highlord",
+          "Highlord Bolvar Fordragon rules in the king's stead, and he asked to see anyone who comes "
+          "from the troubled lands of Elwynn.\n\n"
+          "Cross the canal and the Trade District to the keep, in the north-west of the city.",
+          "Speak with Highlord Bolvar Fordragon in front of Stormwind Keep.",
+          "",
+          "So the Defias grow bold right under our walls. You did well to come, and Stormwind will "
+          "not forget it.",
+          n::MARCUS_JONATHAN, n::BOLVAR, 6, 5, qid::THE_ROAD_TO_STORMWIND, { none, none, none }, xp(6, 40),
+          money(6), { i::NONE, i::NONE, i::NONE } },
+
+        { "Lost Treasures",
+          "Smugglers, miners and adventurers hid chests all over these lands, lad. Behind the trees, "
+          "at the end of old mine tunnels, in corners nobody bothers to look.\n\n"
+          "Find five of them. Keep what's inside, I only want to know where they were. The "
+          "Explorers' League pays well for a good map.",
+          "Open 5 hidden treasure chests anywhere in the world.",
+          "Found them yet? Look where nobody else would.",
+          "Five chests! You have the nose of a true explorer. Take these, they'll carry you far.",
+          n::BRANN, n::BRANN, 10, 6, qid::NONE,
+          { treasure(5, "Treasure chests opened"), none, none }, xp(10), money(10),
+          { i::PATHFINDER_GREAVES, i::WANDERER_SANDALS, i::TRAILBLAZER_BOOTS } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));
@@ -418,6 +461,17 @@ void accept_quest(quest_id quest)
     quest_progress& progress = quest_state(quest);
     progress = quest_progress();
     progress.status = quest_status::ACTIVE;
+
+    const quest_def& def = get_quest(quest);
+
+    for(int index = 0; index < quest_objectives; ++index)
+    {
+        if(def.objectives[index].type == objective_type::TREASURE)
+        {
+            progress.counts[index] = uint8_t(bn::min(opened_chest_count(), int(def.objectives[index].count)));
+        }
+    }
+
     (void) complete_if_done(quest);
 }
 
@@ -656,6 +710,44 @@ bool quests_on_explore(const map_info& map, int x, int y, hud& hud_ref)
             {
                 completed_message(hud_ref, quest);
             }
+        }
+    }
+
+    return changed;
+}
+
+bool quests_on_chest(hud& hud_ref)
+{
+    bool changed = false;
+
+    for(int index = 1; index < int(quest_id::COUNT); ++index)
+    {
+        quest_id quest = quest_id(index);
+        quest_progress& progress = quest_state(quest);
+
+        if(progress.status != quest_status::ACTIVE)
+        {
+            continue;
+        }
+
+        const quest_def& def = get_quest(quest);
+
+        for(int objective_index = 0; objective_index < quest_objectives; ++objective_index)
+        {
+            const objective_def& objective = def.objectives[objective_index];
+            uint8_t& count = progress.counts[objective_index];
+
+            if(objective.type == objective_type::TREASURE && count < objective.count)
+            {
+                ++count;
+                progress_message(hud_ref, objective, count);
+                changed = true;
+            }
+        }
+
+        if(complete_if_done(quest))
+        {
+            completed_message(hud_ref, quest);
         }
     }
 

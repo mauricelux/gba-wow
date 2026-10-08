@@ -6,6 +6,7 @@
 #include "bn_regular_bg_ptr.h"
 #include "bn_sprite_text_generator.h"
 
+#include "gw_chests.h"
 #include "gw_combat.h"
 #include "gw_dialog.h"
 #include "gw_effects.h"
@@ -43,6 +44,7 @@ private:
     effects _effects;
     enemies _enemies;
     npcs _npcs;
+    chests _chests;
     hud _hud;
     combat _combat;
     dialog _dialog;
