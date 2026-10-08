@@ -5,6 +5,7 @@
 
 #include "gw_character.h"
 #include "gw_combat.h"
+#include "gw_homes.h"
 #include "gw_item_text.h"
 #include "gw_menu_layout.h"
 #include "gw_ui.h"
@@ -71,7 +72,15 @@ void menu::_update_bags()
 
     if(bn::keypad::select_pressed())
     {
-        _confirm = true;
+        if(get_item(character().bags[slot_index].item).type == item_type::HEARTHSTONE)
+        {
+            _status.show("You can't drop that", ui::color::RED);
+        }
+        else
+        {
+            _confirm = true;
+        }
+
         _dirty = true;
         return;
     }
@@ -112,6 +121,12 @@ void menu::_update_bags()
         return;
     }
 
+    if(def.type == item_type::HEARTHSTONE)
+    {
+        _use_hearthstone();
+        return;
+    }
+
     if(def.type == item_type::FOOD || def.type == item_type::DRINK || def.type == item_type::POTION)
     {
         // Using it from the menu closes the menu so you see it work.
@@ -131,6 +146,35 @@ void menu::_update_bags()
     }
 
     _status.show("Sell it to a vendor", ui::color::GRAY);
+}
+
+void menu::_use_hearthstone()
+{
+    character_data& data = character();
+    _dirty = true;
+
+    if(_combat.in_combat())
+    {
+        _status.show("You are in combat", ui::color::RED);
+        return;
+    }
+
+    if(data.play_frames < data.hearthstone_ready)
+    {
+        int minutes = int((data.hearthstone_ready - data.play_frames) / 3600) + 1;
+        bn::string<28> text = "Ready in ";
+        text += bn::to_string<4>(minutes);
+        text += minutes == 1 ? " minute" : " minutes";
+        _status.show(text, ui::color::RED);
+        return;
+    }
+
+    const home_def& home = get_home(home_id(data.home));
+    data.hearthstone_ready = data.play_frames + hearthstone_cooldown;
+    teleport.map = home.map;
+    teleport.x = home.point.x;
+    teleport.y = home.point.y;
+    _open = false;
 }
 
 void menu::_draw_bags()

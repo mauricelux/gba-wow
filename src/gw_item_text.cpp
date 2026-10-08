@@ -3,6 +3,7 @@
 #include "bn_string.h"
 
 #include "gw_character.h"
+#include "gw_homes.h"
 #include "gw_items.h"
 #include "gw_text_page.h"
 
@@ -65,6 +66,9 @@ const char* item_kind_name(item_id item)
 
     case item_type::QUEST:
         return "Quest item";
+
+    case item_type::HEARTHSTONE:
+        return "Use: return home";
 
     case item_type::FOOD:
         return "Food";
@@ -155,6 +159,29 @@ void add_item_details(text_page& page, item_id item)
     case item_type::QUEST:
         text = item_kind_name(item);
         break;
+
+    case item_type::HEARTHSTONE:
+    {
+        text = "Takes you to ";
+        text += get_home(home_id(data.home)).name;
+        page.add_copy(text, ui::color::WHITE);
+
+        if(data.play_frames < data.hearthstone_ready)
+        {
+            int minutes = int((data.hearthstone_ready - data.play_frames) / 3600) + 1;
+            text = "Ready in ";
+            text += bn::to_string<4>(minutes);
+            text += " min";
+            page.add_copy(text, ui::color::RED);
+        }
+        else
+        {
+            page.add("Ready", ui::color::GREEN);
+        }
+
+        page.add("Talk to an innkeeper to change your home.", ui::color::GRAY);
+        return;
+    }
 
     default:
         text = item_kind_name(item);

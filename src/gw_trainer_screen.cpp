@@ -28,6 +28,7 @@ void trainer_screen::open(npc_id npc)
 {
     _npc = npc;
     _cursor = list_cursor();
+    _status = status_line();
     _abilities.clear();
 
     class_id trainer_class = get_npc_info(npc).trainer_class;

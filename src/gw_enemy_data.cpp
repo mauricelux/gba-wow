@@ -19,7 +19,7 @@ namespace
         { "Kobold Tunneler", l::KOBOLD_TUNNELER, 6, 8, 0, 100, 100, 20, 100, 60, 5 },
         { "Murloc Forager", l::MURLOC, 7, 9, 0, 100, 100, 20, 100, 60, 6 },
         { "Rockhide Boar", l::BOAR, 7, 8, PASSIVE, 110, 100, 20, 100, 60, 7 },
-        { "Princess", l::PRINCESS, 9, 9, ELITE, 300, 150, 20, 140, 240, 8 },
+        { "Princess", l::PRINCESS, 9, 9, ELITE, 260, 140, 20, 140, 240, 8 },
         { "Riverpaw Gnoll", l::RIVERPAW_GNOLL, 8, 10, 0, 105, 100, 22, 100, 60, 9 },
         { "Hogger", l::HOGGER, 11, 11, ELITE, 320, 160, 22, 145, 240, 10 },
         { "Harvest Watcher", l::HARVEST_WATCHER, 12, 14, 0, 115, 110, 26, 110, 60, 11 },

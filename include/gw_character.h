@@ -57,6 +57,8 @@ struct character_data
     quest_progress quests[max_quests];
     uint32_t flags = 0;             // story flags, see story_flag
     uint32_t play_frames = 0;
+    uint8_t home = 0;               // home_id the hearthstone returns to
+    uint32_t hearthstone_ready = 0; // play_frames when it can be used again
 };
 
 // One-off story events.
@@ -82,6 +84,9 @@ void set_flag(story_flag flag);
 
 // Learns the ability and puts it on the first free action slot.
 void learn_ability(ability_id ability);
+
+// Forgets the ability and takes it off the action bar (unlearning talents).
+void forget_ability(ability_id ability);
 
 // Experience needed to go from level to level + 1 (0 at the level cap).
 [[nodiscard]] int xp_for_level(int level);
@@ -128,6 +133,8 @@ struct stats
     int spell_crit;         // percent
     int dodge;              // percent
     int damage_percent;     // all damage dealt, 100 = normal
+    int crit_percent;       // damage of a critical hit, 200 = double
+    int rage_percent;       // rage gained, 100 = normal
     int spell_power;        // added to spell damage
     int health_regen;       // per tick out of combat
     int power_regen;        // mana per tick, or rage lost per tick out of combat

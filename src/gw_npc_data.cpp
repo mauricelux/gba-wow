@@ -67,6 +67,8 @@ namespace
           "The Defias took our farm, and now gnolls roam the fields." },
         { "Quartermaster Lewis", "Militia Supplies", l::MERCHANT, vendor, c::WARRIOR, militia,
           "The militia needs supplies, and so will you. Take a look." },
+        { "Innkeeper Heather", "Innkeeper", l::INNKEEPER, innkeeper, c::WARRIOR, inn,
+          "No roof yet, but a warm fire and a hot meal. Rest here as long as you like." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

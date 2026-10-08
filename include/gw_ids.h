@@ -82,6 +82,7 @@ enum class npc_id : uint8_t
     ANDREW,
     FURLBROW,
     LEWIS,
+    HEATHER,
     COUNT
 };
 

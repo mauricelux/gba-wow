@@ -26,6 +26,7 @@ namespace
     constexpr item_type TWO_HANDED = item_type::TWO_HANDED;
     constexpr item_type BOW = item_type::BOW;
     constexpr item_type GUN = item_type::GUN;
+    constexpr item_type HEARTHSTONE = item_type::HEARTHSTONE;
 
     constexpr equip_slot HEAD = equip_slot::HEAD;
     constexpr equip_slot CHEST = equip_slot::CHEST;
@@ -97,6 +98,11 @@ namespace
     {
         return { name, P, item_type::JUNK, equip_slot::NONE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, uint16_t(sell_price),
                  uint8_t(stack) };
+    }
+
+    [[nodiscard]] constexpr item_def special(const char* name, item_type type)
+    {
+        return { name, C, type, equip_slot::NONE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
     }
 
     #define GW_ITEM_DEF(id, definition) definition,

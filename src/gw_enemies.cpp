@@ -372,7 +372,7 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
             --item.attack_timer;
         }
 
-        if(item.boss() && _combat->boss_update(index))
+        if(item.elite() && _combat->boss_update(index))
         {
             break;
         }
@@ -427,6 +427,7 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
             item.moving = false;
             item.tapped = false;
             item.phase = 0;
+            item.special_timer = 0;
 
             if(item.summoned)
             {

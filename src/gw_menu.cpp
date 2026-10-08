@@ -22,7 +22,7 @@ using namespace menu_layout;
 
 namespace
 {
-    constexpr const char* tab_names[] = { "Character", "Bags", "Spellbook", "Quest Log", "System" };
+    constexpr const char* tab_names[] = { "Character", "Bags", "Spellbook", "Talents", "Quest Log", "System" };
 
     constexpr const char* slot_names[] = { "Head", "Chest", "Hands", "Legs", "Feet", "Main", "Off", "Range" };
 
@@ -95,6 +95,7 @@ void menu::open()
     _assign_slot = -1;
     _teleport_list = false;
     _cursor = list_cursor();
+    _status = status_line();
     teleport = teleport_request();
     ui::clear();
 }
@@ -140,6 +141,10 @@ bool menu::update()
         _update_spells();
         break;
 
+    case tab::TALENTS:
+        _update_talents();
+        break;
+
     case tab::QUESTS:
         _update_quests();
         break;
@@ -180,6 +185,10 @@ bool menu::update()
 
         case tab::SPELLS:
             _draw_spells();
+            break;
+
+        case tab::TALENTS:
+            _draw_talents();
             break;
 
         case tab::QUESTS:

@@ -8,6 +8,7 @@
 #include "gw_floating_text.h"
 #include "gw_hud.h"
 #include "gw_player.h"
+#include "gw_talents.h"
 #include "gw_world.h"
 
 namespace gw
@@ -17,6 +18,8 @@ namespace
 {
     constexpr int seconds = 60;
     constexpr int target_range = 120;
+    constexpr int gore_interval = 9 * seconds;
+    constexpr int gore_windup = 50;
     constexpr int lose_target_range = 220;
     constexpr int combat_timeout = 5 * seconds;
     constexpr int potion_cooldown_frames = 60 * seconds;
@@ -606,7 +609,7 @@ bool combat::damage_enemy(int index, int amount, bool crit, bool periodic)
 
     if(crit && ! periodic)
     {
-        amount = amount * 2;
+        amount = amount * _stats.crit_percent / 100;
     }
 
     _combat_frames = 0;
@@ -1275,11 +1278,11 @@ void combat::_gain_rage(int damage, bool dealt)
 
     character_data& data = character();
     int conversion = rage_conversion(data.level);
-    int rage = dealt ? damage * 12 / conversion : damage * 4 / conversion;
+    int rage = (dealt ? damage * 12 / conversion : damage * 4 / conversion) * _stats.rage_percent / 100;
     data.power = bn::min(100, int(data.power) + bn::max(1, rage));
 }
 
-void combat::enemy_attacks(int index)
+void combat::enemy_attacks(int index, int percent)
 {
     enemy& attacker = _enemies.at(index);
 
@@ -1310,7 +1313,7 @@ void combat::enemy_attacks(int index)
         return;
     }
 
-    int damage = random_range(attacker.damage * 3 / 4, attacker.damage * 5 / 4);
+    int damage = random_range(attacker.damage * 3 / 4, attacker.damage * 5 / 4) * percent / 100;
 
     if(random_chance(5))
     {
@@ -1490,6 +1493,22 @@ void combat::gain_xp(int amount)
         text += "!";
         _texts.show(_head(_player.position(), 34), text, floating_texts::style::CRIT);
 
+        for(int index = 1; index < ability_count; ++index)
+        {
+            const ability_def& def = get_ability(ability_id(index));
+
+            if(def.player_class == data.player_class && def.level == data.level)
+            {
+                _hud.message("New skills at your trainer", ui::color::YELLOW);
+                break;
+            }
+        }
+
+        if(data.level >= first_talent_level)
+        {
+            _hud.message("New talent point to spend", ui::color::YELLOW);
+        }
+
         if(on_level_up)
         {
             on_level_up(callback_context);
@@ -1504,7 +1523,75 @@ void combat::gain_xp(int amount)
 
 bool combat::boss_update(int index)
 {
-    (void) index;
+    enemy& boss = _enemies.at(index);
+    int health_percent = boss.health * 100 / boss.max_health;
+    bool in_melee = distance_squared(boss.position, _player.position()) <= melee_range * melee_range;
+
+    if(boss.special_timer > 0)
+    {
+        --boss.special_timer;
+    }
+
+    switch(boss.id)
+    {
+
+    case enemy_id::PRINCESS:
+        // Gore: lowers her head for a moment, then a hit for more than double.
+        if(boss.phase == 0)
+        {
+            boss.phase = 1;
+            boss.special_timer = gore_interval;
+        }
+        else if(boss.phase == 1 && boss.special_timer == 0 && in_melee)
+        {
+            boss.phase = 2;
+            boss.special_timer = gore_windup;
+            _texts.show(_head(boss.position, 40), "Gore", floating_texts::style::DAMAGE_TAKEN);
+        }
+        else if(boss.phase == 2)
+        {
+            if(boss.special_timer > 0)
+            {
+                boss.moving = false;
+                return true;
+            }
+
+            if(in_melee)
+            {
+                if(boss.sprite)
+                {
+                    boss.sprite->play_attack();
+                }
+
+                _hud.message("Princess gores you!", ui::color::RED);
+                enemy_attacks(index, 250);
+                boss.attack_timer = boss.def->attack_speed * 6;
+            }
+
+            boss.phase = 1;
+            boss.special_timer = gore_interval;
+        }
+        break;
+
+    case enemy_id::HOGGER:
+        if(boss.phase == 0 && health_percent <= 35)
+        {
+            boss.phase = 1;
+            _hud.message("Hogger goes into a frenzy!", ui::color::RED);
+            _texts.show(_head(boss.position, 44), "Frenzy", floating_texts::style::DAMAGE_TAKEN);
+        }
+
+        // Frenzied: swings half again as often.
+        if(boss.phase == 1 && boss.attack_timer > 0 && random_chance(50))
+        {
+            --boss.attack_timer;
+        }
+        break;
+
+    default:
+        break;
+    }
+
     return false;
 }
 

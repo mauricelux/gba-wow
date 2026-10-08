@@ -304,33 +304,22 @@ void coin(int x, int y, int kind)
 
 void money_right(int right_x, int y, int copper, bool on_panel)
 {
-    int gold = copper / 10000;
-    int silver = (copper / 100) % 100;
-    int rest = copper % 100;
+    int units[3] = { copper / 10000, (copper / 100) % 100, copper % 100 };
     int x = right_x;
 
-    // Copper always shows; silver and gold only when there are any (or a higher unit shows).
-    bn::string<8> text_value = bn::to_string<8>(rest);
-    coin(x, y, 2);
-    x -= text_value.size();
-    text(x, y, text_value, color::WHITE, on_panel);
-    --x;
-
-    if(silver || gold)
+    // Each coin that is not zero, like WoW; plain copper for nothing at all.
+    for(int coin_index = 2; coin_index >= 0; --coin_index)
     {
-        text_value = bn::to_string<8>(silver);
-        coin(x, y, 1);
+        if(! units[coin_index] && (copper || coin_index != 2))
+        {
+            continue;
+        }
+
+        bn::string<8> text_value = bn::to_string<8>(units[coin_index]);
+        coin(x, y, coin_index);
         x -= text_value.size();
         text(x, y, text_value, color::WHITE, on_panel);
         --x;
-    }
-
-    if(gold)
-    {
-        text_value = bn::to_string<8>(gold);
-        coin(x, y, 0);
-        x -= text_value.size();
-        text(x, y, text_value, color::WHITE, on_panel);
     }
 }
 

@@ -11,7 +11,7 @@ namespace gw
 namespace
 {
     // Bump when character_data changes so old saves are ignored instead of misread.
-    constexpr int version = 1;
+    constexpr int version = 2;
     constexpr char magic[8] = { 'G', 'B', 'A', 'W', 'O', 'W', 'S', 'V' };
 
     struct save_file

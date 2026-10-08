@@ -52,7 +52,8 @@ enum class item_type : uint8_t
     TWO_HANDED, // two-handed swords, axes and maces
     BOW,
     GUN,
-    WAND
+    WAND,
+    HEARTHSTONE
 };
 
 struct item_def

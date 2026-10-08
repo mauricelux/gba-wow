@@ -377,6 +377,7 @@ def gen_westfall():
     m.npc('GUARD_WF', 470, 330)
     m.npc('SALMA', 420, 360)
     m.npc('LEWIS', 600, 360)
+    m.npc('HEATHER', 540, 392)
     m.point('sentinel_respawn', 512, 370)
     m.area(380, 140, 260, 260, 'Sentinel Hill')
 

@@ -51,6 +51,8 @@ private:
         QUEST,
         VENDOR,
         TRAINER,
+        UNLEARN,
+        HOME,
         GOODBYE
     };
 
@@ -70,6 +72,7 @@ private:
     bn::vector<option, max_options> _options;
     int _cursor = 0;
     int _option_scroll = 0;
+    bool _confirm_unlearn = false;
     quest_id _quest = quest_id::NONE;
     text_page _page;
     int _scroll = 0;
@@ -89,6 +92,7 @@ private:
     void _draw_quest();
     void _accept();
     void _complete();
+    void _unlearn();
     void _close_or_continue();
     void _close();
 };

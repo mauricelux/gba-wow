@@ -22,7 +22,7 @@ struct teleport_request
     int y = 0;
 };
 
-// The pause menu opened with Start: character, bags, spellbook, quest log and system pages.
+// The pause menu opened with Start: character, bags, spellbook, talents, quest log and system pages.
 // L and R switch pages; B closes it.
 class menu
 {
@@ -49,6 +49,7 @@ private:
         CHARACTER,
         BAGS,
         SPELLS,
+        TALENTS,
         QUESTS,
         SYSTEM,
         COUNT
@@ -64,6 +65,7 @@ private:
     status_line _status;
     text_page _page;
     int _page_scroll = 0;
+    int _talent_tree = 0;
 
     // Sub-modes (L, R and B belong to the page while one is active)
     quest_id _quest = quest_id::NONE;   // quest whose details are shown
@@ -81,11 +83,15 @@ private:
     void _update_bags();
     void _draw_bags();
     [[nodiscard]] int _bag_slot(int row) const;
+    void _use_hearthstone();
 
     void _update_spells();
     void _draw_spells();
     [[nodiscard]] int _known_count() const;
     [[nodiscard]] int _known_at(int row) const;
+
+    void _update_talents();
+    void _draw_talents();
 
     void _update_quests();
     void _draw_quests();

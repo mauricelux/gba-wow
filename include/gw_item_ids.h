@@ -11,6 +11,7 @@
 // shield(name, quality, level, str, agi, sta, int, spi)
 // consumable(name, type, level, amount restored, sell price, stack)
 // junk(name, sell price, stack)
+// special(name, type): no price, no stack
 #define GW_ITEM_LIST(X) \
     X(NONE, junk("Nothing", 0)) \
     /* starting gear */ \
@@ -161,7 +162,8 @@
     X(BLACKENED_LEGGINGS, armor("Blackened Leggings", U, LEATHER, LEGS, 17, 0, 3, 2, 0, 0)) \
     X(CINDERCLOTH_ROBE, armor("Cindercloth Robe", U, CLOTH, CHEST, 18, 0, 0, 2, 4, 2)) \
     X(POLISHED_BOOTS, armor("Polished Chain Boots", U, MAIL, FEET, 18, 3, 0, 3, 0, 0)) \
-    X(MINERS_REVENGE, weapon("Miner's Revenge", U, TWO_HANDED, 18, 35, 4, 0, 2, 0, 0))
+    X(MINERS_REVENGE, weapon("Miner's Revenge", U, TWO_HANDED, 18, 35, 4, 0, 2, 0, 0)) \
+    X(HEARTHSTONE, special("Hearthstone", HEARTHSTONE))
 
 namespace gw
 {

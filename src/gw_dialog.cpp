@@ -5,6 +5,7 @@
 #include "bn_string.h"
 
 #include "gw_combat.h"
+#include "gw_homes.h"
 #include "gw_hud.h"
 #include "gw_input.h"
 #include "gw_npc_data.h"
@@ -12,6 +13,7 @@
 #include "gw_quest_text.h"
 #include "gw_quests.h"
 #include "gw_save.h"
+#include "gw_talents.h"
 #include "gw_ui.h"
 
 namespace gw
@@ -24,6 +26,7 @@ namespace
     constexpr int gossip_height = ui::rows - gossip_top;
     constexpr int options_top = 14;
     constexpr int visible_options = 5;
+    constexpr int unlearn_cost = 1000;      // copper
 
     // Full screen quest pages.
     constexpr int page_x = 2;
@@ -115,6 +118,13 @@ void dialog::_build_options()
 
     const npc_info& info = get_npc_info(_npc);
 
+    home_id home = innkeeper_home(_npc);
+
+    if(home != home_id::COUNT && int(home) != character().home)
+    {
+        _options.push_back(option{ option_kind::HOME, quest_id::NONE });
+    }
+
     if(info.flags & npc_flag::VENDOR)
     {
         _options.push_back(option{ option_kind::VENDOR, quest_id::NONE });
@@ -123,10 +133,16 @@ void dialog::_build_options()
     if((info.flags & npc_flag::TRAINER) && info.trainer_class == character().player_class)
     {
         _options.push_back(option{ option_kind::TRAINER, quest_id::NONE });
+
+        if(talent_points_total() > 0)
+        {
+            _options.push_back(option{ option_kind::UNLEARN, quest_id::NONE });
+        }
     }
 
     _options.push_back(option{ option_kind::GOODBYE, quest_id::NONE });
     _cursor = bn::min(_cursor, _options.size() - 1);
+    _confirm_unlearn = false;
 }
 
 void dialog::_show_gossip()
@@ -190,11 +206,13 @@ void dialog::_update_gossip()
     if(input::repeated(bn::keypad::key_type::UP) && _cursor > 0)
     {
         --_cursor;
+        _confirm_unlearn = false;
         _dirty = true;
     }
     else if(input::repeated(bn::keypad::key_type::DOWN) && _cursor < count - 1)
     {
         ++_cursor;
+        _confirm_unlearn = false;
         _dirty = true;
     }
 
@@ -232,6 +250,17 @@ void dialog::_update_gossip()
         case option_kind::TRAINER:
             _state = state::TRAINER;
             _trainer.open(_npc);
+            break;
+
+        case option_kind::UNLEARN:
+            _unlearn();
+            break;
+
+        case option_kind::HOME:
+            character().home = uint8_t(innkeeper_home(_npc));
+            _hud.message("This inn is now your home", ui::color::YELLOW);
+            save_game();
+            _close();
             break;
 
         default:
@@ -346,6 +375,32 @@ void dialog::_complete()
     _close_or_continue();
 }
 
+void dialog::_unlearn()
+{
+    character_data& data = character();
+
+    if(! _confirm_unlearn)
+    {
+        _confirm_unlearn = true;
+        _dirty = true;
+        return;
+    }
+
+    if(data.money < unlearn_cost)
+    {
+        _hud.message("Not enough money", ui::color::RED);
+        _close();
+        return;
+    }
+
+    data.money -= unlearn_cost;
+    reset_talents();
+    _combat.refresh_stats();
+    _hud.message("Your talents are unlearned", ui::color::YELLOW);
+    save_game();
+    _close();
+}
+
 void dialog::_close_or_continue()
 {
     // Stay only when the npc has more quests to give or take (turning one in often unlocks the
@@ -426,6 +481,22 @@ void dialog::_draw_gossip()
         else if(item.kind == option_kind::TRAINER)
         {
             ui::text(6, y, "Train me", ui::color::WHITE, true);
+        }
+        else if(item.kind == option_kind::HOME)
+        {
+            ui::text(6, y, "Make this inn your home", ui::color::WHITE, true);
+        }
+        else if(item.kind == option_kind::UNLEARN)
+        {
+            if(_confirm_unlearn)
+            {
+                ui::text(6, y, "Are you sure? Press A", ui::color::RED, true);
+            }
+            else
+            {
+                ui::text(6, y, "Unlearn talents", ui::color::WHITE, true);
+                ui::money_right(27, y, unlearn_cost);
+            }
         }
         else
         {

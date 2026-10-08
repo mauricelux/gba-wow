@@ -31,6 +31,7 @@ void vendor_screen::open(npc_id npc)
     _npc = npc;
     _selling = false;
     _cursor = list_cursor();
+    _status = status_line();
     _dirty = true;
     ui::clear();
 }
@@ -152,6 +153,13 @@ void vendor_screen::_sell()
     }
 
     item_stack& slot = character().bags[slot_index];
+
+    if(! sell_price(slot.item))
+    {
+        _status.show("They won't buy that", ui::color::RED);
+        return;
+    }
+
     character().money += sell_price(slot.item) * slot.count;
     bn::string<48> text = "Sold ";
     text += get_item(slot.item).name;

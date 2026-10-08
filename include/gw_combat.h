@@ -80,9 +80,12 @@ public:
         return _buffs[int(buff)];
     }
 
-    // Called by enemies.
-    void enemy_attacks(int index);
+    // Called by enemies. percent scales the hit (special attacks).
+    void enemy_attacks(int index, int percent = 100);
     void enemy_killed(int index);
+
+    // Special abilities of elites and bosses, every frame while they fight. Returns true when the
+    // enemy is busy and skips its normal movement and swings this frame.
     bool boss_update(int index);
 
     // Deals damage to an enemy with floating text. Returns true if it died.

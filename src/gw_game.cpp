@@ -253,8 +253,11 @@ void game::_loot(int index)
             text += "s ";
         }
 
-        text += bn::to_string<4>(money % 100);
-        text += "c";
+        if(money % 100)
+        {
+            text += bn::to_string<4>(money % 100);
+            text += "c";
+        }
         _hud.message(text, ui::color::YELLOW);
         item.loot_money = 0;
     }

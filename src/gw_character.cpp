@@ -118,6 +118,7 @@ void new_character(race_id race, class_id player_class)
         break;
     }
 
+    add_item(item_id::HEARTHSTONE);
     add_item(item_id::TOUGH_JERKY, 4);
 
     if(player_class == class_id::MAGE)
@@ -160,6 +161,19 @@ void learn_ability(ability_id ability)
         {
             slot = ability;
             return;
+        }
+    }
+}
+
+void forget_ability(ability_id ability)
+{
+    data.known_abilities &= ~(1u << int(ability));
+
+    for(ability_id& slot : data.action_bar)
+    {
+        if(slot == ability)
+        {
+            slot = ability_id::NONE;
         }
     }
 }
@@ -353,9 +367,16 @@ stats compute_stats(const stat_bonus& bonus)
     s.spell_crit = 5 + s.intellect / 30 + talent.spell_crit;
     s.dodge = 5 + s.agility / 20 + talent.dodge;
     s.damage_percent = 100 + bonus.damage_percent + talent.damage_percent;
+    s.crit_percent = 200 + talent.crit_damage_percent;
+    s.rage_percent = 100 + talent.rage_percent;
     s.spell_power = level * 2 + talent.spell_power;
     s.health_regen = bn::max(1, s.max_health / 25 + s.spirit / 5);
     s.power_regen = data.player_class == class_id::WARRIOR ? 2 : s.spirit / 4 + 12 + s.max_power / 40;
+
+    if(data.player_class != class_id::WARRIOR)
+    {
+        s.power_regen += s.power_regen * talent.regen_percent / 100;
+    }
     return s;
 }
 
