@@ -103,7 +103,7 @@ namespace
           "That will teach them. Choose something from the abbey's stores.",
           n::WILLEM, n::WILLEM, 4, 3, qid::A_THREAT_WITHIN,
           { collect(e::DEFIAS_THUG, 8, 70, "Red Burlap Bandana"), none, none }, xp(4), money(4),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::NORTHSHIRE_MAIL_VEST, i::NORTHSHIRE_ROBE, i::NORTHSHIRE_TUNIC } },
 
         { "Report to Goldshire",
           "You've done Northshire a great service. It is time you saw more of Elwynn.\n\n"
@@ -159,7 +159,7 @@ namespace
           n::GUARD_GS, n::GUARD_GS, 7, 5, qid::NONE,
           { kill(e::TIMBER_WOLF, 6, "Timber Wolf slain"), kill(e::FOREST_SPIDER, 5, "Forest Spider slain"),
             none }, xp(7), money(7),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::GUARD_LEGGINGS, i::WOVEN_LEGGINGS, i::FORESTER_PANTS } },
 
         { "Chunks of Boar Meat",
           "Pa and the boys work the fields all day and they eat like bears. The boars in the "
@@ -181,7 +181,7 @@ namespace
           "The poor beast. Still, our crops are safe now. Thank you.",
           n::MA_STONEFIELD, n::MA_STONEFIELD, 10, 8, qid::BOAR_MEAT,
           { collect(e::PRINCESS, 1, 100, "Brass Collar"), none, none }, xp(10, 150), money(10),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::PIG_IRON_GAUNTLETS, i::FARMHAND_GLOVES, i::BOARHIDE_GLOVES } },
 
         { "The Riverpaw Threat",
           "Riverpaw gnolls have crossed from Westfall into the woods south of this road. They "
@@ -192,7 +192,7 @@ namespace
           "That will make them think twice. Watch out for their leader, Hogger.",
           n::GUARD_WEST, n::GUARD_WEST, 9, 7, qid::NONE,
           { kill(e::RIVERPAW_GNOLL, 10, "Riverpaw Gnoll slain"), none, none }, xp(9), money(9),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::RIVERPAW_CLEAVER, i::TRIBAL_STAFF, i::GNOLL_HUNTING_BOW } },
 
         { "Wanted: Hogger",
           "WANTED: Hogger, a huge gnoll leading the Riverpaw raids at Forest's Edge. He has "
@@ -204,7 +204,7 @@ namespace
           "Hogger's claw! You have done what my guards could not. Take your reward, hero.",
           n::DUGHAN, n::DUGHAN, 11, 9, qid::NONE,
           { collect(e::HOGGER, 1, 100, "Huge Gnoll Claw"), none, none }, xp(11, 150), money(12),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::MARSHALS_GREATSWORD, i::STAFF_OF_ELWYNN, i::ELWYNN_LONGBOW } },
 
         { "Report to Gryan",
           "Westfall, west of Elwynn, has been abandoned by Stormwind. Farmers have formed the "
@@ -228,7 +228,7 @@ namespace
           n::GRYAN, n::GRYAN, 13, 11, qid::REPORT_TO_GRYAN,
           { kill(e::DEFIAS_TRAPPER, 8, "Defias Trapper slain"), kill(e::DEFIAS_SMUGGLER, 6,
             "Defias Smuggler slain"), none }, xp(13), money(13),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::MILITIA_CHAINMAIL, i::MILITIA_ROBE, i::MILITIA_JERKIN } },
 
         { "The Harvest Watchers",
           "Someone set those metal scarecrows loose on our farm. Harvest watchers, they're called. "
@@ -239,7 +239,7 @@ namespace
           "Scrap metal, all of them! Thank you, thank you.",
           n::SALMA, n::SALMA, 12, 10, qid::NONE,
           { kill(e::HARVEST_WATCHER, 10, "Harvest Watcher destroyed"), none, none }, xp(12), money(12),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::HARVESTER_BOOTS, i::HARVESTER_SLIPPERS, i::HARVESTER_MOCCASINS } },
 
         { "Red Leather Bandanas",
           "Every Defias trapper and smuggler wears a red leather bandana. The militia pays for "
@@ -250,7 +250,7 @@ namespace
           n::GUARD_WF, n::GUARD_WF, 13, 11, qid::NONE,
           { collect(e::DEFIAS_TRAPPER, 10, 50, "Red Leather Bandana", e::DEFIAS_SMUGGLER), none, none },
           xp(13), money(13),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::MILITIA_HELM, i::SEER_HOOD, i::SCOUT_HOOD } },
 
         { "Riverpaw Gnoll Bounty",
           "Gnolls drove us off our land, the brutes. Big ones, painted with war colors.\n\n"
@@ -261,7 +261,7 @@ namespace
           "Ha! That's for my barn. Here's your bounty.",
           n::FURLBROW, n::FURLBROW, 15, 13, qid::NONE,
           { collect(e::GNOLL_BRUTE, 8, 60, "Painted Gnoll Armband"), none, none }, xp(15), money(15),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::WESTFALL_WARHAMMER, i::FURLBROW_STAFF, i::WESTFALL_SHORTBOW } },
 
         { "The Defias Brotherhood",
           "The Defias are led by someone clever, and they hide something in Moonbrook. Our "
@@ -286,7 +286,7 @@ namespace
           n::GUARD_WF, n::GUARD_WF, 17, 15, qid::RED_LEATHER_BANDANAS,
           { collect(e::DEFIAS_MINER, 10, 50, "Red Silk Bandana", e::DEFIAS_PIRATE), none, none },
           xp(17), money(17),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::MILITIA_LEGPLATES, i::SILK_TROUSERS, i::DEFIAS_LEGGINGS } },
 
         { "Sneed's Shredder",
           "A goblin called Sneed builds machines for the Defias in their mine. His shredder "
@@ -297,7 +297,7 @@ namespace
           "Without Sneed the Defias will have no more machines. Well fought.",
           n::LEWIS, n::LEWIS, 18, 16, qid::THE_DEFIAS_BROTHERHOOD,
           { kill(e::SNEED, 1, "Sneed slain"), none, none }, xp(18, 200), money(18),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::SHREDDER_GAUNTLETS, i::TINKER_GLOVES, i::MECHANIC_GLOVES } },
 
         { "Edwin VanCleef",
           "Edwin VanCleef was a stonemason who built Stormwind, then was cheated of his pay. Now "
@@ -309,7 +309,7 @@ namespace
           "their life. You are a true hero of the Alliance.",
           n::GRYAN, n::GRYAN, 20, 17, qid::THE_DEFIAS_BROTHERHOOD,
           { collect(e::VANCLEEF, 1, 100, "Head of VanCleef"), none, none }, xp(20, 200), money(20),
-          { i::NONE, i::NONE, i::NONE } },
+          { i::CHAUSSES_OF_WESTFALL, i::TUNIC_OF_WESTFALL, i::STAFF_OF_WESTFALL } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));

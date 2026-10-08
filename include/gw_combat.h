@@ -106,6 +106,13 @@ public:
     // Food and drink: restore health and mana over 18 seconds while standing still.
     void start_eating(int health, int mana);
 
+    // Uses food, drink or a potion from the bags. When it can't, the reason goes to error if given,
+    // otherwise to the HUD.
+    bool use_item(item_id item, const char** error = nullptr);
+
+    // Select: a potion in combat, otherwise food when hurt or a drink when low on mana.
+    bool quick_use();
+
     // Called when an enemy dies with the killer being the player. Set by the game (quests, loot).
     void (*on_kill)(void* context, int index) = nullptr;
     void (*on_level_up)(void* context) = nullptr;
@@ -134,6 +141,7 @@ private:
     int _combat_frames = 3600;               // frames since the last hit dealt or taken
     int _since_cast = 999;                   // frames since mana was spent (five second rule)
     int _regen_timer = 0;
+    int _potion_cooldown = 0;
     int _eat_health = 0;
     int _eat_mana = 0;
     bool _charging = false;

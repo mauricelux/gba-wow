@@ -6,6 +6,8 @@
 #include "gw_ids.h"
 #include "gw_quest_ids.h"
 #include "gw_text_page.h"
+#include "gw_trainer_screen.h"
+#include "gw_vendor_screen.h"
 
 namespace gw
 {
@@ -39,12 +41,16 @@ private:
         GOSSIP,
         QUEST_OFFER,
         QUEST_PROGRESS,
-        QUEST_REWARD
+        QUEST_REWARD,
+        VENDOR,
+        TRAINER
     };
 
     enum class option_kind : uint8_t
     {
         QUEST,
+        VENDOR,
+        TRAINER,
         GOODBYE
     };
 
@@ -70,6 +76,8 @@ private:
     int _reward = 0;
     int _reward_count = 0;
     bool _dirty = true;
+    vendor_screen _vendor;
+    trainer_screen _trainer;
 
     void _build_options();
     void _show_gossip();

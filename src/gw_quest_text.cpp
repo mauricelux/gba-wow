@@ -80,7 +80,9 @@ void add_quest_rewards(text_page& page, quest_id quest, int selected)
         const item_def& item = get_item(def.rewards[index]);
         bn::string<64> text = rewards > 1 && index == selected ? "> " : "  ";
         text += item.name;
-        page.add_copy(text, ui::color(quality_color(item.quality)));
+        // Red for gear the class can't wear, like WoW.
+        bool usable = can_equip(character().player_class, item);
+        page.add_copy(text, usable ? ui::color(quality_color(item.quality)) : ui::color::RED);
     }
 
     if(def.xp > 0 && character().level < max_level)

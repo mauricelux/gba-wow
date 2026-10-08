@@ -40,7 +40,7 @@ floating_texts::floating_texts(const bn::camera_ptr& camera) :
     _generator(common::fixed_8x8_sprite_font)
 {
     _generator.set_center_alignment();
-    _generator.set_bg_priority(0);
+    _generator.set_bg_priority(1);   // over tree tops, under the ui layer (menus, dialog)
 }
 
 void floating_texts::show(const bn::fixed_point& world_position, const bn::string_view& text, style text_style)

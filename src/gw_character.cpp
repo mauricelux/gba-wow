@@ -118,6 +118,13 @@ void new_character(race_id race, class_id player_class)
         break;
     }
 
+    add_item(item_id::TOUGH_JERKY, 4);
+
+    if(player_class == class_id::MAGE)
+    {
+        add_item(item_id::SPRING_WATER, 4);
+    }
+
     stats s = compute_stats();
     data.health = s.max_health;
     data.power = uses_mana() ? s.max_power : 0;
@@ -433,6 +440,88 @@ int free_bag_slots()
     }
 
     return count;
+}
+
+equip_result equip_item(int bag_index)
+{
+    item_stack& slot = data.bags[bag_index];
+    const item_def& item = get_item(slot.item);
+
+    if(slot.item == item_id::NONE || item.slot == equip_slot::NONE)
+    {
+        return equip_result::NOT_EQUIPMENT;
+    }
+
+    if(! can_equip(data.player_class, item))
+    {
+        return equip_result::WRONG_CLASS;
+    }
+
+    if(data.level < item.level)
+    {
+        return equip_result::LEVEL_TOO_LOW;
+    }
+
+    item_id& main_hand = data.equipment[int(equip_slot::MAIN_HAND)];
+    item_id& off_hand = data.equipment[int(equip_slot::OFF_HAND)];
+    bool frees_off_hand = is_two_handed(item) && off_hand != item_id::NONE;
+    bool frees_main_hand = item.slot == equip_slot::OFF_HAND && main_hand != item_id::NONE &&
+            is_two_handed(get_item(main_hand));
+
+    // The item leaves its bag slot, so one extra item always fits there.
+    if((frees_off_hand || frees_main_hand) && data.equipment[int(item.slot)] != item_id::NONE &&
+       free_bag_slots() == 0)
+    {
+        return equip_result::BAGS_FULL;
+    }
+
+    item_id new_item = slot.item;
+    item_id old_item = data.equipment[int(item.slot)];
+    slot = item_stack();
+    data.equipment[int(item.slot)] = new_item;
+
+    if(old_item != item_id::NONE)
+    {
+        add_item(old_item);
+    }
+
+    if(frees_off_hand)
+    {
+        add_item(off_hand);
+        off_hand = item_id::NONE;
+    }
+
+    if(frees_main_hand)
+    {
+        add_item(main_hand);
+        main_hand = item_id::NONE;
+    }
+
+    return equip_result::OK;
+}
+
+bool unequip_item(equip_slot slot)
+{
+    item_id& equipped = data.equipment[int(slot)];
+
+    if(equipped == item_id::NONE || free_bag_slots() == 0)
+    {
+        return false;
+    }
+
+    add_item(equipped);
+    equipped = item_id::NONE;
+    return true;
+}
+
+int buy_price(item_id item)
+{
+    return get_item(item).price * 4;
+}
+
+int sell_price(item_id item)
+{
+    return get_item(item).price;
 }
 
 }

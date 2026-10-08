@@ -19,6 +19,7 @@ namespace
     constexpr int target_range = 120;
     constexpr int lose_target_range = 220;
     constexpr int combat_timeout = 5 * seconds;
+    constexpr int potion_cooldown_frames = 60 * seconds;
     constexpr int regen_interval = 2 * seconds;
     constexpr int dot_interval = 3 * seconds;
     constexpr int ranged_min_range = melee_range + 2;
@@ -273,6 +274,11 @@ void combat::update(bool input_enabled)
 
     ++_combat_frames;
     ++_since_cast;
+
+    if(_potion_cooldown > 0)
+    {
+        --_potion_cooldown;
+    }
 
     if(_gcd > 0)
     {
@@ -1096,9 +1102,138 @@ void combat::_update_buffs()
 
 void combat::start_eating(int health, int mana)
 {
-    _eat_health = health;
-    _eat_mana = mana;
+    // Eating while drinking (or the other way round) keeps both going.
+    bool eating = _buffs[int(buff_id::WELL_FED)] > 0;
+    _eat_health = health || ! eating ? health : _eat_health;
+    _eat_mana = mana || ! eating ? mana : _eat_mana;
     _buffs[int(buff_id::WELL_FED)] = 18 * seconds;
+}
+
+bool combat::use_item(item_id item, const char** error)
+{
+    auto fail = [this, error](const char* reason)
+    {
+        if(error)
+        {
+            *error = reason;
+        }
+        else
+        {
+            _hud.message(reason, ui::color::RED);
+        }
+
+        return false;
+    };
+
+    const item_def& def = get_item(item);
+    character_data& data = character();
+
+    if(_dead || item_count(item) == 0)
+    {
+        return false;
+    }
+
+    if(data.level < def.level)
+    {
+        return fail("Your level is too low");
+    }
+
+    switch(def.type)
+    {
+
+    case item_type::POTION:
+        if(_potion_cooldown > 0)
+        {
+            return fail("Potion not ready yet");
+        }
+
+        if(data.health >= _stats.max_health)
+        {
+            return fail("You are at full health");
+        }
+
+        heal_player(random_range(def.min_damage, def.max_damage));
+        _potion_cooldown = potion_cooldown_frames;
+        break;
+
+    case item_type::FOOD:
+    case item_type::DRINK:
+        if(in_combat())
+        {
+            return fail("You can't eat in combat");
+        }
+
+        if(def.type == item_type::FOOD ? data.health >= _stats.max_health :
+           ! uses_mana() || data.power >= _stats.max_power)
+        {
+            return fail(def.type == item_type::FOOD ? "You are at full health" : "You are at full mana");
+        }
+
+        if(def.type == item_type::FOOD)
+        {
+            start_eating(def.min_damage, 0);
+        }
+        else
+        {
+            start_eating(0, def.min_damage);
+        }
+
+        _hud.message(def.type == item_type::FOOD ? "Eating..." : "Drinking...", ui::color::GREEN);
+        break;
+
+    default:
+        return false;
+    }
+
+    remove_item(item, 1);
+    return true;
+}
+
+bool combat::quick_use()
+{
+    const character_data& data = character();
+    item_type wanted;
+
+    if(in_combat())
+    {
+        wanted = item_type::POTION;
+    }
+    else if(data.health < _stats.max_health)
+    {
+        wanted = item_type::FOOD;
+    }
+    else if(uses_mana() && data.power < _stats.max_power)
+    {
+        wanted = item_type::DRINK;
+    }
+    else
+    {
+        _hud.message("You are at full health", ui::color::WHITE);
+        return false;
+    }
+
+    // The best one the player can use.
+    item_id best = item_id::NONE;
+
+    for(const item_stack& slot : data.bags)
+    {
+        const item_def& def = get_item(slot.item);
+
+        if(slot.item != item_id::NONE && def.type == wanted && def.level <= data.level &&
+           (best == item_id::NONE || def.min_damage > get_item(best).min_damage))
+        {
+            best = slot.item;
+        }
+    }
+
+    if(best == item_id::NONE)
+    {
+        _hud.message(wanted == item_type::POTION ? "No healing potions" :
+                     wanted == item_type::FOOD ? "No food" : "No drinks", ui::color::RED);
+        return false;
+    }
+
+    return use_item(best);
 }
 
 void combat::_update_regen()

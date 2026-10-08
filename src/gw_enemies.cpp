@@ -1,6 +1,7 @@
 #include "gw_enemies.h"
 
 #include "bn_math.h"
+#include "bn_sprite_items_fx_markers.h"
 
 #include "gw_abilities.h"
 #include "gw_character.h"
@@ -24,6 +25,9 @@ namespace
 
     constexpr int sprite_margin_x = 150;
     constexpr int sprite_margin_y = 112;
+
+    constexpr int sparkle_first_frame = 3;   // fx_markers: two twinkle frames
+    constexpr int sparkle_bg_priority = 1;
 
     constexpr int hitbox_left = -4;
     constexpr int hitbox_right = 3;
@@ -111,6 +115,8 @@ void enemies::_spawn(enemy& item)
 
 void enemies::update(const bn::fixed_point& player_feet, bool player_alive)
 {
+    ++_frame;
+
     for(int index = 0, limit = _enemies.size(); index < limit; ++index)
     {
         enemy& item = _enemies[index];
@@ -443,6 +449,7 @@ void enemies::_update_sprite(enemy& item, const bn::fixed_point& player_feet)
     if(! near || item.state == enemy_state::GONE)
     {
         item.sprite.reset();
+        item.sparkle.reset();
         return;
     }
 
@@ -458,6 +465,29 @@ void enemies::_update_sprite(enemy& item, const bn::fixed_point& player_feet)
 
     item.sprite->set_dead(item.state == enemy_state::DEAD);
     item.sprite->update(item.position, item.direction, item.moving, item.walk_counter);
+
+    if(item.state != enemy_state::DEAD || ! item.has_loot())
+    {
+        item.sparkle.reset();
+        return;
+    }
+
+    // A twinkle over corpses that still have loot.
+    int frame = sparkle_first_frame + ((_frame >> 4) & 1);
+
+    if(! item.sparkle)
+    {
+        item.sparkle = bn::sprite_items::fx_markers.create_sprite(0, 0, frame);
+        item.sparkle->set_camera(_camera);
+        item.sparkle->set_bg_priority(sparkle_bg_priority);
+    }
+    else
+    {
+        item.sparkle->set_tiles(bn::sprite_items::fx_markers.tiles_item(), frame);
+    }
+
+    bn::fixed_point screen = world::to_screen_space(item.position);
+    item.sparkle->set_position(screen.x().floor_integer() + 6, screen.y().floor_integer() - 10);
 }
 
 int enemies::nearest(const bn::fixed_point& from, int max_distance, int exclude) const

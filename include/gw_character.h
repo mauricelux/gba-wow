@@ -145,6 +145,27 @@ int remove_item(item_id item, int count = 1);
 
 [[nodiscard]] int free_bag_slots();
 
+enum class equip_result : uint8_t
+{
+    OK,
+    NOT_EQUIPMENT,
+    WRONG_CLASS,
+    LEVEL_TOO_LOW,
+    BAGS_FULL
+};
+
+// Puts on the item in the bag slot; whatever it replaces goes back to the bags. Two-handed weapons
+// also take off the shield, and a shield takes off a two-handed weapon.
+equip_result equip_item(int bag_index);
+
+// Takes the item off into the bags. Returns false if the bags are full.
+bool unequip_item(equip_slot slot);
+
+// Vendors sell for four times what they pay.
+[[nodiscard]] int buy_price(item_id item);
+
+[[nodiscard]] int sell_price(item_id item);
+
 }
 
 #endif

@@ -6,13 +6,14 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Northshire Abbey](docs/screenshots/m1_abbey.png)
 ![Fighting wolves with the action bar open](docs/screenshots/m3_combat.png)
 ![A quest from Deputy Willem](docs/screenshots/m4_quest.png)
+![The character page](docs/screenshots/m5_character.png)
 
 ## Status
 
-Milestone 4 (quests) is playable: a Human Warrior walks freely from Northshire Abbey down to
-Goldshire and on to Westfall, talks to the people living there, takes on 23 quests from Northshire to
-the Deadmines, fights with auto-attack and rage abilities, earns experience and money, and revives at
-the nearest graveyard after dying.
+Milestone 5 (gear and trainers) is playable: a Human Warrior walks freely from Northshire Abbey down
+to Goldshire and on to Westfall, talks to the people living there, takes on 23 quests from Northshire
+to the Deadmines, fights with auto-attack and rage abilities, loots and equips about 140 items, buys
+and sells at vendors, learns new ranks from the class trainer, and saves to the cartridge.
 
 | Milestone | What it adds | State |
 | --- | --- | --- |
@@ -21,8 +22,8 @@ the nearest graveyard after dying.
 | M2 Open world | Elwynn Forest, Westfall, interiors, doors, area names | Done |
 | M3 First playable: combat | Auto-attack, Heroic Strike, rage, wolves | Done |
 | M4 Quests and NPCs | Dialogue, quest log, XP rewards | Done |
-| M5 Levels, gear and trainers | Stats, equipment, loot, vendors, skill trainer, saves | Next |
-| M6 Talents and second area | Warrior talent trees, Westfall-style area | |
+| M5 Levels, gear and trainers | Stats, equipment, loot, vendors, skill trainer, saves | Done |
+| M6 Talents and second area | Warrior talent trees, Westfall-style area | Next |
 | M7 Dungeon and boss | Dungeon interior, multi-phase boss | |
 | M8 More races and classes | Character creation, Dwarf, Night Elf, Mage, Hunter | |
 | M9 Polish | Title screen, music, balance | |
@@ -36,7 +37,11 @@ the nearest graveyard after dying.
 | A | Talk to someone next to you, loot a corpse, or attack the nearest enemy |
 | L | Switch target |
 | R (hold) | Show the action bar; then A, B, L or a D-pad direction uses that slot |
-| Start | Quest log (Select abandons the quest shown) |
+| Select | A healing potion in combat, otherwise food or drink |
+| Start | Menu: character, bags, spellbook, quest log and system pages (L and R switch pages) |
+
+The game saves itself whenever you change zones or turn in a quest, and from the system page. The
+system page also has debug options for testing: teleport, level up and extra gold.
 
 ## Building
 

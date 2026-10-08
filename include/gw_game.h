@@ -48,6 +48,7 @@ private:
     menu _menu;
     const area_def* _area = nullptr;
     const warp_def* _warp = nullptr;
+    warp_def _teleport = {};
     int _warp_frames = 0;
     int _area_check_frames = 0;
     int _death_frames = 0;

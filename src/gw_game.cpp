@@ -14,6 +14,7 @@
 #include "gw_input.h"
 #include "gw_npc_data.h"
 #include "gw_quests.h"
+#include "gw_save.h"
 #include "gw_ui.h"
 #include "gw_world.h"
 
@@ -77,12 +78,19 @@ game::game() :
     _enemies.set_combat(_combat);
     _combat.on_kill = _on_kill;
     _combat.callback_context = this;
+
+    if(character().play_frames > 0)
+    {
+        _hud.message("Welcome back!", ui::color::YELLOW);
+    }
+
     _load_map(character().map, saved_position());
 }
 
 void game::update()
 {
     input::update();
+    ++character().play_frames;
 
     if(_update_overlays())
     {
@@ -104,6 +112,11 @@ void game::update()
             ui::commit();
             return;
         }
+    }
+
+    if(input && ! abilities_held && bn::keypad::select_pressed())
+    {
+        _combat.quick_use();
     }
 
     if(input && bn::keypad::start_pressed())
@@ -157,6 +170,16 @@ bool game::_update_overlays()
         if(! _menu.update())
         {
             _set_paused(false);
+
+            if(_menu.teleport.map != map_id::NONE)
+            {
+                // Reuse the door fade: a warp that leads where the debug page asked.
+                _teleport = warp_def{ 0, 0, 0, 0, _menu.teleport.map, int16_t(_menu.teleport.x),
+                                      int16_t(_menu.teleport.y) };
+                _warp = &_teleport;
+                _warp_frames = 0;
+                _combat.clear_target();
+            }
         }
 
         return true;
@@ -311,6 +334,7 @@ void game::_load_map(map_id map, const bn::fixed_point& position)
     _follow_camera();
     _area = nullptr;
     _check_area(true);
+    save_game();
 }
 
 void game::_save_position()

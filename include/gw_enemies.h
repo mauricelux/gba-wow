@@ -4,6 +4,7 @@
 #include "bn_camera_ptr.h"
 #include "bn_fixed_point.h"
 #include "bn_optional.h"
+#include "bn_sprite_ptr.h"
 #include "bn_vector.h"
 
 #include "gw_actor_sprite.h"
@@ -69,6 +70,7 @@ struct enemy
     loot_slot loot[4];
     int loot_money = 0;
     bn::optional<actor_sprite> sprite;
+    bn::optional<bn::sprite_ptr> sparkle;   // over a corpse that still has loot
 
     [[nodiscard]] bool alive() const
     {
@@ -150,6 +152,7 @@ private:
     bn::camera_ptr _camera;
     combat* _combat = nullptr;
     bn::vector<enemy, max_enemies> _enemies;
+    int _frame = 0;
 
     void _spawn(enemy& item);
     void _update_enemy(int index, const bn::fixed_point& player_feet, bool player_alive);

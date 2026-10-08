@@ -11,6 +11,7 @@
 #include "gw_npcs.h"
 #include "gw_quest_text.h"
 #include "gw_quests.h"
+#include "gw_save.h"
 #include "gw_ui.h"
 
 namespace gw
@@ -63,6 +64,22 @@ bool dialog::update()
         _update_quest();
         break;
 
+    case state::VENDOR:
+        if(! _vendor.update())
+        {
+            _show_gossip();
+        }
+
+        return true;
+
+    case state::TRAINER:
+        if(! _trainer.update())
+        {
+            _show_gossip();
+        }
+
+        return true;
+
     default:
         break;
     }
@@ -94,6 +111,18 @@ void dialog::_build_options()
     for(int index = 0; index < count; ++index)
     {
         _options.push_back(option{ option_kind::QUEST, quests[index] });
+    }
+
+    const npc_info& info = get_npc_info(_npc);
+
+    if(info.flags & npc_flag::VENDOR)
+    {
+        _options.push_back(option{ option_kind::VENDOR, quest_id::NONE });
+    }
+
+    if((info.flags & npc_flag::TRAINER) && info.trainer_class == character().player_class)
+    {
+        _options.push_back(option{ option_kind::TRAINER, quest_id::NONE });
     }
 
     _options.push_back(option{ option_kind::GOODBYE, quest_id::NONE });
@@ -188,13 +217,26 @@ void dialog::_update_gossip()
     {
         const option& selected = _options[_cursor];
 
-        if(selected.kind == option_kind::QUEST)
+        switch(selected.kind)
         {
+
+        case option_kind::QUEST:
             _show_quest(selected.quest);
-        }
-        else
-        {
+            break;
+
+        case option_kind::VENDOR:
+            _state = state::VENDOR;
+            _vendor.open(_npc);
+            break;
+
+        case option_kind::TRAINER:
+            _state = state::TRAINER;
+            _trainer.open(_npc);
+            break;
+
+        default:
             _close();
+            break;
         }
     }
 }
@@ -300,6 +342,7 @@ void dialog::_complete()
     }
 
     _combat.gain_xp(def.xp);
+    save_game();
     _close_or_continue();
 }
 
@@ -375,6 +418,14 @@ void dialog::_draw_gossip()
             bool active = status == quest_status::ACTIVE;
             ui::text(4, y, complete || active ? "?" : "!", active ? ui::color::GRAY : ui::color::YELLOW, true);
             ui::text(6, y, def.title, ui::color(level_color(def.level)), true);
+        }
+        else if(item.kind == option_kind::VENDOR)
+        {
+            ui::text(6, y, "Browse your goods", ui::color::WHITE, true);
+        }
+        else if(item.kind == option_kind::TRAINER)
+        {
+            ui::text(6, y, "Train me", ui::color::WHITE, true);
         }
         else
         {
