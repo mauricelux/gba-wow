@@ -37,6 +37,9 @@ public:
     // Set when the last quest was turned in; the game shows the ending once the dialog closes.
     bool ending_requested = false;
 
+    // Set when the player chose to rest at an inn; the game fades out and in once the dialog closes.
+    bool rest_requested = false;
+
 private:
     enum class state : uint8_t
     {
@@ -55,6 +58,7 @@ private:
         VENDOR,
         TRAINER,
         UNLEARN,
+        REST,
         HOME,
         GOODBYE
     };
@@ -65,7 +69,9 @@ private:
         quest_id quest;
     };
 
-    static constexpr int max_options = 8;
+    // Up to seven quests, then rest, home, vendor, trainer, unlearn and goodbye.
+    static constexpr int max_quest_options = 7;
+    static constexpr int max_options = max_quest_options + 6;
 
     combat& _combat;
     hud& _hud;

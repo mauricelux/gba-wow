@@ -217,7 +217,7 @@ namespace gw
 
 #define GW_ITEM_ID(id, definition) id,
 
-enum class item_id : uint8_t
+enum class item_id : uint16_t
 {
     GW_ITEM_LIST(GW_ITEM_ID)
     COUNT

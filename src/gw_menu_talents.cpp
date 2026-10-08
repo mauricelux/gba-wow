@@ -142,7 +142,7 @@ void menu::_draw_talents()
     int points = talent_points_available();
     bn::string<16> available = "Points ";
     available += bn::to_string<4>(points);
-    ui::text(page_x, hint_row, "A Learn  < > Tree", ui::color::WHITE, true);
+    ui::text(page_x, hint_row, "A Learn < > Tree", ui::color::WHITE, true);
     ui::text_right(27, hint_row, available, points ? ui::color::GREEN : ui::color::GRAY, true);
 }
 

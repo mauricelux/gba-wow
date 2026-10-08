@@ -8,7 +8,7 @@
 namespace gw
 {
 
-enum class item_id : uint8_t;
+enum class item_id : uint16_t;
 
 enum class item_quality : uint8_t
 {

@@ -7,7 +7,7 @@
 namespace gw
 {
 
-// Saves store known abilities as a bit mask of these values: keep the order, append only.
+// Saves store a rank for each of these values: keep the order, append only.
 enum class ability_id : uint8_t
 {
     NONE,

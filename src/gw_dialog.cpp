@@ -109,8 +109,8 @@ void dialog::_build_options()
 {
     _options.clear();
 
-    quest_id quests[max_options];
-    int count = npc_quests(_npc, quests, max_options - 1);
+    quest_id quests[max_quest_options];
+    int count = npc_quests(_npc, quests, max_quest_options);
 
     for(int index = 0; index < count; ++index)
     {
@@ -120,6 +120,11 @@ void dialog::_build_options()
     const npc_info& info = get_npc_info(_npc);
 
     home_id home = innkeeper_home(_npc);
+
+    if(home != home_id::COUNT)
+    {
+        _options.push_back(option{ option_kind::REST, quest_id::NONE });
+    }
 
     if(home != home_id::COUNT && int(home) != character().home)
     {
@@ -255,6 +260,11 @@ void dialog::_update_gossip()
 
         case option_kind::UNLEARN:
             _unlearn();
+            break;
+
+        case option_kind::REST:
+            rest_requested = true;
+            _close();
             break;
 
         case option_kind::HOME:
@@ -489,6 +499,10 @@ void dialog::_draw_gossip()
         else if(item.kind == option_kind::TRAINER)
         {
             ui::text(6, y, "Train me", ui::color::WHITE, true);
+        }
+        else if(item.kind == option_kind::REST)
+        {
+            ui::text(6, y, "Rest a while", ui::color::WHITE, true);
         }
         else if(item.kind == option_kind::HOME)
         {

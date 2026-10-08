@@ -10,12 +10,18 @@ namespace gw
 
 namespace
 {
-    character_data data;
+    BN_DATA_EWRAM character_data data;
 
-    // Experience per level: classic values scaled down for a handheld session.
+    // Experience per level: classic values scaled down for a handheld session. From level 20 the
+    // number of same-level kills a level takes grows with the square root of WoW's (42 at level 19,
+    // 80 at level 59), so the curve keeps WoW's shape without its grind.
     constexpr int xp_table[max_level] = {
         160, 360, 560, 840, 1120, 1440, 1800, 2160, 2600, 2950,
-        3250, 3550, 3850, 4150, 4450, 4800, 5150, 5500, 5900, 0
+        3250, 3550, 3850, 4150, 4450, 4800, 5150, 5500, 5900, 6250,
+        6650, 7050, 7400, 7800, 8200, 8600, 9050, 9450, 9900, 10400,
+        10900, 11400, 11850, 12350, 12900, 13400, 13900, 14450, 15000, 15550,
+        16100, 16650, 17200, 17800, 18350, 18950, 19550, 20150, 20750, 21350,
+        21950, 22600, 23200, 23850, 24500, 25150, 25800, 26450, 27150, 0
     };
 
     struct class_base
@@ -177,12 +183,12 @@ void new_character(race_id race, class_id player_class)
 
 bool has_flag(story_flag flag)
 {
-    return data.flags & (1u << int(flag));
+    return data.flags[int(flag) / 32] & (1u << (int(flag) % 32));
 }
 
 void set_flag(story_flag flag)
 {
-    data.flags |= 1u << int(flag);
+    data.flags[int(flag) / 32] |= 1u << (int(flag) % 32);
 }
 
 bool chest_opened(int chest)
@@ -256,29 +262,28 @@ int xp_for_level(int level)
 
 namespace
 {
+    // How many levels below the player an enemy gives no experience, as in WoW.
     [[nodiscard]] int zero_difference(int level)
     {
-        if(level <= 7)
+        constexpr int limits[][2] = {
+            { 7, 5 }, { 9, 6 }, { 11, 7 }, { 15, 8 }, { 19, 9 }, { 29, 11 }, { 39, 12 }, { 44, 13 },
+            { 49, 14 }, { 54, 15 }, { 59, 16 }
+        };
+
+        for(const auto& limit : limits)
         {
-            return 5;
+            if(level <= limit[0])
+            {
+                return limit[1];
+            }
         }
 
-        if(level <= 9)
-        {
-            return 6;
-        }
+        return 17;
+    }
 
-        if(level <= 11)
-        {
-            return 7;
-        }
-
-        if(level <= 15)
-        {
-            return 8;
-        }
-
-        return 9;
+    [[nodiscard]] int max_rest_xp()
+    {
+        return xp_for_level(data.level) * rest_max_percent / 100;
     }
 }
 
@@ -309,6 +314,29 @@ int kill_xp(int enemy_level, bool elite)
     }
 
     return elite ? xp * 2 : xp;
+}
+
+int use_rest_xp(int kill_xp)
+{
+    int bonus = bn::min(kill_xp, int(data.rest_xp));
+    data.rest_xp -= bonus;
+    return bonus;
+}
+
+int pending_rest_xp()
+{
+    uint32_t played = data.play_frames - data.last_rest;
+    int steps = int(bn::min(played / rest_frames_per_step, uint32_t(rest_max_percent / rest_step_percent)));
+    int pending = xp_for_level(data.level) * rest_step_percent * steps / 100;
+    return bn::max(0, bn::min(pending, max_rest_xp() - int(data.rest_xp)));
+}
+
+int rest_at_inn()
+{
+    int added = pending_rest_xp();
+    data.rest_xp += added;
+    data.last_rest = data.play_frames;
+    return added;
 }
 
 bool uses_mana()

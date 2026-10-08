@@ -4,7 +4,8 @@
 #include <cstdint>
 
 // Identifiers shared by the generated map headers (tools/gen_world.py) and the game data.
-// Keep the names in sync with the generator.
+// Keep the names in sync with the generator. Saves store map ids by value: only append. The world
+// will need more than 255 maps, npcs and enemy types, so those ids are 16 bits wide.
 
 namespace gw
 {
@@ -25,7 +26,7 @@ enum class class_id : uint8_t
     COUNT
 };
 
-enum class map_id : uint8_t
+enum class map_id : uint16_t
 {
     NONE,
     ELWYNN,
@@ -60,7 +61,7 @@ enum class area_id : uint8_t
     MOONBROOK
 };
 
-enum class npc_id : uint8_t
+enum class npc_id : uint16_t
 {
     NONE,
     WILLEM,
@@ -106,7 +107,7 @@ enum class npc_id : uint8_t
     COUNT
 };
 
-enum class enemy_id : uint8_t
+enum class enemy_id : uint16_t
 {
     NONE,
     YOUNG_WOLF,

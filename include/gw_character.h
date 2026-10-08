@@ -9,13 +9,20 @@
 namespace gw
 {
 
-constexpr int max_level = 20;
+constexpr int max_level = 60;
 constexpr int bag_slots = 16;
 constexpr int action_slots = 7;
-constexpr int max_quests = 32;
+constexpr int max_quests = 256;
 constexpr int max_talents = 24;
 constexpr int quest_objectives = 3;
-constexpr int max_chests = 64;
+constexpr int max_chests = 256;
+constexpr int max_story_flags = 256;
+
+// Rested experience: every rest_frames_per_step frames played since the last rest at an inn add
+// rest_step_percent of a level, up to rest_max_percent of a level.
+constexpr int rest_frames_per_step = 6 * 60 * 60;
+constexpr int rest_step_percent = 5;
+constexpr int rest_max_percent = 150;
 
 struct item_stack
 {
@@ -37,7 +44,8 @@ struct quest_progress
     uint8_t counts[quest_objectives] = {};
 };
 
-// Everything about the player that is saved.
+// Everything about the player that is saved. The save file stores it field by field (gw_save.cpp), so
+// arrays can grow without breaking old saves.
 struct character_data
 {
     race_id race = race_id::HUMAN;
@@ -56,15 +64,17 @@ struct character_data
     uint32_t known_abilities = 0;   // bit per ability_id
     ability_id action_bar[action_slots] = {};
     uint8_t talents[max_talents] = {};
-    quest_progress quests[max_quests];
-    uint32_t flags = 0;             // story flags, see story_flag
+    quest_progress quests[max_quests];  // indexed by quest_id
+    uint32_t flags[max_story_flags / 32] = {};      // bit per story_flag
     uint32_t play_frames = 0;
     uint8_t home = 0;               // home_id the hearthstone returns to
     uint32_t hearthstone_ready = 0; // play_frames when it can be used again
     uint32_t chests_opened[max_chests / 32] = {};   // bit per chest_def::id
+    int32_t rest_xp = 0;            // kills give this much extra experience before it runs out
+    uint32_t last_rest = 0;         // play_frames at the last rest at an inn
 };
 
-// One-off story events.
+// One-off story events. Saves store them by value: only append.
 enum class story_flag : uint8_t
 {
     HOGGER_KILLED,
@@ -113,6 +123,16 @@ void forget_ability(ability_id ability);
 
 // Experience for killing an enemy of enemy_level (elites give double).
 [[nodiscard]] int kill_xp(int enemy_level, bool elite);
+
+// The part of a kill's experience paid out of rested experience (as much again, while it lasts).
+// Takes it from the rested pool.
+int use_rest_xp(int kill_xp);
+
+// Rested experience waiting at an inn: the time played since the last rest, up to the cap.
+[[nodiscard]] int pending_rest_xp();
+
+// Rests at an inn: moves the pending rested experience into the pool. Returns what it added.
+int rest_at_inn();
 
 // Gray enemies are too low to give experience.
 [[nodiscard]] bool is_gray(int enemy_level);
