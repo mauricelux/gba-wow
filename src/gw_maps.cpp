@@ -4,17 +4,26 @@
 #include "bn_regular_bg_items_map_abbey_overhead.h"
 #include "bn_regular_bg_items_map_deadmines_ground.h"
 #include "bn_regular_bg_items_map_deadmines_overhead.h"
+#include "bn_regular_bg_items_map_echo_ridge_ground.h"
+#include "bn_regular_bg_items_map_echo_ridge_overhead.h"
 #include "bn_regular_bg_items_map_elwynn_ground.h"
 #include "bn_regular_bg_items_map_elwynn_overhead.h"
+#include "bn_regular_bg_items_map_fargodeep_ground.h"
+#include "bn_regular_bg_items_map_fargodeep_overhead.h"
 #include "bn_regular_bg_items_map_inn_ground.h"
 #include "bn_regular_bg_items_map_inn_overhead.h"
+#include "bn_regular_bg_items_map_stormwind_ground.h"
+#include "bn_regular_bg_items_map_stormwind_overhead.h"
 #include "bn_regular_bg_items_map_westfall_ground.h"
 #include "bn_regular_bg_items_map_westfall_overhead.h"
 
 #include "gw_map_abbey.h"
 #include "gw_map_deadmines.h"
+#include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
+#include "gw_map_fargodeep.h"
 #include "gw_map_inn.h"
+#include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
 
 namespace gw
@@ -35,6 +44,9 @@ namespace
     constexpr point_def inn_graveyards[] = { map_data::inn::respawn };
     constexpr point_def westfall_graveyards[] = { map_data::westfall::sentinel_respawn };
     constexpr point_def deadmines_graveyards[] = { map_data::deadmines::respawn };
+    constexpr point_def echo_ridge_graveyards[] = { map_data::echo_ridge::respawn };
+    constexpr point_def fargodeep_graveyards[] = { map_data::fargodeep::respawn };
+    constexpr point_def stormwind_graveyards[] = { map_data::stormwind::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON) \
     map_info{ \
@@ -51,7 +63,8 @@ namespace
         list(map_data::NAME::npcs, map_data::NAME::npcs[0].npc == npc_id::NONE), \
         list(map_data::NAME::spawns, map_data::NAME::spawns[0].enemy == enemy_id::NONE), \
         list(map_data::NAME::areas, map_data::NAME::areas[0].width == 0), \
-        bn::span<const point_def>(NAME##_graveyards) \
+        bn::span<const point_def>(NAME##_graveyards), \
+        list(map_data::NAME::chests, map_data::NAME::chests[0].id == chest_def::none) \
     }
 
     const map_info maps[] = {
@@ -60,7 +73,22 @@ namespace
         GW_MAP_INFO(INN, inn, false),
         GW_MAP_INFO(WESTFALL, westfall, false),
         GW_MAP_INFO(DEADMINES, deadmines, true),
+        GW_MAP_INFO(ECHO_RIDGE, echo_ridge, true),
+        GW_MAP_INFO(FARGODEEP, fargodeep, true),
+        GW_MAP_INFO(STORMWIND, stormwind, false),
     };
+
+    [[nodiscard]] int count_chests()
+    {
+        int result = 0;
+
+        for(const map_info& map : maps)
+        {
+            result += map.chests.size();
+        }
+
+        return result;
+    }
 
 #undef GW_MAP_INFO
 }
@@ -76,6 +104,17 @@ const map_info& get_map(map_id id)
     }
 
     return maps[0];
+}
+
+bn::span<const map_info> all_maps()
+{
+    return maps;
+}
+
+int total_chests()
+{
+    static const int result = count_chests();
+    return result;
 }
 
 const point_def& nearest_graveyard(const map_info& map, int x, int y)

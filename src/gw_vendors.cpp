@@ -36,6 +36,22 @@ namespace
         i::HARDENED_CAP, i::HARDENED_VEST, i::HARDENED_GLOVES, i::HARDENED_PANTS, i::HARDENED_BOOTS,
         i::WOOLEN_HOOD, i::WOOLEN_ROBE, i::WOOLEN_GLOVES, i::WOOLEN_PANTS, i::WOOLEN_BOOTS
     };
+
+    constexpr item_id stormwind_goods[] = {
+        i::TOUGH_JERKY, i::HAUNCH_OF_MEAT, i::SPRING_WATER, i::ICE_COLD_MILK, i::MINOR_HEALING_POTION,
+        i::LESSER_HEALING_POTION
+    };
+
+    constexpr item_id stormwind_weapons[] = {
+        i::LONGSWORD, i::WAR_AXE, i::FLANGED_MACE, i::KRIS, i::QUARTERSTAFF, i::GREATSWORD, i::COMPOSITE_BOW,
+        i::FLINTLOCK, i::KITE_SHIELD
+    };
+
+    constexpr item_id stormwind_armor[] = {
+        i::RINGMAIL_COIF, i::RINGMAIL_VEST, i::RINGMAIL_GLOVES, i::RINGMAIL_LEGGINGS, i::RINGMAIL_BOOTS,
+        i::STUDDED_CAP, i::STUDDED_VEST, i::STUDDED_GLOVES, i::STUDDED_PANTS, i::STUDDED_BOOTS,
+        i::PADDED_HOOD, i::PADDED_ROBE, i::PADDED_GLOVES, i::PADDED_PANTS, i::PADDED_BOOTS
+    };
 }
 
 bn::span<const item_id> vendor_stock(int vendor)
@@ -54,6 +70,15 @@ bn::span<const item_id> vendor_stock(int vendor)
 
     case 4:
         return militia;
+
+    case 5:
+        return stormwind_goods;
+
+    case 6:
+        return stormwind_weapons;
+
+    case 7:
+        return stormwind_armor;
 
     default:
         return general_goods;

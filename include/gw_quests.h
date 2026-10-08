@@ -17,7 +17,8 @@ enum class objective_type : uint8_t
     NONE,
     KILL,       // kill count enemies
     COLLECT,    // enemies drop the quest item with chance percent (kept with the quest, not in bags)
-    EXPLORE     // walk into the area
+    EXPLORE,    // walk into the area
+    TREASURE    // open count treasure chests (chests opened before count too)
 };
 
 struct objective_def
@@ -98,6 +99,8 @@ int npc_quests(npc_id npc, quest_id* out, int max_count);
 bool quests_on_kill(enemy_id enemy, hud& hud_ref);
 
 bool quests_on_explore(const map_info& map, int x, int y, hud& hud_ref);
+
+bool quests_on_chest(hud& hud_ref);
 
 }
 

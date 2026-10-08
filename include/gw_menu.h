@@ -1,6 +1,10 @@
 #ifndef GW_MENU_H
 #define GW_MENU_H
 
+#include "bn_optional.h"
+#include "bn_sprite_ptr.h"
+#include "bn_vector.h"
+
 #include "gw_ids.h"
 #include "gw_list_cursor.h"
 #include "gw_quest_ids.h"
@@ -22,7 +26,8 @@ struct teleport_request
     int y = 0;
 };
 
-// The pause menu opened with Start: character, bags, spellbook, talents, quest log and system pages.
+// The pause menu opened with Start: character, bags, spellbook, talents, quest log, world map and
+// system pages.
 // L and R switch pages; B closes it.
 class menu
 {
@@ -51,6 +56,7 @@ private:
         SPELLS,
         TALENTS,
         QUESTS,
+        MAP,
         SYSTEM,
         COUNT
     };
@@ -72,6 +78,12 @@ private:
     bool _confirm = false;              // abandon quest or drop item
     int _assign_slot = -1;              // spellbook: choosing an action bar slot
     bool _teleport_list = false;        // system: choosing a destination
+
+    // World map page: the picture, its markers and the blinking player dot.
+    int _map_zone = -1;                 // index in gw::minimaps, -1 until the page is first drawn
+    int _map_frame = 0;
+    bn::vector<bn::sprite_ptr, 40> _map_sprites;
+    bn::optional<bn::sprite_ptr> _map_player;
 
     [[nodiscard]] bool _in_submode() const;
     void _switch_tab(int direction);
@@ -96,6 +108,10 @@ private:
     void _update_quests();
     void _draw_quests();
     void _show_quest_details(quest_id quest);
+
+    void _update_map();
+    void _draw_map();
+    void _clear_map();
 
     void _update_system();
     void _draw_system();

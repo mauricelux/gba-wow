@@ -88,6 +88,21 @@ namespace gw::palettes
     constexpr bn::color vancleef_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(3, 2, 3), bn::color(6, 4, 5), bn::color(7, 2, 3), bn::color(12, 4, 5), bn::color(19, 7, 8), bn::color(3, 2, 3), bn::color(5, 4, 5), bn::color(29, 23, 8), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 16, 5), bn::color(22, 4, 5) };
     constexpr bn::sprite_palette_item vancleef(vancleef_colors, bn::bpp_mode::BPP_4);
 
+    constexpr bn::color stormwind_guard_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(8, 9, 11), bn::color(12, 13, 15), bn::color(13, 13, 14), bn::color(22, 22, 24), bn::color(29, 29, 31), bn::color(2, 4, 12), bn::color(4, 7, 20), bn::color(29, 24, 9), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 16, 6), bn::color(29, 21, 17) };
+    constexpr bn::sprite_palette_item stormwind_guard(stormwind_guard_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color bolvar_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(15, 13, 7), bn::color(26, 22, 12), bn::color(16, 14, 7), bn::color(27, 23, 12), bn::color(31, 28, 18), bn::color(3, 4, 11), bn::color(5, 8, 19), bn::color(31, 29, 20), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(21, 20, 14), bn::color(29, 21, 17) };
+    constexpr bn::sprite_palette_item bolvar(bolvar_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color archbishop_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(17, 17, 17), bn::color(29, 29, 29), bn::color(18, 18, 17), bn::color(30, 29, 28), bn::color(31, 31, 31), bn::color(17, 14, 5), bn::color(29, 24, 9), bn::color(22, 5, 5), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(15, 3, 3), bn::color(29, 21, 17) };
+    constexpr bn::sprite_palette_item archbishop(archbishop_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color explorer_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 20, 16), bn::color(13, 6, 3), bn::color(22, 11, 5), bn::color(11, 8, 4), bn::color(19, 14, 8), bn::color(25, 18, 10), bn::color(5, 7, 10), bn::color(9, 12, 17), bn::color(27, 23, 12), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(18, 16, 8), bn::color(22, 11, 5) };
+    constexpr bn::sprite_palette_item explorer(explorer_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color innkeeper_f_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(15, 9, 4), bn::color(25, 15, 7), bn::color(13, 8, 4), bn::color(22, 14, 8), bn::color(29, 18, 10), bn::color(17, 16, 15), bn::color(29, 28, 25), bn::color(15, 10, 6), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(10, 7, 4), bn::color(29, 21, 17) };
+    constexpr bn::sprite_palette_item innkeeper_f(innkeeper_f_colors, bn::bpp_mode::BPP_4);
+
     constexpr bn::color young_wolf_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 9, 8), bn::color(17, 15, 13), bn::color(22, 19, 16), bn::color(17, 16, 14), bn::color(25, 23, 20), bn::color(29, 5, 3), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
     constexpr bn::sprite_palette_item young_wolf(young_wolf_colors, bn::bpp_mode::BPP_4);
 

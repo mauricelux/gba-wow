@@ -135,6 +135,11 @@ namespace
     }
 }
 
+item_id roll_world_drop(int level)
+{
+    return world_drop(level);
+}
+
 void roll_loot(enemy& item)
 {
     int level = item.level;

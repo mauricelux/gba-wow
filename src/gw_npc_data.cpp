@@ -18,6 +18,9 @@ namespace
     constexpr uint8_t armor = 2;
     constexpr uint8_t inn = 3;
     constexpr uint8_t militia = 4;
+    constexpr uint8_t stormwind_goods = 5;
+    constexpr uint8_t stormwind_weapons = 6;
+    constexpr uint8_t stormwind_armor = 7;
 
     constexpr npc_info npcs[] = {
         { "", "", l::PEASANT, 0, c::WARRIOR, 0, "" },
@@ -69,6 +72,34 @@ namespace
           "The militia needs supplies, and so will you. Take a look." },
         { "Innkeeper Heather", "Innkeeper", l::INNKEEPER, innkeeper, c::WARRIOR, inn,
           "No roof yet, but a warm fire and a hot meal. Rest here as long as you like." },
+        { "General Marcus Jonathan", "", l::MARSHAL, 0, c::WARRIOR, 0,
+          "Welcome to Stormwind, the jewel of the Alliance. Keep the peace inside these walls." },
+        { "Stormwind City Guard", "", l::STORMWIND_GUARD, 0, c::WARRIOR, 0,
+          "The keep is to the north-west, the Trade District straight ahead over the canal." },
+        { "Royal Guard", "", l::STORMWIND_GUARD, 0, c::WARRIOR, 0,
+          "Highlord Bolvar speaks for the throne while the king is away. Show respect." },
+        { "Stormwind City Guard", "", l::STORMWIND_GUARD, 0, c::WARRIOR, 0,
+          "Inn to the west, smiths to the east. The mages keep to their quarter, south of the canal." },
+        { "Highlord Bolvar Fordragon", "", l::BOLVAR, 0, c::WARRIOR, 0,
+          "Stormwind stands because people like you defend its lands. The Light be with you." },
+        { "Archbishop Benedictus", "", l::ARCHBISHOP, 0, c::WARRIOR, 0,
+          "The Cathedral of Light is open to all who seek comfort. May the Light guide your path." },
+        { "Innkeeper Allison", "Innkeeper", l::INNKEEPER_F, innkeeper, c::WARRIOR, stormwind_goods,
+          "Welcome to the Gilded Rose, the finest inn in the city. Make yourself at home." },
+        { "Gunther Weller", "Weaponsmith", l::SMITH, vendor, c::WARRIOR, stormwind_weapons,
+          "Stormwind steel, forged in the Dwarven District. Nothing better this side of Ironforge." },
+        { "Lina Stover", "Armorer", l::MERCHANT, vendor, c::WARRIOR, stormwind_armor,
+          "Ringmail, studded leather, padded cloth. Whatever you fight in, I have it." },
+        { "Thurman Mullby", "General Goods", l::PEASANT, vendor, c::WARRIOR, stormwind_goods,
+          "Supplies for the road! Food, drink and potions, fresh every morning." },
+        { "Jennea Cannon", "Mage Trainer", l::MAGE_TRAINER, trainer, c::MAGE, 0,
+          "The Mage Quarter welcomes serious students. Have you come to learn?" },
+        { "Einris Brightspear", "Hunter Trainer", l::HUNTER_TRAINER, trainer, c::HUNTER, 0,
+          "The wilds beyond these walls are your true teacher. I only sharpen what you learn there." },
+        { "Brann Bronzebeard", "Explorers' League", l::EXPLORER, 0, c::WARRIOR, 0,
+          "Old mines, forgotten ruins, lost treasure! The world is full of secrets, lad." },
+        { "Ander Germaine", "Warrior Trainer", l::TRAINER_WARRIOR, trainer, c::WARRIOR, 0,
+          "Old Town breeds tough fighters. Let's see if you have what it takes." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

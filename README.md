@@ -11,16 +11,23 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Arms talents](docs/screenshots/m6_talents.png)
 ![The ending](docs/screenshots/m7_ending.png)
 ![Creating a Night Elf Hunter](docs/screenshots/m8_creation.png)
+![The Valley of Heroes in Stormwind](docs/screenshots/m10_stormwind.png)
+![A hidden chest behind Northshire Abbey](docs/screenshots/m10_treasure.png)
+![The world map](docs/screenshots/m10_world_map.png)
+![Kobolds inside Echo Ridge Mine](docs/screenshots/m10_mine.png)
+![Birches and pines in Elwynn Forest](docs/screenshots/m10_trees.png)
 
 ## Status
 
 Every milestone of the roadmap is in. From the title screen, continue your saved hero or create a
-Human Warrior or Mage, a Dwarf Warrior or Hunter, or a Night Elf Warrior or Hunter, then walk freely from Northshire Abbey down to Goldshire and
-on to Westfall, take on 23 quests from Northshire to the Deadmines, fight with auto-attack and your
-class's abilities, loot and equip about 140 items, buy and sell at vendors, learn new ranks from your
-class trainer, spend talent points from level 10, face the elites Princess and Hogger, hearth home to
-an inn, fight through the Deadmines to Sneed and Edwin VanCleef, see the story's end, and save to the
-cartridge. Every zone has its own music, and elite fights switch to a boss tune.
+Human Warrior or Mage, a Dwarf Warrior or Hunter, or a Night Elf Warrior or Hunter, then walk freely from Northshire Abbey down to Goldshire,
+west to the city of Stormwind and south to Westfall, take on 26 quests from Northshire to the
+Deadmines, fight with auto-attack and your class's abilities, loot and equip about 170 items, buy and
+sell at vendors, learn new ranks from your class trainer, spend talent points from level 10, face the
+elites Princess and Hogger, clear the kobolds out of Echo Ridge and Fargodeep mines, hunt for 16
+hidden treasure chests, hearth home to an inn, fight through the Deadmines to Sneed and Edwin
+VanCleef, see the story's end, and save to the cartridge. Every zone has its own music, and elite
+fights switch to a boss tune.
 
 Following the quests in order takes a hero to about level 17 at the Deadmines and close to level 20 by
 the end, without grinding.
@@ -37,6 +44,7 @@ the end, without grinding.
 | M7 Dungeon and boss | Dungeon interior, multi-phase boss | Done |
 | M8 More races and classes | Character creation, Dwarf, Night Elf, Mage, Hunter | Done |
 | M9 Polish | Title screen, music, sound effects, balance | Done |
+| M10 Stormwind and exploration | Stormwind city, mine maps, hidden chests, world map, more trees and bushes | Done |
 
 ## Controls
 
@@ -48,14 +56,24 @@ the end, without grinding.
 | L | Switch target |
 | R (hold) | Show the action bar; then A, B, L or a D-pad direction uses that slot |
 | Select | A healing potion in combat, otherwise food or drink |
-| Start | Menu: character, bags, spellbook, talents, quest log and system pages (L and R switch pages) |
+| Start | Menu: character, bags, spellbook, talents, quest log, world map and system pages (L and R switch pages) |
 
 Talents: every level from 10 gives a point. Each class has three trees of eight talents; a tree's next
 row opens after three points in it, and the last row teaches an ability (Mortal Strike, Bloodthirst,
 Last Stand for warriors). Class trainers unlearn talents for 10 silver.
 
 The hearthstone in your bags takes you back to your home inn every ten minutes; innkeepers in
-Goldshire and at Sentinel Hill can make their inn your home.
+Goldshire, Stormwind's Trade District and at Sentinel Hill can make their inn your home.
+
+Stormwind is reached by the road west from Goldshire. Its districts have weapon, armor and goods
+vendors, a trainer for every class, and the quest givers who send you on to Highlord Bolvar in the keep.
+
+Treasure chests are hidden around the world: under roofs, behind buildings, at the end of side
+tunnels, and in clearings reached by secret paths through the forests (look for gaps between tree
+trunks). Walk up to a chest and press A to open it for money, an item and sometimes a potion. Each
+chest opens once per hero. The world map (Start, then the World Map page) shows where you are, quest
+givers with a `!` or `?`, the chests you have already opened, and how many of the 16 you have found;
+left and right show the other zones. Brann Bronzebeard in Stormwind pays for five opened chests.
 
 Bosses: Sneed calls an engineer at two thirds of his health and, from half health, throws saw blades
 at the spot marked on the ground under you. Edwin VanCleef calls a Blackguard at 70% and 30% and, from
@@ -90,6 +108,9 @@ or install [devkitPro](https://devkitpro.org/wiki/Getting_Started) with devkitAR
 
 Run `gba-wow.gba` in [mGBA](https://mgba.io/).
 
+The headless runner in `tools/headless/` can start from a save file: set `MGBA_SAVE=path/to/gba-wow.sav`
+before running it.
+
 ## Project layout
 
 | Path | Contents |
@@ -118,7 +139,8 @@ python3 gen_audio.py
 ```
 
 `gen_world.py` lays out the maps; `worldgen.py` holds the painters (trees, houses, roads, water) and
-writes `graphics/map_*` plus the `include/gw_map_*.h` data headers. `gen_audio.py` writes each tune as
+writes `graphics/map_*`, the `graphics/minimap_*` world map pictures, and the `include/gw_map_*.h`
+data headers. It also checks that every NPC and chest can be walked to. `gen_audio.py` writes each tune as
 chords, a melody and accompaniment styles into a ProTracker `audio/*.mod`, plus short `audio/sfx_*.wav`
 sound effects; the tunes are original.
 

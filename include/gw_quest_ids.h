@@ -38,6 +38,10 @@ enum class quest_id : uint8_t
     RED_SILK_BANDANAS,
     SNEEDS_SHREDDER,
     EDWIN_VANCLEEF,
+    // Stormwind
+    THE_ROAD_TO_STORMWIND,
+    AN_AUDIENCE_WITH_THE_HIGHLORD,
+    LOST_TREASURES,
     COUNT
 };
 

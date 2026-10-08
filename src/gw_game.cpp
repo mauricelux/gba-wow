@@ -52,6 +52,7 @@ game::game() :
     _effects(_camera),
     _enemies(_camera),
     _npcs(_camera),
+    _chests(_camera),
     _combat(_player, _enemies, _texts, _effects, _hud),
     _dialog(_combat, _hud, _npcs),
     _menu(_combat, _hud, _npcs)
@@ -113,6 +114,7 @@ void game::update()
     _player.update(input && ! abilities_held, ! _combat.in_combat());
     _enemies.update(_player.position(), ! dead);
     _npcs.update(_player.position());
+    _chests.update(_player.position());
     _combat.update(input);
 
     if(warping)
@@ -250,6 +252,25 @@ void game::_interact()
         return;
     }
 
+    int chest = _chests.nearest_closed(_player.position(), loot_range);
+
+    if(chest >= 0 && ! _combat.in_combat())
+    {
+        _player.face(_chests.position(chest));
+
+        if(_chests.open(chest, _hud))
+        {
+            if(quests_on_chest(_hud))
+            {
+                _npcs.refresh_markers();
+            }
+
+            save_game();
+        }
+
+        return;
+    }
+
     int corpse = _enemies.nearest_corpse(_player.position(), loot_range);
 
     if(corpse >= 0)
@@ -358,6 +379,7 @@ void game::_load_map(map_id map, const bn::fixed_point& position)
 
     _enemies.load(info);
     _npcs.load(info);
+    _chests.load(info);
     _player.set_position(position);
     _save_position();
     _follow_camera();

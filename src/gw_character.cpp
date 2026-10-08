@@ -185,6 +185,28 @@ void set_flag(story_flag flag)
     data.flags |= 1u << int(flag);
 }
 
+bool chest_opened(int chest)
+{
+    return data.chests_opened[chest / 32] & (1u << (chest % 32));
+}
+
+void set_chest_opened(int chest)
+{
+    data.chests_opened[chest / 32] |= 1u << (chest % 32);
+}
+
+int opened_chest_count()
+{
+    int result = 0;
+
+    for(uint32_t bits : data.chests_opened)
+    {
+        result += __builtin_popcount(bits);
+    }
+
+    return result;
+}
+
 bool knows_ability(ability_id ability)
 {
     return data.known_abilities & (1u << int(ability));

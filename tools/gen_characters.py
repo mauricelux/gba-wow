@@ -890,6 +890,21 @@ HUMANOID_LOOKS = {
     'vancleef': ('hum_sword', humanoid_palette(hair=(48, 32, 40), armor=(96, 32, 40),
                                                tabard=(40, 32, 40), trim=(232, 184, 64),
                                                lower_face=(176, 32, 40), armor_light=(152, 56, 64))),
+    # Stormwind
+    'stormwind_guard': ('hum_sword', humanoid_palette(hair=(96, 104, 120), armor=(176, 176, 192),
+                                                      tabard=(32, 56, 160), trim=(232, 192, 72),
+                                                      hair_dark=(64, 72, 88))),
+    'bolvar': ('hum_sword', humanoid_palette(hair=(208, 176, 96), armor=(216, 184, 96),
+                                             tabard=(40, 64, 152), trim=(248, 232, 160),
+                                             armor_light=(248, 224, 144))),
+    'archbishop': ('hum_robe', humanoid_palette(hair=(232, 232, 232), armor=(240, 236, 224),
+                                                tabard=(232, 192, 72), trim=(176, 40, 40),
+                                                armor_light=(248, 248, 248))),
+    'explorer': ('dwarf_bow', humanoid_palette(skin=SKIN_DWARF, hair=(176, 88, 40), armor=(152, 112, 64),
+                                               tabard=(72, 96, 136), trim=(216, 184, 96),
+                                               lower_face=(176, 88, 40))),
+    'innkeeper_f': ('fem_robe', humanoid_palette(hair=(200, 120, 56), armor=(176, 112, 64),
+                                                 tabard=(232, 224, 200), trim=(120, 80, 48))),
 }
 
 CREATURE_LOOKS = {

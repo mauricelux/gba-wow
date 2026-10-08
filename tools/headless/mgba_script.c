@@ -6,6 +6,8 @@
  *   hold:KEYS:N       hold KEYS for N frames (letters: U D L R A B S=start E=select l=L r=R)
  *   shot:FILE.ppm     write the current frame as a binary PPM
  *
+ * Set MGBA_SAVE=FILE to load the cartridge save from FILE and write the game's saves back to it.
+ *
  * Build: cc -O2 -o mgba_script mgba_script.c -lmgba
  * (needs libmgba-dev; on Debian/Ubuntu: apt install libmgba-dev)
  */
@@ -76,6 +78,13 @@ int main(int argc, char** argv)
     if(! mCoreLoadFile(core, argv[1]))
     {
         fprintf(stderr, "cannot load %s\n", argv[1]);
+        return 1;
+    }
+
+    const char* save = getenv("MGBA_SAVE");
+    if(save && ! mCoreLoadSaveFile(core, save, false))
+    {
+        fprintf(stderr, "cannot open the save file %s\n", save);
         return 1;
     }
 

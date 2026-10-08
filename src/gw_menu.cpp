@@ -9,7 +9,10 @@
 #include "gw_hud.h"
 #include "gw_input.h"
 #include "gw_map_deadmines.h"
+#include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
+#include "gw_map_fargodeep.h"
+#include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
 #include "gw_menu_layout.h"
 #include "gw_save.h"
@@ -22,7 +25,8 @@ using namespace menu_layout;
 
 namespace
 {
-    constexpr const char* tab_names[] = { "Character", "Bags", "Spellbook", "Talents", "Quest Log", "System" };
+    constexpr const char* tab_names[] = { "Character", "Bags", "Spellbook", "Talents", "Quest Log", "World Map",
+                                          "System" };
 
     constexpr const char* slot_names[] = { "Head", "Chest", "Hands", "Legs", "Feet", "Main", "Off", "Range" };
 
@@ -38,6 +42,9 @@ namespace
         { "Goldshire", map_id::ELWYNN, map_data::elwynn::goldshire_respawn },
         { "Stonefield Farm", map_id::ELWYNN, { 1700, 1270 } },
         { "Forest's Edge", map_id::ELWYNN, { 330, 1450 } },
+        { "Echo Ridge Mine", map_id::ECHO_RIDGE, map_data::echo_ridge::entry },
+        { "Fargodeep Mine", map_id::FARGODEEP, map_data::fargodeep::entry },
+        { "Stormwind", map_id::STORMWIND, map_data::stormwind::from_elwynn },
         { "Sentinel Hill", map_id::WESTFALL, map_data::westfall::sentinel_respawn },
         { "Moonbrook", map_id::WESTFALL, map_data::westfall::deadmines_exit },
         { "The Deadmines", map_id::DEADMINES, map_data::deadmines::entry },
@@ -137,6 +144,7 @@ void menu::open()
     _cursor = list_cursor();
     _status = status_line();
     teleport = teleport_request();
+    _map_zone = -1;
     ui::clear();
 }
 
@@ -152,6 +160,7 @@ bool menu::update()
         if(bn::keypad::start_pressed() || bn::keypad::b_pressed())
         {
             _open = false;
+            _clear_map();
             ui::clear();
             return false;
         }
@@ -189,6 +198,10 @@ bool menu::update()
         _update_quests();
         break;
 
+    case tab::MAP:
+        _update_map();
+        break;
+
     case tab::SYSTEM:
         _update_system();
         break;
@@ -199,6 +212,7 @@ bool menu::update()
 
     if(! _open)
     {
+        _clear_map();
         ui::clear();
         return false;
     }
@@ -235,6 +249,10 @@ bool menu::update()
             _draw_quests();
             break;
 
+        case tab::MAP:
+            _draw_map();
+            break;
+
         case tab::SYSTEM:
             _draw_system();
             break;
@@ -253,8 +271,10 @@ bool menu::update()
 void menu::_switch_tab(int direction)
 {
     int count = int(tab::COUNT);
+    _clear_map();
     _tab = tab((int(_tab) + count + direction) % count);
     _cursor = list_cursor();
+    _map_zone = -1;
     _dirty = true;
 }
 

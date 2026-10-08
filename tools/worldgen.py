@@ -129,6 +129,7 @@ class Map:
         self.metas_x, self.metas_y = width // META, height // META
         self.corners = {}
         self.warps, self.npcs, self.spawns, self.areas, self.points = [], [], [], [], {}
+        self.chests = []
         self.music = 'NONE'
 
     # --- helpers -------------------------------------------------------------------------------
@@ -190,12 +191,53 @@ class Map:
     def point(self, name, x, y):
         self.points[name] = (x, y)
 
+    def chest(self, chest_id, x, y, level):
+        """A treasure chest standing with its bottom-center at (x, y). Ids are saved: never reuse one."""
+        self.chests.append((chest_id, x, y, level))
+        self.block(x - 8, y - 8, 16, 8)
+
     def area_free(self, x, y, w, h):
         x0, y0 = x // CELL, y // CELL
         x1, y1 = (x + w) // CELL, (y + h) // CELL
         if x0 < 0 or y0 < 0 or x1 >= self.solid.shape[1] or y1 >= self.solid.shape[0]:
             return False
         return not self.solid[y0:y1 + 1, x0:x1 + 1].any()
+
+    def reachable_from(self, x, y, step=4):
+        """Where the player's feet can get to from (x, y), on a grid of step pixels.
+
+        Uses the player's hitbox (10x6 pixels above the feet), like the game.
+        """
+        solid = np.kron(self.solid, np.ones((CELL, CELL), dtype=np.int32))
+        summed = np.pad(solid.cumsum(0).cumsum(1), ((1, 0), (1, 0)))
+        ys = np.arange(0, self.height, step)[:, None]
+        xs = np.arange(0, self.width, step)[None, :]
+        x0, x1 = np.clip(xs - 5, 0, self.width), np.clip(xs + 5, 0, self.width)
+        y0, y1 = np.clip(ys - 5, 0, self.height), np.clip(ys + 1, 0, self.height)
+        blocked = summed[y1, x1] - summed[y0, x1] - summed[y1, x0] + summed[y0, x0]
+        free = (blocked == 0) & (xs >= 5) & (xs < self.width - 5) & (ys >= 6)
+        reach = np.zeros_like(free)
+        reach[y // step, x // step] = free[y // step, x // step]
+        while True:
+            grown = reach.copy()
+            grown[1:] |= reach[:-1]
+            grown[:-1] |= reach[1:]
+            grown[:, 1:] |= reach[:, :-1]
+            grown[:, :-1] |= reach[:, 1:]
+            grown &= free
+            if (grown == reach).all():
+                return reach
+            reach = grown
+
+    def check_reachable(self, start, step=4):
+        """Every chest and NPC must be in range of a spot the player can walk to from start."""
+        reach = self.reachable_from(*self.points[start], step=step)
+        ys, xs = np.nonzero(reach)
+        targets = [(f'chest {c}', x, y - 4, 20) for c, x, y, _ in self.chests]
+        targets += [(npc, x, y, 28) for npc, x, y in self.npcs]
+        for name, x, y, distance in targets:
+            if not (np.hypot(xs * step - x, ys * step - y) < distance).any():
+                raise SystemExit(f'{self.name}: {name} at ({x}, {y}) cannot be reached')
 
     # --- output --------------------------------------------------------------------------------
 
@@ -290,8 +332,52 @@ class Map:
         if not self.areas:
             out.append('        { 0, 0, 0, 0, area_id::NONE, "" },')
         out.append('    };')
+        out.append('')
+        out.append('    constexpr chest_def chests[] = {')
+        for chest_id, x, y, level in self.chests:
+            out.append(f'        {{ {chest_id}, {level}, {x}, {y} }},')
+        if not self.chests:
+            out.append('        { chest_def::none, 0, 0, 0 },')
+        out.append('    };')
         out += ['}', '', '#endif', '']
         (INCLUDE / f'gw_map_{n}.h').write_text('\n'.join(out))
+
+    def rgb(self):
+        """The map as the player sees it: ground with the overhead layer on top."""
+        lut_g = np.array(self.gp.colors + [(0, 0, 0)] * (256 - len(self.gp.colors)), dtype=np.uint8)
+        lut_o = np.array(self.op.colors + [(0, 0, 0)] * (256 - len(self.op.colors)), dtype=np.uint8)
+        rgb = lut_g[self.ground]
+        over = self.overhead != 0
+        rgb[over] = lut_o[self.overhead][over]
+        return rgb
+
+    def save_minimap(self, picture=128, content=112):
+        """A small picture of the whole map for the world map page: graphics/minimap_<name>.bmp.
+
+        The map is shrunk to fit content pixels, centered in a transparent picture x picture square
+        and cut into four 64x64 sprite frames (top-left, top-right, bottom-left, bottom-right).
+        Returns (left, top, size): picture pixel = left + world pixel * content // size.
+        """
+        size = max(self.width, self.height)
+        w, h = round(self.width * content / size), round(self.height * content / size)
+        small = Image.fromarray(self.rgb(), 'RGB').resize((w, h), Image.BOX)
+        # Boost the contrast a little so roads and roofs stand out at this size.
+        arr = np.asarray(small).astype(float)
+        arr = np.clip((arr - 128) * 1.15 + 128, 0, 255).astype(np.uint8)
+        indexed = Image.fromarray(arr, 'RGB').quantize(15, method=Image.Quantize.MEDIANCUT)
+        colors = [tuple(c) for c in np.array(indexed.getpalette()[:45]).reshape(15, 3)]
+        left, top = (picture - w) // 2, (picture - h) // 2
+        pixels = np.zeros((picture, picture), dtype=np.uint8)
+        pixels[top:top + h, left:left + w] = np.asarray(indexed) + 1
+        frames = [pixels[fy:fy + 64, fx:fx + 64] for fy in (0, 64) for fx in (0, 64)]
+        palette = [(255, 0, 255)] + colors
+        save_indexed_bmp(GRAPHICS / f'minimap_{self.name}.bmp', np.concatenate(frames, axis=0), palette,
+                         allow_duplicates=True)
+        (GRAPHICS / f'minimap_{self.name}.json').write_text('{\n    "type": "sprite",\n    "height": 64\n}\n')
+        lut = np.array([(40, 40, 40)] + [c for c in colors], dtype=np.uint8)
+        Image.fromarray(lut[pixels], 'RGB').resize((picture * 2, picture * 2), Image.NEAREST).save(
+            PREVIEW / f'minimap_{self.name}.png')
+        return left, top, size
 
     def _write_preview(self):
         lut_g = np.array(self.gp.colors + [(0, 0, 0)] * (256 - len(self.gp.colors)), dtype=np.uint8)
@@ -310,6 +396,8 @@ class Map:
             tinted[max(0, y - 2):y + 2, max(0, x - 2):x + 2] = (255, 0, 255)
         for _, x, y in self.npcs:
             tinted[max(0, y - 3):y + 3, max(0, x - 3):x + 3] = (0, 255, 255)
+        for _, x, y, _ in self.chests:
+            tinted[max(0, y - 12):y, max(0, x - 6):x + 6] = (255, 255, 0)
         Image.fromarray(tinted, 'RGB').save(PREVIEW / f'{self.name}_debug.png')
 
 
@@ -588,20 +676,21 @@ def bank_fits(layer, part, x, y):
     return True
 
 
-def tree(m, trees, x, y, variant=0, collide=True, kind='oak'):
+def tree(m, trees, x, y, variant=0, collide=True, kind='oak', trunk=True):
     """Tree with its top-left at (x, y), snapped to 8 px. Returns False if it couldn't be drawn.
 
     A crown that would share a tile with a crown of another palette bank falls back to an oak.
     """
     x, y = x // 8 * 8, y // 8 * 8
     options = trees.kinds.get(kind, trees.kinds['oak'])
-    canopy, canopy_y, trunk, trunk_y = options[variant % len(options)]
+    canopy, canopy_y, trunk_part, trunk_y = options[variant % len(options)]
     if not bank_fits(m.overhead, canopy, x, y + canopy_y):
-        canopy, canopy_y, trunk, trunk_y = trees.kinds['oak'][variant % 3]
+        canopy, canopy_y, trunk_part, trunk_y = trees.kinds['oak'][variant % 3]
         if not bank_fits(m.overhead, canopy, x, y + canopy_y):
             return False
-    plain_grass_under(m, x + 8, y + trunk_y, 16, trunk.shape[0])
-    m.stamp(m.ground, trunk, x, y + trunk_y)
+    plain_grass_under(m, x + 8, y + trunk_y, 16, trunk_part.shape[0])
+    if trunk:
+        m.stamp(m.ground, trunk_part, x, y + trunk_y)
     m.stamp(m.overhead, canopy, x, y + canopy_y)
     if collide:
         m.block(x + 8, y + 32, 16, 16)
@@ -612,12 +701,13 @@ def overlaps(a, b):
     return a[0] < b[0] + b[2] and b[0] < a[0] + a[2] and a[1] < b[1] + b[3] and b[1] < a[1] + a[3]
 
 
-def forest(m, trees, x, y, w, h, seed=0, solid=True, dense=True, holes=(), kinds=None):
+def forest(m, trees, x, y, w, h, seed=0, solid=True, dense=True, holes=(), kinds=None, secrets=()):
     """Fill a rectangle with staggered rows of trees and (optionally) make it solid.
 
     kinds cycle in a regular pattern (a checkerboard for two kinds), which keeps the number of
-    unique tiles down. holes are rectangles left open: no trunk stands in them and they stay
-    walkable, which makes clearings and hidden paths into the woods.
+    unique tiles down. holes are rectangles left open: no tree stands in them and they stay
+    walkable, which makes clearings. secrets are walkable too, but keep their tree tops: a hidden
+    path the player walks under the leaves.
     """
     step_y = 24 if dense else 40
     mix = kinds or trees.forest_mix
@@ -627,10 +717,11 @@ def forest(m, trees, x, y, w, h, seed=0, solid=True, dense=True, holes=(), kinds
             if any(overlaps(foot, hole) for hole in holes):
                 continue
             kind = mix[(row + tx // 32 + seed) % len(mix)]
-            tree(m, trees, tx, ty, row + tx // 32 + seed, collide=False, kind=kind)
+            hidden = any(overlaps(foot, secret) for secret in secrets)
+            tree(m, trees, tx, ty, row + tx // 32 + seed, collide=False, kind=kind, trunk=not hidden)
     if solid:
         m.block(x, y, w, h)
-        for hole in holes:
+        for hole in list(holes) + list(secrets):
             m.unblock(*hole)
 
 

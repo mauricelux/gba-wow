@@ -45,10 +45,15 @@ jobs:
             hold:A:2 wait:30 shot:screenshots/2_creation.ppm \
             hold:A:2 wait:4 hold:A:2 wait:4 hold:A:2 wait:40 shot:screenshots/3_start.ppm \
             hold:A:2 wait:4 hold:A:2 wait:4 shot:screenshots/4_quest.ppm \
-            hold:A:2 wait:30 hold:S:2 wait:4 hold:l:2 wait:4 hold:l:2 wait:4 shot:screenshots/5_quest_log.ppm \
+            hold:A:2 wait:30 hold:S:2 wait:4 hold:l:2 wait:4 hold:l:2 wait:4 hold:l:2 wait:4 \
+            shot:screenshots/5_quest_log.ppm \
+            hold:r:2 wait:10 shot:screenshots/5_world_map.ppm \
             hold:B:2 wait:4 hold:R:70 hold:D:40 hold:R:110 hold:A:2 wait:150 shot:screenshots/6_combat.ppm \
             hold:r:20 shot:screenshots/7_action_bar.ppm \
-            wait:4 hold:S:2 wait:4 hold:r:2 wait:4 hold:r:2 wait:6 shot:screenshots/8_character.ppm
+            wait:4 hold:S:2 wait:4 hold:r:2 wait:4 hold:r:2 wait:6 shot:screenshots/8_character.ppm \
+            hold:l:2 wait:4 hold:D:2 wait:4 hold:A:2 wait:4 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 shot:screenshots/9_stormwind.ppm
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm
 
