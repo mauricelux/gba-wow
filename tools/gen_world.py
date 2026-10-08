@@ -174,6 +174,12 @@ def gen_inn():
 # Elwynn Forest
 # ---------------------------------------------------------------------------------------------
 
+MIXED = ('oak', 'birch', 'pine', 'oak', 'small', 'birch')
+ELWYNN_PROPS = ('bush', 'fern', 'flowers', 'tall_grass', 'flower_bush', 'rock', 'wide_bush', 'fern',
+                'log', 'stump', 'big_rock', 'tall_grass', 'bush', 'flowers')
+WESTFALL_PROPS = ('tall_grass', 'rock', 'bush', 'tall_grass', 'log', 'stump', 'big_rock', 'fern',
+                  'tall_grass', 'rock')
+
 def gen_elwynn():
     m = Map('elwynn', 2048, 2048,
             Palette([wg.TERRAIN_ELWYNN, wg.BUILDINGS, wg.FARM]),
@@ -239,9 +245,10 @@ def gen_elwynn():
     m.spawn_group('YOUNG_WOLF', 1250, 430, 6, 130, seed=4)
     m.spawn_group('YOUNG_WOLF', 1220, 650, 4, 100, seed=5)
     wg.grove(m, trees, [(720, 320), (872, 360), (1160, 240), (1300, 280), (1336, 560),
-                       (1160, 720), (880, 760), (1288, 740), (680, 720), (1100, 560)], seed=1)
-    for bx, by in ((960, 400), (1080, 380), (920, 520), (1120, 600), (1300, 380), (860, 300)):
-        wg.bush(m, bx, by)
+                       (1160, 720), (880, 760), (1288, 740), (680, 720), (1100, 560)], seed=1, kinds=MIXED)
+    for (bx, by), kind in zip(((960, 400), (1080, 380), (920, 520), (1120, 600), (1300, 380), (860, 300)),
+                              ('bush', 'flower_bush', 'wide_bush', 'bush', 'flower_bush', 'rock')):
+        wg.PROPS[kind](m, bx, by)
     m.area(640, 64, 768, 768, 'Northshire Valley')
 
     # --- Goldshire -------------------------------------------------------------------------------
@@ -265,7 +272,8 @@ def gen_elwynn():
     m.npc('GUARD_GS', 1060, 1000)
     m.npc('ANDREW', 1136, 1222)
     m.point('goldshire_respawn', 1024, 1260)
-    wg.grove(m, trees, [(760, 1000), (1300, 1000), (1320, 1300), (720, 1380), (1180, 1340)], seed=3)
+    wg.grove(m, trees, [(760, 1000), (1300, 1000), (1320, 1300), (720, 1380), (1180, 1340)], seed=3,
+             kinds=('oak', 'birch', 'oak', 'small'))
     m.area(780, 980, 560, 420, 'Goldshire')
 
     # --- Stonefield farm (east) -------------------------------------------------------------------
@@ -293,24 +301,24 @@ def gen_elwynn():
     m.area(840, 1560, 300, 260, 'Fargodeep Mine', 'FARGODEEP')
 
     # --- Forest's Edge and Hogger (south-west) ----------------------------------------------------
-    wg.forest(m, trees, 64, 1560, 200, 420, solid=True)
-    wg.forest(m, trees, 600, 1580, 160, 400, solid=True)
+    wg.forest(m, trees, 64, 1560, 200, 420, kinds=('oak', 'small'))
+    wg.forest(m, trees, 600, 1580, 160, 400, kinds=('oak', 'small'))
     m.spawn_group('RIVERPAW_GNOLL', 420, 1680, 7, 110, seed=12)
     m.spawn('HOGGER', 400, 1860)
     m.area(260, 1560, 340, 420, "Forest's Edge")
     m.npc('GUARD_WEST', 140, 1400)
 
     # --- woods with timber wolves (west and east) --------------------------------------------------
-    wg.forest(m, trees, 160, 160, 320, 360, solid=True)
-    wg.forest(m, trees, 1600, 160, 320, 320, solid=True)
-    wg.forest(m, trees, 1600, 600, 200, 280, solid=True)
+    wg.forest(m, trees, 160, 160, 320, 360, kinds=('pine',))
+    wg.forest(m, trees, 1600, 160, 320, 320, kinds=('pine',))
+    wg.forest(m, trees, 1600, 600, 200, 280, kinds=('pine', 'birch'))
     m.spawn_group('TIMBER_WOLF', 400, 900, 6, 140, seed=13)
     m.spawn_group('TIMBER_WOLF', 1650, 960, 5, 120, seed=14)
     m.spawn_group('FOREST_SPIDER', 300, 640, 5, 100, seed=15)
     m.spawn_group('FOREST_SPIDER', 1880, 560, 4, 80, seed=16)
     scatter = []
     rng = np.random.default_rng(42)
-    for _ in range(140):
+    for _ in range(170):
         x, y = int(rng.uniform(80, 1960)), int(rng.uniform(80, 1960))
         if m.area_free(x, y, 40, 56) and not (640 <= x <= 1408 and 64 <= y <= 896) \
                 and not (760 <= x <= 1340 and 980 <= y <= 1400):
@@ -325,13 +333,15 @@ def gen_elwynn():
             water[max(0, my - 3):my + 4, max(0, mx - 3):mx + 4].max()
         if near == 0:
             kept.append((x, y))
-    wg.grove(m, trees, kept, seed=5)
-    for i in range(40):
-        x, y = int(rng.uniform(100, 1940)), int(rng.uniform(100, 1940))
-        mx, my = x // 16, y // 16
-        if m.area_free(x, y, 16, 16) and path[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max() == 0 \
-                and water[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max() == 0:
-            (wg.bush if i % 3 else wg.stump)(m, x, y)
+    # Every eighth tree turns red and gold. Those use the roof bank, so they go in last and only
+    # where no green crown shares their tiles.
+    autumn = kept[::8]
+    wg.grove(m, trees, [p for p in kept if p not in autumn], seed=5, kinds=MIXED)
+    wg.grove(m, trees, autumn, seed=0, kinds=('autumn',))
+    wg.scatter_props(m, rng, 130, ELWYNN_PROPS, (80, 80, 1888, 1888),
+                     avoid=[(760, 980, 580, 420), (1480, 1080, 480, 360)])
+    wg.scatter_props(m, rng, 30, ('bush', 'fern', 'flowers', 'flower_bush', 'tall_grass'),
+                     (656, 96, 736, 720), avoid=[(904, 128, 240, 240), (656, 380, 200, 300)])
 
     # Road west leads to the Westfall bridge.
     m.warp(0, 1416, 8, 48, 'westfall', 'from_elwynn')
@@ -411,11 +421,13 @@ def gen_westfall():
 
     rng = np.random.default_rng(7)
     path = wg.corners(m, 'path')
-    for _ in range(40):
+    for i in range(48):
         x, y = int(rng.uniform(60, 900)), int(rng.uniform(60, 940))
         mx, my = (x + 16) // 16, (y + 40) // 16
         if m.area_free(x, y, 40, 56) and path[max(0, my - 3):my + 4, max(0, mx - 3):mx + 4].max() == 0:
-            wg.tree(m, trees, x, y, int(rng.integers(0, 3)))
+            wg.tree(m, trees, x, y, int(rng.integers(0, 3)), kind=('oak', 'small', 'autumn', 'oak')[i % 4])
+    wg.scatter_props(m, rng, 70, WESTFALL_PROPS, (56, 56, 900, 900),
+                     avoid=[(380, 140, 260, 260), (300, 700, 500, 300)])
 
     m.point('from_elwynn', 1000, 448)
     m.npc('FURLBROW', 860, 410)
