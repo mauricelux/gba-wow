@@ -9,6 +9,22 @@
 namespace gw
 {
 
+enum class race_id : uint8_t
+{
+    HUMAN,
+    DWARF,
+    NIGHT_ELF,
+    COUNT
+};
+
+enum class class_id : uint8_t
+{
+    WARRIOR,
+    MAGE,
+    HUNTER,
+    COUNT
+};
+
 enum class map_id : uint8_t
 {
     NONE,

@@ -1,18 +1,19 @@
 #include "bn_core.h"
+#include "bn_unique_ptr.h"
 
+#include "gw_character.h"
 #include "gw_game.h"
-#include "gw_map_elwynn.h"
 
 int main()
 {
     bn::core::init();
 
-    constexpr gw::point_def start = gw::map_data::elwynn::start;
-    gw::game game(gw::map_id::ELWYNN, bn::fixed_point(start.x, start.y));
+    gw::new_character(gw::race_id::HUMAN, gw::class_id::WARRIOR);
+    bn::unique_ptr<gw::game> game(new gw::game());
 
     while(true)
     {
-        game.update();
+        game->update();
         bn::core::update();
     }
 }

@@ -24,10 +24,13 @@ struct map_info
     bn::span<const npc_def> npcs;
     bn::span<const spawn_def> spawns;
     bn::span<const area_def> areas;
-    point_def respawn;
+    bn::span<const point_def> graveyards;   // where the player comes back to life after dying
 };
 
 [[nodiscard]] const map_info& get_map(map_id id);
+
+// The graveyard closest to the point.
+[[nodiscard]] const point_def& nearest_graveyard(const map_info& map, int x, int y);
 
 // The smallest named area containing the point, or nullptr.
 [[nodiscard]] const area_def* area_at(const map_info& map, int x, int y);

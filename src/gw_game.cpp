@@ -1,11 +1,17 @@
 #include "gw_game.h"
 
+#include "bn_bg_palettes.h"
 #include "bn_display.h"
+#include "bn_keypad.h"
 #include "bn_math.h"
+#include "bn_sprite_palettes.h"
+#include "bn_string.h"
 
 #include "common_variable_8x16_sprite_font.h"
 
+#include "gw_character.h"
 #include "gw_fade.h"
+#include "gw_ui.h"
 #include "gw_world.h"
 
 namespace gw
@@ -19,25 +25,75 @@ namespace
 
     constexpr int warp_fade_frames = 16;
     constexpr int area_check_interval = 15;
+    constexpr int loot_range = 24;
+
+    constexpr int death_gray_frames = 60;
+    constexpr int death_wait_frames = 150;
+    constexpr int death_fade_frames = 30;
+
+    [[nodiscard]] look_id player_look()
+    {
+        const character_data& data = character();
+
+        switch(data.race)
+        {
+
+        case race_id::DWARF:
+            return data.player_class == class_id::HUNTER ? look_id::DWARF_HUNTER : look_id::DWARF_WARRIOR;
+
+        case race_id::NIGHT_ELF:
+            return data.player_class == class_id::HUNTER ? look_id::ELF_HUNTER : look_id::ELF_WARRIOR;
+
+        default:
+            return data.player_class == class_id::MAGE ? look_id::HUMAN_MAGE : look_id::HUMAN_WARRIOR;
+        }
+    }
+
+    [[nodiscard]] bn::fixed_point saved_position()
+    {
+        return bn::fixed_point(character().x, character().y);
+    }
 }
 
-game::game(map_id map, const bn::fixed_point& position) :
+game::game() :
     _camera(bn::camera_ptr::create(0, 0)),
-    _player(position, _camera),
+    _player(player_look(), saved_position(), _camera),
     _text_generator(common::variable_8x16_sprite_font),
-    _banner(_text_generator)
+    _banner(_text_generator),
+    _texts(_camera),
+    _effects(_camera),
+    _enemies(_camera),
+    _combat(_player, _enemies, _texts, _effects, _hud)
 {
-    _load_map(map, position);
+    // The UI layer goes first so it owns the first palette banks and tile block.
+    ui::init();
+    _enemies.set_combat(_combat);
+    _load_map(character().map, saved_position());
 }
 
 void game::update()
 {
     bool warping = _warp != nullptr;
-    _player.update(! warping);
+    bool dead = _combat.dead();
+    bool input = ! warping && ! dead;
+    bool abilities_held = bn::keypad::r_held();
+
+    if(input && ! abilities_held && bn::keypad::a_pressed())
+    {
+        _interact();
+    }
+
+    _player.update(input && ! abilities_held, ! _combat.in_combat());
+    _enemies.update(_player.position(), ! dead);
+    _combat.update(input);
 
     if(warping)
     {
         _update_warp();
+    }
+    else if(_combat.dead())
+    {
+        _update_death();
     }
     else
     {
@@ -46,7 +102,95 @@ void game::update()
     }
 
     _follow_camera();
+    _texts.update();
     _banner.update();
+    _hud.update(_combat, _enemies);
+    ui::commit();
+}
+
+void game::_interact()
+{
+    int corpse = _enemies.nearest_corpse(_player.position(), loot_range);
+
+    if(corpse >= 0)
+    {
+        _loot(corpse);
+        return;
+    }
+
+    _combat.engage();
+}
+
+void game::_loot(int index)
+{
+    enemy& item = _enemies.at(index);
+    character_data& data = character();
+
+    if(item.loot_money)
+    {
+        data.money += item.loot_money;
+        bn::string<28> text = "You loot ";
+        int money = item.loot_money;
+
+        if(money >= 100)
+        {
+            text += bn::to_string<6>(money / 100);
+            text += "s ";
+        }
+
+        text += bn::to_string<4>(money % 100);
+        text += "c";
+        _hud.message(text, ui::color::YELLOW);
+        item.loot_money = 0;
+    }
+
+    bool full = false;
+
+    for(loot_slot& slot : item.loot)
+    {
+        if(slot.item == item_id::NONE)
+        {
+            continue;
+        }
+
+        int left = add_item(slot.item, slot.count);
+
+        if(left == slot.count)
+        {
+            full = true;
+            continue;
+        }
+
+        bn::string<28> text = get_item(slot.item).name;
+
+        if(slot.count - left > 1)
+        {
+            text += " x";
+            text += bn::to_string<4>(slot.count - left);
+        }
+
+        _hud.message(text, ui::color(quality_color(get_item(slot.item).quality)));
+        slot.count = left;
+
+        if(left == 0)
+        {
+            slot.item = item_id::NONE;
+        }
+        else
+        {
+            full = true;
+        }
+    }
+
+    if(full)
+    {
+        _hud.message("Inventory is full", ui::color::RED);
+    }
+
+    if(! item.has_loot())
+    {
+        _enemies.corpse_looted(index);
+    }
 }
 
 void game::_load_map(map_id map, const bn::fixed_point& position)
@@ -54,9 +198,11 @@ void game::_load_map(map_id map, const bn::fixed_point& position)
     // Free the old map's VRAM before loading the new one.
     _ground.reset();
     _overhead.reset();
+    _combat.on_map_change();
 
     const map_info& info = get_map(map);
     world::set_map(info);
+    character().map = map;
 
     _ground = info.ground.create_bg(0, 0);
     _ground->set_priority(ground_priority);
@@ -66,10 +212,18 @@ void game::_load_map(map_id map, const bn::fixed_point& position)
     _overhead->set_priority(overhead_priority);
     _overhead->set_camera(_camera);
 
+    _enemies.load(info);
     _player.set_position(position);
+    _save_position();
     _follow_camera();
     _area = nullptr;
     _check_area(true);
+}
+
+void game::_save_position()
+{
+    character().x = _player.position().x().integer();
+    character().y = _player.position().y().integer();
 }
 
 void game::_follow_camera()
@@ -129,6 +283,42 @@ void game::_update_warp()
     }
 }
 
+void game::_update_death()
+{
+    ++_death_frames;
+
+    if(_death_frames == 1)
+    {
+        _hud.message("You have died", ui::color::RED);
+    }
+
+    if(_death_frames <= death_gray_frames)
+    {
+        bn::fixed intensity = bn::fixed(_death_frames) / death_gray_frames;
+        bn::bg_palettes::set_grayscale_intensity(intensity);
+        bn::sprite_palettes::set_grayscale_intensity(intensity);
+    }
+    else if(_death_frames > death_wait_frames && _death_frames <= death_wait_frames + death_fade_frames)
+    {
+        set_fade(bn::fixed(_death_frames - death_wait_frames) / death_fade_frames);
+
+        if(_death_frames == death_wait_frames + death_fade_frames)
+        {
+            // Back to life at the nearest graveyard.
+            bn::bg_palettes::set_grayscale_intensity(0);
+            bn::sprite_palettes::set_grayscale_intensity(0);
+            const point_def& graveyard = nearest_graveyard(world::map(), _player.position().x().integer(),
+                                                           _player.position().y().integer());
+            _combat.revive();
+            _load_map(character().map, bn::fixed_point(graveyard.x, graveyard.y));
+            _death_frames = 0;
+            _warp_frames = warp_fade_frames;
+            _warp = &world::map().warps[0];
+            _hud.message("You return to life", ui::color::GREEN);
+        }
+    }
+}
+
 void game::_check_area(bool force)
 {
     if(! force && --_area_check_frames > 0)
@@ -137,6 +327,7 @@ void game::_check_area(bool force)
     }
 
     _area_check_frames = area_check_interval;
+    _save_position();
 
     const area_def* area = area_at(world::map(), _player.position().x().floor_integer(),
                                    _player.position().y().floor_integer());

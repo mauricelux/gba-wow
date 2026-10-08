@@ -6,6 +6,11 @@
 #include "bn_regular_bg_ptr.h"
 #include "bn_sprite_text_generator.h"
 
+#include "gw_combat.h"
+#include "gw_effects.h"
+#include "gw_enemies.h"
+#include "gw_floating_text.h"
+#include "gw_hud.h"
 #include "gw_maps.h"
 #include "gw_player.h"
 #include "gw_zone_banner.h"
@@ -18,7 +23,8 @@ class game
 {
 
 public:
-    game(map_id map, const bn::fixed_point& position);
+    // Starts at the character's saved map and position.
+    game();
 
     void update();
 
@@ -29,16 +35,26 @@ private:
     player _player;
     bn::sprite_text_generator _text_generator;
     zone_banner _banner;
+    floating_texts _texts;
+    effects _effects;
+    enemies _enemies;
+    hud _hud;
+    combat _combat;
     const area_def* _area = nullptr;
     const warp_def* _warp = nullptr;
     int _warp_frames = 0;
     int _area_check_frames = 0;
+    int _death_frames = 0;
 
     void _load_map(map_id map, const bn::fixed_point& position);
     void _follow_camera();
     void _check_warps();
     void _update_warp();
     void _check_area(bool force);
+    void _interact();
+    void _loot(int index);
+    void _update_death();
+    void _save_position();
 };
 
 }

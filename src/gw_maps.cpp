@@ -29,7 +29,14 @@ namespace
         return placeholder ? bn::span<const Type>() : bn::span<const Type>(items, Size);
     }
 
-#define GW_MAP_INFO(ID, NAME, DUNGEON, RESPAWN) \
+    constexpr point_def elwynn_graveyards[] = { map_data::elwynn::northshire_respawn,
+                                                map_data::elwynn::goldshire_respawn };
+    constexpr point_def abbey_graveyards[] = { map_data::abbey::respawn };
+    constexpr point_def inn_graveyards[] = { map_data::inn::respawn };
+    constexpr point_def westfall_graveyards[] = { map_data::westfall::sentinel_respawn };
+    constexpr point_def deadmines_graveyards[] = { map_data::deadmines::respawn };
+
+#define GW_MAP_INFO(ID, NAME, DUNGEON) \
     map_info{ \
         map_id::ID, \
         bn::regular_bg_items::map_##NAME##_ground, \
@@ -44,15 +51,15 @@ namespace
         list(map_data::NAME::npcs, map_data::NAME::npcs[0].npc == npc_id::NONE), \
         list(map_data::NAME::spawns, map_data::NAME::spawns[0].enemy == enemy_id::NONE), \
         list(map_data::NAME::areas, map_data::NAME::areas[0].width == 0), \
-        map_data::NAME::RESPAWN \
+        bn::span<const point_def>(NAME##_graveyards) \
     }
 
     const map_info maps[] = {
-        GW_MAP_INFO(ELWYNN, elwynn, false, northshire_respawn),
-        GW_MAP_INFO(ABBEY, abbey, false, respawn),
-        GW_MAP_INFO(INN, inn, false, respawn),
-        GW_MAP_INFO(WESTFALL, westfall, false, sentinel_respawn),
-        GW_MAP_INFO(DEADMINES, deadmines, true, respawn),
+        GW_MAP_INFO(ELWYNN, elwynn, false),
+        GW_MAP_INFO(ABBEY, abbey, false),
+        GW_MAP_INFO(INN, inn, false),
+        GW_MAP_INFO(WESTFALL, westfall, false),
+        GW_MAP_INFO(DEADMINES, deadmines, true),
     };
 
 #undef GW_MAP_INFO
@@ -69,6 +76,27 @@ const map_info& get_map(map_id id)
     }
 
     return maps[0];
+}
+
+const point_def& nearest_graveyard(const map_info& map, int x, int y)
+{
+    const point_def* best = &map.graveyards[0];
+    int best_distance = -1;
+
+    for(const point_def& graveyard : map.graveyards)
+    {
+        int dx = graveyard.x - x;
+        int dy = graveyard.y - y;
+        int d = dx * dx + dy * dy;
+
+        if(best_distance < 0 || d < best_distance)
+        {
+            best = &graveyard;
+            best_distance = d;
+        }
+    }
+
+    return *best;
 }
 
 const area_def* area_at(const map_info& map, int x, int y)

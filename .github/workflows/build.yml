@@ -42,8 +42,9 @@ jobs:
           mkdir -p screenshots
           ./mgba_script gba-wow.gba \
             wait:30 shot:screenshots/1_start.ppm \
-            hold:D:60 hold:R:90 shot:screenshots/2_walk.ppm \
-            hold:U:120 shot:screenshots/3_blocked.ppm
+            hold:D:60 hold:L:60 shot:screenshots/2_walk.ppm \
+            hold:D:40 hold:A:2 wait:150 shot:screenshots/3_combat.ppm \
+            hold:r:20 shot:screenshots/4_action_bar.ppm
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm
 
