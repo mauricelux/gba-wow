@@ -312,8 +312,8 @@ namespace
           "End this. Bring me his head and Westfall will be free.",
           "Bring the Head of VanCleef to Gryan Stoutmantle.",
           "VanCleef still lives. Westfall waits.",
-          "So ends the Defias Brotherhood. Westfall is free, and every farmer here owes you "
-          "their life. You are a true hero of the Alliance.",
+          "So falls Edwin VanCleef. Westfall is free, and every farmer here owes you their life.\n\n"
+          "But he carried a letter I don't like the look of. Hear me out before you rest.",
           n::GRYAN, n::GRYAN, 20, 17, qid::THE_DEFIAS_BROTHERHOOD,
           { collect(e::VANCLEEF, 1, 100, "Head of VanCleef"), none, none }, xp(20, 200), money(20),
           { i::CHAUSSES_OF_WESTFALL, i::TUNIC_OF_WESTFALL, i::STAFF_OF_WESTFALL } },
@@ -354,6 +354,47 @@ namespace
           n::BRANN, n::BRANN, 10, 6, qid::NONE,
           { treasure(5, "Treasure chests opened"), none, none }, xp(10), money(10),
           { i::PATHFINDER_GREAVES, i::WANDERER_SANDALS, i::TRAILBLAZER_BOOTS } },
+
+        // --- The Stockade ---------------------------------------------------------------------------
+
+        { "The Unsent Letter",
+          "VanCleef never sent this letter. It is sealed with the Brotherhood's mark and addressed to "
+          "one Bazil Thredd... a prisoner in the Stockade, inside Stormwind itself.\n\n"
+          "If the Defias have friends in the city's own prison, Stormwind must know. Take it to Warden "
+          "Thelwater at the Stockade, in the Mage Quarter.",
+          "Take the Unsent Letter to Warden Thelwater at the Stockade in Stormwind.",
+          "",
+          "A letter from VanCleef to Bazil Thredd? Light help us. The prisoners rose this very "
+          "morning, and Thredd is the one leading them.",
+          n::GRYAN, n::THELWATER, 20, 18, qid::EDWIN_VANCLEEF, { none, none, none }, xp(20, 40), money(5),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "The Stockade Riots",
+          "The prisoners broke out of their cells and hold the whole Stockade. My guards are dead or "
+          "locked in with them.\n\n"
+          "Go in and put the riot down. And Targorr the Dread is loose in the west hall: he killed "
+          "two of my men with his bare hands. Make sure he never does it again.",
+          "Kill 10 Defias Convicts, 8 Defias Insurgents and Targorr the Dread in the Stockade.",
+          "The riot still rages. I can hear it from out here.",
+          "Quiet, at last. You've done what the whole city watch couldn't.",
+          n::THELWATER, n::THELWATER, 20, 18, qid::THE_UNSENT_LETTER,
+          { kill(e::DEFIAS_CONVICT, 10, "Defias Convict slain"), kill(e::DEFIAS_INSURGENT, 8,
+            "Defias Insurgent slain"), kill(e::TARGORR, 1, "Targorr the Dread slain") }, xp(20), money(20),
+          { i::RIOTGUARD_HELM, i::JAILERS_COWL, i::TURNKEY_CAP } },
+
+        { "Bazil Thredd",
+          "Bazil Thredd planned this riot with VanCleef. He holed up in my own hall at the back of the "
+          "Stockade, past the east cells.\n\n"
+          "End it. Bring his head to Highlord Bolvar at the keep: the Highlord will want to see with "
+          "his own eyes that the last of the Brotherhood is finished.",
+          "Bring the Head of Bazil Thredd to Highlord Bolvar Fordragon.",
+          "Thredd still lives? Then the Brotherhood still has a head.",
+          "So VanCleef's last friend in Stormwind is dead, and the Defias Brotherhood with him. You "
+          "have saved this city as surely as Westfall. Kneel, champion: Stormwind will remember your "
+          "name.",
+          n::THELWATER, n::BOLVAR, 21, 18, qid::THE_UNSENT_LETTER,
+          { collect(e::BAZIL_THREDD, 1, 100, "Head of Bazil Thredd"), none, none }, xp(21, 200), money(25),
+          { i::LIONHEART_BLADE, i::STAFF_OF_THE_LION, i::LIONHEART_LONGBOW } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));

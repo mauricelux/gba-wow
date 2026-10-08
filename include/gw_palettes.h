@@ -103,6 +103,27 @@ namespace gw::palettes
     constexpr bn::color innkeeper_f_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(15, 9, 4), bn::color(25, 15, 7), bn::color(13, 8, 4), bn::color(22, 14, 8), bn::color(29, 18, 10), bn::color(17, 16, 15), bn::color(29, 28, 25), bn::color(15, 10, 6), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(10, 7, 4), bn::color(29, 21, 17) };
     constexpr bn::sprite_palette_item innkeeper_f(innkeeper_f_colors, bn::bpp_mode::BPP_4);
 
+    constexpr bn::color warden_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(13, 13, 14), bn::color(19, 19, 20), bn::color(8, 8, 10), bn::color(14, 14, 16), bn::color(18, 19, 21), bn::color(2, 3, 6), bn::color(4, 5, 11), bn::color(22, 22, 23), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(15, 15, 16), bn::color(29, 21, 17) };
+    constexpr bn::sprite_palette_item warden(warden_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color defias_prisoner_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(19, 12, 9), bn::color(25, 17, 12), bn::color(7, 5, 3), bn::color(12, 9, 6), bn::color(11, 11, 9), bn::color(19, 18, 16), bn::color(25, 23, 21), bn::color(9, 8, 7), bn::color(15, 14, 12), bn::color(21, 5, 5), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(14, 3, 3), bn::color(21, 5, 5) };
+    constexpr bn::sprite_palette_item defias_prisoner(defias_prisoner_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color defias_convict_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(4, 3, 3), bn::color(7, 6, 5), bn::color(10, 9, 8), bn::color(17, 16, 14), bn::color(22, 21, 18), bn::color(7, 6, 5), bn::color(12, 11, 9), bn::color(22, 5, 5), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(15, 3, 3), bn::color(22, 5, 5) };
+    constexpr bn::sprite_palette_item defias_convict(defias_convict_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color defias_insurgent_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(11, 2, 3), bn::color(19, 4, 5), bn::color(4, 4, 4), bn::color(8, 7, 7), bn::color(10, 9, 9), bn::color(8, 2, 3), bn::color(14, 4, 5), bn::color(19, 4, 5), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(13, 3, 3), bn::color(19, 4, 5) };
+    constexpr bn::sprite_palette_item defias_insurgent(defias_insurgent_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color targorr_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(14, 9, 6), bn::color(19, 12, 8), bn::color(14, 9, 6), bn::color(19, 12, 8), bn::color(9, 6, 4), bn::color(15, 11, 7), bn::color(19, 14, 9), bn::color(6, 4, 3), bn::color(11, 8, 5), bn::color(18, 18, 19), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(12, 12, 13), bn::color(19, 12, 9) };
+    constexpr bn::sprite_palette_item targorr(targorr_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color kam_deepfury_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(12, 12, 14), bn::color(17, 17, 19), bn::color(3, 3, 3), bn::color(5, 5, 6), bn::color(6, 6, 7), bn::color(10, 10, 11), bn::color(13, 13, 15), bn::color(10, 3, 2), bn::color(18, 6, 4), bn::color(25, 13, 5), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(17, 9, 3), bn::color(5, 5, 6) };
+    constexpr bn::sprite_palette_item kam_deepfury(kam_deepfury_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color bazil_thredd_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(2, 2, 2), bn::color(4, 3, 4), bn::color(4, 3, 4), bn::color(7, 5, 8), bn::color(13, 10, 14), bn::color(11, 2, 3), bn::color(19, 4, 5), bn::color(29, 23, 8), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 16, 5), bn::color(19, 4, 5) };
+    constexpr bn::sprite_palette_item bazil_thredd(bazil_thredd_colors, bn::bpp_mode::BPP_4);
+
     constexpr bn::color young_wolf_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 9, 8), bn::color(17, 15, 13), bn::color(22, 19, 16), bn::color(17, 16, 14), bn::color(25, 23, 20), bn::color(29, 5, 3), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
     constexpr bn::sprite_palette_item young_wolf(young_wolf_colors, bn::bpp_mode::BPP_4);
 

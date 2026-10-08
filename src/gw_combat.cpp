@@ -26,6 +26,7 @@ namespace
     constexpr int telegraph_windup = 90;
     constexpr int saw_radius = 28;
     constexpr int flurry_radius = 40;
+    constexpr int smoke_radius = 32;
     constexpr int lose_target_range = 220;
     constexpr int combat_timeout = 5 * seconds;
     constexpr int potion_cooldown_frames = 60 * seconds;
@@ -1582,7 +1583,8 @@ void combat::_summon_add(const enemy& boss, enemy_id add)
     _enemies.summon(add, position);
 }
 
-bool combat::_update_telegraph(enemy& boss, bool around_boss, int radius)
+bool combat::_update_telegraph(enemy& boss, bool around_boss, int radius, const char* name,
+                               projectile_kind kind)
 {
     if(boss.telegraph_frames > 0)
     {
@@ -1598,7 +1600,7 @@ bool combat::_update_telegraph(enemy& boss, bool around_boss, int radius)
             return false;
         }
 
-        _effects.burst(boss.special_position, around_boss ? projectile_kind::ARCANE : projectile_kind::FIRE);
+        _effects.burst(boss.special_position, kind);
 
         if(distance_squared(_player.position(), boss.special_position) <= radius * radius)
         {
@@ -1614,11 +1616,72 @@ bool combat::_update_telegraph(enemy& boss, bool around_boss, int radius)
         boss.special_position = around_boss ? boss.position : _player.position();
         boss.telegraph_frames = telegraph_windup;
         _effects.circle(boss.special_position, radius, telegraph_windup, false);
-        _texts.show(_head(boss.position, 44), around_boss ? "Blade Flurry" : "Saw Blade",
-                    floating_texts::style::DAMAGE_TAKEN);
+        _texts.show(_head(boss.position, 44), name, floating_texts::style::DAMAGE_TAKEN);
     }
 
     return false;
+}
+
+bool combat::_update_wind_up(int index, bool in_melee, const char* name, const char* message)
+{
+    // Phase 1 waits for the next heavy blow; phase 2 holds still for a moment, then hits for more
+    // than double. Returns true while the boss winds up.
+    enemy& boss = _enemies.at(index);
+
+    if(boss.phase == 0)
+    {
+        boss.phase = 1;
+        boss.special_timer = gore_interval;
+    }
+    else if(boss.phase == 1 && boss.special_timer == 0 && in_melee)
+    {
+        boss.phase = 2;
+        boss.special_timer = gore_windup;
+        _texts.show(_head(boss.position, 40), name, floating_texts::style::DAMAGE_TAKEN);
+    }
+    else if(boss.phase == 2)
+    {
+        if(boss.special_timer > 0)
+        {
+            boss.moving = false;
+            return true;
+        }
+
+        if(in_melee)
+        {
+            if(boss.sprite)
+            {
+                boss.sprite->play_attack();
+            }
+
+            _hud.message(message, ui::color::RED);
+            enemy_attacks(index, 250);
+            boss.attack_timer = boss.def->attack_speed * 6;
+        }
+
+        boss.phase = 1;
+        boss.special_timer = gore_interval;
+    }
+
+    return false;
+}
+
+void combat::_update_frenzy(enemy& boss, int health_percent, int below, int phase, const char* name)
+{
+    // From the phase it reaches below the health threshold, the boss swings half again as often.
+    if(boss.phase == phase - 1 && health_percent <= below)
+    {
+        boss.phase = phase;
+        bn::string<48> text = name;
+        text += " goes into a frenzy!";
+        _hud.message(text, ui::color::RED);
+        _texts.show(_head(boss.position, 44), "Frenzy", floating_texts::style::DAMAGE_TAKEN);
+    }
+
+    if(boss.phase == phase && boss.attack_timer > 0 && random_chance(50))
+    {
+        --boss.attack_timer;
+    }
 }
 
 bool combat::boss_update(int index)
@@ -1637,39 +1700,9 @@ bool combat::boss_update(int index)
 
     case enemy_id::PRINCESS:
         // Gore: lowers her head for a moment, then a hit for more than double.
-        if(boss.phase == 0)
+        if(_update_wind_up(index, in_melee, "Gore", "Princess gores you!"))
         {
-            boss.phase = 1;
-            boss.special_timer = gore_interval;
-        }
-        else if(boss.phase == 1 && boss.special_timer == 0 && in_melee)
-        {
-            boss.phase = 2;
-            boss.special_timer = gore_windup;
-            _texts.show(_head(boss.position, 40), "Gore", floating_texts::style::DAMAGE_TAKEN);
-        }
-        else if(boss.phase == 2)
-        {
-            if(boss.special_timer > 0)
-            {
-                boss.moving = false;
-                return true;
-            }
-
-            if(in_melee)
-            {
-                if(boss.sprite)
-                {
-                    boss.sprite->play_attack();
-                }
-
-                _hud.message("Princess gores you!", ui::color::RED);
-                enemy_attacks(index, 250);
-                boss.attack_timer = boss.def->attack_speed * 6;
-            }
-
-            boss.phase = 1;
-            boss.special_timer = gore_interval;
+            return true;
         }
         break;
 
@@ -1690,7 +1723,8 @@ bool combat::boss_update(int index)
             _hud.message("Sneed: Engineers, to me!", ui::color::RED);
         }
 
-        if(boss.phase >= 2 && health_percent <= 50 && _update_telegraph(boss, false, saw_radius))
+        if(boss.phase >= 2 && health_percent <= 50 &&
+           _update_telegraph(boss, false, saw_radius, "Saw Blade", projectile_kind::FIRE))
         {
             return true;
         }
@@ -1720,24 +1754,64 @@ bool combat::boss_update(int index)
             _hud.message("VanCleef: For the Brotherhood!", ui::color::RED);
         }
 
-        if(health_percent <= 50 && _update_telegraph(boss, true, flurry_radius))
+        if(health_percent <= 50 &&
+           _update_telegraph(boss, true, flurry_radius, "Blade Flurry", projectile_kind::ARCANE))
         {
             return true;
         }
         break;
 
     case enemy_id::HOGGER:
-        if(boss.phase == 0 && health_percent <= 35)
+        _update_frenzy(boss, health_percent, 35, 1, "Hogger");
+        break;
+
+    case enemy_id::TARGORR:
+        if(boss.phase == 0)
         {
             boss.phase = 1;
-            _hud.message("Hogger goes into a frenzy!", ui::color::RED);
-            _texts.show(_head(boss.position, 44), "Frenzy", floating_texts::style::DAMAGE_TAKEN);
+            _hud.message("Targorr: Fresh meat!", ui::color::RED);
         }
 
-        // Frenzied: swings half again as often.
-        if(boss.phase == 1 && boss.attack_timer > 0 && random_chance(50))
+        _update_frenzy(boss, health_percent, 50, 2, "Targorr");
+        break;
+
+    case enemy_id::KAM_DEEPFURY:
+        // Shield Slam: raises his shield for a moment, then a hit for more than double.
+        if(_update_wind_up(index, in_melee, "Shield Slam", "Kam Deepfury slams you!"))
         {
-            --boss.attack_timer;
+            return true;
+        }
+        break;
+
+    case enemy_id::BAZIL_THREDD:
+        // Smoke bombs at the player's feet from the start; a rioter at two thirds and one third of his
+        // health; a frenzy near the end.
+        if(boss.phase == 0)
+        {
+            boss.phase = 1;
+            boss.special_timer = 5 * seconds;
+            _hud.message("Bazil: Nobody takes me alive!", ui::color::RED);
+        }
+
+        if(boss.phase == 1 && health_percent <= 66)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::DEFIAS_RIOTER);
+            _hud.message("Bazil: Open the cells, lads!", ui::color::RED);
+        }
+
+        if(boss.phase == 2 && health_percent <= 33)
+        {
+            boss.phase = 3;
+            _summon_add(boss, enemy_id::DEFIAS_RIOTER);
+            _hud.message("Bazil: To me, Brotherhood!", ui::color::RED);
+        }
+
+        _update_frenzy(boss, health_percent, 15, 4, "Bazil");
+
+        if(_update_telegraph(boss, false, smoke_radius, "Smoke Bomb", projectile_kind::ARCANE))
+        {
+            return true;
         }
         break;
 

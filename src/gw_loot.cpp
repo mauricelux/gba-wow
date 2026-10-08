@@ -73,6 +73,18 @@ namespace
         // 16 Edwin VanCleef
         { { { i::HEALING_POTION, 100, 2, 3 }, none, none }, true,
           { i::CRUEL_BARB, i::SMITES_HAMMER, i::CORSAIR_OVERSHIRT } },
+        // 17 Stockade prisoners
+        { { { i::WOOL_CLOTH, 45, 1, 2 }, { i::MUTTON_CHOP, 8, 1, 1 }, { i::HEALING_POTION, 6, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 18 Targorr the Dread
+        { { { i::HEALING_POTION, 60, 1, 2 }, none, none }, true,
+          { i::LUCINE_LONGSWORD, i::KNUCKLE_WRAPS, i::SHACKLED_MITTS } },
+        // 19 Kam Deepfury
+        { { { i::HEALING_POTION, 60, 1, 2 }, none, none }, true,
+          { i::DEEPFURY_SHIELD, i::EMBERWEAVE_ROBE, i::DARK_IRON_RIFLE } },
+        // 20 Bazil Thredd
+        { { { i::HEALING_POTION, 100, 2, 3 }, none, none }, true,
+          { i::THREDDS_DUSKBLADE, i::SMOKEWEAVE_PANTS, i::SHADOWHIDE_BOOTS } },
     };
 
     // Uncommon items any enemy of a level band may drop.

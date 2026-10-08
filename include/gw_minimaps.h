@@ -7,6 +7,7 @@
 #include "bn_sprite_items_minimap_echo_ridge.h"
 #include "bn_sprite_items_minimap_elwynn.h"
 #include "bn_sprite_items_minimap_fargodeep.h"
+#include "bn_sprite_items_minimap_stockade.h"
 #include "bn_sprite_items_minimap_stormwind.h"
 #include "bn_sprite_items_minimap_westfall.h"
 
@@ -36,6 +37,7 @@ constexpr minimap_def minimaps[] = {
     { map_id::ECHO_RIDGE, bn::sprite_items::minimap_echo_ridge, 8, 8, 512 },
     { map_id::FARGODEEP, bn::sprite_items::minimap_fargodeep, 8, 26, 768 },
     { map_id::DEADMINES, bn::sprite_items::minimap_deadmines, 8, 36, 1024 },
+    { map_id::STOCKADE, bn::sprite_items::minimap_stockade, 8, 36, 1024 },
 };
 
 constexpr int minimap_count = sizeof(minimaps) / sizeof(minimaps[0]);

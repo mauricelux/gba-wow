@@ -346,8 +346,9 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
                 item.state_timer = random_range(120, 360);
             }
         }
-        else if(--item.state_timer <= 0)
+        else if(--item.state_timer <= 0 && ! item.boss())
         {
+            // Bosses hold their ground, so their guards can be pulled one at a time.
             bn::fixed_point target(item.spawn.x() + random_range(-wander_radius, wander_radius),
                                    item.spawn.y() + random_range(-wander_radius, wander_radius));
 

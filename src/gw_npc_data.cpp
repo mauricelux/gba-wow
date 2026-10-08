@@ -100,6 +100,10 @@ namespace
           "Old mines, forgotten ruins, lost treasure! The world is full of secrets, lad." },
         { "Ander Germaine", "Warrior Trainer", l::TRAINER_WARRIOR, trainer, c::WARRIOR, 0,
           "Old Town breeds tough fighters. Let's see if you have what it takes." },
+        { "Warden Thelwater", "The Stockade", l::WARDEN, 0, c::WARRIOR, 0,
+          "The prisoners rose this morning and took the cells. Nobody goes in there lightly." },
+        { "Stormwind City Guard", "", l::STORMWIND_GUARD, 0, c::WARRIOR, 0,
+          "That's the Stockade. Riot or no riot, whatever comes out of that gate doesn't get past me." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

@@ -905,6 +905,28 @@ HUMANOID_LOOKS = {
                                                lower_face=(176, 88, 40))),
     'innkeeper_f': ('fem_robe', humanoid_palette(hair=(200, 120, 56), armor=(176, 112, 64),
                                                  tabard=(232, 224, 200), trim=(120, 80, 48))),
+    'warden': ('hum_sword', humanoid_palette(hair=(152, 152, 160), armor=(112, 116, 132),
+                                             tabard=(32, 40, 88), trim=(176, 176, 184),
+                                             hair_dark=(104, 104, 112))),
+    # the Stockade
+    'defias_prisoner': ('hum_plain', humanoid_palette(skin=SKIN_TAN, hair=(96, 72, 48),
+                                                      armor=(152, 144, 128), tabard=(120, 112, 96),
+                                                      trim=(168, 40, 40), lower_face=(168, 40, 40))),
+    'defias_convict': ('hum_sword', humanoid_palette(hair=(56, 48, 40), armor=(136, 128, 112),
+                                                     tabard=(96, 88, 72), trim=(176, 44, 40),
+                                                     lower_face=(176, 44, 40))),
+    'defias_insurgent': ('hum_sword', humanoid_palette(hair=(152, 36, 40), armor=(64, 56, 56),
+                                                       tabard=(112, 32, 40), trim=(152, 36, 40),
+                                                       lower_face=(152, 36, 40))),
+    'targorr': ('hum_sword', humanoid_palette(skin=SKIN_DARK, hair=SKIN_DARK, armor=(120, 88, 56),
+                                              tabard=(88, 64, 40), trim=(144, 144, 152),
+                                              hair_dark=(112, 72, 48))),
+    'kam_deepfury': ('dwarf_sword', humanoid_palette(skin=(136, 136, 152), hair=(40, 40, 48),
+                                                     armor=(80, 80, 92), tabard=(144, 48, 32),
+                                                     trim=(200, 104, 40), lower_face=(40, 40, 48))),
+    'bazil_thredd': ('hum_sword', humanoid_palette(hair=(32, 28, 36), armor=(56, 40, 64),
+                                                   tabard=(152, 32, 40), trim=(232, 184, 64),
+                                                   lower_face=(152, 32, 40), armor_light=(104, 80, 112))),
 }
 
 CREATURE_LOOKS = {

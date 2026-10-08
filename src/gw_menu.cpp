@@ -12,6 +12,7 @@
 #include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
+#include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
 #include "gw_menu_layout.h"
@@ -50,7 +51,11 @@ namespace
         { "The Deadmines", map_id::DEADMINES, map_data::deadmines::entry },
         { "Goblin Foundry", map_id::DEADMINES, { 640, 390 } },
         { "Ironclad Cove", map_id::DEADMINES, { 744, 200 } },
+        { "The Stockade", map_id::STOCKADE, map_data::stockade::entry },
+        { "Warden's Hall", map_id::STOCKADE, { 680, 88 } },
     };
+
+    static_assert(sizeof(destinations) / sizeof(destinations[0]) <= content_rows);
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);
 
@@ -68,7 +73,8 @@ namespace
     constexpr const char* system_names[] = { "Save game", "Debug: teleport", "Debug: level up", "Debug: +10 gold",
                                              "Debug: gear up" };
 
-    // Equips the best item the character can use in every slot, for testing later content.
+    // Equips the best item the character can use in every slot, for testing later content. Epics are
+    // left out: they are the story's last reward.
     void gear_up()
     {
         character_data& data = character();
@@ -85,7 +91,8 @@ namespace
         {
             const item_def& def = get_item(item_id(index));
 
-            if(def.slot == equip_slot::NONE || def.level > data.level || ! can_equip(data.player_class, def))
+            if(def.slot == equip_slot::NONE || def.level > data.level || def.quality == item_quality::EPIC ||
+               ! can_equip(data.player_class, def))
             {
                 continue;
             }
