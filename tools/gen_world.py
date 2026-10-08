@@ -1643,8 +1643,8 @@ GENERATORS = {
 def main():
     maps = {name: generate() for name, generate in GENERATORS.items()}
     ids = [chest[0] for m in maps.values() for chest in m.chests]
-    if len(ids) != len(set(ids)) or max(ids) >= 64:
-        raise SystemExit(f'chest ids must be unique and below 64: {sorted(ids)}')
+    if len(ids) != len(set(ids)) or max(ids) >= 256:
+        raise SystemExit(f'chest ids must be unique and below 256: {sorted(ids)}')
     print(f'{len(ids)} treasure chests')
     starts = {'elwynn': 'start', 'westfall': 'from_elwynn', 'stormwind': 'from_elwynn'}
     for name, m in maps.items():

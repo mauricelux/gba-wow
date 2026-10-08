@@ -364,8 +364,6 @@ void combat::update(bool input_enabled)
         const enemy& target = _enemies.at(_target);
         _effects.set_target(&target.position, true);
     }
-
-    data.play_frames += 1;
 }
 
 void combat::_read_input()
@@ -1499,6 +1497,8 @@ void combat::enemy_killed(int index)
 
     if(xp > 0)
     {
+        // Rested experience doubles kill experience while it lasts, as in WoW.
+        xp += use_rest_xp(xp);
         bn::string<16> text = "+";
         text += bn::to_string<8>(xp);
         text += " XP";

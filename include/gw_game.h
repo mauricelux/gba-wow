@@ -54,6 +54,7 @@ private:
     const warp_def* _warp = nullptr;
     warp_def _teleport = {};
     int _warp_frames = 0;
+    int _rest_frames = 0;
     int _area_check_frames = 0;
     int _death_frames = 0;
 
@@ -61,6 +62,9 @@ private:
     void _follow_camera();
     void _check_warps();
     void _update_warp();
+    void _update_rest();
+    [[nodiscard]] bool _near_innkeeper() const;
+    void _rest(bool loaded);
     void _check_area(bool force);
     void _interact();
     bool _update_overlays();

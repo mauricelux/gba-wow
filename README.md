@@ -20,6 +20,8 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Prisoners in the Stockade cell block](docs/screenshots/m11_stockade_cells.png)
 ![Bazil Thredd throws a smoke bomb](docs/screenshots/m11_bazil.png)
 ![The new ending](docs/screenshots/m11_ending.png)
+![Resting at the Lion's Pride Inn](docs/screenshots/m12_rest.png)
+![A rested kill gives double experience](docs/screenshots/m12_rested_kill.png)
 
 ## Status
 
@@ -34,7 +36,8 @@ VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd,
 end, and save to the cartridge. Every zone has its own music, and elite fights switch to a boss tune.
 
 Following the quests in order takes a hero to about level 17 at the Deadmines and to level 20 in the
-Stockade, without grinding.
+Stockade, without grinding. The level cap is 60: the road there is planned in
+[docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12 to M26).
 
 | Milestone | What it adds | State |
 | --- | --- | --- |
@@ -50,6 +53,12 @@ Stockade, without grinding.
 | M9 Polish | Title screen, music, sound effects, balance | Done |
 | M10 Stormwind and exploration | Stormwind city, mine maps, hidden chests, world map, more trees and bushes | Done |
 | M11 The Stockade | Second dungeon under Stormwind, three bosses, final quest chain and new ending | Done |
+| M12 Systems for 60 | Level cap 60, XP curve to 60, rested XP, 16-bit ids, save version 4 | Done |
+| M13 Subclasses and ranks | Subclass choice, 9 kits, ability ranks, 18-talent trees | Planned |
+| M14 Keybinds and bags | Utility, Buffs and Items bars, buff reminder, unlimited sorted bags | Planned |
+| M15 Enemy abilities | Shared enemy ability table, cast bars, interrupts, flee and call for help | Planned |
+| M16 Travel and the pet | Flight masters, boats, tram, mount, two-level world map, hunter pet | Planned |
+| M17 to M26 | Redridge to the Plaguelands, 18 new dungeons, Onyxia and the new ending | Planned |
 
 ## Controls
 
@@ -69,6 +78,11 @@ Last Stand for warriors). Class trainers unlearn talents for 10 silver.
 
 The hearthstone in your bags takes you back to your home inn every ten minutes; innkeepers in
 Goldshire, Stormwind's Trade District and at Sentinel Hill can make their inn your home.
+
+Rested experience: ask an innkeeper to let you rest a while (or save and switch off inside an inn).
+Every six minutes played since your last rest becomes 5% of a level of rested experience, up to a
+level and a half. While you are rested the experience bar turns blue and kills give double experience
+until the rested pool runs out. Resting also restores your health and mana.
 
 Stormwind is reached by the road west from Goldshire. Its districts have weapon, armor and goods
 vendors, a trainer for every class, and the quest givers who send you on to Highlord Bolvar in the keep.
@@ -101,6 +115,10 @@ The game saves itself whenever you change zones or turn in a quest, and from the
 system page also has debug options for testing: teleport, level up, extra gold and gear for your level
 (without the epic quest rewards).
 
+Saves from every earlier version load: the first time an old save is loaded it is converted, and the
+old copy stays on the cartridge until the game has saved twice in the new format. The game keeps two
+save slots and writes them in turn, so a save cut short by switching off leaves the previous one.
+
 ## Building
 
 The ROM is built by CI on every push: open the latest run under **Actions** and download the
@@ -122,7 +140,9 @@ or install [devkitPro](https://devkitpro.org/wiki/Getting_Started) with devkitAR
 Run `gba-wow.gba` in [mGBA](https://mgba.io/).
 
 The headless runner in `tools/headless/` can start from a save file: set `MGBA_SAVE=path/to/gba-wow.sav`
-before running it.
+before running it. `tools/headless/check_save.py` prints the hero stored in a save file and can check
+it (`check_save.py gba-wow.sav level=12 class=Hunter`); CI uses it with an old version 3 save from
+`tools/headless/saves/` to make sure old saves still load.
 
 ## Project layout
 

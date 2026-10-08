@@ -120,9 +120,10 @@ void hud::update(const combat& combat_ref, const enemies& enemies_ref)
 
     _draw_target(combat_ref, enemies_ref);
 
-    if(data.xp != _xp || data.level != _level)
+    if(data.xp != _xp || data.level != _level || (data.rest_xp > 0) != _rested)
     {
         _xp = data.xp;
+        _rested = data.rest_xp > 0;
         _level = data.level;
         _draw_xp();
         _draw_player();
@@ -213,7 +214,9 @@ void hud::_draw_xp()
         return;
     }
 
-    ui::bar(0, xp_row, ui::columns, character().xp, xp_for_level(character().level), ui::bar_color::XP);
+    // Blue while rested, as in WoW.
+    ui::bar(0, xp_row, ui::columns, character().xp, xp_for_level(character().level),
+            character().rest_xp > 0 ? ui::bar_color::MANA : ui::bar_color::XP);
 }
 
 void hud::_draw_cast(const combat& combat_ref)

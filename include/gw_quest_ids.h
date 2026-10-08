@@ -8,7 +8,7 @@ namespace gw
 
 // Keep in the same order as the table in gw_quests.cpp. Saves index quest progress by these values:
 // only append, and keep COUNT within gw::max_quests.
-enum class quest_id : uint8_t
+enum class quest_id : uint16_t
 {
     NONE,
     // Northshire

@@ -5,3 +5,4 @@ build/
 *.ss[0-9]
 tools/preview/
 __pycache__/
+!tools/headless/saves/*.sav

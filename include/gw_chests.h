@@ -43,7 +43,7 @@ public:
 private:
     struct chest
     {
-        uint8_t id = 0;
+        uint16_t id = 0;
         uint8_t level = 1;
         bn::fixed_point position;
         bn::optional<bn::sprite_ptr> sprite;

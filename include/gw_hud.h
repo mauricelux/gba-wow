@@ -50,6 +50,7 @@ private:
     int _target = -2;
     int _target_health = -1;
     int _xp = -1;
+    bool _rested = false;
     int _level = -1;
     int _cast = -1;
     int _buff_mask = -1;

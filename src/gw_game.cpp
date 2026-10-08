@@ -12,6 +12,7 @@
 #include "gw_audio.h"
 #include "gw_character.h"
 #include "gw_fade.h"
+#include "gw_homes.h"
 #include "gw_input.h"
 #include "gw_npc_data.h"
 #include "gw_quests.h"
@@ -29,6 +30,9 @@ namespace
     constexpr int overhead_priority = 1;
 
     constexpr int warp_fade_frames = 16;
+    constexpr int rest_fade_frames = 30;
+    constexpr int rest_dark_frames = 40;
+    constexpr int inn_range = 120;      // pixels from an innkeeper that count as inside the inn
     constexpr int area_check_interval = 15;
     constexpr int loot_range = 24;
     constexpr int talk_range = 32;
@@ -63,12 +67,20 @@ game::game() :
     _combat.on_kill = _on_kill;
     _combat.callback_context = this;
 
-    if(character().play_frames > 0)
+    bool loaded = character().play_frames > 0;
+
+    if(loaded)
     {
         _hud.message("Welcome back!", ui::color::YELLOW);
     }
 
     _load_map(character().map, saved_position());
+
+    // Saving and quitting in an inn counts as a night's rest.
+    if(loaded && _near_innkeeper())
+    {
+        _rest(true);
+    }
 }
 
 void game::update()
@@ -82,7 +94,7 @@ void game::update()
         return;
     }
 
-    bool warping = _warp != nullptr;
+    bool warping = _warp != nullptr || _rest_frames > 0;
     bool dead = _combat.dead();
     bool input = ! warping && ! dead;
     bool abilities_held = bn::keypad::r_held();
@@ -117,7 +129,11 @@ void game::update()
     _chests.update(_player.position());
     _combat.update(input);
 
-    if(warping)
+    if(_rest_frames > 0)
+    {
+        _update_rest();
+    }
+    else if(warping)
     {
         _update_warp();
     }
@@ -152,6 +168,11 @@ bool game::_update_overlays()
                 _dialog.ending_requested = false;
                 _set_paused(true);
                 _ending.open();
+            }
+            else if(_dialog.rest_requested)
+            {
+                _dialog.rest_requested = false;
+                _rest_frames = 1;
             }
         }
 
@@ -453,6 +474,81 @@ void game::_update_warp()
         {
             _warp = nullptr;
         }
+    }
+}
+
+void game::_update_rest()
+{
+    // Fade to black, rest, fade back in.
+    ++_rest_frames;
+
+    if(_rest_frames <= rest_fade_frames)
+    {
+        set_fade(bn::fixed(_rest_frames) / rest_fade_frames);
+
+        if(_rest_frames == rest_fade_frames)
+        {
+            _rest(false);
+        }
+    }
+    else if(_rest_frames > rest_fade_frames + rest_dark_frames)
+    {
+        int frames_in = _rest_frames - rest_fade_frames - rest_dark_frames;
+        set_fade(bn::fixed(rest_fade_frames - frames_in) / rest_fade_frames);
+
+        if(frames_in == rest_fade_frames)
+        {
+            _rest_frames = 0;
+        }
+    }
+}
+
+bool game::_near_innkeeper() const
+{
+    for(int index = 0; index < _npcs.count(); ++index)
+    {
+        const npc& item = _npcs.at(index);
+
+        if(innkeeper_home(item.id) != home_id::COUNT &&
+           bn::abs(item.position.x() - _player.position().x()) <= inn_range &&
+           bn::abs(item.position.y() - _player.position().y()) <= inn_range)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void game::_rest(bool loaded)
+{
+    int added = rest_at_inn();
+
+    if(! loaded)
+    {
+        // A night in a bed heals too.
+        character_data& data = character();
+        const stats& s = _combat.player_stats();
+        data.health = s.max_health;
+
+        if(uses_mana())
+        {
+            data.power = s.max_power;
+        }
+
+        save_game();
+    }
+
+    if(added > 0)
+    {
+        bn::string<30> text = "Rested: +";
+        text += bn::to_string<8>(added);
+        text += " bonus XP";
+        _hud.message(text, ui::color::BLUE);
+    }
+    else if(! loaded)
+    {
+        _hud.message(character().rest_xp > 0 ? "You are well rested" : "You feel refreshed", ui::color::BLUE);
     }
 }
 
