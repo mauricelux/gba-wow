@@ -240,10 +240,10 @@ def markers():
 # --- treasure chest (16x16): closed and open ---------------------------------------------------------
 
 CH = {'out': 1, 'wood_d': 2, 'wood': 3, 'wood_l': 4, 'iron_d': 5, 'iron': 6, 'gold_d': 7, 'gold': 8,
-      'gold_l': 9, 'inside': 10, 'shadow': 11}
+      'gold_l': 9, 'inside': 10, 'shadow': 11, 'flame_d': 12, 'flame': 13, 'flame_l': 14, 'coal': 15}
 CHEST_PALETTE = [(255, 0, 255), (24, 16, 16), (88, 48, 24), (136, 80, 40), (176, 112, 56), (72, 72, 88),
                  (136, 136, 152), (176, 120, 24), (232, 184, 48), (248, 232, 136), (40, 24, 16),
-                 (40, 48, 32)] + [(0, 0, 0)] * 4
+                 (40, 48, 32), (208, 72, 24), (248, 152, 40), (255, 240, 144), (96, 32, 24)]
 
 
 def chest(opened):
@@ -285,6 +285,38 @@ def chest(opened):
         img[7:11, 7:9] = CH['gold']
         img[7, 7] = CH['gold_l']
         img[10, 7:9] = CH['gold_d']
+    return img
+
+
+# --- brazier (16x16): a chest_def of level 0. Cold, then two frames of flame ---------------------------
+
+def brazier(lit, flicker=0):
+    c = Canvas(16)
+    img = c.img
+    img[14:16, 3:13] = CH['shadow']
+    # Three iron legs under a wide bowl.
+    img[11:15, 4] = CH['iron_d']
+    img[11:15, 11] = CH['iron_d']
+    img[11:14, 7:9] = CH['iron_d']
+    img[14, 3:6] = CH['out']
+    img[14, 10:13] = CH['out']
+    img[8:11, 2:14] = CH['iron']
+    img[8, 2:14] = CH['out']
+    img[10, 3:13] = CH['iron_d']
+    img[11, 3:13] = CH['out']
+    img[8:11, 1] = CH['out']
+    img[8:11, 14] = CH['out']
+    img[9, 4:12] = CH['gold_d']
+    # Coals heaped in the bowl.
+    img[7, 3:13] = CH['coal'] if lit else CH['inside']
+    img[6, 5:11] = CH['coal'] if lit else CH['inside']
+    if lit:
+        sway = (0, 1)[flicker]
+        c.fill(c.ellipse(8 - sway * 0.5, 4.5, 4.5, 3.5), CH['flame_d'])
+        c.fill(c.poly([(4, 6), (8 + sway, -0.5), (12, 6)]), CH['flame_d'])
+        c.fill(c.ellipse(8, 5, 3, 2.5) | c.poly([(5.5, 6), (8 - sway, 1), (10.5, 6)]), CH['flame'])
+        c.fill(c.ellipse(8, 5.5, 1.5, 1.5), CH['flame_l'])
+        img[7, 4:12] = CH['flame']
     return img
 
 
@@ -950,7 +982,8 @@ def main():
     write('circle', circle(), CIRCLE_PALETTE, 64)
     write('castbar', castbars(), CASTBAR_PALETTE, 8)
     write('petbar', petbars(), PETBAR_PALETTE, 8)
-    write('chest', [chest(False), chest(True)], CHEST_PALETTE, 16)
+    write('chest', [chest(False), chest(True), brazier(False), brazier(True), brazier(True, 1)],
+          CHEST_PALETTE, 16)
     write('map_marks', map_marks(), MARKER_PALETTE, 8)
     icon_map = icons()
     write('icons', [c.img for c in icon_map.values()], ICON_PALETTE, 16)

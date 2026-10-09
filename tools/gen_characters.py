@@ -139,6 +139,82 @@ HEAD_PATCHES = {
         'side': {8: '.ommmmsooo......', 9: '..ommmAooogo....', 10: '..ommLAAobBgo...',
                  11: '..oomAAAobBgo...'},
     },
+    # A gnome replaces every row: a big round head with a hair tuft, wide eyes and long ears sticking out
+    # sideways over a narrow, short body (rows 11-17; the hands stay on row 15 like everyone else's). The
+    # chin is the lower face, so an old gnome gets a beard from the palette.
+    'gnome': {
+        'front': dict(enumerate([
+            '......oo',
+            '.....oHH',
+            '...ooHHH',
+            '..oHHHHH',
+            '.ohHoggo',
+            'o.ohoddo',
+            'SoohSSSS',
+            'oSShSoSS',
+            '.osSSoSS',
+            '..osSSms',
+            '...osmmm',
+            '..ooAAom',
+            '.oALLAob',
+            '.oAAaobB',
+            '.oaaobBg',
+            '.oSsollg',
+            '..oobBBB',
+            '...obBbB',
+        ])),
+        'back': dict(enumerate([
+            '......oo',
+            '.....oHH',
+            '...ooHHH',
+            '..oHHHHH',
+            '.ohHHHHH',
+            'o.ohdddd',
+            'SohhHHHH',
+            'oShhHHHH',
+            '.oohhHHH',
+            '...ohhhH',
+            '....ohhh',
+            '..ooAAoo',
+            '.oALLAgg',
+            '.oAAagBB',
+            '.oaagBgB',
+            '.oSsogBB',
+            '..ooodgB',
+            '...obodd',
+        ])),
+        'side': dict(enumerate([
+            '......oo........',
+            '.....oHHo.......',
+            '....oHHHHoo.....',
+            '...oHHHHHHHo....',
+            '..oggoHHHHHHo...',
+            '..oddoddddhHo...',
+            '.oSSSHHhhhhHo...',
+            '.oSoSSShSSShoSo.',
+            'oSSoSSShsSSSSo..',
+            '.osSSSSshSoo....',
+            '..ommmmsho......',
+            '...ooAAooo......',
+            '..oALLAobBo.....',
+            '..oAAAAobBo.....',
+            '..oaAaaobgo.....',
+            '...oSsolldo.....',
+            '...obBBBoo......',
+            '...obBbBo.......',
+        ])),
+    },
+}
+
+# The gnome's cast pose: the arms raised out to the sides, below the ears.
+GNOME_CAST = {
+    9: 'oS.sSSms',
+    10: 'oAo.osmm',
+    11: '.oAoAAom',
+    12: '..oALAob',
+    13: '...oaobB',
+    14: '...oobBg',
+    15: '...ollll',
 }
 
 LEGS_ARMOR = [
@@ -222,6 +298,7 @@ SWORD = ['.g.',
          '.L.',
          '.A.']
 SWORD_GRIP = (1, 1)
+SWORD_SHORT = SWORD[:4] + SWORD[6:]         # a gnome's: the blade two pixels shorter
 
 STAFF = ['.g.',
          'gLg',
@@ -313,9 +390,13 @@ class Humanoid:
         self.head = head
         self.body = body
         self.weapon = weapon
-        self.leg_extra = {'dwarf': -3, 'elf': 1}.get(head, 0)
+        self.leg_extra = {'dwarf': -3, 'elf': 1, 'gnome': -5}.get(head, 0)
         patches = HEAD_PATCHES[head]
         self.front = to_array(mirror(patched(FRONT, patches.get('front', {}))), HKEYS)
+        self.sword = SWORD_SHORT if head == 'gnome' else SWORD
+        self.cast_top = None
+        if head == 'gnome':
+            self.cast_top = to_array(mirror(patched(patched(FRONT, patches['front']), GNOME_CAST)), HKEYS)
         self.back = to_array(mirror(patched(BACK, patches.get('back', {}))), HKEYS)
         self.side = to_array(patched(SIDE, patches.get('side', {})), HKEYS)
         self.ox = 8
@@ -389,7 +470,7 @@ class Humanoid:
 
         top_part = top.copy()
         if pose == 'cast':
-            top_part = self._raise_arms(top_part)
+            top_part = self._raise_arms(top_part) if self.cast_top is None else self.cast_top.copy()
         blit(frame, top_part, self.ox + lunge, top_y + bob)
 
         if pose == 'walk' and view == 'side':
@@ -402,7 +483,7 @@ class Humanoid:
 
     def _held_weapon(self, frame, view, hand_x, off_hand_x, hand_y):
         if self.weapon == 'sword':
-            place(frame, stamp(SWORD), SWORD_GRIP, hand_x, hand_y)
+            place(frame, stamp(self.sword), SWORD_GRIP, hand_x, hand_y)
         elif self.weapon == 'staff':
             place(frame, stamp(STAFF), STAFF_GRIP, hand_x, hand_y)
         elif self.weapon == 'bow':
@@ -422,7 +503,7 @@ class Humanoid:
             else:
                 blit(frame, bow, 13, hand_y - 16)
             return
-        rows = SWORD if self.weapon != 'staff' else STAFF[:12]
+        rows = self.sword if self.weapon != 'staff' else STAFF[:12]
         grip = SWORD_GRIP if self.weapon != 'staff' else STAFF_GRIP
         if self.weapon == 'none':
             return
@@ -451,6 +532,9 @@ class Humanoid:
     def _cast_weapon(self, frame, top_y):
         if self.weapon == 'staff':
             place(frame, stamp(STAFF), STAFF_GRIP, self.ox + 1, top_y + 5)
+        elif self.weapon == 'sword' and self.cast_top is not None:
+            part = stamp(self.sword)[::-1, :]           # the grip in the raised hand (row 9, column 1)
+            blit(frame, part, self.ox - 1, top_y + 9 - (part.shape[0] - 3))
         elif self.weapon == 'sword':
             part = stamp(SWORD)[::-1, :]
             blit(frame, part, self.ox - 1, top_y - 6)
@@ -493,6 +577,10 @@ HUMANOID_SHEETS = {
     'elf_bow': Humanoid('elf', 'armor', 'bow'),
     'orc_sword': Humanoid('orc', 'armor', 'sword'),
     'orc_staff': Humanoid('orc', 'robe', 'staff'),
+    'gnome_plain': Humanoid('gnome', 'armor', 'none'),
+    'gnome_sword': Humanoid('gnome', 'armor', 'sword'),
+    'dwarf_plain': Humanoid('dwarf', 'armor', 'none'),
+    'fem_bow': Humanoid('long', 'armor', 'bow'),
 }
 
 # --- creatures --------------------------------------------------------------------------------------
@@ -1406,6 +1494,523 @@ def abomination(step, pose):
     return c.done()
 
 
+def ridges(c, xs, key='second_dark'):
+    """Spikes along a back: a pixel of key on top of the topmost colored pixel of each column."""
+    for x in xs:
+        if not 0 <= x < FRAME:
+            continue
+        col = c.img[:, x]
+        rows = np.where((col != 0) & (col != C['outline']))[0]
+        if len(rows) and rows[0] > 0:
+            c.px(x, rows[0] - 1, key)
+
+
+def teeth(c, xs, y0, y1, down=True, key='tooth'):
+    """Teeth along a jaw: under the lowest (down) or over the highest colored pixel of each column between
+    rows y0 and y1."""
+    for x in xs:
+        col = c.img[y0:y1 + 1, x]
+        rows = np.where((col != 0) & (col != C['outline']))[0]
+        if len(rows):
+            c.px(x, y0 + (rows[-1] + 1 if down else rows[0] - 1), key)
+
+
+def crocolisk(step, pose):
+    """A crocolisk: a long, low crocodile with a flat snout, a ridged back and a heavy tail swaying behind."""
+    c = Canvas()
+    s = STRIDE[step] // 2
+    t = [0, 1, 0, -1][step]
+    attack = pose == 'attack'
+    u = -1 if attack else 0
+    lift = [(0, 0), (1, 0), (0, 0), (0, 1)][step]                                    # diagonal pairs step
+    for x, up in ((13 - s, lift[1]), (24 + s, lift[0])):                             # far legs
+        c.rect(x, 24, x + 1, 27 - up, 'dark')
+        c.rect(x - 2, 28 - up, x + 1, 28 - up, 'dark')
+    c.poly([(22, 18.5), (30.6, 23 + t), (30.6, 24.5 + t), (22, 26.6)], 'main', dark='dark', light='light')
+    body = c.ellipse_mask(16.5 + u, 22.5, 8.5, 4)
+    c.part(body, 'main', dark='dark', light='light')
+    c.part(body & (c.ys >= 25), 'second', edge=False)                                # pale belly
+    ridges(c, range(11 + u, 31, 2))
+    for x, up in ((10 + s, lift[0]), (21 - s, lift[1])):                             # near legs
+        c.rect(x, 24, x + 2, 27 - up, 'main', dark='dark')
+        c.rect(x - 2, 28 - up, x + 2, 28 - up, 'main')
+        c.px(x - 2, 28 - up, 'tooth')
+    hx = 9 + u * 2
+    if attack:
+        c.ellipse(hx + 1, 21.5, 3, 2.5, 'main', light='light')
+        c.poly([(hx + 1, 19), (hx + 1, 22.6), (2, 18.6), (2, 16)], 'main', light='light')  # jaws thrown open
+        c.poly([(hx + 1, 23.4), (hx + 1, 25.6), (2, 26.6), (2, 25)], 'second', dark='second_dark')
+        teeth(c, (3, 5, 7), 12, 22)
+        teeth(c, (3, 5, 7), 24, 28, down=False)
+    else:
+        c.ellipse(hx + 1, 21.5, 3, 2.5, 'main', light='light')
+        c.rect(1, 20, hx, 22, 'main', light='light')                                    # upper jaw
+        c.rect(2, 24, hx, 24, 'second')                                                 # lower jaw
+        c.line(2, 23, hx, 23, 'outline', edge=False)
+        for x in (3, 5, 7):
+            c.px(x, 23, 'tooth')
+        c.px(1, 19, 'main')                                                             # nostril bump
+    c.ellipse(hx + 1, 19, 1.5, 1.5, 'main', light='light')                              # eye bump
+    c.px(hx + 1, 19, 'eye')
+    return c.done()
+
+
+RAPTOR_LEG = [
+    '..lmml..',
+    '.lmmmmd.',
+    '.mmmmmd.',
+    '.mmmmmd.',
+    '..mmmd..',
+    '...mmd..',
+    '....mmd.',
+    '....mmd.',
+    '...mmd..',
+    '..mmdT..',
+    '.mmmd...',
+    'TmmmmT..',
+]
+
+
+def raptor(step, pose):
+    """A raptor: a lean two-legged hunter leaning forward over a long tail, with a feathered crest, striped
+    hide, small clawed arms and sickle-clawed feet; it bites with a lunge and dies on its side, legs up."""
+    c = Canvas()
+    if pose == 'dead':
+        legs = RAPTOR_LEG[::-1]
+        c.sticker(legs, 18, 10, far=True)
+        c.sticker(legs, 12, 11)
+        for i in range(3):
+            c.line(9 + i, 22 + i, 13 + i * 2, 19 + i * 2, 'second', edge=True)
+        c.part(c.poly_mask([(21, 21.5), (30.6, 25), (30.6, 26.6), (21, 27.6)]) | c.ellipse_mask(16, 24.5, 7, 3.5) |
+               c.ellipse_mask(8, 25.5, 3, 2.5) | c.rect_mask(2, 25, 7, 27) |
+               c.poly_mask([(9, 23), (13, 22), (13, 27.6), (9, 27.6)]), 'main', dark='dark', light='light')
+        c.line(3, 26, 6, 26, 'outline', edge=False)
+        c.px(7, 24, 'outline')                                                           # eye shut
+        return c.done()
+    d = STRIDE[step]
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    hx, hy = (8, 11 + b) if attack else (8, 6 + b)
+    c.sticker(RAPTOR_LEG, 18, 17, leg_stride(-d), far=True)
+    for i in range(3):                                                                 # crest feathers
+        c.line(hx + 1 + i, hy - 2 + i, hx + 5 + i * 2, hy - 5 + i * 2, 'second', edge=True)
+    tail = c.poly_mask([(20, 10 + b), (30.6, 5 + b), (30.6, 7 + b), (22, 15 + b)])
+    body = c.ellipse_mask(17, 14 + b, 6.5, 4)
+    neck = c.poly_mask([(hx + 1, hy - 1), (hx + 3, hy - 2), (14, 11 + b), (13, 15 + b), (hx + 1, hy + 2)])
+    skull = c.ellipse_mask(hx, hy, 3, 2.5)
+    if attack:
+        jaw = (c.poly_mask([(hx - 1, hy - 2), (hx - 7, hy - 4), (hx - 7, hy - 2), (hx, hy + 1)]) |
+               c.poly_mask([(hx - 1, hy + 1), (hx - 6, hy + 3), (hx - 6, hy + 4.5), (hx + 1, hy + 2.5)]))
+    else:
+        jaw = c.rect_mask(hx - 6, hy - 1, hx - 1, hy + 1)
+    c.part(tail | body | neck | skull | jaw, 'main', dark='dark', light='light')
+    for x, y in ((14, 11), (18, 10), (22, 10), (26, 8)):                               # stripes
+        c.line(x, y + b, x + 1, y + 2 + b, 'dark', edge=False)
+    if attack:
+        teeth(c, (hx - 6, hx - 3), hy - 6, hy)
+        teeth(c, (hx - 5, hx - 2), hy + 1, hy + 6, down=False)
+    else:
+        c.line(hx - 5, hy + 1, hx - 1, hy + 1, 'outline', edge=False)                    # mouth
+        c.px(hx - 3, hy + 2, 'tooth')
+    c.px(hx - 1, hy - 1, 'eye')
+    c.px(hx - 6, hy - 1, 'dark')                                                         # nostril
+    c.sticker(RAPTOR_LEG, 16, 17, leg_stride(d), edge=2)
+    arm_end = (hx - 1, hy + 5) if attack else (10, 17 + b)
+    c.line(13, 14 + b, arm_end[0], arm_end[1], 'main', dark='dark')                    # small arm
+    c.px(arm_end[0] - 1, arm_end[1], 'tooth')
+    c.px(arm_end[0], arm_end[1] + 1, 'tooth')
+    return c.done()
+
+
+def tube(c, points, r0, r1):
+    """A mask for a snake-like body: discs along the polyline through points, the radius going from r0 at
+    the first point to r1 at the last."""
+    mask = np.zeros((FRAME, FRAME), dtype=bool)
+    segments = list(zip(points, points[1:]))
+    lengths = [float(np.hypot(x1 - x0, y1 - y0)) for (x0, y0), (x1, y1) in segments]
+    total = sum(lengths)
+    done = 0.0
+    for ((x0, y0), (x1, y1)), length in zip(segments, lengths):
+        n = max(int(length * 2), 1)
+        for i in range(n + 1):
+            t = i / n
+            r = r0 + (r1 - r0) * (done + length * t) / total
+            mask |= c.ellipse_mask(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, r, r)
+        done += length
+    return mask
+
+
+def naga(step, pose, caster=False):
+    """A naga: a scaled torso and a finned head over a coiled snake tail that sways as it slithers;
+    warriors carry a trident and thrust it, casters hold up glowing hands. It dies stretched out."""
+    c = Canvas()
+    if pose == 'dead':
+        if not caster:
+            c.line(5, 21, 23, 21, 'weapon')                                                # the dropped trident
+            c.line(5, 19, 5, 23, 'weapon')
+            for y in (19, 21, 23):
+                c.line(2, y, 4, y, 'weapon')
+        body = tube(c, [(9, 25.5), (16, 26), (23, 26), (27, 25), (29.5, 22.5)], 3, 0.8)
+        c.part(body, 'main', dark='dark', light='light')
+        c.part(body & (c.ys >= 27), 'second', edge=False)
+        c.poly([(6, 21), (10, 18), (9, 23)], 'extra', dark='extra_dark')                 # head fin
+        c.ellipse(5, 24.5, 3, 3, 'main', light='light', dark='dark')
+        c.px(3, 24, 'outline')
+        c.rect(9, 23, 12, 25, 'extra', dark='extra_dark', edge=False)                     # belt
+        return c.done()
+    w = [0, 1, 0, -1][step]
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    path = [(15.5, 15 + b), (14, 19 + b), (13 + w * 0.5, 23.5), (16.5, 26), (22 + w, 26), (26 + w, 24),
+            (27.5 + w, 20.5), (26.5 + w * 2, 17.5)]
+    body = tube(c, path, 3.2, 0.8)
+    c.part(body, 'main', dark='dark', light='light')
+    belly = tube(c, [(x - 1.5, y + 1) for x, y in path[:5]], 2.2, 1.6) & body
+    c.part(belly & ~tube(c, path[:5], 2.4, 1.2), 'second', edge=False)                # pale underside
+    for x, y in ((24 + w, 25), (27 + w, 21), (17, 25)):
+        c.px(x, y, 'dark')                                                                 # scales
+    if caster and attack:
+        c.line(16, 11 + b, 11, 5 + b, 'dark', width=2)                                 # far arm raised
+    elif attack:
+        c.line(16, 11 + b, 10, 13 + b, 'dark', width=2)
+    else:
+        c.line(16, 11 + b, 12, 15 + b, 'dark', width=2)
+    c.poly([(12, 10 + b), (19, 10 + b), (18, 17 + b), (13, 17 + b)], 'main', dark='dark', light='light')
+    c.rect(12, 16 + b, 19, 17 + b, 'extra', dark='extra_dark')                       # belt
+    hx, hy = 14, 6 + b
+    c.poly([(15, 3 + b), (22, 1 + b), (20, 5 + b), (22, 8 + b), (16, 9 + b)], 'extra', dark='extra_dark')
+    c.ellipse(hx, hy, 3, 3.5, 'main', light='light', dark='dark')
+    c.poly([(15, 5 + b), (19, 3 + b), (18, 7 + b)], 'extra')                          # fin ear
+    c.px(hx - 2, hy - 1, 'eye')
+    c.px(hx - 3, hy + 1, 'outline')
+    c.ellipse(16, 11 + b, 2, 1.5, 'extra', dark='extra_dark', light='light')         # shoulder
+    if caster:
+        if attack:
+            c.line(15, 11 + b, 9, 4 + b, 'main', width=2, dark='dark')
+            glow(c, 8, 3 + b, 2.5)
+            for x, y in ((4, 1), (12, 1), (4, 6), (12, 6), (8, -1)):
+                c.px(x, y + 2 + b, 'flame')
+        else:
+            c.line(15, 11 + b, 11, 14 + b, 'main', width=2, dark='dark')
+            glow(c, 9, 14 + b, 2 if step in (1, 3) else 1.5)
+        return c.done()
+    if attack:
+        c.line(21, 13 + b, 4, 13 + b, 'weapon')                                         # trident thrust
+        c.line(4, 11 + b, 4, 15 + b, 'weapon')
+        for y in (11, 13, 15):
+            c.line(1, y + b, 3, y + b, 'weapon', edge=True)
+        c.line(15, 11 + b, 9, 13 + b, 'main', width=2, dark='dark')
+    else:
+        c.line(9, 4 + b, 9, 27, 'weapon')                                                 # trident upright
+        c.line(7, 4 + b, 11, 4 + b, 'weapon')
+        for x in (7, 9, 11):
+            c.line(x, 1 + b, x, 3 + b, 'weapon')
+        c.line(15, 11 + b, 10, 14 + b, 'main', width=2, dark='dark')
+    return c.done()
+
+
+def turtle(step, pose):
+    """A big snapping turtle: a high domed shell over stubby legs, the hook-beaked head out front; it snaps
+    with the neck stretched out."""
+    c = Canvas()
+    s = STRIDE[step] // 2
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    for x in (11 - s, 23 + s):                                                       # far legs
+        c.rect(x, 23, x + 2, 27, 'second_dark')
+        c.rect(x - 1, 28, x + 2, 28, 'second_dark')
+    c.poly([(26, 20), (30.6, 24), (26, 24.6)], 'second', dark='second_dark')        # tail
+    dome = c.ellipse_mask(17, 23, 11.5, 11) & (c.ys <= 22)
+    c.part(dome, 'main', light='light')
+    for cx, cy in ((11, 18), (17, 16), (23, 18), (14, 13), (20, 13)):                # shell plates
+        plate = c.ellipse_mask(cx, cy, 2.5, 2) & dome
+        ring = neighbors(plate) & ~plate & dome
+        c.img[ring] = C['dark']
+    c.rect(6, 21, 28, 22, 'extra')                                                   # rim
+    for x in range(8, 28, 3):
+        c.px(x, 22, 'extra_dark')
+    hx, hy = (5, 19) if attack else (6, 20 + b)
+    c.part(c.rect_mask(hx + 1, hy - 2, 9, hy + 2) | c.ellipse_mask(hx, hy, 3.5, 3), 'second', dark='second_dark',
+           light='light')
+    if attack:
+        c.poly([(hx - 1, hy - 3), (hx - 4.4, hy - 3), (hx - 4.4, hy - 1), (hx - 1, hy)], 'second', light='light')
+        c.poly([(hx - 1, hy + 2), (hx - 4, hy + 3), (hx - 4, hy + 4), (hx, hy + 3.6)], 'second', dark='second_dark')
+        c.px(hx - 4, hy - 1, 'tooth_dark')
+    else:
+        c.rect(hx - 4, hy - 1, hx - 3, hy + 1, 'second', light='light')                 # hooked beak
+        c.px(hx - 4, hy + 1, 'tooth_dark')
+        c.line(hx - 3, hy + 1, hx, hy + 1, 'outline', edge=False)
+    c.px(hx - 1, hy - 1, 'eye')
+    c.px(hx, hy - 1, 'outline')
+    for x in (8 + s, 20 - s):                                                        # near legs
+        c.rect(x, 23, x + 3, 27, 'second', dark='second_dark')
+        c.rect(x - 1, 28, x + 3, 28, 'second')
+        c.px(x - 1, 28, 'tooth')
+    return c.done()
+
+
+def hydra_head(c, hx, hy, attack, dead=False):
+    """One of a hydra's heads facing left, its skull centered on (hx, hy), with a finned crest."""
+    c.poly([(hx + 1, hy - 2), (hx + 6, hy - 4), (hx + 4, hy + 1)], 'extra', dark='extra_dark')
+    skull = c.ellipse_mask(hx, hy, 3, 2.5)
+    if attack:
+        upper = c.poly_mask([(hx - 1, hy - 2.5), (hx - 6, hy - 4), (hx - 6, hy - 2), (hx, hy + 0.5)])
+        c.part(skull | upper, 'main', light='light', dark='dark')
+        c.part(c.poly_mask([(hx - 1, hy + 1), (hx - 5, hy + 2.5), (hx - 5, hy + 4), (hx + 1, hy + 2.5)]), 'second',
+               dark='second_dark')
+        c.px(hx - 5, hy - 1, 'tooth')
+        c.px(hx - 3, hy, 'tooth')
+        c.px(hx - 4, hy + 2, 'tooth')
+    else:
+        c.part(skull | c.rect_mask(hx - 5, hy - 1, hx - 1, hy + 1), 'main', light='light', dark='dark')
+        c.line(hx - 4, hy + 1, hx - 1, hy + 1, 'outline', edge=False)
+        c.px(hx - 3, hy + 2, 'tooth')
+    if dead:
+        c.line(hx - 1, hy - 1, hx, hy - 1, 'outline', edge=False)
+    else:
+        c.px(hx - 1, hy - 1, 'eye')
+        c.px(hx, hy - 1, 'outline')
+
+
+def hydra_neck(c, path):
+    neck = tube(c, path, 2.2, 1.3)
+    c.part(neck, 'main', dark='dark', light='light')
+    c.part(neck & tube(c, [(x - 1.5, y + 1.5) for x, y in path], 1.5, 1) & ~tube(c, path, 1.4, 0.6), 'second',
+           edge=False)
+
+
+def hydra(step, pose):
+    """A hydra (Aku'mai): a squat scaled body on stumpy legs with three long necks fanned out; the heads
+    bob out of step as it walks and all lunge to bite. It dies with the necks sprawled on the ground."""
+    c = Canvas()
+    if pose == 'dead':
+        c.rect(24, 17, 26, 20, 'dark')
+        c.rect(18, 17, 20, 20, 'dark')                                                    # legs in the air
+        body = c.ellipse_mask(21.5, 24, 8.5, 4.5) | c.poly_mask([(27, 22), (30.6, 26), (30.6, 27.6), (26, 27.6)])
+        c.part(body, 'main', dark='dark', light='light')
+        c.part(body & (c.ys <= 21) & (c.xs <= 27), 'second', edge=False)
+        necks = [([(16, 21), (13, 18), (10, 17)], (7, 17)), ([(15, 24), (11, 23), (9, 23)], (6, 23)),
+                 ([(17, 26), (14, 26.5)], (11, 26))]
+        for path, (hx, hy) in necks:
+            hydra_neck(c, path + [(hx + 1, hy)])
+        for path, (hx, hy) in necks:
+            hydra_head(c, hx, hy, False, dead=True)
+        return c.done()
+    s = STRIDE[step] // 2
+    attack = pose == 'attack'
+    c.rect(25 + s, 24, 27 + s, 28, 'dark')                                           # far legs
+    c.rect(15 - s, 24, 17 - s, 28, 'dark')
+    lunge = -1 if attack else 0
+    necks = [([(22, 17), (23, 12), (22, 8)], (19, 6)),                                # fanned out, back first
+             ([(18, 17), (16, 13), (14, 11)], (11, 9)),
+             ([(15, 20), (12, 21), (11, 19)], (8, 17))]
+    heads = []
+    for k, (path, (hx, hy)) in enumerate(necks):
+        dy = 1 if attack else [0, 1, 0, -1][(step + k) % 4]
+        hx += lunge
+        hy += dy
+        path = path[:1] + [(x + lunge * i / 2, y + dy * i / 2) for i, (x, y) in enumerate(path) if i]
+        heads.append((path + [(hx + 2, hy)], hx, hy))
+    hydra_neck(c, heads[0][0])
+    body = c.ellipse_mask(21.5, 21.5, 8.5, 6) | c.poly_mask([(27, 18), (30.6, 24), (30.6, 25.6), (26, 25.6)])
+    c.part(body, 'main', dark='dark', light='light')
+    c.part(body & (c.ys >= 25) & (c.xs <= 27), 'second', edge=False)
+    ridges(c, range(24, 31, 2), 'extra')
+    for path, _, _ in heads[1:]:
+        hydra_neck(c, path)
+    for _, hx, hy in heads:
+        hydra_head(c, hx, hy, attack)
+    c.rect(19 + s, 24, 22 + s, 28, 'main', dark='dark')                              # near legs
+    c.rect(26 - s, 25, 28 - s, 28, 'main', dark='dark')
+    return c.done()
+
+
+def bone(c, x0, y0, x1, y1):
+    """A big bone used as a club, knobbed at both ends."""
+    c.line(x0, y0, x1, y1, 'weapon', width=2)
+    for x, y in ((x0, y0), (x1, y1)):
+        c.ellipse(x, y, 1.6, 1.6, 'weapon', dark='weapon_dark')
+
+
+def trogg(step, pose):
+    """A trogg: a hunched, stocky cave brute with stony skin and lumps along its back, a small head with a
+    jutting jaw and long heavy arms; it swings a bone club and dies face down."""
+    c = Canvas()
+    if pose == 'dead':
+        bone(c, 2, 21, 9, 19)
+        for y in (24, 26):
+            c.rect(23, y, 29, y + 1, 'dark' if y == 24 else 'main', dark='dark')        # legs
+        c.ellipse(17, 24, 8, 4.5, 'main', dark='dark', light='light')
+        for x, y, r in ((13, 20, 1.5), (18, 19.5, 2), (23, 21, 1.5)):
+            c.ellipse(x, y, r, r, 'second', dark='second_dark')
+        c.ellipse(7, 25.5, 3, 2.5, 'main', dark='dark', light='light')
+        c.line(5, 25, 6, 25, 'outline', edge=False)                                    # eyes shut
+        c.line(12, 26, 4, 28, 'main', width=2, dark='dark')                             # arm flung out
+        return c.done()
+    d = STRIDE[step] // 2
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    u = -1 if attack else 0
+    c.rect(19 + d, 22, 22 + d, 27, 'dark')                                           # far leg
+    c.rect(18 + d, 28, 22 + d, 28, 'dark')
+    if not attack:
+        c.line(22, 12 + b, 21, 18 + b, 'dark', width=3)                                # far arm
+        c.line(21, 18 + b, 19 - d, 23 + b, 'dark', width=2)
+    c.ellipse(19 + u, 15 + b, 7.5, 7, 'main', dark='dark', light='light')
+    for x, y, r in ((16, 9, 1.5), (21, 9, 2), (25, 12, 1.5), (26, 17, 1.2)):        # stony lumps
+        c.ellipse(x + u, y + b, r, r, 'second', dark='second_dark')
+    c.poly([(14, 19 + b), (22, 19 + b), (21, 24 + b), (15, 24 + b)], 'extra', dark='extra_dark')
+    c.rect(14 - d, 21, 17 - d, 27, 'main', dark='dark')                              # near leg
+    c.rect(13 - d, 28, 17 - d, 28, 'main')
+    hx, hy = (9, 16) if attack else (10, 14 + b)
+    c.ellipse(hx, hy, 3, 3, 'main', dark='dark', light='light')
+    c.rect(hx - 3, hy + 1, hx + 1, hy + 3, 'main', dark='dark')                       # jutting jaw
+    c.px(hx - 3, hy, 'tooth')
+    c.px(hx - 1, hy, 'tooth')
+    c.line(hx - 3, hy - 2, hx, hy - 2, 'dark', edge=False)                             # brow
+    c.px(hx - 2, hy - 1, 'eye')
+    if attack:
+        bone(c, 5, 11, 2, 22)                                                            # smashed down in front
+        c.line(16, 10, 6, 10, 'main', width=3, dark='dark')
+        c.ellipse(5, 11, 1.8, 1.8, 'main', dark='dark')
+        for x, y in ((1, 28), (5, 28), (6, 26), (1, 25)):
+            c.px(x, y, 'light')
+    else:
+        bone(c, 11, 23 + b, 6 + d, 27)                                                   # dragged along
+        c.line(16, 11 + b, 14, 17 + b, 'main', width=3, dark='dark')
+        c.line(14, 17 + b, 12, 22 + b, 'main', width=2, dark='dark')
+        c.ellipse(11.5, 23 + b, 1.8, 1.8, 'main', dark='dark')                           # fist
+    return c.done()
+
+
+def ooze(step, pose):
+    """An ooze: a blob of slime that squashes and stretches as it creeps, bubbles drifting inside and two
+    eyes up front; it rears up to strike and dies as a puddle."""
+    c = Canvas()
+    if pose == 'dead':
+        mask = c.ellipse_mask(16, 28.5, 14, 3) & (c.ys <= 28)
+        c.part(mask, 'main', light='light')
+        for x in (8, 15, 22):
+            c.px(x, 27, 'second')
+        return c.done()
+    if pose == 'attack':
+        mask = (c.ellipse_mask(18, 28.5, 10, 7) | c.ellipse_mask(14, 17, 5.5, 9) |
+                c.ellipse_mask(9, 10, 5.5, 4)) & (c.ys <= 28)
+        c.part(mask, 'main', dark='dark', light='light')
+        for x, y in ((6, 14), (9, 15), (5, 15)):
+            c.px(x, y, 'main')                                                           # drips
+        bubbles = [(15, 18, 1.5), (19, 24, 1.2), (12, 10, 1)]
+        eyes = [(6, 10), (9, 10)]
+    else:
+        w, h, x = [(11, 9, 16), (9, 12, 15), (11, 9, 15), (12.5, 8, 16)][step]
+        mask = (c.ellipse_mask(x, 28.5, w, h) | c.ellipse_mask(x - w + 2, 27, 3, 2)) & (c.ys <= 28)
+        c.part(mask, 'main', dark='dark', light='light')
+        top = 28 - h
+        bubbles = [(x + 3, int(top) + 5 + step % 2, 1.5), (x - 1, int(top) + 7 - step % 2, 1), (x + 6, 26, 1)]
+        eyes = [(int(x - w) + 4, int(top) + 4), (int(x - w) + 7, int(top) + 3)]
+    for bx, by, r in bubbles:
+        ring = c.ellipse_mask(bx, by, r, r)
+        c.img[ring & mask] = C['second']
+        c.px(int(bx - r / 2), int(by - r / 2), 'light')
+    for ex, ey in eyes:
+        c.px(ex, ey, 'eye')
+        c.px(ex, ey + 1, 'outline')
+    return c.done()
+
+
+def robot(step, pose):
+    """A gnomish mechanical walker: a riveted box on two piston legs with a glowing lamp in front and a
+    smoke stack, swinging a claw arm; it dies as a wreck slumped on the ground."""
+    c = Canvas()
+    if pose == 'dead':
+        c.line(22, 26, 29, 21, 'second_dark', width=2)                                  # a leg sticking out
+        c.rect(26, 19, 30, 20, 'second_dark')
+        c.rect(7, 18, 24, 28, 'main', dark='dark', light='light')
+        c.rect(19, 13, 21, 17, 'second', dark='second_dark')
+        c.ellipse(11, 22, 2, 2, 'dark')                                                    # the lamp is out
+        for x, y in ((9, 18), (22, 18), (9, 27), (22, 27)):
+            c.px(x, y, 'extra')
+        c.line(5, 26, 2, 27, 'second', width=2)
+        c.rect(1, 28, 3, 28, 'weapon')
+        for x, y in ((20, 10), (22, 8), (19, 6), (23, 4)):
+            c.px(x, y, 'light')                                                           # smoke
+        c.px(4, 20, 'flame')
+        c.px(6, 17, 'flame')
+        return c.done()
+    d = STRIDE[step]
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+
+    def leg(x, far):
+        key, dark = ('second_dark', None) if far else ('second', 'second_dark')
+        c.rect(x - 1, 19 + b, x + 2, 23, key, dark=dark)
+        c.rect(x, 24, x + 1, 26, 'weapon_dark' if far else 'weapon')
+        c.rect(x - 2, 27, x + 3, 28, key, dark=dark)
+    leg(20 - d, True)
+    c.rect(19, 3 + b, 21, 8 + b, 'second', dark='second_dark', light='light')       # smoke stack
+    c.rect(18, 2 + b, 22, 3 + b, 'second_dark')
+    c.rect(9, 8 + b, 24, 19 + b, 'main', dark='dark', light='light')
+    c.line(17, 10 + b, 17, 17 + b, 'dark', edge=False)                                # panel seam
+    for x, y in ((11, 9), (22, 9), (22, 17), (19, 17)):
+        c.px(x, y + b, 'extra')
+    c.ellipse(11.5, 12.5 + b, 2.5, 2.5, 'extra', dark='extra_dark')                   # lamp housing
+    glow(c, 11.5, 12.5 + b, 1.5)
+    leg(14 + d, False)
+    c.ellipse(13, 16 + b, 1.5, 1.5, 'second', dark='second_dark')                    # shoulder
+    if attack:
+        c.line(12, 16 + b, 5, 16 + b, 'second', width=2, dark='second_dark')
+        c.rect(4, 15 + b, 5, 17 + b, 'weapon_dark')                                       # claw wide open
+        c.line(4, 15 + b, 2, 11 + b, 'weapon')
+        c.line(2, 11 + b, 1, 13 + b, 'weapon')
+        c.line(4, 17 + b, 2, 21 + b, 'weapon')
+        c.line(2, 21 + b, 1, 19 + b, 'weapon')
+        for x, y in ((1, 16), (3, 14), (2, 18)):
+            c.px(x, y + b, 'flame')
+    else:
+        c.line(12, 16 + b, 7, 20 + b, 'second', width=2, dark='second_dark')
+        c.line(6, 19 + b, 3, 18 + b, 'weapon')
+        c.line(6, 22 + b, 3, 22 + b, 'weapon')
+        c.px(2, 19 + b, 'weapon')
+        c.px(2, 21 + b, 'weapon')
+    return c.done()
+
+
+def bomb(step, pose):
+    """A walking bomb: a small round black bomb toddling on two tiny legs, its fuse fizzing on top; it hops
+    with the fuse flaring to attack and dies tipped over with the fuse out."""
+    c = Canvas()
+    if pose == 'dead':
+        c.line(19, 22, 22, 19, 'weapon')                                                   # legs in the air
+        c.line(20, 25, 23, 23, 'weapon')
+        c.ellipse(15, 24, 4.5, 4.5, 'main', dark='dark', light='light')
+        c.rect(9, 23, 10, 25, 'second', dark='second_dark')
+        c.line(8, 24, 6, 26, 'extra')
+        return c.done()
+    d = [0, 1, 0, -1][step]
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    lift = 2 if attack else 0
+    c.line(14, 25 - lift, 13 + d, 27 - lift, 'weapon_dark')
+    c.px(12 + d, 28 - lift, 'weapon_dark')
+    c.ellipse(16, 21 + b - lift, 4.5, 4.5, 'main', dark='dark', light='light')
+    c.px(14, 18 + b - lift, 'light')
+    c.px(13, 19 + b - lift, 'light')
+    c.rect(15, 16 + b - lift, 17, 16 + b - lift, 'second', dark='second_dark')
+    c.line(17, 15 + b - lift, 18, 13 + b - lift, 'extra')
+    c.line(18, 25 - lift, 19 - d, 27 - lift, 'weapon')
+    c.px(18 - d, 28 - lift, 'weapon')
+    fy = 12 + b - lift
+    if attack:
+        glow(c, 19, fy - 1, 2)
+        for x, y in ((16, fy - 3), (22, fy - 3), (22, fy + 1), (19, fy - 5)):
+            c.px(x, y, 'flame')
+    else:
+        c.px(19, fy, 'flame')
+        c.px(19 + (step % 2), fy - 1, 'flame_dark')
+        c.px(18 - (step % 2), fy - 1, 'flame')
+    return c.done()
+
+
 CREATURES = {
     'water_elemental': water_elemental,
     'wolf': wolf,
@@ -1424,17 +2029,33 @@ CREATURES = {
     'ghoul': ghoul,
     'ogre': ogre,
     'abomination': abomination,
+    'crocolisk': crocolisk,
+    'raptor': raptor,
+    'naga': naga,
+    'naga_caster': lambda step, pose: naga(step, pose, caster=True),
+    'turtle': turtle,
+    'hydra': hydra,
+    'trogg': trogg,
+    'ooze': ooze,
+    'robot': robot,
+    'bomb': bomb,
 }
 
 
 # Upright creatures fall on their back instead of turning over like beasts.
 LYING_DEAD = {'worgen', 'worgen_caster', 'skeleton', 'skeleton_mage'}
 
+# Creatures that draw their own dead frame (pose 'dead'): an ooze dies as a puddle, a robot as a wreck.
+OWN_DEAD = {'raptor', 'naga', 'naga_caster', 'hydra', 'trogg', 'ooze', 'robot', 'bomb'}
 
-def creature_sheet(draw, lying=False):
+
+def creature_sheet(draw, lying=False, own_dead=False):
     frames = [draw(step, 'walk') for step in range(4)]
     frames.append(draw(0, 'attack'))
     stand = frames[0]
+    if own_dead:
+        frames.append(draw(0, 'dead'))
+        return frames
     if lying:
         frames.append(dead_frame(stand))
         return frames
@@ -1448,7 +2069,7 @@ def creature_sheet(draw, lying=False):
 
 
 def creature_sheet_options(name):
-    return {'lying': name in LYING_DEAD}
+    return {'lying': name in LYING_DEAD, 'own_dead': name in OWN_DEAD}
 
 
 # --- mounts -----------------------------------------------------------------------------------------
@@ -1631,9 +2252,26 @@ SKIN_ORC = (104, 152, 72)
 TUSK = (232, 224, 200)
 
 
-def orc_palette(armor, tabard, hair=(40, 32, 32), leather=(96, 64, 40), skin=SKIN_ORC):
-    return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=TUSK, leather=leather,
+SKIN_GNOME = (240, 184, 152)
+SKIN_DARK_IRON = (140, 140, 160)
+
+
+def orc_palette(armor, tabard, hair=(40, 32, 32), leather=(96, 64, 40), skin=SKIN_ORC, trim=TUSK):
+    return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=trim, leather=leather,
                             lower_face=(skin[0] - 8, skin[1] - 8, skin[2]))
+
+
+def dwarf_palette(hair, armor, tabard, trim=(232, 184, 64), skin=SKIN_DWARF, beard=None, **kw):
+    """A dwarf: the beard is the lower face, the hair color unless it is given."""
+    return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=trim,
+                            lower_face=beard or hair, **kw)
+
+
+def gnome_palette(hair, armor, tabard, trim=(232, 184, 64), skin=SKIN_GNOME, beard=None, **kw):
+    """A gnome: the trim also colors the goggles pushed up on the forehead, and beard (the chin) defaults
+    to the skin, so only old gnomes have one."""
+    return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=trim,
+                            lower_face=beard or (skin[0], skin[1], min(255, skin[2] + 8)), **kw)
 
 
 # Looks used by the player (race_class) and by NPCs and humanoid enemies. Each is a sheet + palette.
@@ -1830,6 +2468,82 @@ HUMANOID_LOOKS = {
     'archmage_arugal': ('hum_staff', humanoid_palette(hair=(232, 232, 232), armor=(112, 56, 152),
                                                       tabard=(72, 32, 104), trim=(200, 200, 216),
                                                       armor_light=(160, 104, 200))),
+    # Ironforge and Dun Morogh
+    'magni_bronzebeard': ('dwarf_sword', dwarf_palette(hair=(144, 60, 32), armor=(216, 168, 64),
+                                                       tabard=(168, 32, 32), trim=(248, 232, 144),
+                                                       armor_light=(248, 216, 120), hair_dark=(96, 36, 24))),
+    'ironforge_guard': ('dwarf_sword', dwarf_palette(hair=(120, 76, 40), armor=(160, 164, 180),
+                                                     tabard=(40, 72, 168), trim=(216, 184, 96))),
+    'dwarf_innkeeper': ('dwarf_plain', dwarf_palette(hair=(184, 64, 32), armor=(136, 92, 52),
+                                                     tabard=(200, 168, 120), trim=(112, 72, 40),
+                                                     leather=(104, 68, 40))),
+    'dwarf_merchant': ('dwarf_plain', dwarf_palette(hair=(168, 168, 172), armor=(72, 128, 72),
+                                                    tabard=(48, 100, 56), trim=(232, 184, 64))),
+    'dwarf_smith': ('dwarf_plain', dwarf_palette(hair=(40, 36, 40), armor=(144, 136, 128),
+                                                 tabard=(88, 60, 40), trim=(168, 168, 176),
+                                                 hair_dark=(24, 20, 24), leather=(80, 56, 40))),
+    'captain_stoutfist': ('dwarf_sword', dwarf_palette(hair=(232, 232, 236), armor=(184, 192, 212),
+                                                       tabard=(40, 64, 168), trim=(216, 224, 240),
+                                                       hair_dark=(160, 160, 176))),
+    'ormer_ironbraid': ('dwarf_bow', dwarf_palette(hair=(216, 112, 40), armor=(96, 124, 64),
+                                                   tabard=(64, 96, 48), trim=(200, 168, 96),
+                                                   armor_light=(136, 168, 96))),
+    'prospector_whelgar': ('dwarf_plain', dwarf_palette(hair=(224, 192, 64), beard=(120, 76, 44),
+                                                        armor=(140, 100, 60), tabard=(112, 80, 48),
+                                                        trim=(232, 200, 72), hair_dark=(168, 128, 40))),
+    'dark_iron_dwarf': ('dwarf_sword', dwarf_palette(skin=SKIN_DARK_IRON, hair=(36, 32, 40), armor=(76, 76, 88),
+                                                     tabard=(152, 40, 32), trim=(208, 112, 40))),
+    'dark_iron_saboteur': ('dwarf_plain', dwarf_palette(skin=SKIN_DARK_IRON, hair=(184, 56, 32),
+                                                        armor=(108, 82, 56), tabard=(80, 60, 44),
+                                                        trim=(208, 112, 40))),
+    'balgaras_the_foul': ('dwarf_sword', dwarf_palette(skin=(120, 120, 140), hair=(28, 24, 32), armor=(52, 48, 58),
+                                                       tabard=(152, 24, 28), trim=(200, 56, 40),
+                                                       armor_light=(104, 96, 112))),
+    'dark_iron_agent': ('dwarf_sword', dwarf_palette(skin=SKIN_DARK_IRON, hair=(64, 56, 64), armor=(68, 68, 80),
+                                                     tabard=(104, 48, 136), trim=(176, 176, 188))),
+    # Wetlands: the Dragonmaw orcs and the Twilight's Hammer
+    'dragonmaw_grunt': ('orc_sword', orc_palette(armor=(60, 56, 64), tabard=(160, 32, 32))),
+    'dragonmaw_shadowwarder': ('orc_staff', orc_palette(armor=(96, 52, 120), tabard=(60, 36, 76))),
+    'nek_rosh': ('orc_sword', orc_palette(armor=(48, 44, 52), tabard=(168, 32, 32), trim=(232, 208, 136),
+                                          skin=(96, 140, 64))),
+    'twilight_acolyte': ('hum_robe', humanoid_palette(hair=(48, 40, 48), armor=(72, 44, 92), tabard=(40, 30, 50),
+                                                      trim=(232, 128, 40), armor_light=(112, 76, 136))),
+    'twilight_reaver': ('hum_sword', humanoid_palette(hair=(40, 36, 40), armor=(84, 84, 96), tabard=(104, 48, 136),
+                                                      trim=(232, 128, 40))),
+    'twilight_lord_kelris': ('hum_staff', humanoid_palette(skin=SKIN_ELF, hair=(232, 232, 240), armor=(52, 44, 60),
+                                                           tabard=(104, 52, 144), trim=(232, 128, 40),
+                                                           armor_light=(96, 84, 108))),
+    # Menethil Harbor
+    'menethil_guard': ('hum_sword', humanoid_palette(hair=(96, 72, 48), armor=(168, 172, 186), tabard=(32, 120, 136),
+                                                     trim=(216, 184, 96))),
+    'james_halloran': ('hum_plain', humanoid_palette(hair=(104, 72, 40), armor=(132, 96, 56), tabard=(72, 108, 56),
+                                                     trim=(184, 152, 96))),
+    # Darkshore and Auberdine
+    'sentinel': ('fem_bow', humanoid_palette(skin=SKIN_ELF, hair=(64, 168, 160), armor=(72, 72, 140),
+                                             tabard=(88, 48, 128), trim=(208, 208, 232),
+                                             armor_light=(112, 112, 188))),
+    'dawnwatcher_shaedlass': ('fem_robe', humanoid_palette(skin=SKIN_ELF, hair=(208, 212, 228), armor=(232, 232, 240),
+                                                           tabard=(208, 208, 220), trim=(176, 152, 232),
+                                                           armor_light=(248, 248, 248))),
+    'argent_guard_thaelrid': ('elf_sword', humanoid_palette(skin=SKIN_ELF, hair=(208, 212, 228), armor=(192, 196, 212),
+                                                            tabard=(236, 236, 236), trim=(232, 192, 72))),
+    'hippogryph_master': ('fem_robe', humanoid_palette(skin=SKIN_ELF, hair=(40, 100, 64), armor=(80, 144, 88),
+                                                       tabard=(56, 112, 64), trim=(208, 192, 128))),
+    'night_elf_innkeeper': ('fem_robe', humanoid_palette(skin=SKIN_ELF, hair=(64, 96, 192), armor=(132, 76, 164),
+                                                         tabard=(96, 56, 128), trim=(216, 200, 144))),
+    # Gnomes: Gnomeregan's survivors and its ruin
+    'mekkatorque': ('gnome_plain', gnome_palette(hair=(236, 236, 240), beard=(236, 236, 240), armor=(56, 84, 192),
+                                                 tabard=(40, 56, 144), trim=(240, 200, 72),
+                                                 hair_dark=(176, 176, 192))),
+    'tinker_gnome': ('gnome_plain', gnome_palette(hair=(240, 120, 176), armor=(136, 96, 56), tabard=(104, 72, 44),
+                                                  trim=(120, 208, 224))),
+    'ozzie_togglevolt': ('gnome_plain', gnome_palette(hair=(240, 136, 40), armor=(88, 152, 80), tabard=(56, 120, 64),
+                                                      trim=(200, 200, 208))),
+    'leper_gnome': ('gnome_sword', gnome_palette(skin=(168, 184, 148), hair=(216, 216, 208), armor=(112, 92, 68),
+                                                 tabard=(92, 80, 60), trim=(136, 128, 112), leather=(88, 64, 48))),
+    'mekgineer_thermaplugg': ('gnome_sword', gnome_palette(hair=(40, 36, 44), armor=(84, 52, 112),
+                                                           tabard=(56, 36, 76), trim=(232, 192, 72),
+                                                           armor_light=(132, 92, 160))),
 }
 
 CREATURE_LOOKS = {
@@ -1916,6 +2630,65 @@ CREATURE_LOOKS = {
                                                           extra=(128, 132, 144), weapon=(104, 72, 44))),
     'stitches': ('abomination', creature_palette((192, 176, 168), (152, 160, 136), eye=(232, 216, 64),
                                                  extra=(136, 32, 40), weapon=(144, 144, 152))),
+    # Wetlands
+    'young_crocolisk': ('crocolisk', creature_palette((112, 164, 80), (208, 208, 144), eye=(232, 200, 64))),
+    'giant_crocolisk': ('crocolisk', creature_palette((76, 96, 56), (152, 140, 96), eye=(232, 72, 40),
+                                                      light=(112, 128, 72))),
+    'mottled_raptor': ('raptor', creature_palette((104, 148, 72), (208, 176, 96), eye=(232, 200, 64))),
+    'mottled_screecher': ('raptor', creature_palette((112, 128, 156), (192, 196, 212), eye=(232, 72, 40))),
+    'sarltooth': ('raptor', creature_palette((140, 40, 32), (224, 176, 96), eye=(248, 216, 64),
+                                             light=(192, 72, 56))),
+    'mosshide_gnoll': ('gnoll', creature_palette((124, 128, 72), (72, 80, 48), eye=(232, 48, 32),
+                                                 extra=(104, 80, 56), weapon=(136, 96, 56))),
+    'mosshide_mystic': ('gnoll', creature_palette((104, 136, 72), (176, 192, 120), eye=(200, 240, 120),
+                                                  extra=(96, 64, 112), weapon=(120, 88, 56))),
+    'bluegill_murloc': ('murloc', creature_palette((64, 120, 188), (176, 208, 232), eye=(24, 24, 24),
+                                                   extra=(96, 200, 208))),
+    'gelihast': ('murloc', creature_palette((40, 112, 112), (152, 200, 184), eye=(248, 216, 64),
+                                            extra=(208, 48, 40))),
+    'blindlight_murloc': ('murloc', creature_palette((184, 200, 216), (228, 234, 242), eye=(168, 192, 216),
+                                                     extra=(128, 152, 188), light=(220, 230, 244))),
+    # Blackfathom Deeps
+    'blackfathom_myrmidon': ('naga', creature_palette((56, 144, 136), (192, 216, 168), eye=(248, 232, 96),
+                                                      extra=(152, 72, 136), weapon=(232, 192, 72))),
+    'blackfathom_tide_priestess': ('naga_caster', creature_palette((136, 168, 216), (220, 220, 244),
+                                                                   eye=(248, 248, 255), extra=(152, 120, 200),
+                                                                   flame=(216, 248, 255), flame_dark=(96, 176, 232))),
+    'lady_sarevess': ('naga_caster', creature_palette((168, 88, 168), (232, 184, 216), eye=(248, 232, 96),
+                                                      extra=(232, 184, 64), flame=(255, 224, 248),
+                                                      flame_dark=(200, 96, 216))),
+    'aku_mai_snapjaw': ('turtle', creature_palette((88, 128, 64), (136, 152, 104), eye=(232, 200, 64),
+                                                   extra=(192, 176, 112))),
+    'ghamoo_ra': ('turtle', creature_palette((72, 84, 116), (120, 136, 120), eye=(232, 64, 40),
+                                             extra=(152, 144, 128))),
+    'aku_mai_servant': ('hydra', creature_palette((56, 136, 136), (168, 200, 168), eye=(248, 216, 64),
+                                                  extra=(40, 88, 112))),
+    'aku_mai': ('hydra', creature_palette((72, 64, 152), (136, 152, 200), eye=(248, 40, 32), extra=(152, 56, 104))),
+    # Gnomeregan
+    'irradiated_pillager': ('trogg', creature_palette((136, 136, 128), (152, 232, 72), eye=(184, 248, 96),
+                                                      extra=(96, 80, 64), weapon=(208, 200, 176))),
+    'caverndeep_burrower': ('trogg', creature_palette((136, 120, 100), (104, 96, 88), eye=(232, 200, 64),
+                                                      extra=(112, 72, 48), weapon=(208, 200, 176))),
+    'grubbis': ('trogg', creature_palette((80, 88, 104), (124, 132, 148), eye=(248, 64, 40), extra=(136, 40, 40),
+                                          weapon=(216, 208, 184))),
+    'irradiated_slime': ('ooze', creature_palette((120, 216, 72), (200, 248, 136), eye=(24, 48, 16),
+                                                  light=(200, 255, 152))),
+    'viscous_fallout': ('ooze', creature_palette((72, 136, 48), (232, 232, 72), eye=(248, 248, 120),
+                                                 light=(216, 232, 80))),
+    'mechano_tank': ('robot', creature_palette((144, 148, 160), (96, 100, 112), extra=(200, 168, 96),
+                                               weapon=(184, 188, 200), flame=(255, 120, 96),
+                                               flame_dark=(200, 32, 24))),
+    'arcane_nullifier': ('robot', creature_palette((104, 88, 168), (72, 72, 112), extra=(176, 160, 224),
+                                                   weapon=(168, 176, 208), flame=(232, 200, 255),
+                                                   flame_dark=(144, 80, 232))),
+    'electrocutioner_6000': ('robot', creature_palette((200, 128, 64), (152, 112, 56), extra=(240, 208, 96),
+                                                       weapon=(200, 200, 208), flame=(216, 248, 255),
+                                                       flame_dark=(64, 160, 248))),
+    'crowd_pummeler': ('robot', creature_palette((176, 48, 40), (88, 88, 96), extra=(200, 200, 208),
+                                                 weapon=(136, 140, 152), flame=(255, 232, 120))),
+    'walking_bomb': ('bomb', creature_palette((56, 56, 64), (176, 144, 72), extra=(200, 176, 120),
+                                              weapon=(120, 120, 128), light=(120, 120, 136),
+                                              flame=(255, 232, 96), flame_dark=(240, 128, 32))),
 }
 
 

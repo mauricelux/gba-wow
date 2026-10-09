@@ -73,3 +73,13 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
 - `enemy_flag::QUEST` enemies only exist while a quest in the log still asks for their death
   (`quest_wants_kill`). `combat::boss_update` runs for elites every frame of a fight, also while they
   cast, so its timers keep going.
+- Braziers (`m.brazier` in `gen_world.py`) are chests of level 0: kept in the save like a chest, lit
+  with A, never counted as treasure (`total_chests`, `opened_chest_count`, the world map). A warp
+  with `sealed=True` only lets the player through once every brazier of its map is lit
+  (`chests::all_braziers_lit`); until then touching it says the door is sealed.
+- `area_id::RADIATION` areas (Gnomeregan's `fallout` pools) take a share of the player's health every
+  second (`game::_update_radiation`). `area_at` skips them, so they never rename the place.
+- A boss script can use the map's patrol points as spawn spots: Thermaplugg's Walking Bombs climb
+  out of them (`combat::_launch_bomb`), and `SELF_DESTRUCT` removes its caster when it goes off.
+- Text limits: a HUD message shows 30 characters and a gossip line 26 columns (3 lines under a
+  subtitle, 4 without); boss lines and gossip must fit, or they are cut off.

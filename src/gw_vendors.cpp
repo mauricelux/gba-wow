@@ -62,6 +62,25 @@ namespace
         i::MUTTON_CHOP, i::WILD_HOG_SHANK, i::MELON_JUICE, i::SWEET_NECTAR, i::HEALING_POTION,
         i::GREATER_HEALING_POTION, i::TELEPORTATION_RUNE
     };
+
+    constexpr item_id ironforge_goods[] = {
+        i::WILD_HOG_SHANK, i::DWARVEN_MILD, i::SWEET_NECTAR, i::MOONBERRY_JUICE, i::HEALING_POTION,
+        i::GREATER_HEALING_POTION, i::TELEPORTATION_RUNE
+    };
+
+    constexpr item_id ironforge_smith[] = {
+        i::DWARVEN_BROADSWORD, i::DWARVEN_WAR_AXE, i::IRONFORGE_WARHAMMER, i::OAKEN_WAR_STAFF, i::DWARVEN_GREATAXE,
+        i::HEAVY_RECURVE_BOW, i::DWARVEN_HAND_CANNON, i::IRONFORGE_TOWER_SHIELD,
+        i::BANDED_HELM, i::BANDED_HAUBERK, i::BANDED_GAUNTLETS, i::BANDED_LEGGINGS, i::BANDED_BOOTS,
+        i::THICK_LEATHER_CAP, i::THICK_LEATHER_VEST, i::THICK_LEATHER_GLOVES, i::THICK_LEATHER_PANTS,
+        i::THICK_LEATHER_BOOTS,
+        i::MAGEWEAVE_HOOD, i::MAGEWEAVE_ROBE, i::MAGEWEAVE_GLOVES, i::MAGEWEAVE_PANTS, i::MAGEWEAVE_BOOTS
+    };
+
+    constexpr item_id menethil[] = {
+        i::WILD_HOG_SHANK, i::DWARVEN_MILD, i::SWEET_NECTAR, i::MOONBERRY_JUICE, i::GREATER_HEALING_POTION,
+        i::TELEPORTATION_RUNE
+    };
 }
 
 bn::span<const item_id> vendor_stock(int vendor)
@@ -95,6 +114,15 @@ bn::span<const item_id> vendor_stock(int vendor)
 
     case 9:
         return darkshire;
+
+    case 10:
+        return ironforge_goods;
+
+    case 11:
+        return ironforge_smith;
+
+    case 12:
+        return menethil;
 
     default:
         return general_goods;

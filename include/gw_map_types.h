@@ -21,7 +21,8 @@ enum class vehicle : uint8_t
     TRAM
 };
 
-// Touching the rectangle moves the player to (target_x, target_y) on the target map.
+// Touching the rectangle moves the player to (target_x, target_y) on the target map. A sealed warp (a
+// door) stays shut until every brazier of its map is lit.
 struct warp_def
 {
     int16_t x;
@@ -32,6 +33,7 @@ struct warp_def
     int16_t target_x;
     int16_t target_y;
     vehicle ride = vehicle::NONE;
+    bool sealed = false;
 };
 
 struct npc_def
@@ -59,7 +61,8 @@ struct area_def
     const char* name;
 };
 
-// A treasure chest standing with its bottom-center at (x, y). The id is the chest's bit in the save.
+// A treasure chest standing with its bottom-center at (x, y). The id is the chest's bit in the save. A
+// chest of level 0 is a brazier: lighting it is saved the same way, and it holds nothing.
 struct chest_def
 {
     static constexpr uint16_t none = 0xFFFF;

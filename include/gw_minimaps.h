@@ -3,17 +3,23 @@
 #ifndef GW_MINIMAPS_H
 #define GW_MINIMAPS_H
 
+#include "bn_sprite_items_minimap_blackfathom_deeps.h"
+#include "bn_sprite_items_minimap_darkshore.h"
 #include "bn_sprite_items_minimap_deadmines.h"
+#include "bn_sprite_items_minimap_dun_morogh.h"
 #include "bn_sprite_items_minimap_duskwood.h"
 #include "bn_sprite_items_minimap_echo_ridge.h"
 #include "bn_sprite_items_minimap_elwynn.h"
 #include "bn_sprite_items_minimap_fargodeep.h"
+#include "bn_sprite_items_minimap_gnomeregan.h"
+#include "bn_sprite_items_minimap_ironforge.h"
 #include "bn_sprite_items_minimap_redridge.h"
 #include "bn_sprite_items_minimap_shadowfang.h"
 #include "bn_sprite_items_minimap_silverpine.h"
 #include "bn_sprite_items_minimap_stockade.h"
 #include "bn_sprite_items_minimap_stormwind.h"
 #include "bn_sprite_items_minimap_westfall.h"
+#include "bn_sprite_items_minimap_wetlands.h"
 
 #include "gw_ids.h"
 
@@ -41,11 +47,17 @@ constexpr minimap_def minimaps[] = {
     { map_id::REDRIDGE, bn::sprite_items::minimap_redridge, 8, 19, 1280 },
     { map_id::DUSKWOOD, bn::sprite_items::minimap_duskwood, 8, 26, 1536 },
     { map_id::SILVERPINE, bn::sprite_items::minimap_silverpine, 8, 26, 768 },
+    { map_id::IRONFORGE, bn::sprite_items::minimap_ironforge, 8, 22, 1024 },
+    { map_id::DUN_MOROGH, bn::sprite_items::minimap_dun_morogh, 8, 22, 1024 },
+    { map_id::WETLANDS, bn::sprite_items::minimap_wetlands, 8, 19, 1280 },
+    { map_id::DARKSHORE, bn::sprite_items::minimap_darkshore, 22, 8, 1024 },
     { map_id::ECHO_RIDGE, bn::sprite_items::minimap_echo_ridge, 8, 8, 512 },
     { map_id::FARGODEEP, bn::sprite_items::minimap_fargodeep, 8, 26, 768 },
     { map_id::DEADMINES, bn::sprite_items::minimap_deadmines, 8, 36, 1024 },
     { map_id::STOCKADE, bn::sprite_items::minimap_stockade, 8, 36, 1024 },
     { map_id::SHADOWFANG, bn::sprite_items::minimap_shadowfang, 8, 22, 1024 },
+    { map_id::BLACKFATHOM_DEEPS, bn::sprite_items::minimap_blackfathom_deeps, 8, 8, 1024 },
+    { map_id::GNOMEREGAN, bn::sprite_items::minimap_gnomeregan, 8, 8, 1024 },
 };
 
 constexpr int minimap_count = sizeof(minimaps) / sizeof(minimaps[0]);

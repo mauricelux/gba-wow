@@ -78,6 +78,12 @@ enum class map_id : uint16_t
     DUSKWOOD,
     SILVERPINE,
     SHADOWFANG,
+    IRONFORGE,
+    DUN_MOROGH,
+    WETLANDS,
+    DARKSHORE,
+    BLACKFATHOM_DEEPS,
+    GNOMEREGAN,
     COUNT
 };
 
@@ -91,7 +97,9 @@ enum class music_id : uint8_t
     DUNGEON,
     BOSS,
     REDRIDGE,
-    DUSKWOOD
+    DUSKWOOD,
+    IRONFORGE,
+    WETLANDS
 };
 
 enum class area_id : uint8_t
@@ -102,7 +110,9 @@ enum class area_id : uint8_t
     ECHO_RIDGE,
     MOONBROOK,
     LAKE_EVERSTILL,     // fishing waters
-    MISTMANTLE_MANOR
+    MISTMANTLE_MANOR,
+    THANDOL_SPAN,
+    RADIATION           // fallout that burns whoever stands in it; unnamed, under a named room
 };
 
 enum class npc_id : uint16_t
@@ -181,6 +191,41 @@ enum class npc_id : uint16_t
     // Silverpine Forest
     VALDAN,
     GRYPHON_SILVERPINE,
+    // Ironforge
+    MAGNI,
+    IRONFORGE_GUARD_SEAT,
+    GERRIG,
+    IRONFORGE_GUARD_GATE,
+    GRYTH,
+    FIREBREW,
+    IRONFORGE_VENDOR,
+    IRONFORGE_SMITH,
+    MEKKATORQUE,
+    SHONI,
+    KELSTRUM,
+    OLMIN,
+    JULI,
+    // Dun Morogh
+    IRONFORGE_GUARD_OUTSIDE,
+    OZZIE,
+    MOUNTAINEER,
+    // Wetlands
+    STOUTFIST,
+    HELBREK,
+    MENETHIL_VENDOR,
+    SHELLEI,
+    HALLORAN,
+    HARBORMASTER,
+    MENETHIL_GUARD,
+    WHELGAR,
+    ORMER,
+    // Darkshore
+    SHAUSSIY,
+    SHAEDLASS,
+    CAYLAIS,
+    SENTINEL,
+    // Blackfathom Deeps
+    THAELRID,
     COUNT
 };
 
@@ -262,6 +307,48 @@ enum class enemy_id : uint16_t
     ODO_THE_BLINDWATCHER,
     ARUGAL,
     LUPINE_HORROR,
+    // Wetlands
+    YOUNG_CROCOLISK,
+    GIANT_CROCOLISK,
+    MOTTLED_RAPTOR,
+    MOTTLED_SCREECHER,
+    SARLTOOTH,
+    MOSSHIDE_GNOLL,
+    MOSSHIDE_MYSTIC,
+    BLUEGILL_MURLOC,
+    DARK_IRON_DWARF,
+    DARK_IRON_SABOTEUR,
+    BALGARAS_THE_FOUL,
+    DRAGONMAW_GRUNT,
+    DRAGONMAW_SHADOWWARDER,
+    NEK_ROSH,
+    // Blackfathom Deeps
+    BLACKFATHOM_MYRMIDON,
+    BLACKFATHOM_TIDE_PRIESTESS,
+    AKU_MAI_SNAPJAW,
+    BLINDLIGHT_MURLOC,
+    TWILIGHT_ACOLYTE,
+    TWILIGHT_REAVER,
+    AKU_MAI_SERVANT,
+    GHAMOO_RA,
+    LADY_SAREVESS,
+    GELIHAST,
+    TWILIGHT_LORD_KELRIS,
+    AKU_MAI,
+    // Gnomeregan
+    LEPER_GNOME,
+    IRRADIATED_PILLAGER,
+    CAVERNDEEP_BURROWER,
+    IRRADIATED_SLIME,
+    DARK_IRON_AGENT,
+    MECHANO_TANK,
+    ARCANE_NULLIFIER,
+    WALKING_BOMB,
+    GRUBBIS,
+    VISCOUS_FALLOUT,
+    ELECTROCUTIONER_6000,
+    CROWD_PUMMELER,
+    MEKGINEER_THERMAPLUGG,
     COUNT
 };
 

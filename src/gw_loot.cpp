@@ -152,6 +152,77 @@ namespace
         // 43 Archmage Arugal
         { { { i::GREATER_HEALING_POTION, 100, 2, 3 }, none, none }, true,
           { i::SHADOWFANG, i::ROBE_OF_ARUGAL, i::WORGEN_HIDE_LEGGINGS } },
+        // 44 crocolisks
+        { { { i::CROCOLISK_SCALE, 50, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 45 raptors
+        { { { i::RAPTOR_TALON, 50, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 46 Mosshide gnolls
+        { { { i::GNOLL_PELT, 45, 1, 1 }, { i::MAGEWEAVE_CLOTH, 20, 1, 1 }, { i::GREATER_HEALING_POTION, 4, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 47 Bluegill and Blindlight murlocs
+        { { { i::MURLOC_SCALE, 50, 1, 1 }, { i::MAGEWEAVE_CLOTH, 10, 1, 1 }, none }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 48 Dark Iron dwarves
+        { { { i::MAGEWEAVE_CLOTH, 35, 1, 2 }, { i::DWARVEN_MILD, 8, 1, 1 }, { i::GREATER_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 49 Dragonmaw orcs
+        { { { i::MAGEWEAVE_CLOTH, 40, 1, 2 }, { i::WILD_HOG_SHANK, 8, 1, 1 }, { i::GREATER_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 50 Sarltooth
+        { { { i::RAPTOR_TALON, 100, 2, 3 }, { i::GREATER_HEALING_POTION, 50, 1, 1 }, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 51 Balgaras the Foul
+        { { { i::MAGEWEAVE_CLOTH, 100, 2, 3 }, { i::GREATER_HEALING_POTION, 60, 1, 2 }, none }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 52 Nek'rosh
+        { { { i::GREATER_HEALING_POTION, 100, 1, 2 }, { i::MAGEWEAVE_CLOTH, 100, 2, 3 }, none }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 53 naga
+        { { { i::NAGA_SCALE, 45, 1, 1 }, { i::MAGEWEAVE_CLOTH, 25, 1, 1 }, { i::GREATER_HEALING_POTION, 4, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 54 Twilight cultists
+        { { { i::MAGEWEAVE_CLOTH, 45, 1, 2 }, { i::MOONBERRY_JUICE, 8, 1, 1 }, { i::GREATER_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 55 Ghamoo-ra
+        { { { i::GREATER_HEALING_POTION, 60, 1, 2 }, none, none }, false,
+          { i::TURTLE_SHELL_SHIELD, i::GHAMOO_RA_WRAPS, i::SNAPJAW_GLOVES } },
+        // 56 Lady Sarevess
+        { { { i::GREATER_HEALING_POTION, 60, 1, 2 }, { i::NAGA_SCALE, 100, 1, 2 }, none }, true,
+          { i::STRIKE_OF_THE_HYDRA, i::ROBE_OF_THE_DEEPS, i::NAGA_SCALE_JERKIN } },
+        // 57 Gelihast
+        { { { i::GREATER_HEALING_POTION, 60, 1, 2 }, { i::MURLOC_SCALE, 100, 1, 2 }, none }, true,
+          { i::MURKBLOOD_HELM, i::GELIHASTS_HOOD, i::FISHSCALE_CAP } },
+        // 58 Twilight Lord Kelris
+        { { { i::GREATER_HEALING_POTION, 60, 1, 2 }, none, none }, true,
+          { i::TWILIGHT_CLEAVER, i::ROD_OF_THE_SLEEPWALKER, i::TWILIGHT_LONGBOW } },
+        // 59 Aku'mai
+        { { { i::GREATER_HEALING_POTION, 100, 2, 3 }, none, none }, false,
+          { i::AKU_MAIS_FANG, i::STAFF_OF_THE_DEEP_MOTHER, i::ABYSSAL_LONGBOW } },
+        // 60 troggs
+        { { { i::TROGG_STONE_TOOTH, 45, 1, 1 }, { i::MAGEWEAVE_CLOTH, 20, 1, 1 },
+            { i::GREATER_HEALING_POTION, 4, 1, 1 } }, true, { i::NONE, i::NONE, i::NONE } },
+        // 61 leper gnomes
+        { { { i::GREASY_COG, 40, 1, 1 }, { i::MAGEWEAVE_CLOTH, 30, 1, 2 }, { i::GREATER_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 62 robots
+        { { { i::GREASY_COG, 55, 1, 2 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 63 slimes
+        { { { i::GLOWING_SLUDGE, 50, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 64 Grubbis
+        { { { i::GREATER_HEALING_POTION, 60, 1, 2 }, { i::TROGG_STONE_TOOTH, 100, 1, 2 }, none }, true,
+          { i::TROGGSTONE_HELM, i::CAVERNDEEP_COWL, i::BURROWER_HOOD } },
+        // 65 Viscous Fallout
+        { { { i::GLOWING_SLUDGE, 100, 2, 3 }, none, none }, false,
+          { i::FALLOUT_LEGPLATES, i::RADIANT_LEGGINGS, i::SLUDGE_SOAKED_PANTS } },
+        // 66 Electrocutioner 6000
+        { { { i::GREASY_COG, 100, 2, 3 }, none, none }, false,
+          { i::ELECTROCUTIONER_LEG, i::ARC_SPARK_STAFF, i::STATIC_LONGBOW } },
+        // 67 Crowd Pummeler 9-60
+        { { { i::GREASY_COG, 100, 2, 3 }, none, none }, false,
+          { i::MANUAL_CROWD_PUMMELER, i::OSCILLATING_POWER_ROBE, i::GEAR_STUDDED_JERKIN } },
+        // 68 Mekgineer Thermaplugg
+        { { { i::GREATER_HEALING_POTION, 100, 2, 3 }, none, none }, true,
+          { i::THERMAPLUGGS_LEFT_ARM, i::MEKGINEERS_SPARK_STAFF, i::THERMAPLUGGS_BLUNDERBUSS } },
     };
 
     // Uncommon items any enemy of a level band may drop.
@@ -162,6 +233,10 @@ namespace
                                    i::HORNWOOD_BOW, i::MILITIA_SHIELD };
     constexpr item_id band_4[] = { i::BLACKENED_LEGGINGS, i::CINDERCLOTH_ROBE, i::POLISHED_BOOTS,
                                    i::MINERS_REVENGE };
+    constexpr item_id band_5[] = { i::SCALED_LEATHER_HEADBAND, i::GREENWEAVE_ROBE, i::DEFENDER_GAUNTLETS,
+                                   i::KNIGHTS_LONGSWORD, i::EMBERSTONE_STAFF, i::OUTRIDERS_BOW };
+    constexpr item_id band_6[] = { i::BOGWALKER_BOOTS, i::FENPLATE_LEGGINGS, i::MOONGLOW_HOOD, i::KNIGHTLY_GREATSWORD,
+                                   i::SAGES_STAFF, i::HAWKEYE_BOW, i::BULWARK_SHIELD };
 
     constexpr int world_drop_chance = 3;
     constexpr int elite_world_drop_chance = 35;
@@ -197,7 +272,17 @@ namespace
             return pick(band_3);
         }
 
-        return pick(band_4);
+        if(level <= 20)
+        {
+            return pick(band_4);
+        }
+
+        if(level <= 25)
+        {
+            return pick(band_5);
+        }
+
+        return pick(band_6);
     }
 
     void add(enemy& item, item_id loot, int count)

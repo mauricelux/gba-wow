@@ -8,18 +8,24 @@
 #include "gw_combat.h"
 #include "gw_hud.h"
 #include "gw_input.h"
+#include "gw_map_blackfathom_deeps.h"
+#include "gw_map_darkshore.h"
 #include "gw_map_deadmines.h"
 #include "gw_map_deeprun_tram.h"
+#include "gw_map_dun_morogh.h"
 #include "gw_map_duskwood.h"
 #include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
+#include "gw_map_gnomeregan.h"
+#include "gw_map_ironforge.h"
 #include "gw_map_redridge.h"
 #include "gw_map_shadowfang.h"
 #include "gw_map_silverpine.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
+#include "gw_map_wetlands.h"
 #include "gw_menu_layout.h"
 #include "gw_save.h"
 #include "gw_types.h"
@@ -70,6 +76,16 @@ namespace
         { "Scouts' Camp", map_id::SILVERPINE, map_data::silverpine::silverpine_respawn },
         { "Shadowfang Keep", map_id::SHADOWFANG, map_data::shadowfang::entry },
         { "Arugal's Chamber", map_id::SHADOWFANG, { 384, 160 } },
+        { "Ironforge", map_id::IRONFORGE, map_data::ironforge::ironforge_respawn },
+        { "Dun Morogh", map_id::DUN_MOROGH, map_data::dun_morogh::dun_morogh_respawn },
+        { "Tinker Town", map_id::IRONFORGE, map_data::ironforge::tram_exit },
+        { "Menethil Harbor", map_id::WETLANDS, map_data::wetlands::menethil_respawn },
+        { "Menethil Pier", map_id::WETLANDS, map_data::wetlands::from_darkshore },
+        { "Auberdine", map_id::DARKSHORE, map_data::darkshore::auberdine_respawn },
+        { "Blackfathom Deeps", map_id::BLACKFATHOM_DEEPS, map_data::blackfathom_deeps::entry },
+        { "The Moonshrine", map_id::BLACKFATHOM_DEEPS, map_data::blackfathom_deeps::moonshrine_door },
+        { "Gnomeregan", map_id::GNOMEREGAN, map_data::gnomeregan::entry },
+        { "Thermaplugg", map_id::GNOMEREGAN, { 512, 240 } },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);

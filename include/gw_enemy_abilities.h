@@ -60,6 +60,12 @@ enum class enemy_ability_id : uint8_t
     MANA_SHIELD,
     // One enemy's own
     CANDLE_THROW,
+    // Added with the Wetlands, Blackfathom Deeps and Gnomeregan
+    FORKED_LIGHTNING,
+    SELF_DESTRUCT,      // the caster blows up with it: no corpse, no loot
+    TOXIC_VOLLEY,
+    CROWD_PUMMEL,
+    THROW_DYNAMITE,
     COUNT
 };
 
@@ -85,7 +91,13 @@ enum class enemy_family : uint8_t
     ORC,
     UNDEAD,
     WORGEN,
-    OGRE
+    OGRE,
+    NAGA,
+    TROGG,
+    DWARF,
+    CULTIST,
+    GNOME,
+    OOZE
 };
 
 enum class enemy_effect : uint8_t

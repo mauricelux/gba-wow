@@ -32,6 +32,8 @@ namespace
     constexpr int smoke_radius = 32;
     constexpr int shadow_port_interval = 9 * seconds;
     constexpr int bane_guard_percent = 90;     // Morbent Fel without Sirra's bane
+    constexpr int bomb_interval = 10 * seconds; // Thermaplugg sends a Walking Bomb
+    constexpr int max_bombs = 3;
     constexpr int lose_target_range = 220;
     constexpr int combat_timeout = 5 * seconds;
     constexpr int potion_cooldown_frames = 60 * seconds;
@@ -3547,7 +3549,7 @@ void combat::_update_frenzy(enemy& boss, int health_percent, int below, int phas
     {
         boss.phase = phase;
         bn::string<48> text = name;
-        text += " goes into a frenzy!";
+        text += " is in a frenzy!";
         _hud.message(text, ui::color::RED);
         _texts.show(_head(boss.position, 44), "Frenzy", floating_texts::style::DAMAGE_TAKEN);
     }
@@ -3737,12 +3739,12 @@ bool combat::boss_update(int index)
     // --- Duskwood ----------------------------------------------------------------------------------
 
     case enemy_id::MOR_LADIM:
-        _boss_greeting(boss, "Mor'Ladim: Who disturbs my rest?");
+        _boss_greeting(boss, "Mor'Ladim: Who wakes me?");
         _update_frenzy(boss, health_percent, 30, 2, "Mor'Ladim");
         break;
 
     case enemy_id::STALVAN_MISTMANTLE:
-        _boss_greeting(boss, "Stalvan: You will not take her from me!");
+        _boss_greeting(boss, "Stalvan: She is mine!");
         _update_frenzy(boss, health_percent, 30, 2, "Stalvan");
         break;
 
@@ -3752,8 +3754,8 @@ bool combat::boss_update(int index)
         if(boss.phase == 0)
         {
             boss.phase = 1;
-            _hud.message(quest_wants_kill(enemy_id::MORBENT_FEL) ? "Morbent Fel: That smell... the bane!" :
-                                                                   "Morbent Fel: Your weapons cannot harm me!",
+            _hud.message(quest_wants_kill(enemy_id::MORBENT_FEL) ? "Morbent Fel: The bane?!" :
+                                                                   "Morbent: Steel can't hurt me!",
                          ui::color::RED);
         }
 
@@ -3766,7 +3768,7 @@ bool combat::boss_update(int index)
         break;
 
     case enemy_id::STITCHES:
-        _boss_greeting(boss, "Stitches roars and lumbers at you!");
+        _boss_greeting(boss, "Stitches lumbers at you!");
         _update_frenzy(boss, health_percent, 25, 2, "Stitches");
         break;
 
@@ -3782,7 +3784,7 @@ bool combat::boss_update(int index)
 
     case enemy_id::RAZORCLAW_THE_BUTCHER:
         // From half health, spins his cleavers around him; a frenzy near the end.
-        _boss_greeting(boss, "Razorclaw: More meat for the larder!");
+        _boss_greeting(boss, "Razorclaw: More meat!");
         _update_frenzy(boss, health_percent, 25, 2, "Razorclaw");
 
         if(health_percent <= 50 &&
@@ -3798,7 +3800,7 @@ bool combat::boss_update(int index)
         {
             boss.phase = 1;
             boss.special_timer = 4 * seconds;
-            _hud.message("Silverlaine: My keep... You will not have it!", ui::color::RED);
+            _hud.message("Silverlaine: Leave my keep!", ui::color::RED);
         }
 
         if(_update_telegraph(boss, false, smoke_radius, "Veil of Shadow", projectile_kind::SHADOW))
@@ -3809,7 +3811,7 @@ bool combat::boss_update(int index)
 
     case enemy_id::COMMANDER_SPRINGVALE:
         // Heals himself under half health (interrupt it); Divine Protection once, near the end.
-        _boss_greeting(boss, "Springvale: The Light left me. I serve another now!");
+        _boss_greeting(boss, "Springvale: I serve another!");
 
         if(boss.phase == 1 && health_percent <= 25)
         {
@@ -3833,21 +3835,21 @@ bool combat::boss_update(int index)
         {
             boss.phase = 1;
             boss.special_timer = shadow_port_interval;
-            _hud.message("Arugal: Who dares enter my keep?", ui::color::RED);
+            _hud.message("Arugal: Who dares enter?", ui::color::RED);
         }
 
         if(boss.phase == 1 && health_percent <= 66)
         {
             boss.phase = 2;
             _summon_add(boss, enemy_id::LUPINE_HORROR);
-            _hud.message("Arugal: Children of the night, to me!", ui::color::RED);
+            _hud.message("Arugal: To me, my children!", ui::color::RED);
         }
 
         if(boss.phase == 2 && health_percent <= 33)
         {
             boss.phase = 3;
             _summon_add(boss, enemy_id::LUPINE_HORROR);
-            _hud.message("Arugal: You will be one of them!", ui::color::RED);
+            _hud.message("Arugal: You'll be one of them!", ui::color::RED);
         }
 
         if(boss.special_timer == 0)
@@ -3857,11 +3859,181 @@ bool combat::boss_update(int index)
         }
         break;
 
+    // --- The Wetlands ------------------------------------------------------------------------------
+
+    case enemy_id::BALGARAS_THE_FOUL:
+        _boss_greeting(boss, "Balgaras: The span will burn!");
+        _update_frenzy(boss, health_percent, 30, 2, "Balgaras");
+        break;
+
+    case enemy_id::NEK_ROSH:
+        // A grunt comes running at half health; a frenzy near the end.
+        _boss_greeting(boss, "Nek'rosh: Die, dwarf-friend!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::DRAGONMAW_GRUNT);
+            _hud.message("Nek'rosh: Grunts, to me!", ui::color::RED);
+        }
+
+        _update_frenzy(boss, health_percent, 25, 3, "Nek'rosh");
+        break;
+
+    // --- Blackfathom Deeps -------------------------------------------------------------------------
+
+    case enemy_id::GHAMOO_RA:
+        // Shell Slam: draws into its shell for a moment, then a hit for more than double.
+        if(_update_wind_up(index, in_melee, "Shell Slam", "Ghamoo-ra slams you!"))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::LADY_SAREVESS:
+        // Forked Lightning is one of her abilities; a myrmidon guards her from half health.
+        _boss_greeting(boss, "Sarevess: You will drown here!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::BLACKFATHOM_MYRMIDON);
+            _hud.message("Sarevess: Guards, to me!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::GELIHAST:
+        _boss_greeting(boss, "Gelihast: Mrglmrglmrgl!");
+
+        if(boss.phase == 1 && health_percent <= 60)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::BLINDLIGHT_MURLOC);
+        }
+
+        _update_frenzy(boss, health_percent, 30, 3, "Gelihast");
+        break;
+
+    case enemy_id::TWILIGHT_LORD_KELRIS:
+        // Mind Blast lands where the player stood; an acolyte joins at half health.
+        if(boss.phase == 0)
+        {
+            boss.phase = 1;
+            boss.special_timer = 5 * seconds;
+            _hud.message("Kelris: Who dares disturb me?", ui::color::RED);
+        }
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::TWILIGHT_ACOLYTE);
+            _hud.message("Kelris: Brothers, to me!", ui::color::RED);
+        }
+
+        if(_update_telegraph(boss, false, smoke_radius, "Mind Blast", projectile_kind::SHADOW))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::AKU_MAI:
+        // From half health, lashes everything around it with its heads.
+        _boss_greeting(boss, "Aku'mai rises from the deep!");
+
+        if(health_percent <= 50 &&
+           _update_telegraph(boss, true, flurry_radius, "Thrashing Heads", projectile_kind::NATURE))
+        {
+            return true;
+        }
+        break;
+
+    // --- Gnomeregan --------------------------------------------------------------------------------
+
+    case enemy_id::GRUBBIS:
+        _boss_greeting(boss, "Grubbis: Grubbis smash!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::CAVERNDEEP_BURROWER);
+            _hud.message("A burrower digs up to help!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::VISCOUS_FALLOUT:
+        _boss_greeting(boss, "Viscous Fallout oozes at you!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::IRRADIATED_SLIME);
+            _hud.message("Viscous Fallout splits!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::ELECTROCUTIONER_6000:
+        // Megavolt: charges up for a moment, then a shock for more than double.
+        if(_update_wind_up(index, in_melee, "Megavolt", "The Electrocutioner zaps you!"))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::CROWD_PUMMELER:
+        _boss_greeting(boss, "Pummeler: CROWD PUMMEL ENGAGED");
+        _update_frenzy(boss, health_percent, 30, 2, "Crowd Pummeler");
+        break;
+
+    case enemy_id::MEKGINEER_THERMAPLUGG:
+        // A Walking Bomb climbs out of a random hatch every few seconds (the map's patrol points),
+        // at most three at a time; a frenzy near the end.
+        if(boss.phase == 0)
+        {
+            boss.phase = 1;
+            boss.special_timer = 4 * seconds;
+            _hud.message("Thermaplugg: Usurpers! Begone!", ui::color::RED);
+        }
+
+        if(boss.special_timer == 0)
+        {
+            boss.special_timer = bomb_interval;
+            _launch_bomb();
+        }
+
+        _update_frenzy(boss, health_percent, 20, 2, "Thermaplugg");
+        break;
+
     default:
         break;
     }
 
     return false;
+}
+
+void combat::_launch_bomb()
+{
+    const auto& hatches = world::map().patrol;
+    int bombs = 0;
+
+    for(int index = 0, limit = _enemies.count(); index < limit; ++index)
+    {
+        const enemy& item = _enemies.at(index);
+        bombs += item.summoned && item.alive() && item.id == enemy_id::WALKING_BOMB;
+    }
+
+    if(hatches.empty() || bombs >= max_bombs)
+    {
+        return;
+    }
+
+    const point_def& hatch = hatches[random_range(0, hatches.size() - 1)];
+    bn::fixed_point position(hatch.x, hatch.y);
+
+    if(_enemies.summon(enemy_id::WALKING_BOMB, position) >= 0)
+    {
+        _effects.burst(position, projectile_kind::FIRE);
+        _hud.message("A Walking Bomb is coming!", ui::color::RED);
+    }
 }
 
 }

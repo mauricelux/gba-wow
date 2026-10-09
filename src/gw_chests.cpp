@@ -28,6 +28,8 @@ namespace
     constexpr int sparkle_first_frame = 3;      // fx_markers: two twinkle frames
     constexpr int sparkle_period = 128;
     constexpr int sparkle_frames = 24;
+    constexpr int brazier_frame = 2;            // fx_chest: cold, then two frames of flame
+    constexpr int flame_period = 16;
 
     [[nodiscard]] item_id potion_for(int level)
     {
@@ -122,9 +124,54 @@ int chests::nearest_closed(const bn::fixed_point& from, int max_distance) const
     return best;
 }
 
+bool chests::all_braziers_lit() const
+{
+    for(const chest& item : _chests)
+    {
+        if(item.level == 0 && ! chest_opened(item.id))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool chests::open(int index, hud& hud_ref)
 {
     chest& item = _chests[index];
+
+    if(item.level == 0)
+    {
+        set_chest_opened(item.id);
+        play_sound(sound_id::SPELL);
+        int lit = 0;
+        int total = 0;
+
+        for(const chest& other : _chests)
+        {
+            if(other.level == 0)
+            {
+                ++total;
+                lit += chest_opened(other.id);
+            }
+        }
+
+        bn::string<32> text = "The brazier flares (";
+        text += bn::to_string<4>(lit);
+        text += "/";
+        text += bn::to_string<4>(total);
+        text += ")";
+        hud_ref.message(text, ui::color::YELLOW);
+
+        if(lit == total)
+        {
+            hud_ref.message("A sealed door grinds open", ui::color::GREEN);
+        }
+
+        item.sparkle.reset();
+        return true;
+    }
 
     // Only with every bag row in use, which a whole game's loot doesn't reach.
     if(bag_row_count() >= bag_rows)
@@ -159,6 +206,7 @@ bool chests::open(int index, hud& hud_ref)
     if(item.sprite)
     {
         item.sprite->set_tiles(bn::sprite_items::fx_chest.tiles_item(), 1);
+        item.frame = 1;
     }
 
     item.sparkle.reset();
@@ -181,14 +229,32 @@ void chests::_update_sprite(chest& item, const bn::fixed_point& player_feet)
     bn::fixed_point screen = world::to_screen_space(item.position);
     int x = screen.x().floor_integer();
     int y = screen.y().floor_integer();
+    int frame = opened ? 1 : 0;
+
+    if(item.level == 0)
+    {
+        frame = brazier_frame + (opened ? 1 + (_frame + item.id * 5) / flame_period % 2 : 0);
+    }
 
     if(! item.sprite)
     {
-        item.sprite = bn::sprite_items::fx_chest.create_sprite(x, y - 8, opened ? 1 : 0);
+        item.sprite = bn::sprite_items::fx_chest.create_sprite(x, y - 8, frame);
         item.sprite->set_camera(_camera);
         item.sprite->set_bg_priority(chest_bg_priority);
         item.sprite->set_z_order(-item.position.y().floor_integer());
         item.sprite->set_blending_enabled(night::enabled());
+        item.frame = int8_t(frame);
+    }
+    else if(item.frame != frame)
+    {
+        item.sprite->set_tiles(bn::sprite_items::fx_chest.tiles_item(), frame);
+        item.frame = int8_t(frame);
+    }
+
+    // Braziers stand in plain sight.
+    if(item.level == 0)
+    {
+        return;
     }
 
     // A short twinkle every couple of seconds, offset per chest so they don't blink together.
@@ -200,17 +266,17 @@ void chests::_update_sprite(chest& item, const bn::fixed_point& player_feet)
         return;
     }
 
-    int frame = sparkle_first_frame + (phase >= sparkle_frames / 2 ? 1 : 0);
+    int sparkle_frame = sparkle_first_frame + (phase >= sparkle_frames / 2 ? 1 : 0);
 
     if(! item.sparkle)
     {
-        item.sparkle = bn::sprite_items::fx_markers.create_sprite(x + 4, y - 14, frame);
+        item.sparkle = bn::sprite_items::fx_markers.create_sprite(x + 4, y - 14, sparkle_frame);
         item.sparkle->set_camera(_camera);
         item.sparkle->set_bg_priority(sparkle_bg_priority);
     }
     else
     {
-        item.sparkle->set_tiles(bn::sprite_items::fx_markers.tiles_item(), frame);
+        item.sparkle->set_tiles(bn::sprite_items::fx_markers.tiles_item(), sparkle_frame);
     }
 }
 

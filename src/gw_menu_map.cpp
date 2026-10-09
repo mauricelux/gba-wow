@@ -90,7 +90,7 @@ namespace
     {
         map_id map = minimaps[minimap].map;
 
-        for(int pass = 0; pass < 2; ++pass)
+        for(int pass = 0; pass < 3; ++pass)
         {
             for(int index = 0; index < zone_count; ++index)
             {
@@ -313,7 +313,7 @@ void menu::_draw_map()
     // Opened chests only: the others stay hidden.
     for(const chest_def& chest : map.chests)
     {
-        if(chest_opened(chest.id) && ! _map_sprites.full())
+        if(chest.level != 0 && chest_opened(chest.id) && ! _map_sprites.full())
         {
             _map_sprites.push_back(world_mark(minimap, chest.x, chest.y - 4, MARK_CHEST));
         }

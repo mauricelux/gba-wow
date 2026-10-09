@@ -332,7 +332,141 @@
     X(BLINDSIGHT_BOW, weapon("Blindsight Bow", R, BOW, 24, 28, 0, 8, 4, 0, 0)) \
     X(SHADOWFANG, weapon("Shadowfang", R, SWORD, 25, 26, 7, 2, 5, 0, 0)) \
     X(ROBE_OF_ARUGAL, armor("Robe of Arugal", R, CLOTH, CHEST, 25, 0, 0, 6, 11, 6)) \
-    X(WORGEN_HIDE_LEGGINGS, armor("Worgen Hide Leggings", R, LEATHER, LEGS, 25, 0, 9, 6, 0, 0))
+    X(WORGEN_HIDE_LEGGINGS, armor("Worgen Hide Leggings", R, LEATHER, LEGS, 25, 0, 9, 6, 0, 0)) \
+    /* World drops, levels 21 to 30 */ \
+    X(SCALED_LEATHER_HEADBAND, armor("Scaled Leather Headband", U, LEATHER, HEAD, 22, 0, 5, 3, 0, 0)) \
+    X(GREENWEAVE_ROBE, armor("Greenweave Robe", U, CLOTH, CHEST, 23, 0, 0, 3, 6, 4)) \
+    X(DEFENDER_GAUNTLETS, armor("Defender Gauntlets", U, MAIL, HANDS, 22, 4, 0, 3, 0, 0)) \
+    X(KNIGHTS_LONGSWORD, weapon("Knight's Longsword", U, SWORD, 24, 26, 5, 0, 3, 0, 0)) \
+    X(EMBERSTONE_STAFF, weapon("Emberstone Staff", U, STAFF, 23, 32, 0, 0, 3, 6, 4)) \
+    X(OUTRIDERS_BOW, weapon("Outrider's Bow", U, BOW, 24, 28, 0, 5, 3, 0, 0)) \
+    X(BOGWALKER_BOOTS, armor("Bogwalker Boots", U, LEATHER, FEET, 27, 0, 6, 3, 0, 0)) \
+    X(FENPLATE_LEGGINGS, armor("Fenplate Leggings", U, MAIL, LEGS, 27, 6, 0, 4, 0, 0)) \
+    X(MOONGLOW_HOOD, armor("Moonglow Hood", U, CLOTH, HEAD, 27, 0, 0, 3, 7, 4)) \
+    X(KNIGHTLY_GREATSWORD, weapon("Knightly Greatsword", U, TWO_HANDED, 28, 36, 8, 0, 5, 0, 0)) \
+    X(SAGES_STAFF, weapon("Sage's Staff", U, STAFF, 28, 32, 0, 0, 4, 8, 5)) \
+    X(HAWKEYE_BOW, weapon("Hawkeye Bow", U, BOW, 28, 28, 0, 7, 3, 0, 0)) \
+    X(BULWARK_SHIELD, shield("Bulwark Shield", U, 27, 3, 0, 5, 0, 0)) \
+    /* Ironforge and the Wetlands: supplies and what their creatures carry */ \
+    X(DWARVEN_MILD, consumable("Dwarven Mild", FOOD, 25, 700, 180, 20)) \
+    X(MOONBERRY_JUICE, consumable("Moonberry Juice", DRINK, 25, 1300, 180, 20)) \
+    X(MAGEWEAVE_CLOTH, junk("Mageweave Cloth", 60, 20)) \
+    X(CROCOLISK_SCALE, junk("Crocolisk Scale", 55, 20)) \
+    X(RAPTOR_TALON, junk("Raptor Talon", 55, 20)) \
+    X(NAGA_SCALE, junk("Naga Scale", 65, 20)) \
+    X(GREASY_COG, junk("Greasy Cog", 60, 20)) \
+    X(GLOWING_SLUDGE, junk("Glowing Sludge", 50, 20)) \
+    X(TROGG_STONE_TOOTH, junk("Trogg Stone Tooth", 55, 20)) \
+    /* Bruuk Barleybeard, Ironforge */ \
+    X(DWARVEN_BROADSWORD, weapon("Dwarven Broadsword", C, SWORD, 24, 26)) \
+    X(DWARVEN_WAR_AXE, weapon("Dwarven War Axe", C, AXE, 24, 25)) \
+    X(IRONFORGE_WARHAMMER, weapon("Ironforge Warhammer", C, MACE, 24, 27)) \
+    X(OAKEN_WAR_STAFF, weapon("Oaken War Staff", C, STAFF, 24, 31)) \
+    X(DWARVEN_GREATAXE, weapon("Dwarven Greataxe", C, TWO_HANDED, 24, 35)) \
+    X(HEAVY_RECURVE_BOW, weapon("Heavy Recurve Bow", C, BOW, 24, 28)) \
+    X(DWARVEN_HAND_CANNON, weapon("Dwarven Hand Cannon", C, GUN, 24, 29)) \
+    X(IRONFORGE_TOWER_SHIELD, shield("Ironforge Tower Shield", C, 24)) \
+    X(BANDED_HELM, armor("Banded Helm", C, MAIL, HEAD, 24)) \
+    X(BANDED_HAUBERK, armor("Banded Hauberk", C, MAIL, CHEST, 24)) \
+    X(BANDED_GAUNTLETS, armor("Banded Gauntlets", C, MAIL, HANDS, 24)) \
+    X(BANDED_LEGGINGS, armor("Banded Leggings", C, MAIL, LEGS, 24)) \
+    X(BANDED_BOOTS, armor("Banded Boots", C, MAIL, FEET, 24)) \
+    X(THICK_LEATHER_CAP, armor("Thick Leather Cap", C, LEATHER, HEAD, 24)) \
+    X(THICK_LEATHER_VEST, armor("Thick Leather Vest", C, LEATHER, CHEST, 24)) \
+    X(THICK_LEATHER_GLOVES, armor("Thick Leather Gloves", C, LEATHER, HANDS, 24)) \
+    X(THICK_LEATHER_PANTS, armor("Thick Leather Pants", C, LEATHER, LEGS, 24)) \
+    X(THICK_LEATHER_BOOTS, armor("Thick Leather Boots", C, LEATHER, FEET, 24)) \
+    X(MAGEWEAVE_HOOD, armor("Mageweave Hood", C, CLOTH, HEAD, 24)) \
+    X(MAGEWEAVE_ROBE, armor("Mageweave Robe", C, CLOTH, CHEST, 24)) \
+    X(MAGEWEAVE_GLOVES, armor("Mageweave Gloves", C, CLOTH, HANDS, 24)) \
+    X(MAGEWEAVE_PANTS, armor("Mageweave Pants", C, CLOTH, LEGS, 24)) \
+    X(MAGEWEAVE_BOOTS, armor("Mageweave Boots", C, CLOTH, FEET, 24)) \
+    /* The Wetlands: quest rewards */ \
+    X(CROCSCALE_BOOTS, armor("Crocscale Boots", U, MAIL, FEET, 25, 4, 0, 4, 0, 0)) \
+    X(MARSHWALKER_SANDALS, armor("Marshwalker Sandals", U, CLOTH, FEET, 25, 0, 0, 2, 5, 3)) \
+    X(CROCOLISK_HIDE_BOOTS, armor("Crocolisk Hide Boots", U, LEATHER, FEET, 25, 0, 5, 3, 0, 0)) \
+    X(RAPTORSCALE_GAUNTLETS, armor("Raptorscale Gauntlets", U, MAIL, HANDS, 25, 4, 0, 4, 0, 0)) \
+    X(SCREECHER_WRAPS, armor("Screecher Wraps", U, CLOTH, HANDS, 25, 0, 0, 2, 5, 3)) \
+    X(RAPTOR_HIDE_GLOVES, armor("Raptor Hide Gloves", U, LEATHER, HANDS, 25, 0, 5, 3, 0, 0)) \
+    X(EXCAVATORS_HELM, armor("Excavator's Helm", U, MAIL, HEAD, 26, 5, 0, 4, 0, 0)) \
+    X(ARCHAEOLOGISTS_HOOD, armor("Archaeologist's Hood", U, CLOTH, HEAD, 26, 0, 0, 3, 6, 3)) \
+    X(PROSPECTORS_CAP, armor("Prospector's Cap", U, LEATHER, HEAD, 26, 0, 6, 3, 0, 0)) \
+    X(THANDOL_LEGPLATES, armor("Thandol Legplates", U, MAIL, LEGS, 26, 6, 0, 4, 0, 0)) \
+    X(DUN_MODR_LEGGINGS, armor("Dun Modr Leggings", U, CLOTH, LEGS, 26, 0, 0, 3, 6, 4)) \
+    X(MOUNTAINEERS_BREECHES, armor("Mountaineer's Breeches", U, LEATHER, LEGS, 26, 0, 6, 4, 0, 0)) \
+    X(DRAGONMAW_WAR_AXE, weapon("Dragonmaw War Axe", U, AXE, 27, 26, 6, 0, 4, 0, 0)) \
+    X(SHADOWWARDER_STAFF, weapon("Shadowwarder Staff", U, STAFF, 27, 32, 0, 0, 4, 8, 4)) \
+    X(ANGERFANG_BOW, weapon("Angerfang Bow", U, BOW, 27, 28, 0, 6, 4, 0, 0)) \
+    X(STOUTFISTS_CHAINMAIL, armor("Stoutfist's Chainmail", R, MAIL, CHEST, 28, 8, 0, 6, 0, 0)) \
+    X(HARBOR_MAGES_ROBE, armor("Harbor Mage's Robe", R, CLOTH, CHEST, 28, 0, 0, 5, 10, 6)) \
+    X(WETLANDS_JERKIN, armor("Wetlands Jerkin", R, LEATHER, CHEST, 28, 0, 9, 5, 0, 0)) \
+    X(SARLTOOTHS_CLEAVER, weapon("Sarltooth's Cleaver", R, AXE, 28, 26, 7, 1, 5, 0, 0)) \
+    X(IRONBRAID_STAFF, weapon("Ironbraid Staff", R, STAFF, 28, 32, 0, 0, 4, 10, 6)) \
+    X(ORMERS_LONGBOW, weapon("Ormer's Longbow", R, BOW, 28, 28, 0, 9, 4, 0, 0)) \
+    X(NEKROSHS_MAUL, weapon("Nek'rosh's Maul", R, TWO_HANDED, 29, 36, 11, 0, 7, 0, 0)) \
+    X(STAFF_OF_GRIM_BATOL, weapon("Staff of Grim Batol", R, STAFF, 29, 32, 0, 0, 5, 11, 7)) \
+    X(DRAGONMAW_LONGBOW, weapon("Dragonmaw Longbow", R, BOW, 29, 28, 0, 10, 5, 0, 0)) \
+    /* Blackfathom Deeps: quest rewards */ \
+    X(GERRIGS_GAUNTLETS, armor("Gerrig's Gauntlets", R, MAIL, HANDS, 26, 6, 0, 4, 0, 0)) \
+    X(LORGALIS_WRAPS, armor("Lorgalis Wraps", R, CLOTH, HANDS, 26, 0, 0, 3, 7, 4)) \
+    X(BONEGRIP_GLOVES, armor("Bonegrip Gloves", R, LEATHER, HANDS, 26, 0, 7, 3, 0, 0)) \
+    X(ARGENT_SABATONS, armor("Argent Sabatons", R, MAIL, FEET, 26, 6, 0, 4, 0, 0)) \
+    X(DAWNWATCHER_SANDALS, armor("Dawnwatcher Sandals", R, CLOTH, FEET, 26, 0, 0, 3, 7, 4)) \
+    X(TWILIGHT_TREADS, armor("Twilight Treads", R, LEATHER, FEET, 26, 0, 7, 3, 0, 0)) \
+    X(TIDEWALKER_LEGPLATES, armor("Tidewalker Legplates", R, MAIL, LEGS, 26, 7, 0, 5, 0, 0)) \
+    X(TIDECALLER_LEGGINGS, armor("Tidecaller Leggings", R, CLOTH, LEGS, 26, 0, 0, 4, 8, 5)) \
+    X(SNAPJAW_HIDE_PANTS, armor("Snapjaw Hide Pants", R, LEATHER, LEGS, 26, 0, 8, 4, 0, 0)) \
+    X(ARGENT_GUARDS_BLADE, weapon("Argent Guard's Blade", R, SWORD, 27, 26, 7, 1, 4, 0, 0)) \
+    X(DAWNWATCHER_STAFF, weapon("Dawnwatcher Staff", R, STAFF, 27, 32, 0, 0, 4, 10, 6)) \
+    X(STRANDWALKER_BOW, weapon("Strandwalker Bow", R, BOW, 27, 28, 0, 9, 4, 0, 0)) \
+    X(FATHOM_HAUBERK, armor("Fathom Hauberk", R, MAIL, CHEST, 28, 9, 0, 6, 0, 0)) \
+    X(ROBE_OF_THE_MOONSHRINE, armor("Robe of the Moonshrine", R, CLOTH, CHEST, 28, 0, 0, 6, 11, 6)) \
+    X(DEEPWATER_JERKIN, armor("Deepwater Jerkin", R, LEATHER, CHEST, 28, 0, 10, 6, 0, 0)) \
+    /* Blackfathom Deeps: boss drops */ \
+    X(TURTLE_SHELL_SHIELD, shield("Turtle Shell Shield", R, 24, 4, 0, 6, 0, 0)) \
+    X(GHAMOO_RA_WRAPS, armor("Ghamoo-ra's Wraps", R, CLOTH, HANDS, 24, 0, 0, 3, 6, 4)) \
+    X(SNAPJAW_GLOVES, armor("Snapjaw Gloves", R, LEATHER, HANDS, 24, 0, 6, 3, 0, 0)) \
+    X(STRIKE_OF_THE_HYDRA, weapon("Strike of the Hydra", R, SWORD, 25, 26, 6, 1, 4, 0, 0)) \
+    X(ROBE_OF_THE_DEEPS, armor("Robe of the Deeps", R, CLOTH, CHEST, 25, 0, 0, 5, 9, 5)) \
+    X(NAGA_SCALE_JERKIN, armor("Naga Scale Jerkin", R, LEATHER, CHEST, 25, 0, 8, 5, 0, 0)) \
+    X(MURKBLOOD_HELM, armor("Murkblood Helm", R, MAIL, HEAD, 25, 6, 0, 5, 0, 0)) \
+    X(GELIHASTS_HOOD, armor("Gelihast's Hood", R, CLOTH, HEAD, 25, 0, 0, 4, 8, 5)) \
+    X(FISHSCALE_CAP, armor("Fishscale Cap", R, LEATHER, HEAD, 25, 0, 8, 4, 0, 0)) \
+    X(TWILIGHT_CLEAVER, weapon("Twilight Cleaver", R, AXE, 26, 26, 7, 1, 4, 0, 0)) \
+    X(ROD_OF_THE_SLEEPWALKER, weapon("Rod of the Sleepwalker", R, STAFF, 26, 32, 0, 0, 4, 10, 6)) \
+    X(TWILIGHT_LONGBOW, weapon("Twilight Longbow", R, BOW, 26, 28, 0, 9, 4, 0, 0)) \
+    X(AKU_MAIS_FANG, weapon("Aku'mai's Fang", R, TWO_HANDED, 27, 36, 10, 0, 7, 0, 0)) \
+    X(STAFF_OF_THE_DEEP_MOTHER, weapon("Staff of the Deep Mother", R, STAFF, 27, 32, 0, 0, 5, 11, 6)) \
+    X(ABYSSAL_LONGBOW, weapon("Abyssal Longbow", R, BOW, 27, 28, 0, 10, 4, 0, 0)) \
+    /* Gnomeregan: quest rewards */ \
+    X(LEAD_LINED_HELM, armor("Lead-Lined Helm", U, MAIL, HEAD, 27, 6, 0, 4, 0, 0)) \
+    X(RAD_PROOF_HOOD, armor("Rad-Proof Hood", U, CLOTH, HEAD, 27, 0, 0, 3, 7, 4)) \
+    X(GNOMISH_GOGGLES, armor("Gnomish Goggles", U, LEATHER, HEAD, 27, 0, 6, 4, 0, 0)) \
+    X(GRUBBIS_GAUNTLETS, armor("Grubbis's Gauntlets", R, MAIL, HANDS, 28, 7, 0, 5, 0, 0)) \
+    X(CAVERNDEEP_WRAPS, armor("Caverndeep Wraps", R, CLOTH, HANDS, 28, 0, 0, 4, 8, 5)) \
+    X(BURROWER_GRIPS, armor("Burrower Grips", R, LEATHER, HANDS, 28, 0, 8, 4, 0, 0)) \
+    X(GYRO_PLATED_LEGGUARDS, armor("Gyro-Plated Legguards", R, MAIL, LEGS, 28, 8, 0, 6, 0, 0)) \
+    X(SPARK_WOVEN_PANTS, armor("Spark-Woven Pants", R, CLOTH, LEGS, 28, 0, 0, 5, 10, 5)) \
+    X(MECHANISTS_BREECHES, armor("Mechanist's Breeches", R, LEATHER, LEGS, 28, 0, 9, 5, 0, 0)) \
+    X(THERMAPLUGGS_UNDOING, weapon("Thermaplugg's Undoing", E, TWO_HANDED, 30, 36, 13, 0, 9, 0, 0)) \
+    X(MEKKATORQUES_ARCANO_STAFF, weapon("Mekkatorque's Arcano-Staff", E, STAFF, 30, 32, 0, 0, 7, 15, 8)) \
+    X(TINKER_TOWN_HAND_CANNON, weapon("Tinker Town Hand Cannon", E, GUN, 30, 29, 0, 12, 6, 0, 0)) \
+    /* Gnomeregan: boss drops */ \
+    X(TROGGSTONE_HELM, armor("Troggstone Helm", R, MAIL, HEAD, 26, 7, 0, 4, 0, 0)) \
+    X(CAVERNDEEP_COWL, armor("Caverndeep Cowl", R, CLOTH, HEAD, 26, 0, 0, 4, 8, 4)) \
+    X(BURROWER_HOOD, armor("Burrower Hood", R, LEATHER, HEAD, 26, 0, 7, 4, 0, 0)) \
+    X(FALLOUT_LEGPLATES, armor("Fallout Legplates", R, MAIL, LEGS, 27, 8, 0, 5, 0, 0)) \
+    X(RADIANT_LEGGINGS, armor("Radiant Leggings", R, CLOTH, LEGS, 27, 0, 0, 4, 9, 5)) \
+    X(SLUDGE_SOAKED_PANTS, armor("Sludge-Soaked Pants", R, LEATHER, LEGS, 27, 0, 9, 4, 0, 0)) \
+    X(ELECTROCUTIONER_LEG, weapon("Electrocutioner Leg", R, SWORD, 28, 26, 8, 1, 5, 0, 0)) \
+    X(ARC_SPARK_STAFF, weapon("Arc-Spark Staff", R, STAFF, 28, 32, 0, 0, 5, 11, 6)) \
+    X(STATIC_LONGBOW, weapon("Static Longbow", R, BOW, 28, 28, 0, 10, 4, 0, 0)) \
+    X(MANUAL_CROWD_PUMMELER, weapon("Manual Crowd Pummeler", R, TWO_HANDED, 28, 36, 11, 0, 7, 0, 0)) \
+    X(OSCILLATING_POWER_ROBE, armor("Oscillating Power Robe", R, CLOTH, CHEST, 28, 0, 0, 6, 11, 6)) \
+    X(GEAR_STUDDED_JERKIN, armor("Gear-Studded Jerkin", R, LEATHER, CHEST, 28, 0, 10, 6, 0, 0)) \
+    X(THERMAPLUGGS_LEFT_ARM, weapon("Thermaplugg's Left Arm", R, TWO_HANDED, 29, 36, 12, 0, 8, 0, 0)) \
+    X(MEKGINEERS_SPARK_STAFF, weapon("Mekgineer's Spark Staff", R, STAFF, 29, 32, 0, 0, 6, 12, 7)) \
+    X(THERMAPLUGGS_BLUNDERBUSS, weapon("Thermaplugg's Blunderbuss", R, GUN, 29, 29, 0, 11, 5, 0, 0))
 
 namespace gw
 {

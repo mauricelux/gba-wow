@@ -779,6 +779,272 @@ namespace
           n::VALDAN, n::VALDAN, 26, 23, qid::INTO_SHADOWFANG,
           { collect(e::ARUGAL, 1, 100, "Head of Arugal"), none, none }, xp(26, 250), money(26),
           { i::MOONSTEEL_GREATSWORD, i::STAFF_OF_DALARAN, i::VALDANS_LONGBOW } },
+
+        // --- Ironforge and the Wetlands -------------------------------------------------------------
+
+        { "The Road to Ironforge",
+          "A dwarven runner brought word from Ironforge. King Magni Bronzebeard asks Stormwind for a "
+          "champion: the Dark Iron dwarves stir in the Wetlands, and something has gone very wrong "
+          "under Dun Morogh.\n\n"
+          "The Deeprun Tram runs under the mountains from Stormwind. Ride it to Ironforge and present "
+          "yourself to the King in the High Seat.",
+          "Ride the Deeprun Tram to Ironforge and speak with King Magni Bronzebeard in the High Seat.",
+          "",
+          "So Bolvar sent you. Good! Ironforge has need of a strong arm, and the Highlord speaks well "
+          "of yours.",
+          n::BOLVAR, n::MAGNI, 24, 24, qid::THE_ROAD_TO_DARKSHIRE, { none, none, none }, xp(24, 40), money(5),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Menethil Bound",
+          "Menethil Harbor is our door to the sea, and the Dark Irons are banging on it. Their raiders "
+          "hold Dun Modr at the north end of the Wetlands, and the Dragonmaw orcs have dug in to the "
+          "east.\n\n"
+          "Go out the city gates, east through Dun Morogh and north through Dun Algaz. Captain "
+          "Stoutfist holds the harbor on the western shore. Tell him Magni sent you.",
+          "Travel to Menethil Harbor in the Wetlands and report to Captain Stoutfist.",
+          "",
+          "From the King himself? Then you'll be busy. Menethil has more trouble than soldiers.",
+          n::MAGNI, n::STOUTFIST, 25, 24, qid::THE_ROAD_TO_IRONFORGE, { none, none, none }, xp(25, 25),
+          money(10), { i::NONE, i::NONE, i::NONE } },
+
+        { "The Thandol Span",
+          "The Thandol Span is the only bridge between the Wetlands and the north. If the Dark Irons "
+          "blow it, Menethil is cut off.\n\n"
+          "Their camp is in the ruins of Dun Modr, at the foot of the bridge. Scout the span, and "
+          "break their sappers and soldiers before they set their charges.",
+          "Scout the Thandol Span, then kill 8 Dark Iron Dwarves and 4 Dark Iron Saboteurs at Dun Modr.",
+          "The Dark Irons still hold Dun Modr.",
+          "The bridge stands, thanks to you. Take these: the quartermaster won't miss them.",
+          n::STOUTFIST, n::STOUTFIST, 26, 24, qid::MENETHIL_BOUND,
+          { explore(area_id::THANDOL_SPAN, "Thandol Span scouted"),
+            kill(e::DARK_IRON_DWARF, 8, "Dark Iron Dwarf slain"),
+            kill(e::DARK_IRON_SABOTEUR, 4, "Dark Iron Saboteur slain") }, xp(26, 75), money(26),
+          { i::THANDOL_LEGPLATES, i::DUN_MODR_LEGGINGS, i::MOUNTAINEERS_BREECHES } },
+
+        { "Balgaras the Foul",
+          "The Dark Irons at Dun Modr answer to Balgaras the Foul. He's the one who planned the attack "
+          "on the span, and he'll plan another.\n\n"
+          "Bring me his ear, so the men know he's done.",
+          "Bring the Ear of Balgaras to Captain Stoutfist.",
+          "Balgaras still lives.",
+          "That's his ear, all right. Here, take my old mail. It's done me well; it'll do you better.",
+          n::STOUTFIST, n::STOUTFIST, 28, 25, qid::THE_THANDOL_SPAN,
+          { collect(e::BALGARAS_THE_FOUL, 1, 100, "Ear of Balgaras"), none, none }, xp(28), money(28),
+          { i::STOUTFISTS_CHAINMAIL, i::HARBOR_MAGES_ROBE, i::WETLANDS_JERKIN } },
+
+        { "Young Crocolisk Skins",
+          "The young crocolisks in the marsh south of town make the softest leather you'll ever wear. "
+          "I'd hunt them myself, but my knees aren't what they were.\n\n"
+          "Bring me some skins and I'll make you a fine pair of boots.",
+          "Bring 6 Young Crocolisk Skins to James Halloran.",
+          "Not enough skins yet.",
+          "Lovely, lovely. Here you are, just your size.",
+          n::HALLORAN, n::HALLORAN, 25, 23, qid::NONE,
+          { collect(e::YOUNG_CROCOLISK, 6, 50, "Young Crocolisk Skin"), none, none }, xp(25, 60), money(25),
+          { i::CROCSCALE_BOOTS, i::MARSHWALKER_SANDALS, i::CROCOLISK_HIDE_BOOTS } },
+
+        { "Ormer's Revenge",
+          "The raptors took my brother on the ridge to the north-east. Took him while I watched.\n\n"
+          "I can't sleep for hearing them. Thin them out. The screechers too: they call the rest.",
+          "Kill 8 Mottled Raptors and 6 Mottled Screechers at Raptor Ridge.",
+          "I still hear them at night.",
+          "Quieter. A little quieter. Thank you.",
+          n::ORMER, n::ORMER, 26, 24, qid::NONE,
+          { kill(e::MOTTLED_RAPTOR, 8, "Mottled Raptor slain"), kill(e::MOTTLED_SCREECHER, 6,
+            "Mottled Screecher slain"), none }, xp(26, 75), money(26),
+          { i::RAPTORSCALE_GAUNTLETS, i::SCREECHER_WRAPS, i::RAPTOR_HIDE_GLOVES } },
+
+        { "Ormer's Revenge, Part II",
+          "There's one more. A big red brute the others follow: Sarltooth. He's the one that took my "
+          "brother.\n\n"
+          "He prowls the top of the ridge. Bring me his talon.",
+          "Bring Sarltooth's Talon to Ormer Ironbraid.",
+          "Sarltooth still hunts.",
+          "So he's dead. It doesn't bring my brother back. But it helps. Take one of these: they were "
+          "his.",
+          n::ORMER, n::ORMER, 28, 25, qid::ORMERS_REVENGE,
+          { collect(e::SARLTOOTH, 1, 100, "Sarltooth's Talon"), none, none }, xp(28, 75), money(28),
+          { i::SARLTOOTHS_CLEAVER, i::IRONBRAID_STAFF, i::ORMERS_LONGBOW } },
+
+        { "Digging Up the Past",
+          "The Explorers' League has dug at this site for months, and the Mosshide gnolls steal "
+          "everything we find! Pottery, tablets, anything shiny.\n\n"
+          "Get my relics back from them. They're all over the dig.",
+          "Bring 8 Ancient Relics from the Mosshide gnolls to Prospector Whelgar.",
+          "The gnolls still have my relics.",
+          "Marvelous! Ironforge's museum will be the envy of Stormwind. Take something for your "
+          "head: the League's spare kit.",
+          n::WHELGAR, n::WHELGAR, 26, 24, qid::NONE,
+          { collect(e::MOSSHIDE_GNOLL, 8, 50, "Ancient Relic", e::MOSSHIDE_MYSTIC), none, none }, xp(26, 60),
+          money(26), { i::EXCAVATORS_HELM, i::ARCHAEOLOGISTS_HOOD, i::PROSPECTORS_CAP } },
+
+        { "War Banners",
+          "The Dragonmaw orcs at Angerfang Encampment, east of here, fly war banners from every tent. "
+          "They think Grim Batol is theirs.\n\n"
+          "Tear their banners down. Bring them to me and they'll know we're coming.",
+          "Bring 8 Dragonmaw War Banners to Captain Stoutfist.",
+          "The banners still fly.",
+          "Ha! They'll be raging in their tents tonight. Choose a weapon from the armory.",
+          n::STOUTFIST, n::STOUTFIST, 27, 25, qid::MENETHIL_BOUND,
+          { collect(e::DRAGONMAW_GRUNT, 8, 40, "Dragonmaw War Banner", e::DRAGONMAW_SHADOWWARDER), none, none },
+          xp(27, 60), money(27), { i::DRAGONMAW_WAR_AXE, i::SHADOWWARDER_STAFF, i::ANGERFANG_BOW } },
+
+        { "Defeat Nek'rosh",
+          "Without banners the Dragonmaw are angry, and angry orcs come out to fight. Their warlord, "
+          "Nek'rosh, stands at the gate of Grim Batol itself.\n\n"
+          "Kill him and bring me his head. Without him the Dragonmaw will fall apart.",
+          "Bring Nek'rosh's Head to Captain Stoutfist. He guards the gate of Grim Batol.",
+          "Nek'rosh still commands the Dragonmaw.",
+          "The warlord's head! Menethil is safe, and that's your doing. Ironforge will hear of it.",
+          n::STOUTFIST, n::STOUTFIST, 29, 26, qid::WAR_BANNERS,
+          { collect(e::NEK_ROSH, 1, 100, "Nek'rosh's Head"), none, none }, xp(29, 125), money(29),
+          { i::NEKROSHS_MAUL, i::STAFF_OF_GRIM_BATOL, i::DRAGONMAW_LONGBOW } },
+
+        // --- Blackfathom Deeps ----------------------------------------------------------------------
+
+        { "Passage to Auberdine",
+          "The boat at the end of the pier sails for Auberdine, the night elf town across the sea in "
+          "Darkshore. Their Dawnwatcher sent word asking for help with something in the old temple "
+          "on the coast.\n\n"
+          "Night elves don't ask for help often. Go on, the boat's waiting.",
+          "Take the boat to Auberdine and speak with Dawnwatcher Shaedlass.",
+          "",
+          "You came across the sea for us? Elune smiles on you, stranger.",
+          n::HARBORMASTER, n::SHAEDLASS, 24, 23, qid::NONE, { none, none, none }, xp(24, 25), money(5),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "In Search of Thaelrid",
+          "Blackfathom Deeps was a temple to Elune, before the sea took it. Now the Twilight's Hammer "
+          "cult has crept in, and the naga with them.\n\n"
+          "Argent Guard Thaelrid went in to watch them and has not come out. Find him. The temple "
+          "gate is south of town, on the shore.",
+          "Find Argent Guard Thaelrid in Blackfathom Deeps.",
+          "",
+          "Shaedlass sent you? Light be praised. I can't fight my way out alone, but with you here, "
+          "we can push back.",
+          n::SHAEDLASS, n::THAELRID, 25, 23, qid::PASSAGE_TO_AUBERDINE, { none, none, none }, xp(25, 40),
+          money(10), { i::NONE, i::NONE, i::NONE } },
+
+        { "Knowledge in the Deeps",
+          "Ah, an adventurer. The Explorers' League would pay well for the Lorgalis Manuscript, a "
+          "night elf text lost when their temple sank.\n\n"
+          "Word is the naga witch Lady Sarevess keeps it in Blackfathom Deeps, across the sea in "
+          "Darkshore. The boat from Menethil Harbor will take you to Auberdine.",
+          "Bring the Lorgalis Manuscript from Lady Sarevess to Gerrig Bonegrip in Ironforge.",
+          "No manuscript? The League is patient. I am less so.",
+          "The Lorgalis Manuscript! Mind the pages. Here, the League keeps its promises.",
+          n::GERRIG, n::GERRIG, 26, 23, qid::THE_ROAD_TO_IRONFORGE,
+          { collect(e::LADY_SAREVESS, 1, 100, "Lorgalis Manuscript"), none, none }, xp(26, 75), money(26),
+          { i::GERRIGS_GAUNTLETS, i::LORGALIS_WRAPS, i::BONEGRIP_GLOVES } },
+
+        { "Twilight Falls",
+          "The cultists of the Twilight's Hammer wear pendants that mark their rank. Each one is a "
+          "life given to their dark masters.\n\n"
+          "Bring me their pendants. The Argent Dawn will want to know how many they are.",
+          "Bring 10 Twilight Pendants from the Twilight cultists to Argent Guard Thaelrid.",
+          "There are more of them still.",
+          "So many. More than we feared. Take these, and the Dawn's thanks.",
+          n::THAELRID, n::THAELRID, 26, 23, qid::IN_SEARCH_OF_THAELRID,
+          { collect(e::TWILIGHT_ACOLYTE, 10, 50, "Twilight Pendant", e::TWILIGHT_REAVER), none, none },
+          xp(26, 60), money(26), { i::ARGENT_SABATONS, i::DAWNWATCHER_SANDALS, i::TWILIGHT_TREADS } },
+
+        { "Beasts of the Deeps",
+          "The cult does not guard the temple alone. Ghamoo-ra, a turtle the size of a house, sleeps "
+          "in the flooded hall. Lady Sarevess and her naga hold the western ledge, and Gelihast leads "
+          "the blind murlocs in the grotto to the east.\n\n"
+          "Kill all three, and the way to the Moonshrine will be open.",
+          "Kill Ghamoo-ra, Lady Sarevess and Gelihast in Blackfathom Deeps.",
+          "The beasts of the deep still live.",
+          "All three? You fight like ten guards. These are yours.",
+          n::THAELRID, n::THAELRID, 26, 23, qid::IN_SEARCH_OF_THAELRID,
+          { kill(e::GHAMOO_RA, 1, "Ghamoo-ra slain"), kill(e::LADY_SAREVESS, 1, "Lady Sarevess slain"),
+            kill(e::GELIHAST, 1, "Gelihast slain") }, xp(26), money(26),
+          { i::TIDEWALKER_LEGPLATES, i::TIDECALLER_LEGGINGS, i::SNAPJAW_HIDE_PANTS } },
+
+        { "Blackfathom Villainy",
+          "Twilight Lord Kelris leads the cult here. He prays in the Moonshrine at the heart of the "
+          "temple, calling on the old gods below the sea.\n\n"
+          "Kill him. Take his head to Dawnwatcher Shaedlass in Auberdine, so her people know the "
+          "temple will be theirs again.",
+          "Bring the Head of Kelris to Dawnwatcher Shaedlass in Auberdine.",
+          "Kelris still prays in the Moonshrine?",
+          "Kelris is dead? Then the Moonshrine can be cleansed. Thank you, friend of the night elves.",
+          n::THAELRID, n::SHAEDLASS, 27, 24, qid::IN_SEARCH_OF_THAELRID,
+          { collect(e::TWILIGHT_LORD_KELRIS, 1, 100, "Head of Kelris"), none, none }, xp(27), money(27),
+          { i::ARGENT_GUARDS_BLADE, i::DAWNWATCHER_STAFF, i::STRANDWALKER_BOW } },
+
+        { "The Fathom Core",
+          "Behind the Moonshrine is a sealed door. The cult lit four braziers to open it, and what "
+          "waits behind it is Aku'mai, the hydra they worship.\n\n"
+          "Light the braziers in the Moonshrine, open the door and kill the beast. Bring me its "
+          "heart: the Fathom Core.",
+          "Light the four braziers, kill Aku'mai and bring the Fathom Core to Dawnwatcher Shaedlass.",
+          "Aku'mai still lives below the temple.",
+          "The Fathom Core. It is cold, even now. Blackfathom is free, and Auberdine will sing of you.",
+          n::SHAEDLASS, n::SHAEDLASS, 28, 25, qid::IN_SEARCH_OF_THAELRID,
+          { collect(e::AKU_MAI, 1, 100, "Fathom Core"), none, none }, xp(28, 125), money(28),
+          { i::FATHOM_HAUBERK, i::ROBE_OF_THE_MOONSHRINE, i::DEEPWATER_JERKIN } },
+
+        // --- Gnomeregan -----------------------------------------------------------------------------
+
+        { "The Gnomes' Plea",
+          "Gnomeregan was the gnomes' great city, under Dun Morogh. Then the troggs came up from the "
+          "deep, and Mekgineer Thermaplugg flooded the halls with radiation to stop them. He killed "
+          "half his own people doing it.\n\n"
+          "The survivors live in Tinker Town, here in Ironforge. Their leader, High Tinker "
+          "Mekkatorque, could use a hero. Go and see him.",
+          "Speak with High Tinker Mekkatorque in Tinker Town.",
+          "",
+          "Magni sent you? Splendid, splendid! Come in, mind the gears.",
+          n::MAGNI, n::MEKKATORQUE, 26, 26, qid::THE_ROAD_TO_IRONFORGE, { none, none, none }, xp(26, 25),
+          money(10), { i::NONE, i::NONE, i::NONE } },
+
+        { "Gnogaine",
+          "The fallout made monsters of my people. The leper gnomes and the troggs out here glow with "
+          "it.\n\n"
+          "I'm brewing a cure: Gnogaine! But I need samples of the fallout. Fresh ones, from the "
+          "irradiated. Don't worry, it mostly washes off.",
+          "Bring 6 Fallout Samples from Irradiated Pillagers and Leper Gnomes to Ozzie Togglevolt.",
+          "Samples! I need samples!",
+          "Perfect samples! The cure is closer every day. Here: wear this, it blocks the worst of it.",
+          n::OZZIE, n::OZZIE, 27, 25, qid::NONE,
+          { collect(e::IRRADIATED_PILLAGER, 6, 50, "Fallout Sample", e::LEPER_GNOME), none, none }, xp(27, 60),
+          money(27), { i::LEAD_LINED_HELM, i::RAD_PROOF_HOOD, i::GNOMISH_GOGGLES } },
+
+        { "The Troggs Below",
+          "The troggs tunnelled right into the city's front door. A great brute called Grubbis leads "
+          "them, with burrowers that dig wherever he points.\n\n"
+          "Kill him and his diggers, and we'll have a way back in.",
+          "Kill Grubbis and 8 Caverndeep Burrowers in Gnomeregan.",
+          "The troggs still hold the tunnels.",
+          "The tunnels are ours again! You're a marvel. A marvel!",
+          n::OZZIE, n::OZZIE, 28, 25, qid::GNOGAINE,
+          { kill(e::GRUBBIS, 1, "Grubbis slain"), kill(e::CAVERNDEEP_BURROWER, 8, "Caverndeep Burrower slain"),
+            none }, xp(28, 75), money(28), { i::GRUBBIS_GAUNTLETS, i::CAVERNDEEP_WRAPS, i::BURROWER_GRIPS } },
+
+        { "Robo-mechanical Guts",
+          "Shoni says nothing. She hands you a note in tiny, careful letters:\n\n"
+          "THERMAPLUGG TURNED OUR OWN MACHINES AGAINST US. THEIR GUTS ARE STILL GOOD. BRING ME 12 AND "
+          "I WILL BUILD SOMETHING THAT FIGHTS FOR US. P.S. MIND THE TANKS.",
+          "Bring 12 Robo-mechanical Guts from Mechano-Tanks and Arcane Nullifiers to Shoni the Shilent.",
+          "Shoni taps the note and holds out her hand.",
+          "Shoni beams and hands you a parcel. On it, a new note: THANK YOU!",
+          n::SHONI, n::SHONI, 28, 25, qid::THE_GNOMES_PLEA,
+          { collect(e::MECHANO_TANK, 12, 50, "Robo-mechanical Guts", e::ARCANE_NULLIFIER), none, none }, xp(28, 60),
+          money(28), { i::GYRO_PLATED_LEGGUARDS, i::SPARK_WOVEN_PANTS, i::MECHANISTS_BREECHES } },
+
+        { "The Grand Betrayal",
+          "It was Thermaplugg. My own adviser. He told me flooding the city would stop the troggs. "
+          "He knew what it would do to our people, and he did it anyway.\n\n"
+          "He hides in the control room at the heart of Gnomeregan, and he will throw everything at "
+          "you: bombs, robots, the lot. End him.",
+          "Kill Mekgineer Thermaplugg in the control room of Gnomeregan.",
+          "Thermaplugg still sits on my city.",
+          "He's gone. After all these years. Gnomeregan isn't ours yet, but it will be. Take the "
+          "finest thing Tinker Town has ever built: you've earned it.",
+          n::MEKKATORQUE, n::MEKKATORQUE, 30, 26, qid::THE_GNOMES_PLEA,
+          { kill(e::MEKGINEER_THERMAPLUGG, 1, "Mekgineer Thermaplugg slain"), none, none }, xp(30, 150),
+          money(30), { i::THERMAPLUGGS_UNDOING, i::MEKKATORQUES_ARCANO_STAFF, i::TINKER_TOWN_HAND_CANNON } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));

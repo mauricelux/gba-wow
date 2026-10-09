@@ -2,10 +2,16 @@
 
 #include "bn_regular_bg_items_map_abbey_ground.h"
 #include "bn_regular_bg_items_map_abbey_overhead.h"
-#include "bn_regular_bg_items_map_deeprun_tram_ground.h"
-#include "bn_regular_bg_items_map_deeprun_tram_overhead.h"
+#include "bn_regular_bg_items_map_blackfathom_deeps_ground.h"
+#include "bn_regular_bg_items_map_blackfathom_deeps_overhead.h"
+#include "bn_regular_bg_items_map_darkshore_ground.h"
+#include "bn_regular_bg_items_map_darkshore_overhead.h"
 #include "bn_regular_bg_items_map_deadmines_ground.h"
 #include "bn_regular_bg_items_map_deadmines_overhead.h"
+#include "bn_regular_bg_items_map_deeprun_tram_ground.h"
+#include "bn_regular_bg_items_map_deeprun_tram_overhead.h"
+#include "bn_regular_bg_items_map_dun_morogh_ground.h"
+#include "bn_regular_bg_items_map_dun_morogh_overhead.h"
 #include "bn_regular_bg_items_map_duskwood_ground.h"
 #include "bn_regular_bg_items_map_duskwood_overhead.h"
 #include "bn_regular_bg_items_map_echo_ridge_ground.h"
@@ -14,8 +20,12 @@
 #include "bn_regular_bg_items_map_elwynn_overhead.h"
 #include "bn_regular_bg_items_map_fargodeep_ground.h"
 #include "bn_regular_bg_items_map_fargodeep_overhead.h"
+#include "bn_regular_bg_items_map_gnomeregan_ground.h"
+#include "bn_regular_bg_items_map_gnomeregan_overhead.h"
 #include "bn_regular_bg_items_map_inn_ground.h"
 #include "bn_regular_bg_items_map_inn_overhead.h"
+#include "bn_regular_bg_items_map_ironforge_ground.h"
+#include "bn_regular_bg_items_map_ironforge_overhead.h"
 #include "bn_regular_bg_items_map_redridge_ground.h"
 #include "bn_regular_bg_items_map_redridge_overhead.h"
 #include "bn_regular_bg_items_map_shadowfang_ground.h"
@@ -28,21 +38,29 @@
 #include "bn_regular_bg_items_map_stormwind_overhead.h"
 #include "bn_regular_bg_items_map_westfall_ground.h"
 #include "bn_regular_bg_items_map_westfall_overhead.h"
+#include "bn_regular_bg_items_map_wetlands_ground.h"
+#include "bn_regular_bg_items_map_wetlands_overhead.h"
 
 #include "gw_map_abbey.h"
+#include "gw_map_blackfathom_deeps.h"
+#include "gw_map_darkshore.h"
 #include "gw_map_deadmines.h"
 #include "gw_map_deeprun_tram.h"
+#include "gw_map_dun_morogh.h"
 #include "gw_map_duskwood.h"
 #include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
+#include "gw_map_gnomeregan.h"
 #include "gw_map_inn.h"
+#include "gw_map_ironforge.h"
 #include "gw_map_redridge.h"
 #include "gw_map_shadowfang.h"
 #include "gw_map_silverpine.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
+#include "gw_map_wetlands.h"
 
 namespace gw
 {
@@ -72,6 +90,12 @@ namespace
                                                   map_data::duskwood::raven_hill_respawn };
     constexpr point_def silverpine_graveyards[] = { map_data::silverpine::silverpine_respawn };
     constexpr point_def shadowfang_graveyards[] = { map_data::shadowfang::respawn };
+    constexpr point_def ironforge_graveyards[] = { map_data::ironforge::ironforge_respawn };
+    constexpr point_def dun_morogh_graveyards[] = { map_data::dun_morogh::dun_morogh_respawn };
+    constexpr point_def wetlands_graveyards[] = { map_data::wetlands::menethil_respawn };
+    constexpr point_def darkshore_graveyards[] = { map_data::darkshore::auberdine_respawn };
+    constexpr point_def blackfathom_deeps_graveyards[] = { map_data::blackfathom_deeps::respawn };
+    constexpr point_def gnomeregan_graveyards[] = { map_data::gnomeregan::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
@@ -111,6 +135,12 @@ namespace
         GW_MAP_INFO(DUSKWOOD, duskwood, false, false),
         GW_MAP_INFO(SILVERPINE, silverpine, false, false),
         GW_MAP_INFO(SHADOWFANG, shadowfang, true, true),
+        GW_MAP_INFO(IRONFORGE, ironforge, false, false),
+        GW_MAP_INFO(DUN_MOROGH, dun_morogh, false, false),
+        GW_MAP_INFO(WETLANDS, wetlands, false, false),
+        GW_MAP_INFO(DARKSHORE, darkshore, false, false),
+        GW_MAP_INFO(BLACKFATHOM_DEEPS, blackfathom_deeps, true, true),
+        GW_MAP_INFO(GNOMEREGAN, gnomeregan, true, true),
     };
 
     [[nodiscard]] int count_chests()
@@ -119,7 +149,11 @@ namespace
 
         for(const map_info& map : maps)
         {
-            result += map.chests.size();
+            for(const chest_def& chest : map.chests)
+            {
+                // Braziers aren't treasure.
+                result += chest.level != 0;
+            }
         }
 
         return result;
@@ -180,6 +214,11 @@ const area_def* area_at(const map_info& map, int x, int y)
 
     for(const area_def& area : map.areas)
     {
+        if(area.id == area_id::RADIATION)
+        {
+            continue;
+        }
+
         if(x >= area.x && y >= area.y && x < area.x + area.width && y < area.y + area.height)
         {
             int size = area.width * area.height;
@@ -193,6 +232,20 @@ const area_def* area_at(const map_info& map, int x, int y)
     }
 
     return result;
+}
+
+bool in_radiation(const map_info& map, int x, int y)
+{
+    for(const area_def& area : map.areas)
+    {
+        if(area.id == area_id::RADIATION && x >= area.x && y >= area.y && x < area.x + area.width &&
+           y < area.y + area.height)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 }

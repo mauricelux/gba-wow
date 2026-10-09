@@ -5,28 +5,42 @@
 
 #include "bn_sprite_items_char_abomination.h"
 #include "bn_sprite_items_char_boar.h"
+#include "bn_sprite_items_char_bomb.h"
+#include "bn_sprite_items_char_crocolisk.h"
 #include "bn_sprite_items_char_dwarf_bow.h"
+#include "bn_sprite_items_char_dwarf_plain.h"
 #include "bn_sprite_items_char_dwarf_sword.h"
 #include "bn_sprite_items_char_elf_bow.h"
 #include "bn_sprite_items_char_elf_sword.h"
+#include "bn_sprite_items_char_fem_bow.h"
 #include "bn_sprite_items_char_fem_robe.h"
 #include "bn_sprite_items_char_fem_sword.h"
 #include "bn_sprite_items_char_ghoul.h"
 #include "bn_sprite_items_char_gnoll.h"
+#include "bn_sprite_items_char_gnome_plain.h"
+#include "bn_sprite_items_char_gnome_sword.h"
 #include "bn_sprite_items_char_goblin.h"
 #include "bn_sprite_items_char_hum_plain.h"
 #include "bn_sprite_items_char_hum_robe.h"
 #include "bn_sprite_items_char_hum_staff.h"
 #include "bn_sprite_items_char_hum_sword.h"
+#include "bn_sprite_items_char_hydra.h"
 #include "bn_sprite_items_char_kobold.h"
 #include "bn_sprite_items_char_kobold_candle.h"
 #include "bn_sprite_items_char_murloc.h"
+#include "bn_sprite_items_char_naga.h"
+#include "bn_sprite_items_char_naga_caster.h"
 #include "bn_sprite_items_char_ogre.h"
+#include "bn_sprite_items_char_ooze.h"
 #include "bn_sprite_items_char_orc_staff.h"
 #include "bn_sprite_items_char_orc_sword.h"
+#include "bn_sprite_items_char_raptor.h"
+#include "bn_sprite_items_char_robot.h"
 #include "bn_sprite_items_char_skeleton.h"
 #include "bn_sprite_items_char_skeleton_mage.h"
 #include "bn_sprite_items_char_spider.h"
+#include "bn_sprite_items_char_trogg.h"
+#include "bn_sprite_items_char_turtle.h"
 #include "bn_sprite_items_char_watcher.h"
 #include "bn_sprite_items_char_water_elemental.h"
 #include "bn_sprite_items_char_wolf.h"
@@ -113,6 +127,36 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_hum_sword, palettes::baron_silverlaine, false },
     { bn::sprite_items::char_hum_sword, palettes::commander_springvale, false },
     { bn::sprite_items::char_hum_staff, palettes::archmage_arugal, false },
+    { bn::sprite_items::char_dwarf_sword, palettes::magni_bronzebeard, false },
+    { bn::sprite_items::char_dwarf_sword, palettes::ironforge_guard, false },
+    { bn::sprite_items::char_dwarf_plain, palettes::dwarf_innkeeper, false },
+    { bn::sprite_items::char_dwarf_plain, palettes::dwarf_merchant, false },
+    { bn::sprite_items::char_dwarf_plain, palettes::dwarf_smith, false },
+    { bn::sprite_items::char_dwarf_sword, palettes::captain_stoutfist, false },
+    { bn::sprite_items::char_dwarf_bow, palettes::ormer_ironbraid, false },
+    { bn::sprite_items::char_dwarf_plain, palettes::prospector_whelgar, false },
+    { bn::sprite_items::char_dwarf_sword, palettes::dark_iron_dwarf, false },
+    { bn::sprite_items::char_dwarf_plain, palettes::dark_iron_saboteur, false },
+    { bn::sprite_items::char_dwarf_sword, palettes::balgaras_the_foul, false },
+    { bn::sprite_items::char_dwarf_sword, palettes::dark_iron_agent, false },
+    { bn::sprite_items::char_orc_sword, palettes::dragonmaw_grunt, false },
+    { bn::sprite_items::char_orc_staff, palettes::dragonmaw_shadowwarder, false },
+    { bn::sprite_items::char_orc_sword, palettes::nek_rosh, false },
+    { bn::sprite_items::char_hum_robe, palettes::twilight_acolyte, false },
+    { bn::sprite_items::char_hum_sword, palettes::twilight_reaver, false },
+    { bn::sprite_items::char_hum_staff, palettes::twilight_lord_kelris, false },
+    { bn::sprite_items::char_hum_sword, palettes::menethil_guard, false },
+    { bn::sprite_items::char_hum_plain, palettes::james_halloran, false },
+    { bn::sprite_items::char_fem_bow, palettes::sentinel, false },
+    { bn::sprite_items::char_fem_robe, palettes::dawnwatcher_shaedlass, false },
+    { bn::sprite_items::char_elf_sword, palettes::argent_guard_thaelrid, false },
+    { bn::sprite_items::char_fem_robe, palettes::hippogryph_master, false },
+    { bn::sprite_items::char_fem_robe, palettes::night_elf_innkeeper, false },
+    { bn::sprite_items::char_gnome_plain, palettes::mekkatorque, false },
+    { bn::sprite_items::char_gnome_plain, palettes::tinker_gnome, false },
+    { bn::sprite_items::char_gnome_plain, palettes::ozzie_togglevolt, false },
+    { bn::sprite_items::char_gnome_sword, palettes::leper_gnome, false },
+    { bn::sprite_items::char_gnome_sword, palettes::mekgineer_thermaplugg, false },
     { bn::sprite_items::char_wolf, palettes::young_wolf, true },
     { bn::sprite_items::char_wolf, palettes::timber_wolf, true },
     { bn::sprite_items::char_boar, palettes::boar, true },
@@ -157,6 +201,33 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_ogre, palettes::splinter_fist_ogre, true },
     { bn::sprite_items::char_ogre, palettes::splinter_fist_taskmaster, true },
     { bn::sprite_items::char_abomination, palettes::stitches, true },
+    { bn::sprite_items::char_crocolisk, palettes::young_crocolisk, true },
+    { bn::sprite_items::char_crocolisk, palettes::giant_crocolisk, true },
+    { bn::sprite_items::char_raptor, palettes::mottled_raptor, true },
+    { bn::sprite_items::char_raptor, palettes::mottled_screecher, true },
+    { bn::sprite_items::char_raptor, palettes::sarltooth, true },
+    { bn::sprite_items::char_gnoll, palettes::mosshide_gnoll, true },
+    { bn::sprite_items::char_gnoll, palettes::mosshide_mystic, true },
+    { bn::sprite_items::char_murloc, palettes::bluegill_murloc, true },
+    { bn::sprite_items::char_murloc, palettes::gelihast, true },
+    { bn::sprite_items::char_murloc, palettes::blindlight_murloc, true },
+    { bn::sprite_items::char_naga, palettes::blackfathom_myrmidon, true },
+    { bn::sprite_items::char_naga_caster, palettes::blackfathom_tide_priestess, true },
+    { bn::sprite_items::char_naga_caster, palettes::lady_sarevess, true },
+    { bn::sprite_items::char_turtle, palettes::aku_mai_snapjaw, true },
+    { bn::sprite_items::char_turtle, palettes::ghamoo_ra, true },
+    { bn::sprite_items::char_hydra, palettes::aku_mai_servant, true },
+    { bn::sprite_items::char_hydra, palettes::aku_mai, true },
+    { bn::sprite_items::char_trogg, palettes::irradiated_pillager, true },
+    { bn::sprite_items::char_trogg, palettes::caverndeep_burrower, true },
+    { bn::sprite_items::char_trogg, palettes::grubbis, true },
+    { bn::sprite_items::char_ooze, palettes::irradiated_slime, true },
+    { bn::sprite_items::char_ooze, palettes::viscous_fallout, true },
+    { bn::sprite_items::char_robot, palettes::mechano_tank, true },
+    { bn::sprite_items::char_robot, palettes::arcane_nullifier, true },
+    { bn::sprite_items::char_robot, palettes::electrocutioner_6000, true },
+    { bn::sprite_items::char_robot, palettes::crowd_pummeler, true },
+    { bn::sprite_items::char_bomb, palettes::walking_bomb, true },
 };
 
 static_assert(sizeof(look_table) / sizeof(look_table[0]) == int(look_id::COUNT));

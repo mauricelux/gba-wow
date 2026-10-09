@@ -371,6 +371,12 @@ void combat::_enemy_ability_goes_off(int index, enemy_ability_id ability)
             {
                 _enemy_ability_lands(index, ability, damage, ai.cast_position);
             }
+
+            // Nothing is left of a Walking Bomb to loot.
+            if(ability == enemy_ability_id::SELF_DESTRUCT)
+            {
+                _enemies.remove(index);
+            }
         }
         else if(def.projectile != projectile_kind::NONE)
         {
@@ -548,7 +554,8 @@ void combat::_start_flee(int index)
     ai.flee_friend = int16_t(_enemies.idle_friend(index, flee_search));
 
     bn::string<48> text = item.def->name;
-    text += " runs for help!";
+    // The HUD holds 30 letters.
+    text += text.size() <= 15 ? " runs for help!" : " flees!";
     _hud.message(text, ui::color::YELLOW);
     _texts.show(_head(item.position, item.sprite ? item.sprite->height() : 24), "Flee",
                 floating_texts::style::INFO);

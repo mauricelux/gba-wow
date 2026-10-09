@@ -5,6 +5,7 @@
 #include "bn_math.h"
 
 #include "gw_map_elwynn.h"
+#include "gw_maps.h"
 #include "gw_talents.h"
 
 namespace gw
@@ -276,11 +277,15 @@ void set_chest_opened(int chest)
 
 int opened_chest_count()
 {
+    // Treasure only: a lit brazier is a chest of level 0.
     int result = 0;
 
-    for(uint32_t bits : data.chests_opened)
+    for(const map_info& map : all_maps())
     {
-        result += __builtin_popcount(bits);
+        for(const chest_def& chest : map.chests)
+        {
+            result += chest.level != 0 && chest_opened(chest.id);
+        }
     }
 
     return result;

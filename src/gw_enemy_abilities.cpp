@@ -101,6 +101,19 @@ namespace
         // Kobold Tunnelers throw the candles off their helmets.
         { "Candle Throw", e::HIT, t::PLAYER, b::COUNT, s::FIRE, p::FIRE, INTERRUPTIBLE, 64, 0, 10, 8, 0, 120, 0, 0,
           1, none },
+
+        // Lady Sarevess: lightning that strikes where the player stood.
+        { "Forked Lightning", e::HIT, t::AT_PLAYER, b::COUNT, s::NATURE, p::NONE, CAST, 96, 32, 15, 8, 0, 200, 0, 0,
+          1, none },
+        // Walking Bombs run up to the player and blow up; step out of the circle.
+        { "Self-Destruct", e::HIT, t::AROUND_SELF, b::COUNT, s::FIRE, p::NONE, ONCE, 24, 36, 10, 0, 0, 250, 0, 0, 1,
+          none },
+        { "Toxic Volley", e::HIT, t::AROUND_SELF, b::POISONED, s::NATURE, p::NONE, CAST, 48, 48, 15, 12, 15, 80, 25,
+          0, 1, none },
+        { "Crowd Pummel", e::HIT, t::AROUND_SELF, b::STUNNED, s::PHYSICAL, p::NONE, 0, 40, 44, 15, 12, 2, 150, 0, 0,
+          1, none },
+        { "Throw Dynamite", e::HIT, t::AT_PLAYER, b::COUNT, s::FIRE, p::NONE, INTERRUPTIBLE, 80, 28, 12, 10, 0, 140,
+          0, 0, 1, none },
     };
 
     static_assert(sizeof(abilities) / sizeof(abilities[0]) == enemy_ability_count, "an entry per enemy ability");

@@ -106,6 +106,36 @@ TERRAIN_SILVERPINE = [
     ('flower', (200, 200, 168)),
 ]
 
+# Wetlands: olive marsh grass, brown mud roads and murky green water.
+TERRAIN_WETLANDS = [
+    ('shadow', (40, 52, 36)), ('grass_d', (72, 92, 48)), ('grass_m', (100, 120, 60)),
+    ('grass_l', (128, 144, 76)), ('grass_h', (164, 172, 100)),
+    ('dirt_d', (96, 76, 52)), ('dirt_m', (128, 104, 72)), ('dirt_l', (160, 136, 100)),
+    ('water_d', (40, 64, 64)), ('water_m', (56, 92, 88)), ('water_l', (96, 132, 120)),
+    ('foam', (200, 212, 196)), ('trunk_d', (64, 48, 32)), ('trunk_m', (108, 84, 56)),
+    ('flower', (200, 176, 96)),
+]
+
+# Dun Morogh: snow for grass, packed snow roads and ice-blue water.
+TERRAIN_SNOW = [
+    ('shadow', (120, 136, 168)), ('grass_d', (176, 192, 216)), ('grass_m', (208, 220, 236)),
+    ('grass_l', (228, 236, 244)), ('grass_h', (248, 252, 252)),
+    ('dirt_d', (120, 112, 112)), ('dirt_m', (156, 148, 144)), ('dirt_l', (188, 184, 184)),
+    ('water_d', (56, 96, 152)), ('water_m', (88, 136, 192)), ('water_l', (152, 192, 232)),
+    ('foam', (240, 248, 252)), ('trunk_d', (64, 48, 40)), ('trunk_m', (100, 80, 60)),
+    ('flower', (168, 184, 208)),
+]
+
+# Darkshore: night elf woods at dusk, pale sand for roads and a deep blue sea.
+TERRAIN_DARKSHORE = [
+    ('shadow', (28, 36, 56)), ('grass_d', (40, 72, 72)), ('grass_m', (56, 96, 88)),
+    ('grass_l', (76, 120, 104)), ('grass_h', (112, 152, 136)),
+    ('dirt_d', (128, 116, 112)), ('dirt_m', (168, 156, 144)), ('dirt_l', (200, 192, 176)),
+    ('water_d', (24, 40, 88)), ('water_m', (40, 64, 128)), ('water_l', (88, 120, 176)),
+    ('foam', (216, 224, 240)), ('trunk_d', (56, 40, 56)), ('trunk_m', (92, 72, 92)),
+    ('flower', (184, 144, 216)),
+]
+
 BUILDINGS = [
     ('outline', (32, 32, 48)), ('stone_d', (88, 88, 104)), ('stone_m', (128, 128, 144)),
     ('stone_l', (168, 168, 176)), ('stone_h', (208, 208, 200)),
@@ -163,6 +193,32 @@ OVERHEAD_LEAVES_SILVERPINE = [
     ('roof_d', (48, 52, 64)), ('roof_m', (72, 76, 92)), ('roof_l', (100, 104, 120)),
     ('stone_d', (80, 84, 92)), ('stone_m', (112, 116, 124)), ('stone_l', (148, 152, 156)),
     ('gold', (208, 168, 72)), ('glass', (36, 44, 60)), ('roof_h', (128, 132, 148)),
+]
+
+OVERHEAD_LEAVES_WETLANDS = [
+    ('outline', (24, 32, 20)), ('leaf_0', (44, 60, 32)), ('leaf_1', (64, 84, 40)),
+    ('leaf_2', (88, 108, 52)), ('leaf_3', (116, 132, 64)), ('leaf_4', (152, 164, 88)),
+    ('roof_d', (48, 56, 96)), ('roof_m', (72, 88, 136)), ('roof_l', (104, 128, 176)),
+    ('stone_d', (88, 88, 104)), ('stone_m', (128, 128, 144)), ('stone_l', (168, 168, 176)),
+    ('gold', (232, 184, 64)), ('glass', (40, 48, 80)), ('roof_h', (144, 168, 208)),
+]
+
+# Snowy pines: dark needles with white on top.
+OVERHEAD_LEAVES_SNOW = [
+    ('outline', (16, 28, 36)), ('leaf_0', (28, 52, 52)), ('leaf_1', (40, 72, 64)),
+    ('leaf_2', (64, 100, 88)), ('leaf_3', (200, 216, 232)), ('leaf_4', (244, 248, 252)),
+    ('roof_d', (48, 56, 96)), ('roof_m', (72, 88, 136)), ('roof_l', (104, 128, 176)),
+    ('stone_d', (96, 96, 112)), ('stone_m', (136, 136, 152)), ('stone_l', (176, 176, 188)),
+    ('gold', (232, 184, 64)), ('glass', (40, 48, 80)), ('roof_h', (144, 168, 208)),
+]
+
+# Darkshore's woods: blue-green and violet leaves, night elf roofs.
+OVERHEAD_LEAVES_DARKSHORE = [
+    ('outline', (16, 20, 36)), ('leaf_0', (28, 44, 64)), ('leaf_1', (40, 64, 80)),
+    ('leaf_2', (56, 88, 96)), ('leaf_3', (80, 116, 116)), ('leaf_4', (128, 152, 168)),
+    ('roof_d', (56, 40, 88)), ('roof_m', (84, 64, 128)), ('roof_l', (116, 96, 168)),
+    ('stone_d', (80, 80, 104)), ('stone_m', (116, 116, 140)), ('stone_l', (156, 156, 176)),
+    ('gold', (200, 184, 120)), ('glass', (32, 40, 72)), ('roof_h', (152, 136, 200)),
 ]
 
 OVERHEAD_ROOFS = [
@@ -231,9 +287,10 @@ class Map:
 
     # --- metadata ------------------------------------------------------------------------------
 
-    def warp(self, x, y, w, h, target_map, target_point, ride=None):
-        """ride is 'boat' or 'tram' for a warp that plays a travel scene first."""
-        self.warps.append((x, y, w, h, target_map, target_point, ride))
+    def warp(self, x, y, w, h, target_map, target_point, ride=None, sealed=False):
+        """ride is 'boat' or 'tram' for a warp that plays a travel scene first. A sealed warp only opens
+        once every brazier of the map is lit."""
+        self.warps.append((x, y, w, h, target_map, target_point, ride, sealed))
 
     def npc(self, npc_id, x, y):
         self.npcs.append((npc_id, x, y))
@@ -264,6 +321,11 @@ class Map:
         """A treasure chest standing with its bottom-center at (x, y). Ids are saved: never reuse one."""
         self.chests.append((chest_id, x, y, level))
         self.block(x - 8, y - 8, 16, 8)
+
+    def brazier(self, chest_id, x, y):
+        """A brazier the player lights, kept in the save like a chest (level 0). Lighting every brazier
+        of a map opens its sealed warps."""
+        self.chest(chest_id, x, y, 0)
 
     def area_free(self, x, y, w, h):
         x0, y0 = x // CELL, y // CELL
@@ -302,7 +364,7 @@ class Map:
         """Every chest and NPC must be in range of a spot the player can walk to from start, or from
         where a warp to this same map (the tram) puts them."""
         reach = self.reachable_from(*self.points[start], step=step)
-        for *_, target, point, _ in self.warps:
+        for *_, target, point, _, _ in self.warps:
             if target == self.name:
                 reach |= self.reachable_from(*self.points[point], step=step)
         ys, xs = np.nonzero(reach)
@@ -392,9 +454,11 @@ class Map:
             out.append(f'    constexpr point_def {name} = {{ {x}, {y} }};')
         out.append('')
         out.append('    constexpr warp_def warps[] = {')
-        for x, y, w, h, target, tp, ride in self.warps:
+        for x, y, w, h, target, tp, ride, sealed in self.warps:
             tx, ty = maps[target].points[tp]
             vehicle = f', vehicle::{ride.upper()}' if ride else ''
+            if sealed:
+                vehicle = f', vehicle::{(ride or "none").upper()}, true'
             out.append(f'        {{ {x}, {y}, {w}, {h}, map_id::{target.upper()}, {tx}, {ty}{vehicle} }},')
         if not self.warps:
             out.append('        { 0, 0, 0, 0, map_id::NONE, 0, 0 },')
@@ -663,6 +727,30 @@ ROCK_SILVERPINE = [
     ('r_grass_l', (100, 124, 104)), ('r_grass_h', (136, 156, 132)),
     ('rock_0', (40, 40, 48)), ('rock_1', (68, 68, 78)), ('rock_2', (96, 96, 106)),
     ('rock_3', (124, 124, 134)), ('rock_4', (156, 156, 164)), ('rock_5', (192, 192, 196)),
+]
+
+# Brown-grey rock for the Wetlands' hills, with twins of TERRAIN_WETLANDS's grass.
+ROCK_WETLANDS = [
+    ('r_shadow', (40, 52, 44)), ('r_grass_d', (72, 92, 56)), ('r_grass_m', (100, 120, 68)),
+    ('r_grass_l', (128, 144, 84)), ('r_grass_h', (164, 172, 108)),
+    ('rock_0', (48, 40, 36)), ('rock_1', (80, 68, 60)), ('rock_2', (112, 100, 88)),
+    ('rock_3', (144, 132, 116)), ('rock_4', (176, 164, 148)), ('rock_5', (208, 200, 184)),
+]
+
+# Dun Morogh's mountains: grey stone under snow, with twins of TERRAIN_SNOW.
+ROCK_SNOW = [
+    ('r_shadow', (120, 136, 176)), ('r_grass_d', (176, 192, 224)), ('r_grass_m', (208, 220, 240)),
+    ('r_grass_l', (228, 236, 248)), ('r_grass_h', (240, 248, 240)),
+    ('rock_0', (48, 52, 64)), ('rock_1', (80, 84, 100)), ('rock_2', (112, 116, 132)),
+    ('rock_3', (148, 152, 168)), ('rock_4', (196, 204, 220)), ('rock_5', (236, 240, 248)),
+]
+
+# Darkshore's cliffs.
+ROCK_DARKSHORE = [
+    ('r_shadow', (28, 36, 64)), ('r_grass_d', (40, 72, 80)), ('r_grass_m', (56, 96, 96)),
+    ('r_grass_l', (76, 120, 112)), ('r_grass_h', (112, 152, 144)),
+    ('rock_0', (40, 32, 56)), ('rock_1', (60, 56, 76)), ('rock_2', (88, 84, 104)),
+    ('rock_3', (116, 112, 132)), ('rock_4', (148, 144, 164)), ('rock_5', (184, 180, 196)),
 ]
 
 # Terrain colors as the rock bank draws them.

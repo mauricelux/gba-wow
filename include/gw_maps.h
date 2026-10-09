@@ -43,8 +43,11 @@ struct map_info
 // The graveyard closest to the point.
 [[nodiscard]] const point_def& nearest_graveyard(const map_info& map, int x, int y);
 
-// The smallest named area containing the point, or nullptr.
+// The smallest named area containing the point, or nullptr. Radiation pools don't count.
 [[nodiscard]] const area_def* area_at(const map_info& map, int x, int y);
+
+// Whether the point is in a radiation pool (area_id::RADIATION), which hurts while the player stands in it.
+[[nodiscard]] bool in_radiation(const map_info& map, int x, int y);
 
 }
 

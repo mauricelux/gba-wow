@@ -15,6 +15,9 @@ enum class flight_id : uint8_t
     LAKESHIRE,
     DARKSHIRE,
     SCOUTS_CAMP,
+    IRONFORGE,
+    MENETHIL,
+    AUBERDINE,
     COUNT
 };
 

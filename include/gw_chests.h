@@ -16,7 +16,8 @@ class hud;
 
 // The treasure chests of the current map. A closed chest twinkles now and then, even under tree tops
 // and rock, so it can be spotted from nearby. Opening one hands out coins and gear for its level and
-// is saved: every chest opens once per character.
+// is saved: every chest opens once per character. A chest of level 0 is a brazier instead: lighting
+// it gives nothing, but all of a map's braziers lit open its sealed doors.
 class chests
 {
 
@@ -37,7 +38,16 @@ public:
         return _chests[index].position;
     }
 
-    // Opens the chest. Returns false (and leaves it closed) if every bag row is in use.
+    [[nodiscard]] bool brazier(int index) const
+    {
+        return _chests[index].level == 0;
+    }
+
+    // Whether every brazier of the map is lit (true if it has none).
+    [[nodiscard]] bool all_braziers_lit() const;
+
+    // Opens the chest or lights the brazier. Returns false (and leaves a chest closed) if every bag row
+    // is in use.
     bool open(int index, hud& hud_ref);
 
 private:
@@ -45,6 +55,7 @@ private:
     {
         uint16_t id = 0;
         uint8_t level = 1;
+        int8_t frame = -1;          // of fx_chest, while it has a sprite
         bn::fixed_point position;
         bn::optional<bn::sprite_ptr> sprite;
         bn::optional<bn::sprite_ptr> sparkle;

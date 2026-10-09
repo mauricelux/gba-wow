@@ -61,6 +61,8 @@ private:
     const warp_def* _warp = nullptr;
     warp_def _teleport = {};
     int _warp_frames = 0;
+    bool _at_sealed_door = false;   // the sealed door was already explained this visit
+    int _radiation_frames = 0;      // standing in a radiation pool
     int _rest_frames = 0;
     int _area_check_frames = 0;
     int _death_frames = 0;
@@ -73,6 +75,7 @@ private:
     void _update_rest();
     [[nodiscard]] bool _near_innkeeper() const;
     void _rest(bool loaded);
+    void _update_radiation();
     void _check_area(bool force);
     void _interact();
     [[nodiscard]] bool _water_ahead(bn::fixed_point& spot) const;

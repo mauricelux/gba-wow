@@ -50,6 +50,19 @@ namespace
           "Archmage Arugal is dead and his worgen scatter into the hills of Silverpine. Ranger Valdan "
           "rides for Darkshire with the news, and north of the mountains the Wetlands wait.",
           quest_id::ARUGAL_MUST_DIE },
+        { "Menethil Holds",
+          "Nek'rosh is dead at the gate of Grim Batol and the Thandol Span still stands. Captain "
+          "Stoutfist's men hang a Dragonmaw banner over the harbor tavern, upside down.",
+          quest_id::DEFEAT_NEK_ROSH },
+        { "Blackfathom Cleansed",
+          "Aku'mai is dead and the Twilight's Hammer flees the drowned temple. The night elves of "
+          "Auberdine light the Moonshrine again, and Argent Guard Thaelrid walks out into the sun.",
+          quest_id::THE_FATHOM_CORE },
+        { "Thermaplugg Falls",
+          "Mekgineer Thermaplugg lies dead in the heart of Gnomeregan. High Tinker Mekkatorque swears "
+          "his people will go home one day, and King Magni raises a toast to you in the Great Forge. "
+          "Beyond the Thandol Span, the hills of Hillsbrad wait.",
+          quest_id::THE_GRAND_BETRAYAL },
     };
 
     constexpr int story_page_total = sizeof(story_pages) / sizeof(story_pages[0]);

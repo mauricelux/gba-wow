@@ -3,11 +3,14 @@
 #include "bn_math.h"
 
 #include "gw_character.h"
+#include "gw_map_darkshore.h"
 #include "gw_map_duskwood.h"
+#include "gw_map_ironforge.h"
 #include "gw_map_redridge.h"
 #include "gw_map_silverpine.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
+#include "gw_map_wetlands.h"
 
 namespace gw
 {
@@ -20,6 +23,9 @@ namespace
         { "Lakeshire", npc_id::ARIENA, map_id::REDRIDGE, map_data::redridge::flight, 0, 67, 92 },
         { "Darkshire", npc_id::FELICIA, map_id::DUSKWOOD, map_data::duskwood::flight, 0, 55, 102 },
         { "Scouts' Camp", npc_id::GRYPHON_SILVERPINE, map_id::SILVERPINE, map_data::silverpine::flight, 0, 34, 43 },
+        { "Ironforge", npc_id::GRYTH, map_id::IRONFORGE, map_data::ironforge::flight, 0, 41, 69 },
+        { "Menethil Harbor", npc_id::SHELLEI, map_id::WETLANDS, map_data::wetlands::flight, 0, 50, 53 },
+        { "Auberdine", npc_id::CAYLAIS, map_id::DARKSHORE, map_data::darkshore::flight, 1, 40, 30 },
     };
 
     static_assert(sizeof(flights) / sizeof(flights[0]) == int(flight_id::COUNT));

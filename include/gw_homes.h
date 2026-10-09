@@ -16,6 +16,9 @@ enum class home_id : uint8_t
     STORMWIND,
     LAKESHIRE,
     DARKSHIRE,
+    IRONFORGE,
+    MENETHIL,
+    AUBERDINE,
     COUNT
 };
 

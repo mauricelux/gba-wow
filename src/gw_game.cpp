@@ -35,6 +35,8 @@ namespace
     constexpr int rest_dark_frames = 40;
     constexpr int inn_range = 120;      // pixels from an innkeeper that count as inside the inn
     constexpr int area_check_interval = 15;
+    constexpr int radiation_interval = 60;  // frames between burns in a radiation pool
+    constexpr int radiation_percent = 4;    // of the player's health per burn
     constexpr int loot_range = 24;
     constexpr int talk_range = 32;
 
@@ -162,6 +164,7 @@ void game::update()
     {
         _check_warps();
         _check_area(false);
+        _update_radiation();
     }
 
     play_music(_enemies.elite_in_combat() && ! _combat.dead() ? music_id::BOSS : world::map().music);
@@ -368,10 +371,11 @@ void game::_interact()
     if(chest >= 0 && ! _combat.in_combat())
     {
         _player.face(_chests.position(chest));
+        bool brazier = _chests.brazier(chest);
 
         if(_chests.open(chest, _hud))
         {
-            if(quests_on_chest(_hud))
+            if(! brazier && quests_on_chest(_hud))
             {
                 _npcs.refresh_markers();
             }
@@ -632,10 +636,25 @@ void game::_check_warps()
     int top = y + player::hitbox_top - 1;
     int bottom = y + 1;
 
+    bool at_sealed_door = false;
+
     for(const warp_def& warp : world::map().warps)
     {
         if(right >= warp.x && bottom >= warp.y && left < warp.x + warp.width && top < warp.y + warp.height)
         {
+            if(warp.sealed && ! _chests.all_braziers_lit())
+            {
+                // Said once each time the player walks up to it.
+                if(! _at_sealed_door)
+                {
+                    _hud.message("The door is sealed", ui::color::RED);
+                    _hud.message("Light the braziers to open it", ui::color::YELLOW);
+                }
+
+                at_sealed_door = true;
+                continue;
+            }
+
             if(warp.ride != vehicle::NONE)
             {
                 // Aboard a boat or the tram: its scene plays first, named after the far end.
@@ -653,6 +672,8 @@ void game::_check_warps()
             return;
         }
     }
+
+    _at_sealed_door = at_sealed_door;
 }
 
 void game::_update_warp()
@@ -788,6 +809,27 @@ void game::_update_death()
             _warp = &world::map().warps[0];
             _hud.message("You return to life", ui::color::GREEN);
         }
+    }
+}
+
+void game::_update_radiation()
+{
+    // Gnomeregan's fallout pools burn a little every second while the player stands in them.
+    if(! in_radiation(world::map(), _player.position().x().floor_integer(), _player.position().y().floor_integer()))
+    {
+        _radiation_frames = 0;
+        return;
+    }
+
+    if(_radiation_frames == 0)
+    {
+        _hud.message("The fallout burns you", ui::color::RED);
+    }
+
+    if(++_radiation_frames % radiation_interval == 0)
+    {
+        int amount = bn::max(1, _combat.player_stats().max_health * radiation_percent / 100);
+        _combat.damage_player(amount, _player.position(), school::NATURE);
     }
 }
 

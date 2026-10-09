@@ -13,6 +13,13 @@ Maps:
   fargodeep  kobold mine south of Goldshire
   stormwind  1024x1024 capital: Valley of Heroes, Trade District, the Keep, Cathedral, Mage Quarter
   stockade   Stormwind's prison, entered from the Mage Quarter
+  deeprun_tram  the tram between Stormwind and Ironforge
+  duskwood, silverpine, shadowfang   the 20-26 chapter (M18)
+  ironforge  the dwarven capital, inside the mountain
+  dun_morogh the snowy valley in front of Ironforge and Gnomeregan
+  wetlands   1280x1024 outdoor region: Menethil Harbor, Dun Modr, the Dragonmaw
+  darkshore  Auberdine and the Zoram Strand, by boat from Menethil
+  blackfathom_deeps, gnomeregan   the 24-30 dungeons
 """
 
 import numpy as np
@@ -2309,10 +2316,14 @@ def gen_deeprun_tram():
     for x in halls.values():
         c.rect(x, 48, 288, 136)
     c.rect(168, 184, 48, 64)        # stairs up to Stormwind's Dwarven District
-    c.rect(552, 184, 48, 40)        # the lift to Ironforge, closed for now
+    c.rect(552, 184, 48, 64)        # stairs up to Ironforge's Tinker Town
     c.render()
     # The way out first: the world map shows the map an interior's first warp leads to.
     c.exit(168, 248, 'stormwind', 'tram_exit')
+    saved = dict(m.points)
+    c.exit(552, 248, 'ironforge', 'tram_exit')
+    m.points = saved
+    m.point('from_ironforge', 576, 220)
 
     other = {'stormwind': 'ironforge', 'ironforge': 'stormwind'}
     for name, x in halls.items():
@@ -2324,8 +2335,7 @@ def gen_deeprun_tram():
             c.torch(tx, 52)
         c.bench(x + 16, 152)
         c.bench(x + 240, 152)
-    c.bars(552, 200, 48)
-    m.npc('MONTY', 584, 196)
+    m.npc('MONTY', 624, 172)
     m.area(0, 0, 768, 256, 'Deeprun Tram')
     m.area(32, 32, 320, 224, 'Stormwind Station')
     m.area(416, 32, 320, 224, 'Ironforge Station')
@@ -2592,6 +2602,884 @@ def gen_shadowfang():
     return m
 
 
+# ---------------------------------------------------------------------------------------------
+# Ironforge
+# ---------------------------------------------------------------------------------------------
+
+FORGE = [
+    ('outline', (20, 14, 12)), ('top_d', (42, 32, 28)), ('top_m', (60, 48, 42)),
+    ('wall_d', (84, 64, 52)), ('wall_m', (118, 94, 74)), ('wall_l', (156, 128, 100)),
+    ('floor_d', (90, 80, 74)), ('floor_m', (122, 108, 98)), ('floor_l', (154, 140, 126)),
+    ('iron_d', (44, 44, 54)), ('iron_l', (150, 154, 170)), ('straw', (248, 148, 40)),
+    ('wood', (112, 74, 44)), ('flame', (252, 228, 120)), ('red', (176, 44, 20)),
+]
+
+FORGE_OVERHEAD = [
+    ('outline', (20, 14, 12)), ('top_d', (42, 32, 28)), ('top_m', (60, 48, 42)),
+    ('wall_d', (84, 64, 52)), ('wall_m', (118, 94, 74)), ('wall_l', (156, 128, 100)),
+]
+
+
+class Forge(Prison):
+    """Ironforge: halls cut into the mountain, warm stone, lava and anvils. 'straw' is the lava's
+    middle color here."""
+
+    def __init__(self, name, width, height):
+        self.m = Map(name, width, height, Palette([FORGE]), Palette([FORGE_OVERHEAD]))
+        self.floor = np.zeros((height // 8, width // 8), dtype=bool)
+        self.face = np.zeros_like(self.floor)
+
+    def lava(self, x, y, w, h):
+        """A pool of molten metal behind a low stone rim. Solid."""
+        g, m = self.m.ground, self.m
+        g[y:y + h, x:x + w] = m.g('wall_m')
+        g[y:y + 2, x:x + w] = m.g('wall_l')
+        g[y + h - 3:y + h, x:x + w] = m.g('wall_d')
+        g[y + h - 1, x:x + w] = m.g('outline')
+        g[y:y + h, x] = m.g('outline')
+        g[y:y + h, x + w - 1] = m.g('outline')
+        ys, xs = np.mgrid[y + 6:y + h - 6, x + 6:x + w - 6]
+        pool = np.full(xs.shape, m.g('straw'), dtype=np.uint8)
+        pool[((xs * 3 + ys * 5) // 7) % 5 == 0] = m.g('red')
+        pool[((xs + ys * 2) % 11 == 0) | ((xs * 2 + ys) % 13 == 0)] = m.g('flame')
+        g[y + 6:y + h - 6, x + 6:x + w - 6] = pool
+        g[y + 5, x + 5:x + w - 5] = m.g('outline')
+        g[y + 5:y + h - 5, x + 5] = m.g('outline')
+        g[y + 5:y + h - 5, x + w - 6] = m.g('outline')
+        g[y + h - 6, x + 5:x + w - 5] = m.g('outline')
+        self.m.block(x, y + 4, w, h - 4)
+
+    def anvil(self, x, y):
+        """An iron anvil on a stone block, 24x16."""
+        g, m = self.m.ground, self.m
+        g[y + 8:y + 16, x + 4:x + 20] = m.g('outline')
+        g[y + 9:y + 15, x + 5:x + 19] = m.g('wall_m')
+        g[y + 2:y + 9, x:x + 24] = m.g('outline')
+        g[y + 3:y + 8, x + 1:x + 23] = m.g('iron_d')
+        g[y + 3, x + 2:x + 22] = m.g('iron_l')
+        g[y + 4:y + 6, x:x + 4] = m.g('iron_d')
+        self.m.block(x, y + 6, 24, 10)
+
+    def pillar(self, x, y, h=40):
+        """A square stone pillar, 16 wide, standing on the floor."""
+        g, m = self.m.ground, self.m
+        wg.bricks(m, g, x, y, 16, h, 'wall_d', 'wall_m', 'wall_l')
+        g[y:y + h, x] = m.g('outline')
+        g[y:y + h, x + 15] = m.g('outline')
+        g[y, x:x + 16] = m.g('outline')
+        g[y + h - 1, x:x + 16] = m.g('outline')
+        g[y + 2:y + 4, x + 1:x + 15] = m.g('iron_l')
+        self.m.block(x, y + h - 16, 16, 16)
+
+    def throne(self, x, y):
+        """Magni's throne: a high golden-iron seat on a dais, 48x40."""
+        g, m = self.m.ground, self.m
+        g[y:y + 40, x:x + 48] = m.g('outline')
+        g[y + 1:y + 39, x + 1:x + 47] = m.g('wall_l')
+        g[y + 30:y + 39, x + 1:x + 47] = m.g('wall_m')
+        g[y + 4:y + 26, x + 12:x + 36] = m.g('outline')
+        g[y + 5:y + 25, x + 13:x + 35] = m.g('red')
+        g[y + 2:y + 6, x + 10:x + 38] = m.g('flame')
+        g[y + 20:y + 26, x + 8:x + 40] = m.g('iron_l')
+        self.m.block(x, y, 48, 28)
+
+    def table(self, x, y, w=48, h=20):
+        g, m = self.m.ground, self.m
+        g[y:y + h, x:x + w] = m.g('outline')
+        g[y + 1:y + h - 4, x + 1:x + w - 1] = m.g('wood')
+        g[y + h - 4:y + h - 1, x + 1:x + w - 1] = m.g('top_m')
+        for px in range(x + 6, x + w - 6, 12):
+            g[y + 3:y + 7, px:px + 4] = m.g('flame')
+            g[y + 6, px:px + 4] = m.g('wall_d')
+        self.m.block(x, y + 4, w, h - 4)
+
+    def gears(self, x, y):
+        """A big cog on a wall face, 24x24 (Tinker Town)."""
+        g, m = self.m.ground, self.m
+        ys, xs = np.mgrid[0:24, 0:24]
+        d = np.hypot(xs - 11.5, ys - 11.5)
+        a = np.arctan2(ys - 11.5, xs - 11.5)
+        teeth = (d < 12) & (np.cos(a * 8) > 0.3)
+        body = d < 9
+        part = g[y:y + 24, x:x + 24]
+        part[teeth | body] = m.g('outline')
+        part[(d < 8) | (teeth & (d < 11))] = m.g('iron_l')
+        part[(d < 6)] = m.g('iron_d')
+        part[d < 3] = m.g('outline')
+
+    def rug(self, x, y, w, h):
+        """A long red carpet with a gold-iron border."""
+        g, m = self.m.ground, self.m
+        g[y:y + h, x:x + w] = m.g('red')
+        g[y:y + h, x] = m.g('flame')
+        g[y:y + h, x + w - 1] = m.g('flame')
+        g[y + 2:y + h - 2:8, x + 3:x + w - 3] = m.g('outline')
+
+    def exit(self, x, y, target, point, points=True):
+        """Stairs out; points=False keeps 'entry' and 'respawn' where an earlier exit put them."""
+        saved = dict(self.m.points)
+        super().exit(x, y, target, point)
+        if not points:
+            self.m.points = saved
+
+
+def gen_ironforge():
+    c = Forge('ironforge', 1024, 768)
+    m = c.m
+    c.rect(448, 608, 128, 120)      # the Gates
+    c.rect(488, 728, 48, 40)        # the steps out to Dun Morogh
+    c.rect(480, 560, 64, 48)        # the hall up to the Commons
+    c.rect(304, 272, 416, 288)      # the Commons around the Great Forge
+    c.rect(480, 208, 64, 64)        # the hall to the High Seat
+    c.rect(400, 56, 224, 152)       # the High Seat
+    c.rect(720, 384, 80, 48)        # the hall east
+    c.rect(800, 272, 192, 248)      # Tinker Town
+    c.rect(872, 520, 48, 48)        # the stairs down to the Deeprun Tram
+    c.rect(224, 384, 80, 48)        # the hall west
+    c.rect(32, 272, 192, 248)       # the Military Ward
+    c.render()
+    c.exit(488, 760, 'dun_morogh', 'from_ironforge')
+    c.exit(872, 560, 'deeprun_tram', 'from_ironforge', points=False)
+    m.point('tram_exit', 896, 528)
+
+    # The Great Forge: lava in the middle of the Commons, anvils around it.
+    c.lava(440, 352, 144, 120)
+    for x, y in ((400, 360), (600, 360), (400, 448), (600, 448)):
+        c.anvil(x, y)
+    for x in (320, 688):
+        for y in (288, 512):
+            c.pillar(x, y - 24)
+    # The Stonefire Tavern's tables in the Commons' south-west corner.
+    c.table(344, 488, 56, 20)
+    c.barrel(408, 484)
+    for x in (360, 456, 552, 648):
+        c.torch(x, 276)
+    for x in (464, 552):
+        c.torch(x, 612)
+    # The High Seat: Magni's throne and the royal guard.
+    c.throne(488, 72)
+    for x in (432, 576):
+        c.pillar(x, 112, 48)
+    c.rug(496, 112, 32, 96)
+    for x in (416, 592):
+        c.torch(x, 60)
+    # Tinker Town: cogs on the walls, crates of parts.
+    for x in (824, 896, 960):
+        c.gears(x, 276)
+    c.crate(944, 480)
+    c.crate(960, 480)
+    c.barrel(816, 480)
+    # The Military Ward: weapon racks.
+    for x in (48, 96, 176):
+        c.rack(x, 280)
+    c.table(120, 456, 64, 20)
+
+    m.npc('MAGNI', 512, 124)
+    m.npc('IRONFORGE_GUARD_SEAT', 456, 172)
+    m.npc('GERRIG', 584, 176)
+    m.npc('IRONFORGE_GUARD_GATE', 472, 692)
+    m.npc('GRYTH', 512, 312)
+    m.point('flight', 512, 332)
+    m.npc('FIREBREW', 344, 528)
+    m.point('ironforge_respawn', 512, 520)
+    m.npc('IRONFORGE_VENDOR', 680, 528)
+    m.npc('IRONFORGE_SMITH', 400, 400)
+    m.npc('MEKKATORQUE', 896, 320)
+    m.npc('SHONI', 848, 400)
+    m.npc('KELSTRUM', 80, 336)
+    m.npc('OLMIN', 128, 400)
+    m.npc('JULI', 176, 336)
+    m.area(0, 0, 1024, 768, 'Ironforge')
+    m.area(440, 600, 144, 168, 'The Gates')
+    m.area(304, 272, 416, 288, 'The Commons')
+    m.area(432, 344, 160, 136, 'The Great Forge')
+    m.area(400, 56, 224, 152, 'The High Seat')
+    m.area(800, 272, 192, 296, 'Tinker Town')
+    m.area(32, 272, 192, 248, 'The Military Ward')
+    m.music = 'IRONFORGE'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Dun Morogh (the snowy valley in front of Ironforge and Gnomeregan)
+# ---------------------------------------------------------------------------------------------
+
+def mountain_gate(m, x, y, w, h, gate_w=48):
+    """A dwarven gate cut into a mountain: a stone face with gold trim, two braziers and a dark arch
+    in the middle. Returns the gate's bottom-center. x, y, w, h are multiples of 8."""
+    g = m.ground
+    wg.bricks(m, g, x, y, w, h, 'stone_d', 'stone_m', 'stone_l')
+    g[y:y + 3, x:x + w] = m.g('stone_h')
+    g[y + 6, x:x + w] = m.g('gold')
+    g[y + h - 1, x:x + w] = m.g('outline')
+    g[y:y + h, x] = m.g('outline')
+    g[y:y + h, x + w - 1] = m.g('outline')
+    gx = x + w // 2 - gate_w // 2
+    g[y + h - 48:y + h, gx:gx + gate_w] = m.g('outline')
+    g[y + h - 52:y + h - 48, gx - 4:gx + gate_w + 4] = m.g('gold')
+    g[y + h - 48:y + h, gx - 4:gx] = m.g('stone_h')
+    g[y + h - 48:y + h, gx + gate_w:gx + gate_w + 4] = m.g('stone_h')
+    for bx in (x + 16, x + w - 32):
+        g[y + h - 32:y + h - 8, bx:bx + 16] = m.g('stone_d')
+        g[y + h - 36:y + h - 32, bx - 2:bx + 18] = m.g('gold')
+        g[y + h - 44:y + h - 36, bx + 4:bx + 12] = m.g('glass_l')
+    m.block(x, y, w, h)
+    m.unblock(gx, y + h - 24, gate_w, 24)
+    return (gx + gate_w // 2, y + h)
+
+
+def gen_dun_morogh():
+    m = Map('dun_morogh', 1024, 768,
+            Palette([wg.TERRAIN_SNOW, wg.BUILDINGS, wg.FARM, wg.ROCK_SNOW]),
+            Palette([wg.OVERHEAD_LEAVES_SNOW, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    rock = wg.corners(m, 'rock')
+    rock[0:8, :] = 1
+    rock[0:14, 0:16] = 1
+    rock[37:, :] = 1
+    rock[30:, 0:12] = 1
+    rock[0:20, 58:] = 1
+    rock[34:, 50:] = 1
+    wg.paint_cliffs(m)
+
+    wg.corners_along(m, 'path', [(512, 196), (512, 300), (520, 400), (640, 420), (800, 410), (1024, 408)], 1.1)
+    wg.corners_along(m, 'path', [(520, 400), (380, 380), (260, 320), (160, 280), (152, 252)], 1.1)
+    wg.paint_paths(m)
+    wg.corners_ellipse(m, 'water', 700, 540, 110, 40)
+    wg.paint_water(m)
+
+    gate = mountain_gate(m, 416, 112, 192, 88)
+    m.warp(gate[0] - 20, gate[1] - 12, 40, 8, 'ironforge', 'entry')
+    m.point('from_ironforge', gate[0], gate[1] + 18)
+    m.npc('IRONFORGE_GUARD_OUTSIDE', gate[0] + 40, gate[1] + 16)
+    m.area(400, 96, 224, 160, 'The Gates of Ironforge')
+
+    cave = wg.mine_entrance(m, 120, 200, 64, 56)
+    m.warp(cave[0] - 12, cave[1] - 8, 24, 8, 'gnomeregan', 'entry')
+    m.point('gnomeregan_exit', cave[0], cave[1] + 20)
+    m.area(80, 180, 200, 140, 'Gnomeregan')
+
+    # The camp the gnomes fled to when Gnomeregan fell.
+    wg.camp(m, 256, 368, 112, 72, tents=[(264, 376)], fire=(320, 400))
+    m.npc('OZZIE', 344, 384)
+    m.npc('MOUNTAINEER', 248, 344)
+    m.point('dun_morogh_respawn', 312, 448)
+    m.area(240, 340, 150, 120, "The Tinkers' Camp")
+
+    m.spawn_group('LEPER_GNOME', 200, 300, 3, 40, seed=81)
+    m.spawn_group('IRRADIATED_PILLAGER', 120, 330, 2, 30, seed=82)
+
+    rng = np.random.default_rng(31)
+    path = wg.corners(m, 'path')
+    placed = 0
+    for _ in range(600):
+        if placed >= 34:
+            break
+        x, y = int(rng.uniform(40, 940), ), int(rng.uniform(180, 520))
+        mx, my = (x + 16) // 16, (y + 40) // 16
+        if path[max(0, my - 3):my + 4, max(0, mx - 3):mx + 4].max() == 0 and m.area_free(x, y, 40, 56) \
+                and not (230 <= x <= 400 and 320 <= y <= 470) and not (380 <= x <= 640 and y <= 280):
+            wg.tree(m, trees, x, y, placed, kind='pine')
+            placed += 1
+    wg.scatter_props(m, rng, 18, ('rock', 'big_rock', 'rock'), (48, 200, 900, 300),
+                     avoid=[(240, 340, 150, 120)])
+
+    m.point('from_wetlands', 1004, 408)
+    m.warp(1016, 384, 8, 48, 'wetlands', 'from_dun_morogh')
+    m.area(860, 340, 164, 140, 'The Pass to the Wetlands')
+    m.area(0, 0, 1024, 768, 'Dun Morogh')
+    m.music = 'IRONFORGE'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# The Wetlands (Menethil Harbor, Dun Modr, the Dragonmaw)
+# ---------------------------------------------------------------------------------------------
+
+WETLANDS_PROPS = ('tall_grass', 'fern', 'rock', 'bush', 'log', 'stump', 'tall_grass', 'big_rock', 'fern')
+
+
+def ruin(m, x, y, w, h, seed):
+    """Broken dwarven walls: stubs of brick with gaps, on the building bank. Solid where they stand."""
+    g = m.ground
+    local = np.random.default_rng(seed)
+    for bx in range(x, x + w, 16):
+        if local.random() < 0.35:
+            continue
+        top = int(local.integers(0, 3)) * 8
+        wg.bricks(m, g, bx, y + top, 16, h - top, 'stone_d', 'stone_m', 'stone_l')
+        g[y + top, bx:bx + 16] = m.g('stone_h')
+        g[y + h - 1, bx:bx + 16] = m.g('outline')
+        m.block(bx, y + top + 8, 16, h - top - 8)
+
+
+def dig_site(m, x, y, w, h):
+    """An excavation: a pit of bare earth (farm bank) with plank ramps and crates."""
+    ys, xs = np.mgrid[y:y + h, x:x + w]
+    pattern = np.full((h, w), m.g('soil_m'), dtype=np.uint8)
+    pattern[(xs * 5 + ys * 3) % 17 == 0] = m.g('soil_d')
+    pattern[(ys - y) % 24 < 2] = m.g('soil_d')
+    m.ground[y:y + h, x:x + w] = pattern
+    for px in range(x + 16, x + w - 16, 48):
+        m.ground[y + 8:y + h - 8, px:px + 2] = m.g('canvas_d')
+
+
+def gen_wetlands():
+    m = Map('wetlands', 1280, 1024,
+            Palette([wg.TERRAIN_WETLANDS, wg.BUILDINGS, wg.FARM, wg.ROCK_WETLANDS]),
+            Palette([wg.OVERHEAD_LEAVES_WETLANDS, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    # --- the hills: Arathi to the north, Grim Batol to the east, Dun Morogh's peaks to the south -----
+    rock = wg.corners(m, 'rock')
+    rock[0:5, 12:] = 1
+    rock[0:5, 38:44] = 0                # the gorge under the Thandol Span
+    rock[:, 74:] = 1
+    rock[16:30, 70:] = 1                # Grim Batol's foothills
+    rock[60:, 20:] = 1
+    rock[60:, 48:54] = 0                # Dun Algaz, the pass south
+    wg.paint_cliffs(m)
+
+    # --- the sea along the west coast and the marsh ponds ------------------------------------------
+    wg.corners_along(m, 'water', [(0, 0), (40, 200), (60, 420), (80, 620), (100, 820), (60, 1024)], 4.2)
+    wg.corners_ellipse(m, 'water', 0, 500, 140, 560)
+    wg.corners_ellipse(m, 'water', 440, 690, 64, 40)
+    wg.corners_ellipse(m, 'water', 690, 890, 60, 36)
+    wg.corners_ellipse(m, 'water', 280, 470, 56, 32)
+    wg.corners_ellipse(m, 'water', 760, 640, 72, 40)
+    wg.corners_along(m, 'water', [(640, 0), (640, 80)], 2.2)
+    wg.paint_water(m)
+
+    # --- roads ----------------------------------------------------------------------------------------
+    roads = [
+        [(300, 840), (420, 820), (560, 790), (640, 760), (816, 800), (816, 1024)],      # Menethil to Dun Algaz
+        [(560, 790), (580, 640), (560, 480), (600, 360), (640, 260), (640, 96)],       # north to Dun Modr
+        [(600, 360), (760, 380), (920, 440), (1000, 480)],                             # east to the Dragonmaw
+        [(580, 640), (440, 560), (380, 420), (420, 320)],                              # the excavation
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.1)
+    wg.paint_paths(m)
+
+    # --- Menethil Harbor ----------------------------------------------------------------------------
+    wg.cobbles(m, 192, 760, 224, 112)
+    keep = wg.house(m, 296, 648, 112, 112, style='stone', roof_colors=('roof_d', 'roof_m', 'roof_l'),
+                    roof_ridge='roof_h', roof_outline='outline')
+    inn = wg.house(m, 192, 664, 96, 96, roof_colors=('red_d', 'red_m', 'red_l'), roof_ridge='red_l',
+                   roof_outline='o2')
+    shop = wg.house(m, 224, 880, 80, 80, roof_colors=('roof_d', 'roof_m', 'roof_l'), roof_ridge='roof_h',
+                    roof_outline='outline')
+    wg.house(m, 320, 880, 80, 80, roof_colors=('red_d', 'red_m', 'red_l'), roof_ridge='red_l', roof_outline='o2')
+    wg.well(m, 336, 800)
+    wg.pier(m, 160, 800, 32, 120)
+    m.npc('STOUTFIST', keep[0] + 18, keep[1] + 10)
+    m.npc('HELBREK', inn[0] + 18, inn[1] + 10)
+    m.npc('MENETHIL_VENDOR', shop[0] + 18, shop[1] + 10)
+    m.npc('SHELLEI', 392, 790)
+    m.point('flight', 392, 810)
+    m.npc('HALLORAN', 256, 790)
+    m.npc('HARBORMASTER', 216, 820)
+    m.npc('MENETHIL_GUARD', 424, 760)
+    m.point('menethil_respawn', 296, 840)
+    m.point('from_darkshore', 176, 880)
+    m.warp(164, 912, 24, 8, 'darkshore', 'from_menethil', ride='boat')
+    m.area(120, 640, 320, 330, 'Menethil Harbor')
+
+    # --- Whelgar's Excavation Site (gnolls looting the dig) -----------------------------------------
+    dig_site(m, 352, 272, 160, 104)
+    wg.camp(m, 424, 400, 96, 64, tents=[(432, 408)], fire=(480, 424))
+    m.npc('WHELGAR', 496, 448)
+    m.npc('ORMER', 416, 456)
+    m.spawn_group('MOSSHIDE_GNOLL', 420, 320, 5, 70, seed=91)
+    m.spawn_group('MOSSHIDE_MYSTIC', 380, 300, 3, 50, seed=92)
+    m.chest(33, 376, 288, 27)
+    m.area(330, 250, 220, 230, "Whelgar's Excavation Site")
+
+    # --- the bogs: crocolisks around the ponds, raptors on the ridge ---------------------------------
+    m.spawn_group('YOUNG_CROCOLISK', 440, 620, 4, 70, seed=93)
+    m.spawn_group('YOUNG_CROCOLISK', 290, 540, 3, 50, seed=94)
+    m.spawn_group('GIANT_CROCOLISK', 760, 700, 4, 70, seed=95)
+    m.spawn_group('GIANT_CROCOLISK', 690, 940, 2, 40, seed=96)
+    m.spawn_group('MOTTLED_RAPTOR', 860, 220, 4, 80, seed=97)
+    m.spawn_group('MOTTLED_SCREECHER', 960, 260, 4, 70, seed=98)
+    m.spawn('SARLTOOTH', 1000, 200)
+    m.area(800, 140, 300, 220, 'Raptor Ridge')
+    m.spawn_group('BLUEGILL_MURLOC', 200, 300, 5, 80, seed=99)
+    m.area(120, 160, 240, 320, 'Bluegill Marsh')
+
+    # --- Dun Modr and the Thandol Span (Dark Iron dwarves) -------------------------------------------
+    ruin(m, 528, 136, 96, 40, seed=7)
+    ruin(m, 672, 136, 96, 40, seed=8)
+    ruin(m, 528, 232, 64, 32, seed=9)
+    ruin(m, 704, 232, 64, 32, seed=10)
+    ns_bridge(m, 624, 0, 32, 104)
+    m.spawn_group('DARK_IRON_DWARF', 640, 200, 5, 70, seed=100)
+    m.spawn_group('DARK_IRON_SABOTEUR', 600, 260, 3, 50, seed=101)
+    m.spawn('BALGARAS_THE_FOUL', 640, 120)
+    m.area(500, 100, 300, 200, 'Dun Modr')
+    m.area(600, 0, 80, 110, 'Thandol Span', 'THANDOL_SPAN')
+
+    # --- the Dragonmaw: Angerfang Encampment and the gates of Grim Batol ----------------------------
+    wg.camp(m, 904, 480, 176, 104, tents=[(912, 488), (1040, 488)], fire=(984, 528))
+    m.spawn_group('DRAGONMAW_GRUNT', 980, 560, 6, 80, seed=102)
+    m.spawn_group('DRAGONMAW_SHADOWWARDER', 980, 500, 3, 50, seed=103)
+    m.area(880, 460, 240, 180, 'Angerfang Encampment')
+    gate = mountain_gate(m, 1064, 384, 112, 72, gate_w=40)
+    m.block(gate[0] - 20, gate[1] - 24, 40, 24)
+    m.spawn('NEK_ROSH', gate[0], gate[1] + 24)
+    m.spawn_group('DRAGONMAW_GRUNT', gate[0] - 40, gate[1] + 40, 2, 20, seed=104)
+    m.area(1040, 360, 160, 140, 'Grim Batol')
+
+    # --- trees: willows and oaks of the marsh ---------------------------------------------------------
+    rng = np.random.default_rng(37)
+    path = wg.corners(m, 'path')
+    water = wg.corners(m, 'water')
+    clear = [(110, 630, 340, 350), (330, 250, 220, 230), (500, 90, 310, 210), (880, 460, 240, 180),
+             (1040, 360, 160, 140)]
+    placed = 0
+    for _ in range(3000):
+        if placed >= 150:
+            break
+        x, y = int(rng.uniform(120, 1150)), int(rng.uniform(100, 940))
+        mx, my = (x + 16) // 16, (y + 40) // 16
+        near = path[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max() + \
+            water[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max()
+        if near == 0 and m.area_free(x, y, 40, 56) and \
+                not any(cx - 40 <= x <= cx + cw and cy - 56 <= y <= cy + ch for cx, cy, cw, ch in clear):
+            wg.tree(m, trees, x, y, int(rng.integers(0, 3)), kind=('oak', 'small', 'oak', 'birch')[placed % 4])
+            placed += 1
+    wg.scatter_props(m, rng, 80, WETLANDS_PROPS, (120, 100, 1040, 860),
+                     avoid=[(110, 630, 340, 350), (330, 250, 220, 230)])
+
+    m.point('from_dun_morogh', 816, 1000)
+    m.warp(792, 1016, 48, 8, 'dun_morogh', 'from_wetlands')
+    m.area(760, 940, 120, 84, 'Dun Algaz')
+    m.area(0, 0, 1280, 1024, 'Wetlands')
+    m.music = 'WETLANDS'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Darkshore (Auberdine and the road to Blackfathom Deeps)
+# ---------------------------------------------------------------------------------------------
+
+def moonwell(m, x, y):
+    """A night elf moonwell: a ring of pale stone around glowing water on a paved square, 32x32
+    (building bank). x and y are multiples of 8."""
+    g = m.ground
+    wg.cobbles(m, x, y, 32, 32)
+    ys, xs = np.mgrid[0:32, 0:32]
+    d = np.hypot(xs - 15.5, ys - 15.5)
+    part = g[y:y + 32, x:x + 32]
+    part[d < 15] = m.g('outline')
+    part[d < 14] = m.g('stone_l')
+    part[d < 11] = m.g('glass_d')
+    part[d < 9] = m.g('banner')
+    part[(d < 6) & ((xs + ys) % 3 == 0)] = m.g('stone_h')
+    m.block(x + 4, y + 8, 24, 20)
+
+
+def gen_darkshore():
+    m = Map('darkshore', 768, 1024,
+            Palette([wg.TERRAIN_DARKSHORE, wg.BUILDINGS, wg.FARM, wg.ROCK_DARKSHORE]),
+            Palette([wg.OVERHEAD_LEAVES_DARKSHORE, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    rock = wg.corners(m, 'rock')
+    rock[0:6, :] = 1
+    rock[:, 42:] = 1
+    rock[50:, 30:] = 1
+    rock[52:, 0:18] = 1
+    rock[60:, :] = 1
+    rock[0:28, 36:] = 1
+    wg.paint_cliffs(m)
+
+    wg.corners_along(m, 'water', [(0, 80), (40, 300), (60, 500), (30, 700), (0, 896)], 4.0)
+    wg.paint_water(m)
+    wg.corners_along(m, 'path', [(200, 300), (320, 360), (400, 480), (420, 640), (440, 780), (444, 880),
+                                 (352, 904)], 1.1)
+    wg.paint_paths(m)
+
+    # --- Auberdine -----------------------------------------------------------------------------------
+    elf = dict(roof_colors=('roof_d', 'roof_m', 'roof_l'), roof_ridge='roof_h', roof_outline='outline')
+    inn = wg.house(m, 192, 160, 112, 96, style='stone', **elf)
+    hall = wg.house(m, 336, 152, 96, 96, style='stone', **elf)
+    wg.house(m, 464, 184, 80, 80, style='stone', **elf)
+    moonwell(m, 280, 296)
+    wg.pier(m, 120, 296, 32, 104)
+    m.npc('SHAUSSIY', inn[0] + 20, inn[1] + 10)
+    m.npc('SHAEDLASS', hall[0] + 20, hall[1] + 10)
+    m.npc('CAYLAIS', 440, 320)
+    m.point('flight', 440, 340)
+    m.npc('SENTINEL', 232, 344)
+    m.point('auberdine_respawn', 352, 336)
+    m.point('from_menethil', 136, 340)
+    m.warp(124, 392, 24, 8, 'wetlands', 'from_darkshore', ride='boat')
+    m.area(100, 140, 460, 260, 'Auberdine')
+
+    # --- the Zoram Strand: Blackfathom Deeps' gate in the cliffs of Ashenvale ------------------------
+    # Against the western cliffs; the road goes round its east side to the door.
+    gate = mountain_gate(m, 288, 800, 120, 72, gate_w=40)
+    m.warp(gate[0] - 16, gate[1] - 12, 32, 8, 'blackfathom_deeps', 'entry')
+    m.point('bfd_exit', gate[0], gate[1] + 18)
+    m.spawn_group('BLACKFATHOM_MYRMIDON', 380, 700, 3, 60, seed=111)
+    m.spawn_group('BLACKFATHOM_TIDE_PRIESTESS', 300, 720, 2, 40, seed=112)
+    m.area(240, 640, 300, 320, 'The Zoram Strand')
+
+    wg.forest(m, trees, 560, 448, 112, 240, kinds=('pine', 'oak'), holes=[(584, 520, 56, 48)],
+              secrets=[(560, 528, 40, 32)])
+    m.chest(35, 612, 556, 26)
+    rng = np.random.default_rng(41)
+    path = wg.corners(m, 'path')
+    water = wg.corners(m, 'water')
+    clear = [(100, 140, 460, 280), (240, 640, 300, 320), (560, 448, 112, 240)]
+    placed = 0
+    for _ in range(2000):
+        if placed >= 60:
+            break
+        x, y = int(rng.uniform(120, 640)), int(rng.uniform(120, 760))
+        mx, my = (x + 16) // 16, (y + 40) // 16
+        near = path[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max() + \
+            water[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max()
+        if near == 0 and m.area_free(x, y, 40, 56) and \
+                not any(cx - 40 <= x <= cx + cw and cy - 56 <= y <= cy + ch for cx, cy, cw, ch in clear):
+            wg.tree(m, trees, x, y, int(rng.integers(0, 3)), kind=('oak', 'pine')[placed % 2])
+            placed += 1
+    wg.scatter_props(m, rng, 30, ('fern', 'rock', 'tall_grass', 'bush'), (120, 420, 520, 360),
+                     avoid=[(240, 640, 300, 320)])
+    m.area(0, 0, 768, 1024, 'Darkshore')
+    m.music = 'WETLANDS'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Blackfathom Deeps
+# ---------------------------------------------------------------------------------------------
+
+DEEPS = [
+    ('outline', (10, 16, 24)), ('top_d', (20, 32, 40)), ('top_m', (30, 46, 56)),
+    ('wall_d', (40, 64, 72)), ('wall_m', (60, 92, 100)), ('wall_l', (88, 124, 128)),
+    ('floor_d', (56, 72, 76)), ('floor_m', (78, 98, 100)), ('floor_l', (104, 126, 124)),
+    ('water_d', (16, 40, 72)), ('water_m', (28, 64, 108)), ('water_l', (72, 116, 160)),
+    ('moss', (56, 96, 64)), ('flame', (140, 200, 248)), ('iron_d', (36, 40, 52)),
+]
+
+DEEPS_OVERHEAD = [
+    ('outline', (10, 16, 24)), ('top_d', (20, 32, 40)), ('top_m', (30, 46, 56)),
+    ('wall_d', (40, 64, 72)), ('wall_m', (60, 92, 100)), ('wall_l', (88, 124, 128)),
+]
+
+
+class Deeps(Prison):
+    """Blackfathom Deeps: a drowned night elf temple. Mossy blue-green stone, black water."""
+
+    def __init__(self, name, width, height):
+        self.m = Map(name, width, height, Palette([DEEPS]), Palette([DEEPS_OVERHEAD]))
+        self.floor = np.zeros((height // 8, width // 8), dtype=bool)
+        self.face = np.zeros_like(self.floor)
+
+    def pool(self, x, y, w, h):
+        """Deep water with a stone lip. Solid."""
+        g, m = self.m.ground, self.m
+        ys, xs = np.mgrid[y:y + h, x:x + w]
+        water = np.full((h, w), m.g('water_m'), dtype=np.uint8)
+        water[((xs % 16) * 3 + (ys % 16) * 5) % 16 == 0] = m.g('water_l')
+        water[(ys - y) < 6] = m.g('water_d')
+        g[y:y + h, x:x + w] = water
+        g[y:y + 3, x:x + w] = m.g('wall_l')
+        g[y + 3, x:x + w] = m.g('outline')
+        g[y + h - 2:y + h, x:x + w] = m.g('wall_l')
+        g[y:y + h, x:x + 2] = m.g('wall_l')
+        g[y:y + h, x + w - 2:x + w] = m.g('wall_l')
+        self.m.block(x, y + 4, w, h - 6)
+
+    def moss(self, x, y, w, h, seed=0):
+        """Moss on some of the flagstones: two fixed patches, so the tiles repeat."""
+        g, m = self.m.ground, self.m
+        patches = [np.array([[0, 1, 1, 0, 0, 0, 1, 0], [1, 1, 1, 1, 0, 1, 1, 1], [0, 1, 1, 0, 0, 0, 1, 0],
+                             [0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0, 1, 1],
+                             [0, 0, 1, 1, 0, 1, 1, 1], [0, 0, 0, 0, 0, 0, 1, 0]], dtype=bool)]
+        patches.append(patches[0][::-1, ::-1].copy())
+        floors = [m.g('floor_m'), m.g('floor_l'), m.g('floor_d')]
+        for cy in range(y // 8, (y + h) // 8):
+            for cx in range(x // 8, (x + w) // 8):
+                kind = wg.tile_hash(cx, cy, 40 + seed) % 5
+                if kind >= 2:
+                    continue
+                cell = g[cy * 8:cy * 8 + 8, cx * 8:cx * 8 + 8]
+                cell[patches[kind] & np.isin(cell, floors)] = m.g('moss')
+
+    def statue(self, x, y):
+        """A broken night elf statue on a plinth, 16x32."""
+        g, m = self.m.ground, self.m
+        g[y + 20:y + 32, x:x + 16] = m.g('outline')
+        g[y + 21:y + 31, x + 1:x + 15] = m.g('wall_m')
+        g[y + 21, x + 1:x + 15] = m.g('wall_l')
+        g[y:y + 21, x + 4:x + 12] = m.g('outline')
+        g[y + 1:y + 20, x + 5:x + 11] = m.g('wall_l')
+        g[y + 4:y + 8, x + 5:x + 11] = m.g('moss')
+        self.m.block(x, y + 20, 16, 12)
+
+    def altar(self, x, y, w=64, h=32):
+        g, m = self.m.ground, self.m
+        g[y:y + h, x:x + w] = m.g('outline')
+        g[y + 1:y + h - 1, x + 1:x + w - 1] = m.g('wall_l')
+        g[y + h - 6:y + h - 1, x + 1:x + w - 1] = m.g('wall_m')
+        g[y + 6:y + 12, x + w // 2 - 6:x + w // 2 + 6] = m.g('flame')
+        self.m.block(x, y + 4, w, h - 8)
+
+    def door(self, x, y, w=48):
+        """Aku'mai's door on a north wall face: carved stone with a dark slit."""
+        g, m = self.m.ground, self.m
+        g[y:y + 24, x:x + w] = m.g('outline')
+        g[y + 1:y + 24, x + 2:x + w - 2] = m.g('wall_d')
+        g[y + 4:y + 24, x + w // 2 - 1:x + w // 2 + 1] = m.g('outline')
+        for px in (x + 8, x + w - 12):
+            g[y + 6:y + 10, px:px + 4] = m.g('flame')
+
+    def torch(self, x, y):
+        """A blue-flamed sconce on a wall face."""
+        g, m = self.m.ground, self.m
+        g[y + 6:y + 12, x + 3:x + 5] = m.g('iron_d')
+        g[y + 9, x + 1:x + 7] = m.g('iron_d')
+        g[y + 2:y + 6, x + 2:x + 6] = m.g('flame')
+        g[y:y + 2, x + 3:x + 5] = m.g('water_l')
+
+
+def gen_blackfathom_deeps():
+    c = Deeps('blackfathom_deeps', 1024, 1024)
+    m = c.m
+    c.rect(456, 872, 112, 96)       # the entrance hall
+    c.rect(488, 960, 48, 64)        # the stairs up to the Zoram Strand
+    c.rect(488, 800, 48, 72)
+    c.rect(320, 640, 384, 160)      # Ghamoo-ra's pool
+    c.rect(488, 560, 48, 80)
+    c.rect(384, 432, 256, 128)      # the Pool of Ask'ar
+    c.rect(640, 464, 96, 64)        # Thaelrid's alcove
+    c.rect(320, 480, 64, 48)
+    c.rect(96, 400, 224, 176)       # Lady Sarevess's ledge
+    c.rect(128, 576, 48, 64)        # a hidden passage
+    c.rect(96, 640, 112, 64)
+    c.rect(704, 672, 48, 48)
+    c.rect(752, 600, 224, 192)      # Gelihast's grotto
+    c.rect(488, 336, 48, 96)
+    c.rect(320, 160, 384, 176)      # the Moonshrine
+    c.rect(736, 24, 256, 176)       # Aku'mai's lair
+    c.render()
+    c.exit(488, 1016, 'darkshore', 'bfd_exit')
+
+    # Walkways stay open around each pool: the halls' doors face them.
+    c.pool(408, 696, 208, 64)
+    c.pool(456, 480, 112, 40)
+    c.pool(784, 696, 96, 64)
+    c.pool(800, 48, 128, 40)
+    c.moss(320, 640, 384, 160, seed=1)
+    c.moss(96, 400, 224, 176, seed=2)
+    c.moss(752, 600, 224, 192, seed=3)
+    for x, y in ((344, 648), (664, 648), (416, 440), (592, 440)):
+        c.statue(x, y)
+    for x in (352, 456, 552, 648):
+        c.torch(x, 164)
+    for x in (120, 280):
+        c.torch(x, 404)
+    c.altar(480, 232)
+    c.door(488, 160)
+    c.secret(128, 552, 48, 24)
+    m.chest(31, 152, 680, 26)
+
+    # The four braziers of the Moonshrine open Aku'mai's door.
+    for chest, x, y in ((27, 352, 216), (28, 672, 216), (29, 352, 320), (30, 672, 320)):
+        m.brazier(chest, x, y)
+    m.warp(488, 184, 48, 8, 'blackfathom_deeps', 'akumai_entry', sealed=True)
+    m.point('moonshrine_door', 512, 204)
+    m.point('akumai_entry', 864, 176)
+    m.warp(840, 192, 48, 8, 'blackfathom_deeps', 'moonshrine_door')
+
+    m.npc('THAELRID', 704, 496)
+
+    m.spawn_group('BLACKFATHOM_MYRMIDON', 512, 920, 2, 30, seed=121)
+    m.spawn('AKU_MAI_SNAPJAW', 360, 768)
+    m.spawn('AKU_MAI_SNAPJAW', 660, 768)
+    m.spawn('BLACKFATHOM_TIDE_PRIESTESS', 400, 768)
+    m.spawn('GHAMOO_RA', 512, 768)
+    m.spawn_group('BLACKFATHOM_MYRMIDON', 512, 528, 2, 30, seed=122)
+    m.spawn('BLACKFATHOM_TIDE_PRIESTESS', 420, 530)
+    for x, y in ((200, 470), (260, 520), (140, 520)):
+        m.spawn('BLACKFATHOM_MYRMIDON' if x != 260 else 'BLACKFATHOM_TIDE_PRIESTESS', x, y)
+    m.spawn('LADY_SAREVESS', 200, 432)
+    for x, y in ((800, 640), (920, 660), (800, 776), (930, 770)):
+        m.spawn('BLINDLIGHT_MURLOC', x, y)
+    m.spawn('GELIHAST', 880, 640)
+    for x, y in ((392, 252), (632, 252), (440, 304), (584, 304), (512, 324)):
+        m.spawn('TWILIGHT_ACOLYTE' if x in (392, 632, 512) else 'TWILIGHT_REAVER', x, y)
+    m.spawn('TWILIGHT_LORD_KELRIS', 512, 284)
+    # Aku'mai waits at the water's edge, out of reach of the door it is entered by.
+    m.spawn('AKU_MAI_SERVANT', 776, 120)
+    m.spawn('AKU_MAI_SERVANT', 952, 120)
+    m.spawn('AKU_MAI', 864, 108)
+    m.area(0, 0, 1024, 1024, 'Blackfathom Deeps')
+    m.area(320, 640, 384, 160, "Ghamoo-ra's Pool")
+    m.area(96, 400, 224, 176, "Sarevess's Ledge")
+    m.area(752, 600, 224, 192, "Gelihast's Grotto")
+    m.area(320, 160, 384, 176, 'The Moonshrine')
+    m.area(736, 24, 256, 176, "Aku'mai's Lair")
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Gnomeregan
+# ---------------------------------------------------------------------------------------------
+
+GNOMER = [
+    ('outline', (14, 16, 22)), ('top_d', (30, 34, 44)), ('top_m', (46, 52, 64)),
+    ('wall_d', (64, 70, 84)), ('wall_m', (96, 104, 120)), ('wall_l', (136, 144, 160)),
+    ('floor_d', (70, 72, 80)), ('floor_m', (100, 102, 110)), ('floor_l', (132, 134, 140)),
+    ('iron_d', (40, 44, 52)), ('iron_l', (176, 180, 192)), ('straw', (96, 200, 56)),
+    ('wood', (168, 128, 56)), ('flame', (216, 248, 120)), ('red', (184, 48, 40)),
+]
+
+GNOMER_OVERHEAD = [
+    ('outline', (14, 16, 22)), ('top_d', (30, 34, 44)), ('top_m', (46, 52, 64)),
+    ('wall_d', (64, 70, 84)), ('wall_m', (96, 104, 120)), ('wall_l', (136, 144, 160)),
+]
+
+
+class Gnomer(Forge):
+    """Gnomeregan: steel plates, brass pipes and glowing green fallout. 'straw' is the fallout here,
+    'wood' the brass."""
+
+    def __init__(self, name, width, height):
+        self.m = Map(name, width, height, Palette([GNOMER]), Palette([GNOMER_OVERHEAD]))
+        self.floor = np.zeros((height // 8, width // 8), dtype=bool)
+        self.face = np.zeros_like(self.floor)
+
+    def fallout(self, x, y, w, h, seed=0):
+        """A puddle of radioactive slime on the floor. Walkable, and it burns."""
+        g, m = self.m.ground, self.m
+        local = np.random.default_rng(seed)
+        ys, xs = np.mgrid[y:y + h, x:x + w]
+        cx, cy = x + w / 2, y + h / 2
+        d = np.hypot((xs + 0.5 - cx) / (w / 2), (ys + 0.5 - cy) / (h / 2))
+        d += (local.random(d.shape) - 0.5) * 0.15
+        area = g[y:y + h, x:x + w]
+        area[d < 1] = m.g('outline')
+        area[d < 0.92] = m.g('straw')
+        area[(d < 0.7) & ((xs * 5 + ys * 3) % 7 == 0)] = m.g('flame')
+        self.m.area(x + 4, y + 4, w - 8, h - 8, '', 'RADIATION')
+
+    def pipes(self, x, y, w):
+        """Two brass pipes along a wall face."""
+        g, m = self.m.ground, self.m
+        for py in (y + 4, y + 13):
+            g[py:py + 4, x:x + w] = m.g('wood')
+            g[py, x:x + w] = m.g('wall_l')
+            g[py + 3, x:x + w] = m.g('outline')
+            for px in range(x + 8, x + w, 32):
+                g[py - 1:py + 5, px:px + 3] = m.g('iron_d')
+
+    def stripes(self, x, y, w, h):
+        """Red and dark warning stripes on the floor."""
+        g = self.m.ground
+        ys, xs = np.mgrid[y:y + h, x:x + w]
+        g[y:y + h, x:x + w] = np.where(((xs + ys) // 6) % 2 == 0, self.m.g('red'), self.m.g('iron_d'))
+
+    def console(self, x, y, w=48):
+        """A control panel with blinking lights against a wall, 16 high."""
+        g, m = self.m.ground, self.m
+        g[y:y + 16, x:x + w] = m.g('outline')
+        g[y + 1:y + 15, x + 1:x + w - 1] = m.g('wall_m')
+        g[y + 1:y + 4, x + 1:x + w - 1] = m.g('wall_l')
+        for px in range(x + 4, x + w - 4, 8):
+            g[y + 7:y + 10, px:px + 3] = m.g('flame') if (px // 8) % 2 else m.g('red')
+        self.m.block(x, y + 4, w, 12)
+
+
+def gen_gnomeregan():
+    c = Gnomer('gnomeregan', 1024, 1024)
+    m = c.m
+    c.rect(448, 864, 128, 104)      # the way in
+    c.rect(488, 960, 48, 64)        # the ramp up to Dun Morogh
+    c.rect(416, 896, 32, 48)
+    c.rect(160, 832, 256, 144)      # the trogg tunnels, Grubbis's
+    c.rect(488, 752, 48, 112)
+    c.rect(320, 560, 384, 192)      # the Hall of Gears, Viscous Fallout's
+    c.rect(288, 600, 32, 48)
+    c.rect(64, 448, 224, 208)       # the Dormitory
+    c.rect(704, 608, 32, 48)
+    c.rect(736, 512, 224, 224)      # the Engineering Labs, the Electrocutioner's
+    c.rect(488, 448, 48, 112)
+    c.rect(352, 288, 320, 160)      # the Launch Bay, the Crowd Pummeler's
+    c.rect(488, 208, 48, 80)
+    c.rect(320, 48, 384, 160)       # the Control Room, Thermaplugg's
+    c.rect(80, 656, 48, 48)         # a hidden storeroom off the Dormitory
+    c.rect(64, 704, 96, 64)
+    c.render()
+    c.exit(488, 1016, 'dun_morogh', 'gnomeregan_exit')
+
+    for x, y, w, h, seed in ((380, 600, 72, 40, 1), (560, 660, 88, 48, 2), (420, 700, 64, 36, 3),
+                             (220, 880, 56, 32, 4), (840, 660, 64, 40, 5), (120, 560, 56, 32, 6),
+                             (580, 600, 56, 32, 7)):
+        c.fallout(x, y, w, h, seed)
+    c.pipes(320, 560, 384)
+    c.pipes(736, 512, 224)
+    c.pipes(320, 48, 384)
+    for x in (360, 456, 552):
+        c.gears(x, 288)
+    c.stripes(384, 392, 256, 16)
+    for x in (360, 456, 560):
+        c.console(x, 72)
+    c.console(760, 524)
+    c.console(880, 524)
+    c.crate(96, 480)
+    c.crate(112, 480)
+    c.crate(240, 470)
+    c.secret(80, 632, 48, 24)
+    m.chest(32, 112, 744, 29)
+
+    m.spawn_group('CAVERNDEEP_BURROWER', 240, 900, 3, 50, seed=131)
+    m.spawn('IRRADIATED_PILLAGER', 340, 860)
+    m.spawn('GRUBBIS', 200, 870)
+    m.spawn('LEPER_GNOME', 470, 900)
+    m.spawn('LEPER_GNOME', 550, 900)
+    m.spawn_group('IRRADIATED_SLIME', 460, 640, 3, 80, seed=132)
+    m.spawn_group('LEPER_GNOME', 640, 720, 2, 30, seed=133)
+    m.spawn('VISCOUS_FALLOUT', 600, 690)
+    m.spawn_group('LEPER_GNOME', 160, 520, 3, 60, seed=134)
+    m.spawn_group('DARK_IRON_AGENT', 200, 600, 2, 40, seed=135)
+    m.spawn_group('ARCANE_NULLIFIER', 820, 620, 2, 40, seed=136)
+    m.spawn('MECHANO_TANK', 900, 700)
+    m.spawn('ELECTROCUTIONER_6000', 848, 580)
+    m.spawn('MECHANO_TANK', 420, 330)
+    m.spawn('MECHANO_TANK', 600, 330)
+    m.spawn('ARCANE_NULLIFIER', 512, 420)
+    m.spawn('CROWD_PUMMELER', 512, 352)
+    m.spawn('DARK_IRON_AGENT', 400, 180)
+    m.spawn('DARK_IRON_AGENT', 620, 180)
+    m.spawn('MEKGINEER_THERMAPLUGG', 512, 128)
+    # Where Thermaplugg's bombs come out: the hatches along the Control Room's walls.
+    m.patrol = [(344, 120), (680, 120), (344, 196), (680, 196)]
+    m.area(0, 0, 1024, 1024, 'Gnomeregan')
+    m.area(160, 832, 256, 144, 'The Tunnels')
+    m.area(320, 560, 384, 192, 'The Hall of Gears')
+    m.area(64, 448, 224, 208, 'The Dormitory')
+    m.area(736, 512, 224, 224, 'The Engineering Labs')
+    m.area(352, 288, 320, 160, 'The Launch Bay')
+    m.area(320, 48, 384, 160, 'The Control Room')
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
 GENERATORS = {
     'abbey': gen_abbey,
     'inn': gen_inn,
@@ -2607,6 +3495,12 @@ GENERATORS = {
     'duskwood': gen_duskwood,
     'silverpine': gen_silverpine,
     'shadowfang': gen_shadowfang,
+    'ironforge': gen_ironforge,
+    'dun_morogh': gen_dun_morogh,
+    'wetlands': gen_wetlands,
+    'darkshore': gen_darkshore,
+    'blackfathom_deeps': gen_blackfathom_deeps,
+    'gnomeregan': gen_gnomeregan,
 }
 
 
@@ -2617,7 +3511,8 @@ def main():
         raise SystemExit(f'chest ids must be unique and below 256: {sorted(ids)}')
     print(f'{len(ids)} treasure chests')
     starts = {'elwynn': 'start', 'westfall': 'from_elwynn', 'stormwind': 'from_elwynn', 'redridge': 'from_elwynn',
-              'duskwood': 'from_elwynn', 'silverpine': 'flight'}
+              'duskwood': 'from_elwynn', 'silverpine': 'flight', 'dun_morogh': 'from_ironforge',
+              'wetlands': 'from_dun_morogh', 'darkshore': 'from_menethil'}
     for name, m in maps.items():
         m.check_reachable(starts.get(name, 'entry'))
     write_minimaps(maps)
@@ -2625,8 +3520,9 @@ def main():
 
 # Maps with a picture on the world map page, in the order D-pad left and right go through them.
 # Interiors show the map their door leads to.
-MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'duskwood', 'silverpine', 'echo_ridge', 'fargodeep',
-            'deadmines', 'stockade', 'shadowfang']
+MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'duskwood', 'silverpine', 'ironforge', 'dun_morogh',
+            'wetlands', 'darkshore', 'echo_ridge', 'fargodeep', 'deadmines', 'stockade', 'shadowfang',
+            'blackfathom_deeps', 'gnomeregan']
 
 
 def write_minimaps(maps):

@@ -43,6 +43,12 @@ namespace
         case music_id::DUSKWOOD:
             return bn::music_items::duskwood;
 
+        case music_id::IRONFORGE:
+            return bn::music_items::ironforge;
+
+        case music_id::WETLANDS:
+            return bn::music_items::wetlands;
+
         default:
             return bn::nullopt;
         }

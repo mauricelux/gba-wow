@@ -519,6 +519,52 @@ def song_duskwood():
     return s
 
 
+def song_ironforge():
+    """Ironforge: a heavy dwarven march in D minor, organ and timpani under the mountain."""
+    s = Song('ironforge', 7)
+    drums = 't.......k...t.k.|t.......k.k.t...'
+    a = arrange(['Dm', 'Dm', 'Bb', 'A'],
+                'D5 - - - D5 - A4 - D5 - F5 - E5 - D5 - '
+                'A5 - - - G5 - F5 - E5 - - - D5 - - - '
+                'F5 - - - D5 - Bb4 - D5 - F5 - Bb5 - - - '
+                'A5 - - - - - - - E5 - - - C#5 - - - ',
+                lead='organ', lead_volume=38, harmony='stabs', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=26, bass='root_fifth', drums=drums)
+    b = arrange(['Gm', 'Dm', 'C', 'A'],
+                'G5 - - - Bb5 - - - A5 - G5 - F5 - - - '
+                'F5 - - - A5 - - - D5 - - - F5 - - - '
+                'E5 - - - G5 - - - C6 - - - E5 - - - '
+                'C#5 - - - E5 - - - A5 - - - - - - - ',
+                lead='organ', lead_volume=38, harmony='pad', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=24, bass='eighths', drums=drums)
+    s.add(a)
+    s.add(b)
+    return s
+
+
+def song_wetlands():
+    """The Wetlands: misty and wandering, a lilting tune in A minor over a drone."""
+    s = Song('wetlands', 9)
+    drums = 'k.......h.......|k.......h...h...'
+    a = arrange(['Am', 'G', 'F', 'Em'],
+                'E5 - - - A5 - - - G5 - E5 - D5 - - - '
+                'D5 - - - G5 - - - B4 - D5 - G5 - - - '
+                'F5 - - - C5 - - - A4 - C5 - F5 - - - '
+                'E5 - - - - - B4 - G4 - - - B4 - - - ',
+                lead='soft', lead_volume=42, harmony='arp_up_down', harmony_sample='bell', harmony_volume=24,
+                bass='whole', drums=drums)
+    b = arrange(['F', 'C', 'Dm', 'E'],
+                'A5 - - - G5 - F5 - C5 - - - F5 - A5 - '
+                'G5 - - - - - E5 - C5 - - - - - - - '
+                'D5 - - - F5 - A5 - D6 - C6 - A5 - - - '
+                'G#5 - - - - - - - E5 - - - B4 - - - ',
+                lead='soft', lead_volume=42, harmony='pad', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=22, bass='roots', drums=drums)
+    s.add(a)
+    s.add(b)
+    return s
+
+
 def song_dungeon():
     s = Song('dungeon', 10)
     drums = 'k...............|k.......k.......'
@@ -623,7 +669,7 @@ def write_sounds():
 def main():
     os.makedirs(OUT, exist_ok=True)
     for song in (song_title(), song_elwynn(), song_town(), song_westfall(), song_dungeon(), song_boss(),
-                 song_redridge(), song_duskwood()):
+                 song_redridge(), song_duskwood(), song_ironforge(), song_wetlands()):
         write_mod(song)
         print(f'{song.name}.mod: {len(song.patterns)} patterns, {len(song.order)} in order')
     write_sounds()
