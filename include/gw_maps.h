@@ -20,6 +20,7 @@ struct map_info
     int collision_columns;
     music_id music;
     bool dungeon;
+    bool indoors;       // no mounts
     bn::span<const warp_def> warps;
     bn::span<const npc_def> npcs;
     bn::span<const spawn_def> spawns;

@@ -10,8 +10,9 @@ namespace gw
 namespace npc_flag
 {
     constexpr uint8_t VENDOR = 1;       // sells goods and buys anything
-    constexpr uint8_t TRAINER = 2;      // teaches abilities of trainer_class
+    constexpr uint8_t TRAINER = 2;      // teaches abilities of trainer_class (any_class: riding)
     constexpr uint8_t INNKEEPER = 4;
+    constexpr uint8_t FLIGHT_MASTER = 8;    // flies to the flight paths found
 }
 
 struct npc_info

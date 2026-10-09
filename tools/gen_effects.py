@@ -540,6 +540,7 @@ def icons():
 
     subclass_icons(out)
     debuff_icons(out)
+    travel_and_pet_icons(out)
     return out
 
 
@@ -819,6 +820,58 @@ def debuff_icons(out):
         c.px(x, y, I['yellow'])
     out['disease'] = c
     c = icon_base('red_d'); flame(c, 'red', 'orange'); out['burning'] = c
+
+
+def paw(c, color='lgray', x=8, y=8):
+    c.fill(c.ellipse(x, y + 2.5, 3.2, 2.6), I[color], I['out'])
+    for dx, dy in ((-3.5, -1.5), (-1.2, -3.5), (1.2, -3.5), (3.5, -1.5)):
+        c.fill(c.ellipse(x + dx, y + dy, 1.4, 1.4), I[color], I['out'])
+
+
+def travel_and_pet_icons(out):
+    # The Mount ability: a horseshoe.
+    c = icon_base('brown')
+    c.fill(c.ellipse(8, 8, 5.5, 6) & ~c.ellipse(8, 8, 3, 3.5) & ~c.rect(5, 9, 11, 16), I['lgray'], I['out'])
+    for x, y in ((3, 9), (12, 9), (4, 5), (11, 5)):
+        c.px(x, y, I['dgray'])
+    out['mount'] = c
+
+    # Beast Mastery's pet
+    c = icon_base('green_d'); paw(c, 'brown')
+    c.fill(c.ellipse(8, 8, 7, 7) & ~c.ellipse(8, 8, 6, 6), I['yellow'])
+    out['tame_beast'] = c
+    c = icon_base('green_d'); paw(c, 'white'); out['call_pet'] = c
+    c = icon_base('blue_d'); paw(c, 'lgray')
+    for x, y in ((3, 3), (13, 3), (13, 12)):
+        c.px(x, y, I['yellow'])
+        c.px(x - 1, y, I['white'])
+    out['revive_pet'] = c
+    c = icon_base('green_d'); paw(c, 'lgray', 7, 9)
+    c.fill(c.rect(10, 2, 12, 8) | c.rect(8, 4, 14, 6), I['green_l'], I['out'])
+    out['mend_pet'] = c
+    c = icon_base('red_d')
+    for dx in (-3, 0, 3):
+        c.fill(c.line(4 + dx, 3, 9 + dx, 13, 1.4), I['white'])
+    c.fill(c.rect(12, 3, 14, 9) | c.rect(12, 11, 14, 13), I['yellow'], I['out'])
+    out['kill_command'] = c
+    c = icon_base('red_d'); paw(c, 'orange', 8, 9)
+    for x, y in ((3, 3), (8, 2), (13, 3)):
+        c.fill(c.ellipse(x + 0.5, y + 0.5, 1.5, 1.5), I['yellow'])
+    out['intimidation'] = c
+    c = icon_base('green_d')
+    c.fill(c.poly([(2, 9), (6, 6), (9, 3), (11, 6), (13, 6), (14, 9), (12, 13), (5, 13)]), I['brown'], I['out'])
+    c.fill(c.poly([(9, 3), (10, 1.5), (11, 5)]), I['out'])
+    c.fill(c.rect(2, 9, 5, 11), I['lgray'])
+    c.px(9, 7, I['yellow'])
+    out['aspect_beast'] = c
+    c = icon_base('blue_d'); paw(c, 'lgray', 7, 9)
+    c.fill(c.line(10, 2.5, 13, 2.5, 1) | c.line(13, 2.5, 10, 5.5, 1) | c.line(10, 5.5, 13, 5.5, 1), I['white'])
+    out['pet_passive'] = c
+    c = icon_base('blue_d')
+    c.fill(c.poly([(8, 1.5), (12.5, 8), (12, 12), (8, 14), (4, 12), (3.5, 8)]), I['blue_l'], I['out'])
+    c.fill(c.ellipse(6.5, 9, 1, 1.2) | c.ellipse(9.5, 9, 1, 1.2), I['white'])
+    c.px(6, 5, I['white'])
+    out['water_elemental'] = c
 
 
 def main():

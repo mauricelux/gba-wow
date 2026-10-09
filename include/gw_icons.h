@@ -115,6 +115,16 @@ enum class icon_id : uint8_t
     POISON,
     DISEASE,
     BURNING,
+    MOUNT,
+    TAME_BEAST,
+    CALL_PET,
+    REVIVE_PET,
+    MEND_PET,
+    KILL_COMMAND,
+    INTIMIDATION,
+    ASPECT_BEAST,
+    PET_PASSIVE,
+    WATER_ELEMENTAL,
     COUNT
 };
 

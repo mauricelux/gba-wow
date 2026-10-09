@@ -70,8 +70,8 @@ void npcs::refresh_markers()
         quest_marker marker = npc_quest_marker(item.id);
         const npc_info& info = get_npc_info(item.id);
 
-        if(marker == quest_marker::NONE && (info.flags & npc_flag::TRAINER) &&
-           info.trainer_class == character().player_class && trainable_count() > 0)
+        if(marker == quest_marker::NONE && (info.flags & npc_flag::TRAINER) && teaches(info.trainer_class) &&
+           trainable_count(info.trainer_class) > 0)
         {
             marker = quest_marker::TRAINER;
         }

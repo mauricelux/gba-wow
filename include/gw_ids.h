@@ -139,6 +139,9 @@ enum class npc_id : uint16_t
     ANDER,
     THELWATER,
     SW_GUARD_STOCKADE,
+    DUNGAR,
+    THOR,
+    RANDAL,
     COUNT
 };
 

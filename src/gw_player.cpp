@@ -2,6 +2,9 @@
 
 #include "bn_keypad.h"
 #include "bn_math.h"
+#include "bn_sprite_items_mount_horse.h"
+#include "bn_sprite_items_mount_ram.h"
+#include "bn_sprite_items_mount_saber.h"
 
 #include "gw_world.h"
 
@@ -17,20 +20,101 @@ namespace
 
     // How far (in pixels) the player is nudged around a corner they walk into.
     constexpr int corner_tolerance = 6;
+
+    struct mount_look
+    {
+        const bn::sprite_item& sheet;
+        int lift;       // how much higher the rider sits
+    };
+
+    // By race: a horse for humans, a ram for dwarves and a nightsaber for night elves.
+    constexpr mount_look mount_looks[] = {
+        { bn::sprite_items::mount_horse, 8 },
+        { bn::sprite_items::mount_ram, 9 },
+        { bn::sprite_items::mount_saber, 6 },
+    };
+
+    static_assert(sizeof(mount_looks) / sizeof(mount_looks[0]) == int(race_id::COUNT));
+
+    // Mount sheet frames (tools/gen_characters.py): a side view, then towards and away from the viewer.
+    constexpr int mount_side = 0;
+    constexpr int mount_down = 4;
+    constexpr int mount_up = 6;
+    constexpr int mount_frame_ticks = 6;
+
+    // Seen from the side the rider sits behind the mount's neck.
+    constexpr int rider_back = 4;
+    constexpr int feet_to_center = 13;
 }
 
 player::player(look_id look, const bn::fixed_point& feet_position, const bn::camera_ptr& camera) :
     _position(feet_position),
     _sprite(look, camera)
 {
-    _sprite.update(_position, _facing, false, 0);
+    _update_sprites(false);
 }
 
 void player::set_position(const bn::fixed_point& feet_position)
 {
     _position = feet_position;
     _dashing = false;
+    _update_sprites(false);
+}
+
+void player::mount(race_id race)
+{
+    const mount_look& look = mount_looks[int(race)];
+    bn::sprite_ptr mount = look.sheet.create_sprite(0, 0);
+
+    if(const bn::optional<bn::camera_ptr>& camera = _sprite.sprite().camera())
+    {
+        mount.set_camera(*camera);
+    }
+
+    mount.set_bg_priority(_sprite.sprite().bg_priority());
+    _mount = bn::move(mount);
+    _mount_item = &look.sheet;
+    _mount_lift = look.lift;
+    _mount_frame = 0;
+    _update_sprites(false);
+}
+
+void player::dismount()
+{
+    _mount.reset();
+    _sprite.set_offset(0, 0);
+    _update_sprites(false);
+}
+
+void player::_update_sprites(bool moving)
+{
+    if(! _mount)
+    {
+        _sprite.update(_position, _facing, moving, _walk_counter);
+        return;
+    }
+
+    // The rider sits still; the mount walks.
+    bool side = _facing == facing::LEFT || _facing == facing::RIGHT;
+    _sprite.set_offset(! side ? 0 : _facing == facing::LEFT ? rider_back : -rider_back, -_mount_lift);
     _sprite.update(_position, _facing, false, 0);
+
+    int step = moving ? _walk_counter / mount_frame_ticks : 0;
+    int frame = side ? mount_side + step % 4 : (_facing == facing::UP ? mount_up : mount_down) + step % 2;
+
+    if(frame != _mount_frame)
+    {
+        _mount->set_tiles(_mount_item->tiles_item(), frame);
+        _mount_frame = frame;
+    }
+
+    bn::fixed_point screen = world::to_screen_space(_position);
+    _mount->set_horizontal_flip(_facing == facing::RIGHT);
+    _mount->set_position(screen.x().floor_integer(), screen.y().floor_integer() - feet_to_center);
+    _mount->set_visible(_sprite.sprite().visible());
+
+    // In front of the rider, who is drawn at the same feet.
+    _mount->set_z_order(-_position.y().floor_integer() - 1);
 }
 
 void player::face(const bn::fixed_point& target)
@@ -71,7 +155,7 @@ void player::blink(int distance)
     }
 
     _dashing = false;
-    _sprite.update(_position, _facing, false, 0);
+    _update_sprites(false);
 }
 
 void player::update(bool input_enabled, bool can_run, int speed_percent, const bn::fixed_point* flee_from)
@@ -79,7 +163,7 @@ void player::update(bool input_enabled, bool can_run, int speed_percent, const b
     if(_dashing)
     {
         _update_dash();
-        _sprite.update(_position, _facing, true, _walk_counter);
+        _update_sprites(true);
         return;
     }
 
@@ -146,7 +230,7 @@ void player::update(bool input_enabled, bool can_run, int speed_percent, const b
         _walk_counter = 0;
     }
 
-    _sprite.update(_position, _facing, moving, _walk_counter);
+    _update_sprites(moving);
 }
 
 void player::_update_dash()

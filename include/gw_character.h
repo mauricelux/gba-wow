@@ -171,12 +171,15 @@ void arrange_bars();
 // What the known rank costs to use, in rage or mana.
 [[nodiscard]] int ability_cost(ability_id ability);
 
-// The next rank a trainer could teach now (level reached, in the subclass's kit, talent abilities
-// only after the talent), or 0.
+// The next rank a trainer could teach now (level reached, in the subclass's kit, talent and quest
+// abilities only after the talent or the quest), or 0.
 [[nodiscard]] int trainable_rank(ability_id ability);
 
-// How many abilities have a rank waiting at the trainer.
-[[nodiscard]] int trainable_count();
+// How many abilities have a rank waiting at a trainer of the class (any_class: riding trainers).
+[[nodiscard]] int trainable_count(class_id trainer_class);
+
+// Whether trainers of the class teach the character: their own class's trainers and riding trainers.
+[[nodiscard]] bool teaches(class_id trainer_class);
 
 [[nodiscard]] bool has_shield();
 

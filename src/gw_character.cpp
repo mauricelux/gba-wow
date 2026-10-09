@@ -499,7 +499,7 @@ int trainable_rank(ability_id ability)
 
     int rank = ability_rank(ability);
 
-    if(rank == 0 && (get_ability(ability).flags & ability_flag::TALENT))
+    if(rank == 0 && (get_ability(ability).flags & (ability_flag::TALENT | ability_flag::QUEST)))
     {
         return 0;
     }
@@ -508,19 +508,26 @@ int trainable_rank(ability_id ability)
     return level && level <= data.level ? rank + 1 : 0;
 }
 
-int trainable_count()
+int trainable_count(class_id trainer_class)
 {
     int count = 0;
 
     for(int index = 1; index < ability_count; ++index)
     {
-        if(trainable_rank(ability_id(index)))
+        auto ability = ability_id(index);
+
+        if(get_ability(ability).player_class == trainer_class && trainable_rank(ability))
         {
             ++count;
         }
     }
 
     return count;
+}
+
+bool teaches(class_id trainer_class)
+{
+    return trainer_class == data.player_class || trainer_class == any_class;
 }
 
 bool has_shield()

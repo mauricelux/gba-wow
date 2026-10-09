@@ -137,8 +137,11 @@ public:
     // Deals damage to the player (boss specials).
     void damage_player(int amount, const bn::fixed_point& from, school damage_school = school::PHYSICAL);
 
-    // Movement speed in percent, from aspects and dazes; 0 while the player can't move.
+    // Movement speed in percent, from aspects, the mount and dazes; 0 while the player can't move.
     [[nodiscard]] int speed_percent() const;
+
+    // Gets off the mount: fighting, getting hit, using an ability, going indoors or taking a flight.
+    void dismount();
 
     // Set by Teleport: Stormwind; the game moves the player there and clears it.
     map_id teleport_map = map_id::NONE;

@@ -10,6 +10,10 @@ Humanoid sheets are 32x32 frames, 17 per sheet, stacked vertically:
 
 Creature sheets are side views only, 6 frames: 0-3 walk left (0 = idle), 4 attack, 5 dead.
 
+Mount sheets (the horse, ram and nightsaber of the Mount ability) have 8 frames and their own palette:
+  0-3   gallop left (0 = standing), 4-5 trot towards the viewer, 6-7 trot away
+The rider is drawn behind the mount, raised so the mount hides the legs.
+
 Every humanoid sheet uses the same palette layout (HUMANOID_ROLES), and so does every creature sheet
 (CREATURE_ROLES). A look is a sheet plus a palette, so guards, bandits and the player share art and
 differ only in colors. Palettes are written to include/gw_palettes.h.
@@ -781,6 +785,150 @@ def creature_sheet(draw):
     return frames
 
 
+# --- mounts -----------------------------------------------------------------------------------------
+
+def mount_legs(c, xs, top, bottom, key, dark=None, hoof='second_dark'):
+    for x in xs:
+        c.rect(x, top, x + 1, bottom - 1, key, dark=dark)
+        c.rect(x, bottom, x + 1, bottom, hoof, edge=False)
+
+
+def horse(view, step):
+    c = Canvas()
+    if view == 'side':
+        s = STRIDE[step]
+        b = 1 if step in (1, 3) else 0
+        c.line(25, 13 + b, 29, 21 + b, 'second', width=2, dark='second_dark')          # tail
+        mount_legs(c, [9 - s, 21 + s], 21, 28, 'dark')                                  # far legs
+        c.ellipse(16, 17 + b, 10, 5, 'main', dark='dark', light='light')                # body
+        c.rect(15, 12 + b, 22, 17 + b, 'extra', dark='extra_dark', light='flame')       # blanket
+        mount_legs(c, [11 + s, 19 - s], 21, 28, 'main', dark='dark')                    # near legs
+        c.poly([(4, 6 + b), (9, 4 + b), (13, 14 + b), (8, 17 + b)], 'main', dark='dark', light='light')
+        c.ellipse(5, 7 + b, 3, 2.5, 'main', light='light')                              # head
+        c.rect(1, 7 + b, 4, 10 + b, 'main', dark='dark')                                # muzzle
+        c.line(8, 3 + b, 12, 12 + b, 'second', width=2, edge=False)                     # mane
+        c.poly([(6, 4 + b), (7, 0 + b), (9, 4 + b)], 'second_dark')                     # ear
+        c.px(4, 6 + b, 'eye')
+        c.px(1, 9 + b, 'outline')
+        return c.done()
+    b = step
+    if view == 'down':
+        mount_legs(c, [10, 20], 22, 28 - b, 'dark')
+        c.ellipse(15.5, 17, 7, 5, 'main', dark='dark', light='light')                  # chest
+        c.rect(7, 14, 9, 20, 'extra', dark='extra_dark', light='flame')                 # blanket sides
+        c.rect(22, 14, 24, 20, 'extra', dark='extra_dark', light='flame')
+        c.ellipse(15.5, 23 + b, 3, 5, 'main', dark='dark', light='light')              # long face
+        c.rect(14, 18 + b, 17, 27 + b, 'tooth', edge=False)                            # blaze
+        c.rect(15, 18 + b, 16, 26 + b, 'main', edge=False)
+        c.poly([(12, 19 + b), (12, 15 + b), (14, 18 + b)], 'second_dark')              # ears
+        c.poly([(19, 19 + b), (19, 15 + b), (17, 18 + b)], 'second_dark')
+        c.px(13, 21 + b, 'eye')
+        c.px(18, 21 + b, 'eye')
+        c.px(14, 27 + b, 'outline')
+        c.px(17, 27 + b, 'outline')
+        return c.done()
+    # Seen from behind, the head hides behind the rider.
+    mount_legs(c, [10, 20], 22, 28 - b, 'dark')
+    c.ellipse(15.5, 19, 7.5, 6, 'main', dark='dark', light='light')
+    c.rect(7, 14, 9, 20, 'extra', dark='extra_dark', light='flame')
+    c.rect(22, 14, 24, 20, 'extra', dark='extra_dark', light='flame')
+    c.line(15.5, 19, 15.5 + (1 if b else 0), 27, 'second', width=3, dark='second_dark')
+    return c.done()
+
+
+def ram(view, step):
+    c = Canvas()
+    if view == 'side':
+        s = STRIDE[step] // 2 * 2
+        b = 1 if step in (1, 3) else 0
+        c.ellipse(27, 14 + b, 2, 2, 'light', dark='main')                              # tail
+        mount_legs(c, [9 - s, 21 + s], 22, 28, 'dark')
+        c.ellipse(16, 17 + b, 11, 6, 'main', dark='dark', light='light')                # woolly body
+        for x in range(8, 26, 3):
+            c.px(x, 13 + b + (x % 2), 'dark')
+            c.px(x + 1, 20 + b - (x % 2), 'dark')
+        c.rect(15, 11 + b, 22, 16 + b, 'extra', dark='extra_dark', light='flame')       # blanket
+        mount_legs(c, [11 + s, 19 - s], 22, 28, 'second', dark='second_dark')
+        c.poly([(3, 11 + b), (8, 9 + b), (11, 16 + b), (6, 18 + b)], 'main', dark='dark', light='light')
+        c.ellipse(5, 12 + b, 3.5, 3, 'second', light='light', dark='second_dark')       # face
+        c.rect(1, 12 + b, 4, 15 + b, 'second', dark='second_dark')                     # muzzle
+        c.ellipse(8, 11 + b, 2.5, 2.5, 'weapon', dark='weapon_dark')                    # curled horn
+        c.px(8, 11 + b, 'weapon_dark')
+        c.px(9, 12 + b, 'weapon_dark')
+        c.rect(3, 16 + b, 4, 18 + b, 'light', edge=False)                               # beard
+        c.px(4, 11 + b, 'eye')
+        c.px(1, 14 + b, 'outline')
+        return c.done()
+    b = step
+    if view == 'down':
+        mount_legs(c, [10, 20], 23, 28 - b, 'second', dark='second_dark')
+        c.ellipse(15.5, 18, 8, 5.5, 'main', dark='dark', light='light')
+        c.rect(6, 15, 8, 20, 'extra', dark='extra_dark', light='flame')
+        c.rect(23, 15, 25, 20, 'extra', dark='extra_dark', light='flame')
+        c.ellipse(15.5, 23 + b, 3.5, 4, 'second', dark='second_dark', light='light')
+        c.ellipse(10.5, 20 + b, 2.5, 2.5, 'weapon', dark='weapon_dark')                # horns
+        c.ellipse(20.5, 20 + b, 2.5, 2.5, 'weapon', dark='weapon_dark')
+        c.px(10, 20 + b, 'weapon_dark')
+        c.px(21, 20 + b, 'weapon_dark')
+        c.px(14, 22 + b, 'eye')
+        c.px(17, 22 + b, 'eye')
+        c.rect(14, 26 + b, 17, 27 + b, 'light', edge=False)
+        return c.done()
+    mount_legs(c, [10, 20], 23, 28 - b, 'second', dark='second_dark')
+    c.ellipse(15.5, 19, 8.5, 6.5, 'main', dark='dark', light='light')
+    c.rect(6, 15, 8, 20, 'extra', dark='extra_dark', light='flame')
+    c.rect(23, 15, 25, 20, 'extra', dark='extra_dark', light='flame')
+    c.ellipse(15.5, 22 + b, 2, 2, 'light', dark='main')
+    return c.done()
+
+
+def saber(view, step):
+    c = Canvas()
+    if view == 'side':
+        s = STRIDE[step]
+        b = 1 if step in (1, 3) else 0
+        c.line(25, 17 + b, 29, 10 + b, 'main', width=2, dark='dark')                    # tail
+        c.px(29, 9 + b, 'second_dark')
+        mount_legs(c, [8 - s, 22 + s], 22, 28, 'dark', hoof='dark')
+        c.ellipse(16, 18 + b, 10, 4.5, 'main', dark='dark', light='light')              # long body
+        for x in (10, 13, 22, 25):
+            c.line(x, 14 + b, x - 1, 17 + b, 'second', edge=False)                      # stripes
+        c.rect(15, 13 + b, 21, 17 + b, 'extra', dark='extra_dark', light='flame')       # saddle
+        mount_legs(c, [10 + s, 20 - s], 22, 28, 'main', dark='dark', hoof='dark')
+        c.ellipse(6, 13 + b, 4.5, 4, 'main', light='light', dark='dark')                # head
+        c.rect(1, 14 + b, 4, 16 + b, 'light', dark='main')                              # muzzle
+        c.poly([(6, 10 + b), (7, 6 + b), (9, 10 + b)], 'second_dark')                   # ear
+        c.px(4, 12 + b, 'eye')
+        c.px(1, 15 + b, 'outline')
+        return c.done()
+    b = step
+    if view == 'down':
+        mount_legs(c, [10, 20], 23, 28 - b, 'main', dark='dark', hoof='dark')
+        c.ellipse(15.5, 18, 7, 5, 'main', dark='dark', light='light')
+        c.rect(7, 15, 9, 20, 'extra', dark='extra_dark', light='flame')
+        c.rect(22, 15, 24, 20, 'extra', dark='extra_dark', light='flame')
+        c.ellipse(15.5, 23 + b, 4.5, 4, 'main', dark='dark', light='light')             # face
+        c.poly([(11, 21 + b), (11, 17 + b), (14, 20 + b)], 'second_dark')               # ears
+        c.poly([(20, 21 + b), (20, 17 + b), (17, 20 + b)], 'second_dark')
+        c.line(15.5, 19 + b, 15.5, 21 + b, 'second', edge=False)
+        c.px(13, 22 + b, 'eye')
+        c.px(18, 22 + b, 'eye')
+        c.rect(14, 25 + b, 17, 26 + b, 'light', edge=False)
+        c.px(15, 25 + b, 'outline')
+        return c.done()
+    mount_legs(c, [10, 20], 23, 28 - b, 'main', dark='dark', hoof='dark')
+    c.ellipse(15.5, 19, 7.5, 6, 'main', dark='dark', light='light')
+    for y in (15, 18, 21):
+        c.line(11, y, 20, y, 'second', edge=False)
+    c.rect(7, 14, 9, 20, 'extra', dark='extra_dark', light='flame')
+    c.rect(22, 14, 24, 20, 'extra', dark='extra_dark', light='flame')
+    c.line(15.5, 22, 15.5 + (2 if b else -2), 29, 'main', width=2, dark='dark')         # tail
+    return c.done()
+
+
+MOUNT_VIEWS = [('side', step) for step in range(4)] + [('down', 0), ('down', 1), ('up', 0), ('up', 1)]
+
+
 # --- palettes ---------------------------------------------------------------------------------------
 
 def humanoid_palette(skin=(232, 168, 128), hair=(144, 88, 40), armor=(144, 152, 168),
@@ -927,6 +1075,12 @@ HUMANOID_LOOKS = {
     'bazil_thredd': ('hum_sword', humanoid_palette(hair=(32, 28, 36), armor=(56, 40, 64),
                                                    tabard=(152, 32, 40), trim=(232, 184, 64),
                                                    lower_face=(152, 32, 40), armor_light=(104, 80, 112))),
+    # travel
+    'gryphon_master': ('dwarf_sword', humanoid_palette(skin=SKIN_DWARF, hair=(200, 120, 56), armor=(120, 96, 64),
+                                                       tabard=(48, 96, 136), trim=(232, 184, 64),
+                                                       lower_face=(200, 120, 56))),
+    'riding_trainer': ('hum_plain', humanoid_palette(hair=(96, 64, 32), armor=(136, 96, 56), tabard=(56, 104, 64),
+                                                     trim=(200, 168, 96))),
 }
 
 CREATURE_LOOKS = {
@@ -956,6 +1110,16 @@ CREATURE_LOOKS = {
                                          extra=(232, 184, 64), weapon=(184, 184, 192))),
 }
 
+
+# By race: the Mount ability's horse (humans), ram (dwarves) and nightsaber (night elves).
+MOUNTS = {
+    'horse': (horse, creature_palette((136, 88, 48), (56, 36, 24), eye=(24, 20, 28), extra=(48, 72, 168),
+                                      flame=(232, 184, 64), tooth=(232, 228, 216))),
+    'ram': (ram, creature_palette((208, 200, 184), (112, 80, 56), eye=(24, 20, 28), extra=(160, 48, 40),
+                                  flame=(232, 184, 64), weapon=(184, 160, 120))),
+    'saber': (saber, creature_palette((96, 80, 136), (48, 40, 80), eye=(232, 232, 120), extra=(72, 112, 72),
+                                      flame=(208, 208, 232))),
+}
 
 # --- output -----------------------------------------------------------------------------------------
 
@@ -1047,6 +1211,13 @@ def main():
         sheets[name] = write_sheet(name, creature_sheet(draw), base_creature)
     write_palettes()
     write_looks()
+    mount_frames = []
+    for name, (draw, palette) in MOUNTS.items():
+        frames = [draw(view, step) for view, step in MOUNT_VIEWS]
+        save_indexed_bmp(GRAPHICS / f'mount_{name}.bmp', np.concatenate(frames, axis=0), unique(palette))
+        (GRAPHICS / f'mount_{name}.json').write_text('{\n    "type": "sprite",\n    "height": 32\n}\n')
+        mount_frames.append(frames)
+    preview(mount_frames, [palette for _, palette in MOUNTS.values()], PREVIEW / 'mounts.png')
 
     looks = list(HUMANOID_LOOKS.items()) + list(CREATURE_LOOKS.items())
     preview([sheets[sheet] for _, (sheet, _) in looks], [p for _, (_, p) in looks],

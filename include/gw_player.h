@@ -3,8 +3,11 @@
 
 #include "bn_camera_ptr.h"
 #include "bn_fixed_point.h"
+#include "bn_optional.h"
+#include "bn_sprite_ptr.h"
 
 #include "gw_actor_sprite.h"
+#include "gw_ids.h"
 
 namespace gw
 {
@@ -66,9 +69,23 @@ public:
         return _sprite;
     }
 
+    // Rides the race's mount (the Mount ability): the rider sits higher and the mount hides the legs.
+    void mount(race_id race);
+
+    void dismount();
+
+    [[nodiscard]] bool mounted() const
+    {
+        return _mount.has_value();
+    }
+
 private:
     bn::fixed_point _position;
     actor_sprite _sprite;
+    bn::optional<bn::sprite_ptr> _mount;
+    const bn::sprite_item* _mount_item = nullptr;
+    int _mount_lift = 0;
+    int _mount_frame = -1;
     bn::fixed_point _dash_target;
     facing _facing = facing::DOWN;
     int _last_x = 0;    // the last direction moved, from the keypad
@@ -84,6 +101,7 @@ private:
     void _slide_around_corner(bn::fixed dx, bn::fixed dy, bn::fixed speed);
     void _update_facing(int input_x, int input_y);
     void _update_dash();
+    void _update_sprites(bool moving);
 };
 
 }

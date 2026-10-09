@@ -124,6 +124,12 @@ namespace gw::palettes
     constexpr bn::color bazil_thredd_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(2, 2, 2), bn::color(4, 3, 4), bn::color(4, 3, 4), bn::color(7, 5, 8), bn::color(13, 10, 14), bn::color(11, 2, 3), bn::color(19, 4, 5), bn::color(29, 23, 8), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 16, 5), bn::color(19, 4, 5) };
     constexpr bn::sprite_palette_item bazil_thredd(bazil_thredd_colors, bn::bpp_mode::BPP_4);
 
+    constexpr bn::color gryphon_master_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 20, 16), bn::color(15, 9, 4), bn::color(25, 15, 7), bn::color(9, 7, 4), bn::color(15, 12, 8), bn::color(19, 15, 10), bn::color(3, 7, 10), bn::color(6, 12, 17), bn::color(29, 23, 8), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 16, 5), bn::color(25, 15, 7) };
+    constexpr bn::sprite_palette_item gryphon_master(gryphon_master_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color riding_trainer_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(7, 4, 2), bn::color(12, 8, 4), bn::color(10, 7, 4), bn::color(17, 12, 7), bn::color(22, 15, 9), bn::color(4, 7, 4), bn::color(7, 13, 8), bn::color(25, 21, 12), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(17, 14, 8), bn::color(29, 21, 17) };
+    constexpr bn::sprite_palette_item riding_trainer(riding_trainer_colors, bn::bpp_mode::BPP_4);
+
     constexpr bn::color young_wolf_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 9, 8), bn::color(17, 15, 13), bn::color(22, 19, 16), bn::color(17, 16, 14), bn::color(25, 23, 20), bn::color(29, 5, 3), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
     constexpr bn::sprite_palette_item young_wolf(young_wolf_colors, bn::bpp_mode::BPP_4);
 

@@ -48,6 +48,8 @@ enum class look_id : uint8_t
     TARGORR,
     KAM_DEEPFURY,
     BAZIL_THREDD,
+    GRYPHON_MASTER,
+    RIDING_TRAINER,
     YOUNG_WOLF,
     TIMBER_WOLF,
     BOAR,

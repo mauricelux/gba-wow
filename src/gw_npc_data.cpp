@@ -1,5 +1,7 @@
 #include "gw_npc_data.h"
 
+#include "gw_abilities.h"
+
 namespace gw
 {
 
@@ -11,6 +13,7 @@ namespace
     constexpr uint8_t vendor = npc_flag::VENDOR;
     constexpr uint8_t trainer = npc_flag::TRAINER;
     constexpr uint8_t innkeeper = npc_flag::INNKEEPER | npc_flag::VENDOR;
+    constexpr uint8_t flight_master = npc_flag::FLIGHT_MASTER;
 
     // Vendor stock lists, see gw_vendors.
     constexpr uint8_t general_goods = 0;
@@ -104,6 +107,12 @@ namespace
           "The prisoners rose this morning and took the cells. Nobody goes in there lightly." },
         { "Stormwind City Guard", "", l::STORMWIND_GUARD, 0, c::WARRIOR, 0,
           "That's the Stockade. Riot or no riot, whatever comes out of that gate doesn't get past me." },
+        { "Dungar Longdrink", "Gryphon Master", l::GRYPHON_MASTER, flight_master, c::WARRIOR, 0,
+          "My gryphons fly to any flight master you've met on the road, for a few coins." },
+        { "Thor", "Gryphon Master", l::GRYPHON_MASTER, flight_master, c::WARRIOR, 0,
+          "Sentinel Hill's gryphons are fed and saddled. Where to, friend?" },
+        { "Randal Hunter", "Riding Trainer", l::RIDING_TRAINER, trainer, any_class, 0,
+          "Reach level 30, bring 5 gold, and I'll teach you to ride." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

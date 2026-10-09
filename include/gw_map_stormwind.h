@@ -156,6 +156,8 @@ namespace gw::map_data::stormwind
     constexpr npc_def npcs[] = {
         { npc_id::MARCUS_JONATHAN, 948, 500 },
         { npc_id::SW_GUARD_GATE, 948, 536 },
+        { npc_id::DUNGAR, 808, 440 },
+        { npc_id::RANDAL, 808, 600 },
         { npc_id::BOLVAR, 192, 256 },
         { npc_id::SW_GUARD_KEEP, 144, 252 },
         { npc_id::BENEDICTUS, 464, 248 },

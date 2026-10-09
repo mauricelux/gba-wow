@@ -107,6 +107,19 @@ enum class ability_id : uint8_t
     EXPLOSIVE_TRAP,
     DETERRENCE,
     WYVERN_STING,
+    // riding, for every class
+    MOUNT,
+    // hunter: Beast Mastery's pet
+    TAME_BEAST,
+    CALL_PET,
+    REVIVE_PET,
+    MEND_PET,
+    KILL_COMMAND,
+    INTIMIDATION,
+    ASPECT_OF_THE_BEAST,
+    PET_PASSIVE,
+    // mage: the Frost capstone
+    WATER_ELEMENTAL,
     COUNT
 };
 
@@ -176,9 +189,16 @@ namespace ability_flag
     constexpr uint8_t SHIELD = 8;       // needs a shield
     constexpr uint8_t REACTIVE = 16;    // only right after a dodge (or a block)
     constexpr uint8_t ASPECT = 32;      // one aspect at a time, until changed
+    constexpr uint8_t QUEST = 64;       // the first rank comes from a quest, the others from trainers
 }
 
 constexpr int max_ranks = 12;
+
+// The class of abilities every class learns, from a riding trainer: the mount.
+constexpr class_id any_class = class_id::COUNT;
+
+// What a riding trainer asks for the mount, in copper.
+constexpr int riding_cost = 50000;
 
 struct ability_def
 {
@@ -224,7 +244,7 @@ constexpr int ability_count = int(ability_id::COUNT);
 // What trainers ask for the rank, in copper.
 [[nodiscard]] int rank_train_cost(ability_id ability, int rank);
 
-// Whether the subclass gets the ability.
+// Whether the subclass gets the ability. Abilities of any_class are in every kit.
 [[nodiscard]] bool in_kit(ability_id ability, subclass_id subclass);
 
 // The bar a newly learned ability goes on: long buffs and travel on Buffs, interrupts, crowd

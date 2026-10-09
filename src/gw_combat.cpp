@@ -354,6 +354,19 @@ const char* combat::_unusable_reason(ability_id ability) const
         return "Can't charge in combat";
     }
 
+    if(ability == ability_id::MOUNT && ! _buffs[int(buff_id::MOUNTED)])
+    {
+        if(in_combat())
+        {
+            return "Can't mount in combat";
+        }
+
+        if(world::map().indoors)
+        {
+            return "Can't mount indoors";
+        }
+    }
+
     if(ability == ability_id::TELEPORT_STORMWIND && item_count(item_id::TELEPORTATION_RUNE) == 0)
     {
         return "You need a Teleportation Rune";
@@ -400,12 +413,21 @@ int combat::speed_percent() const
         return 0;
     }
 
+    // The fastest of the Cheetah and the mount.
     int percent = 100;
+    int bonus = 0;
 
     if(_buffs[int(buff_id::ASPECT_OF_THE_CHEETAH)])
     {
-        percent += _buff_values[int(buff_id::ASPECT_OF_THE_CHEETAH)];
+        bonus = _buff_values[int(buff_id::ASPECT_OF_THE_CHEETAH)];
     }
+
+    if(_buffs[int(buff_id::MOUNTED)])
+    {
+        bonus = bn::max(bonus, _buff_values[int(buff_id::MOUNTED)]);
+    }
+
+    percent += bonus;
 
     if(_buffs[int(buff_id::DAZED)])
     {
@@ -479,12 +501,23 @@ void combat::engage()
 
     if(_target_valid())
     {
+        dismount();
         _auto_attack = true;
         _player.face(_enemies.at(_target).position);
     }
     else
     {
         clear_target();
+    }
+}
+
+void combat::dismount()
+{
+    _end_buff(buff_id::MOUNTED);
+
+    if(_player.mounted())
+    {
+        _player.dismount();
     }
 }
 
@@ -557,6 +590,12 @@ void combat::update(bool input_enabled)
 
     ++_combat_frames;
     ++_since_cast;
+
+    // A blow dealt or taken ends the ride.
+    if(_buffs[int(buff_id::MOUNTED)] && _combat_frames <= 1)
+    {
+        dismount();
+    }
 
     if(_potion_cooldown > 0)
     {
@@ -779,6 +818,17 @@ void combat::_use_slot(bar_id bar, int slot)
 bool combat::_use_ability(ability_id ability)
 {
     const ability_def& def = get_ability(ability);
+
+    // Mount again gets off; any other ability gets off first.
+    if(_buffs[int(buff_id::MOUNTED)])
+    {
+        dismount();
+
+        if(ability == ability_id::MOUNT)
+        {
+            return true;
+        }
+    }
 
     // Ice Block again breaks out of the ice.
     if(ability == ability_id::ICE_BLOCK && _buffs[int(buff_id::ICE_BLOCK)])
@@ -1863,6 +1913,7 @@ void combat::_set_aspect(buff_id aspect, ability_id ability)
     _buffs[int(buff_id::ASPECT_OF_THE_HAWK)] = 0;
     _buffs[int(buff_id::ASPECT_OF_THE_MONKEY)] = 0;
     _buffs[int(buff_id::ASPECT_OF_THE_CHEETAH)] = 0;
+    _buffs[int(buff_id::ASPECT_OF_THE_BEAST)] = 0;
     _set_buff(aspect, permanent_buff, ability_value(ability));
     _texts.show(_head(_player.position(), 26), get_ability(ability).name, floating_texts::style::INFO);
 }
@@ -2283,6 +2334,15 @@ void combat::_apply_ability(ability_id ability, int target_index)
         _set_aspect(buff_id::ASPECT_OF_THE_CHEETAH, ability);
         break;
 
+    case ability_id::ASPECT_OF_THE_BEAST:
+        _set_aspect(buff_id::ASPECT_OF_THE_BEAST, ability);
+        break;
+
+    case ability_id::MOUNT:
+        _set_buff(buff_id::MOUNTED, permanent_buff, ability_value(ability));
+        _player.mount(data.race);
+        break;
+
     case ability_id::TRUESHOT_AURA:
         _set_buff(buff_id::TRUESHOT_AURA, permanent_buff, ability_value(ability));
         _texts.show(_head(_player.position(), 26), def.name, floating_texts::style::INFO);
@@ -2506,6 +2566,8 @@ bool combat::use_item(item_id item, const char** error)
             return fail(def.type == item_type::FOOD ? "You are at full health" : "You are at full mana");
         }
 
+        dismount();
+
         if(def.type == item_type::FOOD)
         {
             start_eating(def.min_damage, 0);
@@ -2535,6 +2597,7 @@ bool combat::use_item(item_id item, const char** error)
         }
 
         // The game takes the player home, as after Teleport.
+        dismount();
         const home_def& home = get_home(home_id(data.home));
         data.hearthstone_ready = data.play_frames + hearthstone_cooldown;
         teleport_map = home.map;
@@ -2941,6 +3004,7 @@ void combat::_die()
         frames = 0;
     }
 
+    dismount();
     refresh_stats();
     _enemies.reset_combat();
 }
@@ -3039,9 +3103,14 @@ void combat::gain_xp(int amount)
         _texts.show(_head(_player.position(), 34), text, floating_texts::style::CRIT);
         play_sound(sound_id::LEVEL_UP);
 
-        if(trainable_count() > 0)
+        if(trainable_count(data.player_class) > 0)
         {
             _hud.message("New ranks at your trainer", ui::color::YELLOW);
+        }
+
+        if(data.level == ability_level(ability_id::MOUNT))
+        {
+            _hud.message("You can learn to ride", ui::color::YELLOW);
         }
 
         if(data.level >= first_talent_level)

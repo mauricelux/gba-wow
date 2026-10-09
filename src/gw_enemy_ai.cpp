@@ -35,8 +35,7 @@ namespace
         "Bleeding", "Poisoned", "Diseased", "Burning"
     };
 
-    static_assert(sizeof(debuff_names) / sizeof(debuff_names[0]) == int(buff_id::COUNT) - int(buff_id::CHILLED),
-                  "a name per debuff");
+    static_assert(sizeof(debuff_names) / sizeof(debuff_names[0]) == enemy_debuff_count, "a name per debuff");
 
     [[nodiscard]] projectile_kind school_burst(school damage_school)
     {

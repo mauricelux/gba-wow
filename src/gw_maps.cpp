@@ -52,7 +52,7 @@ namespace
     constexpr point_def stormwind_graveyards[] = { map_data::stormwind::respawn };
     constexpr point_def stockade_graveyards[] = { map_data::stockade::respawn };
 
-#define GW_MAP_INFO(ID, NAME, DUNGEON) \
+#define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
         map_id::ID, \
         bn::regular_bg_items::map_##NAME##_ground, \
@@ -63,6 +63,7 @@ namespace
         map_data::NAME::collision_columns, \
         map_data::NAME::music, \
         DUNGEON, \
+        INDOORS, \
         list(map_data::NAME::warps, map_data::NAME::warps[0].target == map_id::NONE), \
         list(map_data::NAME::npcs, map_data::NAME::npcs[0].npc == npc_id::NONE), \
         list(map_data::NAME::spawns, map_data::NAME::spawns[0].enemy == enemy_id::NONE), \
@@ -72,15 +73,15 @@ namespace
     }
 
     const map_info maps[] = {
-        GW_MAP_INFO(ELWYNN, elwynn, false),
-        GW_MAP_INFO(ABBEY, abbey, false),
-        GW_MAP_INFO(INN, inn, false),
-        GW_MAP_INFO(WESTFALL, westfall, false),
-        GW_MAP_INFO(DEADMINES, deadmines, true),
-        GW_MAP_INFO(ECHO_RIDGE, echo_ridge, true),
-        GW_MAP_INFO(FARGODEEP, fargodeep, true),
-        GW_MAP_INFO(STORMWIND, stormwind, false),
-        GW_MAP_INFO(STOCKADE, stockade, true),
+        GW_MAP_INFO(ELWYNN, elwynn, false, false),
+        GW_MAP_INFO(ABBEY, abbey, false, true),
+        GW_MAP_INFO(INN, inn, false, true),
+        GW_MAP_INFO(WESTFALL, westfall, false, false),
+        GW_MAP_INFO(DEADMINES, deadmines, true, true),
+        GW_MAP_INFO(ECHO_RIDGE, echo_ridge, true, true),
+        GW_MAP_INFO(FARGODEEP, fargodeep, true, true),
+        GW_MAP_INFO(STORMWIND, stormwind, false, false),
+        GW_MAP_INFO(STOCKADE, stockade, true, true),
     };
 
     [[nodiscard]] int count_chests()

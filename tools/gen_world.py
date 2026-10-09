@@ -417,6 +417,7 @@ def gen_westfall():
     m.npc('SALMA', 420, 360)
     m.npc('LEWIS', 600, 360)
     m.npc('HEATHER', 540, 392)
+    m.npc('THOR', 604, 300)
     m.point('sentinel_respawn', 512, 370)
     m.area(380, 140, 260, 260, 'Sentinel Hill')
 
@@ -953,6 +954,8 @@ def gen_stormwind():
     m.point('from_elwynn', 990, 512)
     m.npc('MARCUS_JONATHAN', 948, 500)
     m.npc('SW_GUARD_GATE', 948, 536)
+    m.npc('DUNGAR', 808, 440)
+    m.npc('RANDAL', 808, 600)
     m.area(720, 400, 304, 224, 'Valley of Heroes')
 
     # --- Stormwind Keep and Cathedral Square ----------------------------------------------------------

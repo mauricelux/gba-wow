@@ -54,6 +54,10 @@ enum class buff_id : uint8_t
     POISONED,       // Poison
     DISEASED,       // Disease
     BURNING,        // Burning
+    // The player's own again, from travel and pets on.
+    MOUNTED,        // value: percent faster
+    ASPECT_OF_THE_BEAST,
+    WATER_ELEMENTAL,    // the elemental stays while it lasts
     COUNT
 };
 
@@ -65,8 +69,11 @@ constexpr int permanent_buff = 0x7FFFFFFF;
 // Debuffs show on their own row under the buffs.
 [[nodiscard]] constexpr bool is_debuff(buff_id buff)
 {
-    return buff == buff_id::DAZED || buff >= buff_id::CHILLED;
+    return buff == buff_id::DAZED || (buff >= buff_id::CHILLED && buff <= buff_id::BURNING);
 }
+
+// The debuffs enemy abilities put on the player, in order.
+constexpr int enemy_debuff_count = int(buff_id::BURNING) + 1 - int(buff_id::CHILLED);
 
 // Debuffs that hurt every few seconds.
 [[nodiscard]] constexpr bool is_periodic(buff_id buff)

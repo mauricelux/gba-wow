@@ -82,7 +82,7 @@ namespace
         icon_id::DETERRENCE, icon_id::TRUESHOT_AURA, icon_id::CONCUSSIVE_SHOT, icon_id::FROSTBOLT, icon_id::NET,
         icon_id::STUN, icon_id::SLEEP, icon_id::POLYMORPH, icon_id::INTIMIDATING_SHOUT, icon_id::CURSE,
         icon_id::SUNDER_ARMOR, icon_id::MORTAL_STRIKE, icon_id::REND, icon_id::POISON, icon_id::DISEASE,
-        icon_id::BURNING
+        icon_id::BURNING, icon_id::MOUNT, icon_id::ASPECT_BEAST, icon_id::WATER_ELEMENTAL
     };
 
     static_assert(sizeof(buff_icons) / sizeof(buff_icons[0]) == int(buff_id::COUNT), "an icon per buff");

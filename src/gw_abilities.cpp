@@ -35,6 +35,7 @@ namespace
     constexpr uint8_t SHIELD = ability_flag::SHIELD;
     constexpr uint8_t REACTIVE = ability_flag::REACTIVE;
     constexpr uint8_t ASPECT = ability_flag::ASPECT;
+    constexpr uint8_t QUEST = ability_flag::QUEST;
 
     // name, description, class, kits, icon, flags, cost, cooldown, cast time, range, value, value per
     // level (or rank), scaling, duration, target, school, projectile, rank levels
@@ -272,6 +273,35 @@ namespace
         { "Wyvern Sting", "Puts the target to sleep, then poisons it. Damage wakes it.", c::HUNTER, SURV,
           i::WYVERN_STING, TALENT, 60, 120 * seconds, 0, 140, 30, 6, v::DAMAGE, 12 * seconds, a::ENEMY,
           s::NATURE, p::ARROW, { 40, 50, 60 } },
+
+        // riding
+        { "Mount", "Ride your horse, ram or nightsaber: 60% faster out of combat.", any_class, ALL, i::MOUNT, 0, 0,
+          0, 90, 0, 60, 0, v::LEVEL, 0, a::SELF, s::PHYSICAL, p::NONE, { 30 } },
+
+        // hunter: Beast Mastery's pet
+        { "Tame Beast", "Channel 6 seconds to tame a beast up to your level as your pet.", c::HUNTER, BEAST,
+          i::TAME_BEAST, QUEST | CHANNELED, 0, 0, 360, 60, 0, 0, v::LEVEL, 0, a::ENEMY, s::NATURE, p::NONE,
+          { 10 } },
+        { "Call Pet", "Calls your pet to your side, or sends it away.", c::HUNTER, BEAST, i::CALL_PET, QUEST, 0,
+          0, 0, 0, 0, 0, v::LEVEL, 0, a::SELF, s::NATURE, p::NONE, { 10 } },
+        { "Revive Pet", "Brings your dead pet back to life with a third of its health.", c::HUNTER, BEAST,
+          i::REVIVE_PET, QUEST, 60, 0, 300, 0, 33, 0, v::LEVEL, 0, a::SELF, s::NATURE, p::NONE, { 10 } },
+        { "Mend Pet", "Heals your pet over 15 seconds.", c::HUNTER, BEAST, i::MEND_PET, 0, 40, 0, 0, 0, 24, 5,
+          v::DAMAGE, 15 * seconds, a::SELF, s::NATURE, p::NONE, { 12, 20, 28, 36, 44, 52, 60 } },
+        { "Kill Command", "Your pet's next bite hits its target hard.", c::HUNTER, BEAST, i::KILL_COMMAND, 0, 30,
+          5 * seconds, 0, 140, 20, 4, v::DAMAGE, 0, a::ENEMY, s::PHYSICAL, p::NONE, { 20, 40, 60 } },
+        { "Intimidation", "Your pet's next bite stuns its target for 3 seconds.", c::HUNTER, BEAST,
+          i::INTIMIDATION, TALENT, 15, 60 * seconds, 0, 140, 0, 0, v::LEVEL, 3 * seconds, a::ENEMY,
+          s::PHYSICAL, p::NONE, { 30 } },
+        { "Aspect of the Beast", "You and your pet deal 10% more damage until you change aspects.", c::HUNTER,
+          BEAST, i::ASPECT_BEAST, ASPECT, 40, 0, 0, 0, 10, 0, v::LEVEL, 0, a::SELF, s::NATURE, p::NONE, { 30 } },
+        { "Pet Passive", "Your pet stops fighting and only follows you. Again: it fights.", c::HUNTER, BEAST,
+          i::PET_PASSIVE, QUEST, 0, 0, 0, 0, 0, 0, v::LEVEL, 0, a::SELF, s::NATURE, p::NONE, { 10 } },
+
+        // mage: the Frost capstone
+        { "Water Elemental", "A water elemental fights for you for 45 seconds, casting Frostbolt.", c::MAGE,
+          FROST, i::WATER_ELEMENTAL, TALENT, 160, 180 * seconds, 0, 0, 20, 3, v::DAMAGE, 45 * seconds, a::SELF,
+          s::FROST, p::FROST, { 40 } },
     };
 
     static_assert(sizeof(abilities) / sizeof(abilities[0]) == ability_count);
@@ -367,9 +397,14 @@ int rank_train_cost(ability_id ability, int rank)
 {
     const ability_def& def = get_ability(ability);
 
-    if(rank == 1 && (def.flags & (ability_flag::STARTER | ability_flag::TALENT)))
+    if(rank == 1 && (def.flags & (ability_flag::STARTER | ability_flag::TALENT | ability_flag::QUEST)))
     {
         return 0;
+    }
+
+    if(def.player_class == any_class)
+    {
+        return riding_cost;
     }
 
     int level = rank_level(ability, rank);
@@ -380,7 +415,17 @@ bool in_kit(ability_id ability, subclass_id subclass)
 {
     const ability_def& def = get_ability(ability);
 
-    if(ability == ability_id::NONE || subclass == subclass_id::NONE || def.player_class != subclass_class(subclass))
+    if(ability == ability_id::NONE || subclass == subclass_id::NONE)
+    {
+        return false;
+    }
+
+    if(def.player_class == any_class)
+    {
+        return true;
+    }
+
+    if(def.player_class != subclass_class(subclass))
     {
         return false;
     }
@@ -405,6 +450,8 @@ bar_id default_bar(ability_id ability)
     case ability_id::ASPECT_OF_THE_MONKEY:
     case ability_id::ASPECT_OF_THE_CHEETAH:
     case ability_id::TRUESHOT_AURA:
+    case ability_id::MOUNT:
+    case ability_id::ASPECT_OF_THE_BEAST:
         return bar_id::BUFFS;
 
     case ability_id::HAMSTRING:
@@ -441,6 +488,13 @@ bar_id default_bar(ability_id ability)
     case ability_id::FROST_TRAP:
     case ability_id::DETERRENCE:
     case ability_id::WYVERN_STING:
+    case ability_id::TAME_BEAST:
+    case ability_id::CALL_PET:
+    case ability_id::REVIVE_PET:
+    case ability_id::MEND_PET:
+    case ability_id::INTIMIDATION:
+    case ability_id::PET_PASSIVE:
+    case ability_id::WATER_ELEMENTAL:
         return bar_id::UTILITY;
 
     default:

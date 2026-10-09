@@ -42,6 +42,14 @@ public:
 
     void set_visible(bool visible);
 
+    // Draws the sprite this far from its feet, keeping its place in front of or behind others: a
+    // rider sits higher than their feet.
+    void set_offset(int x, int y)
+    {
+        _offset_x = x;
+        _offset_y = y;
+    }
+
     // Flashes the sprite white for a few frames, for example when hit.
     void flash();
 
@@ -60,6 +68,8 @@ private:
     int _frame = -1;
     int _attack_frames = 0;
     int _flash_frames = 0;
+    int _offset_x = 0;
+    int _offset_y = 0;
     bool _casting = false;
     bool _dead = false;
     bool _flipped = false;

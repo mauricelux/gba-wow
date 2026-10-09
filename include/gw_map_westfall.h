@@ -158,6 +158,7 @@ namespace gw::map_data::westfall
         { npc_id::SALMA, 420, 360 },
         { npc_id::LEWIS, 600, 360 },
         { npc_id::HEATHER, 540, 392 },
+        { npc_id::THOR, 604, 300 },
         { npc_id::FURLBROW, 860, 410 },
     };
 

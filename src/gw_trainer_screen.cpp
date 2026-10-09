@@ -35,8 +35,10 @@ void trainer_screen::open(npc_id npc)
     const character_data& data = character();
 
     // Trainers teach the subclass's abilities in the order they come, and further ranks of talent
-    // abilities once the talent is learned.
-    if(get_npc_info(npc).trainer_class == data.player_class)
+    // and quest abilities once the talent or the quest taught the first. Riding trainers teach riding.
+    class_id trainer_class = get_npc_info(npc).trainer_class;
+
+    if(teaches(trainer_class))
     {
         for(int level = 1; level <= max_level; ++level)
         {
@@ -45,8 +47,9 @@ void trainer_screen::open(npc_id npc)
                 ability_id ability = ability_id(index);
                 const ability_def& def = get_ability(ability);
 
-                if(in_kit(ability, data.subclass) && ability_level(ability) == level &&
-                   (! (def.flags & ability_flag::TALENT) || knows_ability(ability)))
+                if(def.player_class == trainer_class && in_kit(ability, data.subclass) &&
+                   ability_level(ability) == level &&
+                   (! (def.flags & (ability_flag::TALENT | ability_flag::QUEST)) || knows_ability(ability)))
                 {
                     _abilities.push_back(ability);
                 }

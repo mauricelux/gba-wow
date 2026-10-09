@@ -426,6 +426,11 @@ void game::_load_map(map_id map, const bn::fixed_point& position)
     world::set_map(info);
     character().map = map;
 
+    if(info.indoors)
+    {
+        _combat.dismount();
+    }
+
     _ground = info.ground.create_bg(0, 0);
     _ground->set_priority(ground_priority);
     _ground->set_camera(_camera);

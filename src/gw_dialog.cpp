@@ -136,11 +136,11 @@ void dialog::_build_options()
         _options.push_back(option{ option_kind::VENDOR, quest_id::NONE });
     }
 
-    if((info.flags & npc_flag::TRAINER) && info.trainer_class == character().player_class)
+    if((info.flags & npc_flag::TRAINER) && teaches(info.trainer_class))
     {
         _options.push_back(option{ option_kind::TRAINER, quest_id::NONE });
 
-        if(talent_points_total() > 0)
+        if(talent_points_total() > 0 && info.trainer_class != any_class)
         {
             _options.push_back(option{ option_kind::UNLEARN, quest_id::NONE });
         }

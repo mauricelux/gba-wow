@@ -156,8 +156,8 @@ void actor_sprite::update(const bn::fixed_point& feet, facing direction, bool mo
 
     // Whole pixels only, so characters never shimmer against the background.
     bn::fixed_point screen = world::to_screen_space(feet);
-    int center_y = (screen.y() - feet_to_center * _scale).floor_integer();
-    _sprite.set_position(screen.x().floor_integer(), center_y);
+    int center_y = (screen.y() - feet_to_center * _scale).floor_integer() + _offset_y;
+    _sprite.set_position(screen.x().floor_integer() + _offset_x, center_y);
 
     // Characters lower on the map are drawn in front.
     _sprite.set_z_order(-feet.y().floor_integer());
@@ -181,7 +181,7 @@ void actor_sprite::flash()
 int actor_sprite::height() const
 {
     int base = _look->creature ? 20 : 26;
-    return (base * _scale).floor_integer();
+    return (base * _scale).floor_integer() - _offset_y;
 }
 
 }
