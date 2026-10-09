@@ -1188,7 +1188,194 @@
     X(BLAZING_GREATSWORD, weapon("Blazing Greatsword", U, TWO_HANDED, 53, 36, 20, 0, 12, 0, 0)) \
     X(STAFF_OF_EMBERS, weapon("Staff of Embers", U, STAFF, 53, 32, 0, 0, 10, 21, 12)) \
     X(ASHWOOD_LONGBOW, weapon("Ashwood Longbow", U, BOW, 53, 28, 0, 20, 10, 0, 0)) \
-    X(OBSIDIAN_BULWARK, shield("Obsidian Bulwark", U, 52, 4, 0, 7, 0, 0))
+    X(OBSIDIAN_BULWARK, shield("Obsidian Bulwark", U, 52, 4, 0, 7, 0, 0)) \
+    /* The Plaguelands, Blackrock Spire, Scholomance and Stratholme */ \
+    X(SCOURGESTONE, junk("Scourgestone", 190, 20)) \
+    X(NECROTIC_RUNE, junk("Necrotic Rune", 180, 20)) \
+    X(BLACKROCK_EMBLEM, junk("Blackrock Emblem", 180, 20)) \
+    X(CHROMATIC_SCALE, junk("Chromatic Scale", 200, 20)) \
+    X(IRONWEB_SPIDER_SILK, junk("Ironweb Spider Silk", 170, 20)) \
+    X(ARGENT_RATION, consumable("Argent Ration", FOOD, 58, 2300, 520, 20)) \
+    X(DAWNWELL_WATER, consumable("Dawnwell Water", DRINK, 58, 4000, 520, 20)) \
+    /* The Argent Dawn's quartermaster */ \
+    X(ARGENT_AVENGER, weapon("Argent Avenger", U, SWORD, 58, 26, 19, 2, 15, 0, 0)) \
+    X(ARGENT_CRUSADER, weapon("Argent Crusader", U, STAFF, 58, 32, 0, 0, 15, 26, 17)) \
+    X(ARGENT_GREATBOW, weapon("Argent Greatbow", U, BOW, 58, 28, 0, 25, 15, 0, 0)) \
+    X(ARGENT_DEFENDER, shield("Argent Defender", U, 58, 4, 0, 13, 0, 0)) \
+    X(ARGENT_WARHELM, armor("Argent Warhelm", U, MAIL, HEAD, 58, 20, 0, 16, 0, 0)) \
+    X(DAWNWEAVE_COWL, armor("Dawnweave Cowl", U, CLOTH, HEAD, 58, 0, 0, 15, 22, 17)) \
+    X(ARGENT_SCOUTS_CAP, armor("Argent Scout's Cap", U, LEATHER, HEAD, 58, 0, 21, 16, 0, 0)) \
+    /* The Plaguelands: quest rewards */ \
+    X(CHILLWIND_GAUNTLETS, armor("Chillwind Gauntlets", U, MAIL, HANDS, 55, 17, 0, 13, 0, 0)) \
+    X(CHILLWIND_GLOVES, armor("Chillwind Gloves", U, CLOTH, HANDS, 55, 0, 0, 12, 19, 14)) \
+    X(CHILLWIND_GRIPS, armor("Chillwind Grips", U, LEATHER, HANDS, 55, 0, 18, 13, 0, 0)) \
+    X(ANDORHAL_LEGGUARDS, armor("Andorhal Legguards", U, MAIL, LEGS, 55, 17, 0, 13, 0, 0)) \
+    X(ANDORHAL_LEGGINGS, armor("Andorhal Leggings", U, CLOTH, LEGS, 55, 0, 0, 12, 19, 14)) \
+    X(ANDORHAL_PANTS, armor("Andorhal Pants", U, LEATHER, LEGS, 55, 0, 18, 13, 0, 0)) \
+    X(ARAJS_BANE, weapon("Araj's Bane", R, TWO_HANDED, 56, 36, 24, 0, 16, 0, 0)) \
+    X(SUMMONERS_STAFF, weapon("Summoner's Staff", R, STAFF, 56, 32, 0, 0, 14, 25, 16)) \
+    X(LICHBANE_LONGBOW, weapon("Lichbane Longbow", R, BOW, 56, 28, 0, 24, 14, 0, 0)) \
+    X(HEARTHGLEN_SABATONS, armor("Hearthglen Sabatons", U, MAIL, FEET, 56, 18, 0, 14, 0, 0)) \
+    X(HEARTHGLEN_SLIPPERS, armor("Hearthglen Slippers", U, CLOTH, FEET, 56, 0, 0, 13, 20, 15)) \
+    X(HEARTHGLEN_BOOTS, armor("Hearthglen Boots", U, LEATHER, FEET, 56, 0, 19, 14, 0, 0)) \
+    X(INQUISITORS_HAUBERK, armor("Inquisitor's Hauberk", R, MAIL, CHEST, 57, 20, 0, 16, 0, 0)) \
+    X(INQUISITORS_ROBE, armor("Inquisitor's Robe", R, CLOTH, CHEST, 57, 0, 0, 15, 22, 17)) \
+    X(INQUISITORS_VEST, armor("Inquisitor's Vest", R, LEATHER, CHEST, 57, 0, 21, 16, 0, 0)) \
+    X(DARROWMERE_HELM, armor("Darrowmere Helm", U, MAIL, HEAD, 55, 17, 0, 13, 0, 0)) \
+    X(DARROWMERE_HOOD, armor("Darrowmere Hood", U, CLOTH, HEAD, 55, 0, 0, 12, 19, 14)) \
+    X(DARROWMERE_CAP, armor("Darrowmere Cap", U, LEATHER, HEAD, 55, 0, 18, 13, 0, 0)) \
+    X(DAWNWATCH_GAUNTLETS, armor("Dawnwatch Gauntlets", U, MAIL, HANDS, 56, 18, 0, 14, 0, 0)) \
+    X(DAWNWATCH_GLOVES, armor("Dawnwatch Gloves", U, CLOTH, HANDS, 56, 0, 0, 13, 20, 15)) \
+    X(DAWNWATCH_GRIPS, armor("Dawnwatch Grips", U, LEATHER, HANDS, 56, 0, 19, 14, 0, 0)) \
+    X(PLAGUEWOOD_HAUBERK, armor("Plaguewood Hauberk", U, MAIL, CHEST, 56, 18, 0, 14, 0, 0)) \
+    X(PLAGUEWOOD_ROBE, armor("Plaguewood Robe", U, CLOTH, CHEST, 56, 0, 0, 13, 20, 15)) \
+    X(PLAGUEWOOD_VEST, armor("Plaguewood Vest", U, LEATHER, CHEST, 56, 0, 19, 14, 0, 0)) \
+    X(CROSSING_LEGGUARDS, armor("Crossing Legguards", U, MAIL, LEGS, 57, 19, 0, 15, 0, 0)) \
+    X(CROSSING_LEGGINGS, armor("Crossing Leggings", U, CLOTH, LEGS, 57, 0, 0, 14, 21, 16)) \
+    X(CROSSING_PANTS, armor("Crossing Pants", U, LEATHER, LEGS, 57, 0, 20, 15, 0, 0)) \
+    X(LIGHTWARDEN_HELM, armor("Lightwarden Helm", R, MAIL, HEAD, 58, 21, 0, 17, 0, 0)) \
+    X(LIGHTWARDEN_COWL, armor("Lightwarden Cowl", R, CLOTH, HEAD, 58, 0, 0, 16, 23, 18)) \
+    X(LIGHTWARDEN_MASK, armor("Lightwarden Mask", R, LEATHER, HEAD, 58, 0, 22, 17, 0, 0)) \
+    X(TYRS_SABATONS, armor("Tyr's Sabatons", U, MAIL, FEET, 57, 19, 0, 15, 0, 0)) \
+    X(TYRS_SLIPPERS, armor("Tyr's Slippers", U, CLOTH, FEET, 57, 0, 0, 14, 21, 16)) \
+    X(TYRS_BOOTS, armor("Tyr's Boots", U, LEATHER, FEET, 57, 0, 20, 15, 0, 0)) \
+    X(DAWNBRINGER_BLADE, weapon("Dawnbringer Blade", R, SWORD, 58, 26, 20, 2, 16, 0, 0)) \
+    X(STAFF_OF_FIRST_LIGHT, weapon("Staff of First Light", R, STAFF, 58, 32, 0, 0, 16, 27, 18)) \
+    X(DAWNSTRIKE_LONGBOW, weapon("Dawnstrike Longbow", R, BOW, 58, 28, 0, 26, 16, 0, 0)) \
+    /* Scholomance and Stratholme: quest rewards */ \
+    X(BONEWARDEN_GAUNTLETS, armor("Bonewarden Gauntlets", R, MAIL, HANDS, 57, 20, 0, 16, 0, 0)) \
+    X(BONEWARDEN_GLOVES, armor("Bonewarden Gloves", R, CLOTH, HANDS, 57, 0, 0, 15, 22, 17)) \
+    X(BONEWARDEN_GRIPS, armor("Bonewarden Grips", R, LEATHER, HANDS, 57, 0, 21, 16, 0, 0)) \
+    X(SARKHOFFS_SABATONS, armor("Sarkhoff's Sabatons", R, MAIL, FEET, 58, 21, 0, 17, 0, 0)) \
+    X(SARKHOFFS_SLIPPERS, armor("Sarkhoff's Slippers", R, CLOTH, FEET, 58, 0, 0, 16, 23, 18)) \
+    X(SARKHOFFS_BOOTS, armor("Sarkhoff's Boots", R, LEATHER, FEET, 58, 0, 22, 17, 0, 0)) \
+    X(COLDBONE_HELM, armor("Coldbone Helm", R, MAIL, HEAD, 58, 21, 0, 17, 0, 0)) \
+    X(COLDBONE_COWL, armor("Coldbone Cowl", R, CLOTH, HEAD, 58, 0, 0, 16, 23, 18)) \
+    X(COLDBONE_MASK, armor("Coldbone Mask", R, LEATHER, HEAD, 58, 0, 22, 17, 0, 0)) \
+    X(WELDONS_LEGGUARDS, armor("Weldon's Legguards", R, MAIL, LEGS, 59, 22, 0, 18, 0, 0)) \
+    X(WELDONS_LEGGINGS, armor("Weldon's Leggings", R, CLOTH, LEGS, 59, 0, 0, 17, 24, 19)) \
+    X(WELDONS_PANTS, armor("Weldon's Pants", R, LEATHER, LEGS, 59, 0, 23, 18, 0, 0)) \
+    X(NECROSBANE_GREATSWORD, weapon("Necrosbane Greatsword", E, TWO_HANDED, 59, 36, 30, 0, 23, 0, 0)) \
+    X(STAFF_OF_CAER_DARROW, weapon("Staff of Caer Darrow", E, STAFF, 59, 32, 0, 0, 19, 31, 20)) \
+    X(DARROWSHIRE_LONGBOW, weapon("Darrowshire Longbow", E, BOW, 59, 28, 0, 29, 19, 0, 0)) \
+    X(BREASTPLATE_OF_THE_DAWN, armor("Breastplate of the Dawn", E, MAIL, CHEST, 60, 26, 0, 22, 0, 0)) \
+    X(ROBE_OF_THE_DAWN, armor("Robe of the Dawn", E, CLOTH, CHEST, 60, 0, 0, 21, 28, 23)) \
+    X(VEST_OF_THE_DAWN, armor("Vest of the Dawn", E, LEATHER, CHEST, 60, 0, 27, 22, 0, 0)) \
+    X(TRUTHBEARER_LEGPLATES, armor("Truthbearer Legplates", R, MAIL, LEGS, 59, 22, 0, 18, 0, 0)) \
+    X(TRUTHBEARER_LEGGINGS, armor("Truthbearer Leggings", R, CLOTH, LEGS, 59, 0, 0, 17, 24, 19)) \
+    X(TRUTHBEARER_PANTS, armor("Truthbearer Pants", R, LEATHER, LEGS, 59, 0, 23, 18, 0, 0)) \
+    X(LIGHTBOUND_GAUNTLETS, armor("Lightbound Gauntlets", R, MAIL, HANDS, 59, 22, 0, 18, 0, 0)) \
+    X(LIGHTBOUND_GLOVES, armor("Lightbound Gloves", R, CLOTH, HANDS, 59, 0, 0, 17, 24, 19)) \
+    X(LIGHTBOUND_GRIPS, armor("Lightbound Grips", R, LEATHER, HANDS, 59, 0, 23, 18, 0, 0)) \
+    X(STRATHOLME_SABATONS, armor("Stratholme Sabatons", R, MAIL, FEET, 58, 21, 0, 17, 0, 0)) \
+    X(STRATHOLME_SLIPPERS, armor("Stratholme Slippers", R, CLOTH, FEET, 58, 0, 0, 16, 23, 18)) \
+    X(STRATHOLME_BOOTS, armor("Stratholme Boots", R, LEATHER, FEET, 58, 0, 22, 17, 0, 0)) \
+    /* Blackrock Spire: quest rewards */ \
+    X(SPIREBREAKER_HELM, armor("Spirebreaker Helm", E, MAIL, HEAD, 59, 25, 0, 21, 0, 0)) \
+    X(SPIREBREAKER_COWL, armor("Spirebreaker Cowl", E, CLOTH, HEAD, 59, 0, 0, 20, 27, 22)) \
+    X(SPIREBREAKER_MASK, armor("Spirebreaker Mask", E, LEATHER, HEAD, 59, 0, 26, 21, 0, 0)) \
+    X(HORDEMAR_HAUBERK, armor("Hordemar Hauberk", R, MAIL, CHEST, 58, 21, 0, 17, 0, 0)) \
+    X(HORDEMAR_ROBE, armor("Hordemar Robe", R, CLOTH, CHEST, 58, 0, 0, 16, 23, 18)) \
+    X(HORDEMAR_VEST, armor("Hordemar Vest", R, LEATHER, CHEST, 58, 0, 22, 17, 0, 0)) \
+    X(WEBWALKER_SABATONS, armor("Webwalker Sabatons", R, MAIL, FEET, 57, 20, 0, 16, 0, 0)) \
+    X(WEBWALKER_SLIPPERS, armor("Webwalker Slippers", R, CLOTH, FEET, 57, 0, 0, 15, 22, 17)) \
+    X(WEBWALKER_BOOTS, armor("Webwalker Boots", R, LEATHER, FEET, 57, 0, 21, 16, 0, 0)) \
+    X(BEASTSLAYER_AXE, weapon("Beastslayer Axe", R, AXE, 58, 25, 20, 2, 16, 0, 0)) \
+    X(BEASTCALLER_STAFF, weapon("Beastcaller Staff", R, STAFF, 58, 32, 0, 0, 16, 27, 18)) \
+    X(BEASTSLAYER_RIFLE, weapon("Beastslayer Rifle", R, GUN, 58, 29, 0, 26, 16, 0, 0)) \
+    X(FLAMEBINDER_GAUNTLETS, armor("Flamebinder Gauntlets", R, MAIL, HANDS, 58, 21, 0, 17, 0, 0)) \
+    X(FLAMEBINDER_GLOVES, armor("Flamebinder Gloves", R, CLOTH, HANDS, 58, 0, 0, 16, 23, 18)) \
+    X(FLAMEBINDER_GRIPS, armor("Flamebinder Grips", R, LEATHER, HANDS, 58, 0, 22, 17, 0, 0)) \
+    /* The Plaguelands: elites */ \
+    X(ARAJS_SABATONS, armor("Araj's Sabatons", R, MAIL, FEET, 57, 20, 0, 16, 0, 0)) \
+    X(ARAJS_SLIPPERS, armor("Araj's Slippers", R, CLOTH, FEET, 57, 0, 0, 15, 22, 17)) \
+    X(ARAJS_BOOTS, armor("Araj's Boots", R, LEATHER, FEET, 57, 0, 21, 16, 0, 0)) \
+    X(ISILLIENS_GAUNTLETS, armor("Isillien's Gauntlets", R, MAIL, HANDS, 57, 20, 0, 16, 0, 0)) \
+    X(ISILLIENS_GLOVES, armor("Isillien's Gloves", R, CLOTH, HANDS, 57, 0, 0, 15, 22, 17)) \
+    X(ISILLIENS_GRIPS, armor("Isillien's Grips", R, LEATHER, HANDS, 57, 0, 21, 16, 0, 0)) \
+    X(HED_MUSHS_LEGPLATES, armor("Hed'mush's Legplates", R, MAIL, LEGS, 58, 21, 0, 17, 0, 0)) \
+    X(HED_MUSHS_LEGGINGS, armor("Hed'mush's Leggings", R, CLOTH, LEGS, 58, 0, 0, 16, 23, 18)) \
+    X(HED_MUSHS_PANTS, armor("Hed'mush's Pants", R, LEATHER, LEGS, 58, 0, 22, 17, 0, 0)) \
+    X(VALDELMARS_HELM, armor("Valdelmar's Helm", R, MAIL, HEAD, 58, 21, 0, 17, 0, 0)) \
+    X(VALDELMARS_COWL, armor("Valdelmar's Cowl", R, CLOTH, HEAD, 58, 0, 0, 16, 23, 18)) \
+    X(VALDELMARS_MASK, armor("Valdelmar's Mask", R, LEATHER, HEAD, 58, 0, 22, 17, 0, 0)) \
+    /* Blackrock Spire: boss drops */ \
+    X(OMOKKS_GAUNTLETS, armor("Omokk's Gauntlets", R, MAIL, HANDS, 57, 20, 0, 16, 0, 0)) \
+    X(OMOKKS_GLOVES, armor("Omokk's Gloves", R, CLOTH, HANDS, 57, 0, 0, 15, 22, 17)) \
+    X(OMOKKS_GRIPS, armor("Omokk's Grips", R, LEATHER, HANDS, 57, 0, 21, 16, 0, 0)) \
+    X(VOONES_CLEAVER, weapon("Voone's Cleaver", R, AXE, 57, 25, 19, 2, 15, 0, 0)) \
+    X(VOONES_STAFF, weapon("Voone's Staff", R, STAFF, 57, 32, 0, 0, 15, 26, 17)) \
+    X(VOONES_LONGBOW, weapon("Voone's Longbow", R, BOW, 57, 28, 0, 25, 15, 0, 0)) \
+    X(SMOLDERWEB_SABATONS, armor("Smolderweb Sabatons", R, MAIL, FEET, 57, 20, 0, 16, 0, 0)) \
+    X(SMOLDERWEB_SLIPPERS, armor("Smolderweb Slippers", R, CLOTH, FEET, 57, 0, 0, 15, 22, 17)) \
+    X(SMOLDERWEB_BOOTS, armor("Smolderweb Boots", R, LEATHER, FEET, 57, 0, 21, 16, 0, 0)) \
+    X(WYRMTHALAKS_LEGPLATES, armor("Wyrmthalak's Legplates", R, MAIL, LEGS, 58, 21, 0, 17, 0, 0)) \
+    X(WYRMTHALAKS_LEGGINGS, armor("Wyrmthalak's Leggings", R, CLOTH, LEGS, 58, 0, 0, 16, 23, 18)) \
+    X(WYRMTHALAKS_PANTS, armor("Wyrmthalak's Pants", R, LEATHER, LEGS, 58, 0, 22, 17, 0, 0)) \
+    X(EMBERSEER_HAUBERK, armor("Emberseer Hauberk", R, MAIL, CHEST, 58, 21, 0, 17, 0, 0)) \
+    X(EMBERSEER_ROBE, armor("Emberseer Robe", R, CLOTH, CHEST, 58, 0, 0, 16, 23, 18)) \
+    X(EMBERSEER_VEST, armor("Emberseer Vest", R, LEATHER, CHEST, 58, 0, 22, 17, 0, 0)) \
+    X(BEASTMAW_HELM, armor("Beastmaw Helm", R, MAIL, HEAD, 58, 21, 0, 17, 0, 0)) \
+    X(BEASTMAW_COWL, armor("Beastmaw Cowl", R, CLOTH, HEAD, 58, 0, 0, 16, 23, 18)) \
+    X(BEASTMAW_MASK, armor("Beastmaw Mask", R, LEATHER, HEAD, 58, 0, 22, 17, 0, 0)) \
+    X(DRACONIC_GREATSWORD, weapon("Draconic Greatsword", E, TWO_HANDED, 59, 36, 30, 0, 23, 0, 0)) \
+    X(STAFF_OF_DRAKKISATH, weapon("Staff of Drakkisath", E, STAFF, 59, 32, 0, 0, 19, 31, 20)) \
+    X(DRAGONSPUR_LONGBOW, weapon("Dragonspur Longbow", E, BOW, 59, 28, 0, 29, 19, 0, 0)) \
+    /* Scholomance: boss drops */ \
+    X(ILLUSIONISTS_GAUNTLETS, armor("Illusionist's Gauntlets", R, MAIL, HANDS, 58, 21, 0, 17, 0, 0)) \
+    X(ILLUSIONISTS_GLOVES, armor("Illusionist's Gloves", R, CLOTH, HANDS, 58, 0, 0, 16, 23, 18)) \
+    X(ILLUSIONISTS_GRIPS, armor("Illusionist's Grips", R, LEATHER, HANDS, 58, 0, 22, 17, 0, 0)) \
+    X(BONECRUSHER_LEGPLATES, armor("Bonecrusher Legplates", R, MAIL, LEGS, 58, 21, 0, 17, 0, 0)) \
+    X(BONECRUSHER_LEGGINGS, armor("Bonecrusher Leggings", R, CLOTH, LEGS, 58, 0, 0, 16, 23, 18)) \
+    X(BONECRUSHER_PANTS, armor("Bonecrusher Pants", R, LEATHER, LEGS, 58, 0, 22, 17, 0, 0)) \
+    X(FROSTBITE_GREATAXE, weapon("Frostbite Greataxe", R, TWO_HANDED, 59, 36, 27, 0, 19, 0, 0)) \
+    X(FROSTWHISPER_STAFF, weapon("Frostwhisper Staff", R, STAFF, 59, 32, 0, 0, 17, 28, 19)) \
+    X(FROSTWHISPER_LONGBOW, weapon("Frostwhisper Longbow", R, BOW, 59, 28, 0, 27, 17, 0, 0)) \
+    X(INSTRUCTORS_SABATONS, armor("Instructor's Sabatons", R, MAIL, FEET, 58, 21, 0, 17, 0, 0)) \
+    X(INSTRUCTORS_SLIPPERS, armor("Instructor's Slippers", R, CLOTH, FEET, 58, 0, 0, 16, 23, 18)) \
+    X(INSTRUCTORS_BOOTS, armor("Instructor's Boots", R, LEATHER, FEET, 58, 0, 22, 17, 0, 0)) \
+    X(SURGEONS_HAUBERK, armor("Surgeon's Hauberk", R, MAIL, CHEST, 58, 21, 0, 17, 0, 0)) \
+    X(SURGEONS_ROBE, armor("Surgeon's Robe", R, CLOTH, CHEST, 58, 0, 0, 16, 23, 18)) \
+    X(SURGEONS_VEST, armor("Surgeon's Vest", R, LEATHER, CHEST, 58, 0, 22, 17, 0, 0)) \
+    X(LOREKEEPERS_HELM, armor("Lorekeeper's Helm", R, MAIL, HEAD, 58, 21, 0, 17, 0, 0)) \
+    X(LOREKEEPERS_COWL, armor("Lorekeeper's Cowl", R, CLOTH, HEAD, 58, 0, 0, 16, 23, 18)) \
+    X(LOREKEEPERS_MASK, armor("Lorekeeper's Mask", R, LEATHER, HEAD, 58, 0, 22, 17, 0, 0)) \
+    X(ALEXEIS_GAUNTLETS, armor("Alexei's Gauntlets", R, MAIL, HANDS, 59, 22, 0, 18, 0, 0)) \
+    X(ALEXEIS_GLOVES, armor("Alexei's Gloves", R, CLOTH, HANDS, 59, 0, 0, 17, 24, 19)) \
+    X(ALEXEIS_GRIPS, armor("Alexei's Grips", R, LEATHER, HANDS, 59, 0, 23, 18, 0, 0)) \
+    X(ILLUCIAS_SABATONS, armor("Illucia's Sabatons", R, MAIL, FEET, 59, 22, 0, 18, 0, 0)) \
+    X(ILLUCIAS_SLIPPERS, armor("Illucia's Slippers", R, CLOTH, FEET, 59, 0, 0, 17, 24, 19)) \
+    X(ILLUCIAS_BOOTS, armor("Illucia's Boots", R, LEATHER, FEET, 59, 0, 23, 18, 0, 0)) \
+    X(HEADMASTERS_HAUBERK, armor("Headmaster's Hauberk", E, MAIL, CHEST, 60, 26, 0, 22, 0, 0)) \
+    X(HEADMASTERS_ROBE, armor("Headmaster's Robe", E, CLOTH, CHEST, 60, 0, 0, 21, 28, 23)) \
+    X(HEADMASTERS_VEST, armor("Headmaster's Vest", E, LEATHER, CHEST, 60, 0, 27, 22, 0, 0)) \
+    /* Stratholme: boss drops */ \
+    X(CRUEL_GAUNTLETS, armor("Cruel Gauntlets", R, MAIL, HANDS, 58, 21, 0, 17, 0, 0)) \
+    X(CRUEL_GLOVES, armor("Cruel Gloves", R, CLOTH, HANDS, 58, 0, 0, 16, 23, 18)) \
+    X(CRUEL_GRIPS, armor("Cruel Grips", R, LEATHER, HANDS, 58, 0, 22, 17, 0, 0)) \
+    X(ZEALOUS_WARHAMMER, weapon("Zealous Warhammer", R, MACE, 59, 27, 21, 2, 17, 0, 0)) \
+    X(ZEALOUS_STAFF, weapon("Zealous Staff", R, STAFF, 59, 32, 0, 0, 17, 28, 19)) \
+    X(ZEALOUS_RIFLE, weapon("Zealous Rifle", R, GUN, 59, 29, 0, 27, 17, 0, 0)) \
+    X(DREADLORD_LEGPLATES, armor("Dreadlord Legplates", E, MAIL, LEGS, 60, 26, 0, 22, 0, 0)) \
+    X(DREADLORD_LEGGINGS, armor("Dreadlord Leggings", E, CLOTH, LEGS, 60, 0, 0, 21, 28, 23)) \
+    X(DREADLORD_PANTS, armor("Dreadlord Pants", E, LEATHER, LEGS, 60, 0, 27, 22, 0, 0)) \
+    X(PALLID_SABATONS, armor("Pallid Sabatons", R, MAIL, FEET, 59, 22, 0, 18, 0, 0)) \
+    X(PALLID_SLIPPERS, armor("Pallid Slippers", R, CLOTH, FEET, 59, 0, 0, 17, 24, 19)) \
+    X(PALLID_BOOTS, armor("Pallid Boots", R, LEATHER, FEET, 59, 0, 23, 18, 0, 0)) \
+    X(GORGERS_HAUBERK, armor("Gorger's Hauberk", R, MAIL, CHEST, 59, 22, 0, 18, 0, 0)) \
+    X(GORGERS_ROBE, armor("Gorger's Robe", R, CLOTH, CHEST, 59, 0, 0, 17, 24, 19)) \
+    X(GORGERS_VEST, armor("Gorger's Vest", R, LEATHER, CHEST, 59, 0, 23, 18, 0, 0)) \
+    X(RIVENDARES_RUNEBLADE, weapon("Rivendare's Runeblade", E, TWO_HANDED, 60, 36, 31, 0, 24, 0, 0)) \
+    X(STAFF_OF_THE_BARON, weapon("Staff of the Baron", E, STAFF, 60, 32, 0, 0, 20, 32, 21)) \
+    X(BARONS_LONGBOW, weapon("Baron's Longbow", E, BOW, 60, 28, 0, 30, 20, 0, 0)) \
+    /* World drops, levels 56 to 60 */ \
+    X(PLAGUEBRINGER_HELM, armor("Plaguebringer Helm", U, MAIL, HEAD, 58, 20, 0, 16, 0, 0)) \
+    X(NECROTIC_ROBE, armor("Necrotic Robe", U, CLOTH, CHEST, 58, 0, 0, 15, 22, 17)) \
+    X(BLIGHTWALKER_LEGGINGS, armor("Blightwalker Leggings", U, LEATHER, LEGS, 58, 0, 21, 16, 0, 0)) \
+    X(LIGHTS_VENGEANCE, weapon("Light's Vengeance", U, TWO_HANDED, 58, 36, 25, 0, 17, 0, 0)) \
+    X(STAFF_OF_THE_DEAD, weapon("Staff of the Dead", U, STAFF, 58, 32, 0, 0, 15, 26, 17)) \
+    X(DAWNGUARD_LONGBOW, weapon("Dawnguard Longbow", U, BOW, 58, 28, 0, 25, 15, 0, 0)) \
+    X(BULWARK_OF_THE_DAWN, shield("Bulwark of the Dawn", U, 57, 4, 0, 12, 0, 0))
 
 namespace gw
 {

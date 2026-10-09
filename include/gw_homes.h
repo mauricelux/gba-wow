@@ -25,6 +25,7 @@ enum class home_id : uint8_t
     FEATHERMOON,
     NIJELS_POINT,
     MORGANS_VIGIL,
+    LIGHTS_HOPE,
     COUNT
 };
 

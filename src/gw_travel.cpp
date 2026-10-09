@@ -10,6 +10,7 @@
 #include "gw_map_feralas.h"
 #include "gw_map_hillsbrad.h"
 #include "gw_map_ironforge.h"
+#include "gw_map_plaguelands.h"
 #include "gw_map_redridge.h"
 #include "gw_map_silverpine.h"
 #include "gw_map_stormwind.h"
@@ -43,6 +44,9 @@ namespace
         { "Morgan's Vigil", npc_id::BORGUS, map_id::BURNING_STEPPES, map_data::burning_steppes::flight, 0, 56, 80 },
         { "Swamp of Sorrows", npc_id::SWAMP_GRYPHON, map_id::SWAMP_OF_SORROWS, map_data::swamp_of_sorrows::flight,
           0, 62, 99 },
+        { "Chillwind Camp", npc_id::BIBILFAZ, map_id::PLAGUELANDS, map_data::plaguelands::chillwind_flight, 0, 54, 32 },
+        { "Light's Hope Chapel", npc_id::KHAELYN, map_id::PLAGUELANDS, map_data::plaguelands::lights_hope_flight,
+          0, 90, 26 },
     };
 
     static_assert(sizeof(flights) / sizeof(flights[0]) == int(flight_id::COUNT));

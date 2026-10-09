@@ -9,6 +9,7 @@
 #include "gw_floating_text.h"
 #include "gw_homes.h"
 #include "gw_hud.h"
+#include "gw_map_scholomance.h"
 #include "gw_pet.h"
 #include "gw_player.h"
 #include "gw_quests.h"
@@ -505,6 +506,8 @@ void combat::on_map_change()
     _texts.clear();
     _event = -1;
     _events_done = 0;
+    _baron_frames = 0;
+    _baron_over = false;
 }
 
 void combat::engage()
@@ -611,6 +614,7 @@ void combat::update(bool input_enabled)
     ++_combat_frames;
     ++_since_cast;
     _update_event();
+    _update_baron_clock();
 
     // A blow dealt or taken ends the ride.
     if(_buffs[int(buff_id::MOUNTED)] && _combat_frames <= 1)
@@ -4829,11 +4833,332 @@ bool combat::boss_update(int index)
         _update_frenzy(boss, health_percent, 25, 2, "Thaurissan");
         break;
 
+    // --- The Plaguelands ---------------------------------------------------------------------------
+
+    case enemy_id::ARAJ_THE_SUMMONER:
+        // Raises a skeleton from Andorhal's dead at half health.
+        _boss_greeting(boss, "Araj: Rise, my servants!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::SKELETAL_FLAYER);
+            _hud.message("Araj raises the dead!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::GRAND_INQUISITOR_ISILLIEN:
+        _boss_greeting(boss, "Isillien: Burn, heretic!");
+
+        if(_update_telegraph(boss, false, saw_radius, "Holy Fire", projectile_kind::HOLY))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::HED_MUSH_THE_ROTTING:
+        // A cloud of rot around him: the hero steps out of it.
+        if(_update_telegraph(boss, true, flurry_radius, "Rot Cloud", projectile_kind::NATURE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::CRUSADER_LORD_VALDELMAR:
+        if(_update_wind_up(index, in_melee, "Crusader Strike", "Valdelmar smites you!"))
+        {
+            return true;
+        }
+        break;
+
+    // --- Blackrock Spire ---------------------------------------------------------------------------
+
+    case enemy_id::HIGHLORD_OMOKK:
+        if(_update_wind_up(index, in_melee, "Smash", "Omokk smashes you!"))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::WAR_MASTER_VOONE:
+        // Throws axes at where the hero stands.
+        _boss_greeting(boss, "Voone: Me smash you!");
+
+        if(_update_telegraph(boss, false, saw_radius, "Throw Axe", projectile_kind::ARROW))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::MOTHER_SMOLDERWEB:
+        // Her brood crawls out of the webs at two thirds and one third of her health.
+        _boss_greeting(boss, "Mother Smolderweb hisses!");
+
+        if((boss.phase == 1 && health_percent <= 66) || (boss.phase == 2 && health_percent <= 33))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::SPIRE_SPIDERLING);
+            _summon_add(boss, enemy_id::SPIRE_SPIDERLING);
+            _hud.message("Spiderlings swarm out!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::OVERLORD_WYRMTHALAK:
+        // Calls two veterans from the stairs at half health.
+        _boss_greeting(boss, "Wyrmthalak: You dare?");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::BLACKHAND_VETERAN);
+            _summon_add(boss, enemy_id::BLACKHAND_VETERAN);
+            _hud.message("Wyrmthalak: Guards, to me!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::PYROGUARD_EMBERSEER:
+        // Flames burst around him; free at last, he rages near the end.
+        _boss_greeting(boss, "Emberseer burns with fury!");
+
+        if(_update_telegraph(boss, true, flurry_radius, "Fire Nova", projectile_kind::FIRE))
+        {
+            return true;
+        }
+
+        _update_frenzy(boss, health_percent, 25, 2, "Emberseer");
+        break;
+
+    case enemy_id::THE_BEAST:
+        _boss_greeting(boss, "The Beast roars!");
+
+        if(_update_breath(boss, "Flame Break", projectile_kind::FIRE))
+        {
+            return true;
+        }
+
+        _update_frenzy(boss, health_percent, 30, 2, "The Beast");
+        break;
+
+    case enemy_id::GENERAL_DRAKKISATH:
+        // Breathes fire in front of him; whelps fly in at two thirds and one third of his health.
+        _boss_greeting(boss, "Drakkisath: You face a god!");
+
+        if((boss.phase == 1 && health_percent <= 66) || (boss.phase == 2 && health_percent <= 33))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::CHROMATIC_WHELP);
+            _summon_add(boss, enemy_id::CHROMATIC_WHELP);
+            _hud.message("Whelps answer Drakkisath!", ui::color::RED);
+        }
+
+        if(_update_breath(boss, "Flamestrike", projectile_kind::FIRE))
+        {
+            return true;
+        }
+        break;
+
+    // --- Scholomance -------------------------------------------------------------------------------
+
+    case enemy_id::JANDICE_BAROV:
+        // Splits into illusions at two thirds and one third of her health.
+        _boss_greeting(boss, "Jandice: Which one is real?");
+
+        if((boss.phase == 1 && health_percent <= 66) || (boss.phase == 2 && health_percent <= 33))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::ILLUSION_OF_JANDICE);
+            _summon_add(boss, enemy_id::ILLUSION_OF_JANDICE);
+            _effects.burst(boss.position, projectile_kind::ARCANE);
+            _hud.message("Jandice splits apart!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::RATTLEGORE:
+        if(_update_wind_up(index, in_melee, "Bone Smash", "Rattlegore crushes you!"))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::RAS_FROSTWHISPER:
+        _boss_greeting(boss, "Ras: Your bones will freeze!");
+
+        if(_update_telegraph(boss, false, ground_radius, "Blizzard", projectile_kind::FROST))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::INSTRUCTOR_MALICIA:
+        _boss_greeting(boss, "Malicia: Class is in session!");
+
+        if(_update_telegraph(boss, false, saw_radius, "Shadow Bolt", projectile_kind::SHADOW))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::DOCTOR_THEOLEN_KRASTINOV:
+        _boss_greeting(boss, "Krastinov: Fresh specimens!");
+        _update_frenzy(boss, health_percent, 30, 2, "Krastinov");
+        break;
+
+    case enemy_id::LOREKEEPER_POLKELT:
+        if(_update_telegraph(boss, false, saw_radius, "Volatile Infection", projectile_kind::NATURE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::LORD_ALEXEI_BAROV:
+    case enemy_id::LADY_ILLUCIA_BAROV:
+    {
+        // The Barovs fight together: waking one wakes the other.
+        bool alexei = boss.id == enemy_id::LORD_ALEXEI_BAROV;
+
+        if(boss.phase == 0)
+        {
+            int other = _find_enemy(alexei ? enemy_id::LADY_ILLUCIA_BAROV : enemy_id::LORD_ALEXEI_BAROV);
+
+            if(other >= 0 && _enemies.at(other).state == enemy_state::IDLE)
+            {
+                _enemies.aggro(other);
+            }
+        }
+
+        _boss_greeting(boss, alexei ? "Alexei: Our land, our dead!" : "Illucia: Kneel, peasant!");
+
+        if(_update_telegraph(boss, ! alexei, alexei ? saw_radius : flurry_radius,
+                             alexei ? "Unholy Aura" : "Shadow Shock", projectile_kind::SHADOW))
+        {
+            return true;
+        }
+        break;
+    }
+
+    case enemy_id::DARKMASTER_GANDLING:
+        // Shadow Portal: sends the hero to another corner of his study and raises students around
+        // them, then waits a while before the next.
+        if(boss.phase == 0)
+        {
+            boss.phase = 1;
+            boss.special_timer = 10 * seconds;
+            _hud.message("Gandling: School is out!", ui::color::RED);
+        }
+
+        if(boss.special_timer == 0)
+        {
+            _gandling_portal();
+            boss.special_timer = 18 * seconds;
+        }
+
+        if(boss.phase == 1 && health_percent <= 25)
+        {
+            boss.phase = 2;
+            _hud.message("Gandling: You will not leave!", ui::color::RED);
+        }
+        break;
+
+    // --- Stratholme --------------------------------------------------------------------------------
+
+    case enemy_id::TIMMY_THE_CRUEL:
+        _boss_greeting(boss, "Timmy: TIMMY!");
+        _update_frenzy(boss, health_percent, 50, 2, "Timmy");
+        break;
+
+    case enemy_id::MALOR_THE_ZEALOUS:
+        if(_update_wind_up(index, in_melee, "Holy Strike", "Malor strikes you down!"))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::BALNAZZAR:
+        // Dathrohan's mask slips at half health.
+        _boss_greeting(boss, "Dathrohan: The Light guides!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _effects.burst(boss.position, projectile_kind::SHADOW);
+            _hud.message("Dathrohan is Balnazzar!", ui::color::RED);
+        }
+
+        if(boss.phase >= 2 &&
+           _update_telegraph(boss, false, ground_radius, "Psychic Scream", projectile_kind::SHADOW))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::MALEKI_THE_PALLID:
+        if(_update_telegraph(boss, false, ground_radius, "Ice Tomb", projectile_kind::FROST))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::RAMSTEIN_THE_GORGER:
+        if(_update_wind_up(index, in_melee, "Trample", "Ramstein tramples you!"))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::BARON_RIVENDARE:
+        // Raises bone minions at three quarters, half and a quarter of his health.
+        _boss_greeting(boss, "Rivendare: Kneel to the Lich!");
+
+        if((boss.phase == 1 && health_percent <= 75) || (boss.phase == 2 && health_percent <= 50) ||
+           (boss.phase == 3 && health_percent <= 25))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::BONE_MINION);
+            _summon_add(boss, enemy_id::BONE_MINION);
+            _hud.message("Rivendare raises the dead!", ui::color::RED);
+        }
+        break;
+
     default:
         break;
     }
 
     return false;
+}
+
+void combat::_gandling_portal()
+{
+    namespace sc = map_data::scholomance;
+    constexpr point_def corners[] = { sc::gandling_a, sc::gandling_b, sc::gandling_c, sc::gandling_d };
+    const point_def* best = &corners[0];
+    int best_distance = -1;
+
+    for(const point_def& corner : corners)
+    {
+        int d = distance_squared(bn::fixed_point(corner.x, corner.y), _player.position());
+
+        if(d > best_distance)
+        {
+            best = &corner;
+            best_distance = d;
+        }
+    }
+
+    bn::fixed_point position(best->x, best->y);
+    _effects.burst(_player.position(), projectile_kind::SHADOW);
+    _player.set_position(position);
+    _effects.burst(position, projectile_kind::SHADOW);
+    _hud.message("A Shadow Portal takes you!", ui::color::RED);
+
+    for(int side = -1; side <= 1; side += 2)
+    {
+        bn::fixed_point student(position.x() + side * 32, position.y() + 16);
+
+        if(_enemies.fits(student.x(), student.y()) && _enemies.summon(enemy_id::RISEN_STUDENT, student) >= 0)
+        {
+            _effects.burst(student, projectile_kind::SHADOW);
+        }
+    }
 }
 
 void combat::_boss_killed(const enemy& boss)
@@ -4882,6 +5207,21 @@ void combat::_boss_killed(const enemy& boss)
         }
         break;
     }
+
+    case enemy_id::BARON_RIVENDARE:
+        // In time, Ysida Harmon is saved from the slaughterhouse.
+        if(_baron_frames > 0)
+        {
+            _baron_frames = 0;
+            _baron_over = true;
+            _hud.message("Ysida Harmon is saved!", ui::color::GREEN);
+
+            if(quests_on_rescue(enemy_id::BARON_RIVENDARE, _hud) && on_quest_progress)
+            {
+                on_quest_progress(callback_context);
+            }
+        }
+        break;
 
     case enemy_id::SCARLET_COMMANDER_MOGRAINE:
         // Whitemane stays at the altar, praying for him: the hero gets to catch a breath before her.

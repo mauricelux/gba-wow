@@ -67,6 +67,9 @@ namespace
         case music_id::STEPPES:
             return bn::music_items::steppes;
 
+        case music_id::PLAGUELANDS:
+            return bn::music_items::plaguelands;
+
         default:
             return bn::nullopt;
         }

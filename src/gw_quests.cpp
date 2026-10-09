@@ -64,6 +64,11 @@ namespace
         return { o::FISH, uint8_t(count), e::NONE, e::NONE, uint8_t(chance), area, name };
     }
 
+    [[nodiscard]] constexpr objective_def rescue(e enemy, const char* name)
+    {
+        return { o::RESCUE, 1, enemy, e::NONE, 0, area_id::NONE, name };
+    }
+
     constexpr quest_def quests[] = {
         { "", "", "", "", "", n::NONE, n::NONE, 0, 0, qid::NONE, { none, none, none }, 0, 0,
           { i::NONE, i::NONE, i::NONE } },
@@ -2243,6 +2248,344 @@ namespace
           n::MAXWELL, n::MAXWELL, 55, 52, qid::JAIL_BREAK,
           { kill(e::EMPEROR_DAGRAN_THAURISSAN, 1, "Emperor Thaurissan slain"), none, none }, xp(55, 100),
           money(55), { i::BRONZEBEARD_LEGPLATES, i::BRONZEBEARD_LEGGINGS, i::BRONZEBEARD_PANTS } },
+
+        // --- The Western Plaguelands -----------------------------------------------------------------
+        { "Chillwind Camp",
+          "North of Tirisfal lie the Plaguelands, what is left of Lordaeron. The Alliance holds one "
+          "camp there, Chillwind Camp, under Commander Ashlam Valorfist.\n\n"
+          "Fly to Tirisfal and take the road east, or ask a gryphon master: Chillwind is on their maps now.",
+          "Travel to Chillwind Camp in the Western Plaguelands and speak with Ashlam Valorfist.",
+          "",
+          "Maxwell sent you? Good. We need every blade we can get up here.",
+          n::MAXWELL, n::VALORFIST, 55, 54, qid::NONE,
+          { none, none, none }, xp(55, 15), money(55),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Clear the Way",
+          "The farms west of camp are dead. Skeletal flayers walk Felstone Field and slavering ghouls "
+          "dig in Dalson's Tears.\n\n"
+          "Clear the road so our scouts can get through.",
+          "Kill 8 Skeletal Flayers and 8 Slavering Ghouls on the farms of the Western Plaguelands.",
+          "The dead still walk the farms.",
+          "The road is open again. Thank you.",
+          n::VALORFIST, n::VALORFIST, 55, 53, qid::CHILLWIND_CAMP,
+          { kill(e::SKELETAL_FLAYER, 8, "Skeletal Flayer slain"),
+            kill(e::SLAVERING_GHOUL, 8, "Slavering Ghoul slain"), none }, xp(55, 20), money(55),
+          { i::CHILLWIND_GAUNTLETS, i::CHILLWIND_GLOVES, i::CHILLWIND_GRIPS } },
+
+        { "The Cauldrons of Andorhal",
+          "Andorhal was the grain capital of Lordaeron. The Scourge brewed the plague in its cauldrons, "
+          "and its wardens and necromancers still guard the ruins.\n\n"
+          "Find Andorhal, north-east of here, and break its guard.",
+          "Find Andorhal and kill 8 Scourge Warders and 5 Scourge Necromancers there.",
+          "Andorhal is still theirs.",
+          "Fewer of them to stir the cauldrons. Well done.",
+          n::VALORFIST, n::VALORFIST, 56, 54, qid::CHILLWIND_CAMP,
+          { explore(area_id::ANDORHAL, "Andorhal found"), kill(e::SCOURGE_WARDER, 8, "Scourge Warder slain"),
+            kill(e::SCOURGE_NECROMANCER, 5, "Necromancer slain") }, xp(56, 20), money(56),
+          { i::ANDORHAL_LEGGUARDS, i::ANDORHAL_LEGGINGS, i::ANDORHAL_PANTS } },
+
+        { "Araj the Summoner",
+          "The necromancers of Andorhal answer to a lich: Araj the Summoner. As long as he stands, "
+          "the dead of the town will keep rising.\n\n"
+          "Destroy him.",
+          "Kill Araj the Summoner in Andorhal.",
+          "Araj still raises the dead.",
+          "The lich is dust. Andorhal's dead can rest. Choose your reward.",
+          n::VALORFIST, n::VALORFIST, 57, 55, qid::THE_CAULDRONS_OF_ANDORHAL,
+          { kill(e::ARAJ_THE_SUMMONER, 1, "Araj the Summoner slain"), none, none }, xp(57, 30), money(57),
+          { i::ARAJS_BANE, i::SUMMONERS_STAFF, i::LICHBANE_LONGBOW } },
+
+        { "The Scarlet Threat",
+          "The Scarlet Crusade holds Hearthglen, in the north. They hate the Scourge, but they hate "
+          "everyone else just as much, and they have started killing our scouts.\n\n"
+          "Teach them some manners.",
+          "Kill 8 Scarlet Knights and 6 Scarlet Spellbinders at Hearthglen.",
+          "The Crusade still hunts our scouts.",
+          "That should keep them behind their walls for a while.",
+          n::VALORFIST, n::VALORFIST, 56, 54, qid::CHILLWIND_CAMP,
+          { kill(e::SCARLET_KNIGHT, 8, "Scarlet Knight slain"),
+            kill(e::SCARLET_SPELLBINDER, 6, "Spellbinder slain"), none }, xp(56, 20), money(56),
+          { i::HEARTHGLEN_SABATONS, i::HEARTHGLEN_SLIPPERS, i::HEARTHGLEN_BOOTS } },
+
+        { "Grand Inquisitor Isillien",
+          "Hearthglen's master is Grand Inquisitor Isillien. He burns anyone he calls tainted, which "
+          "is anyone who is not him.\n\n"
+          "End his inquisition.",
+          "Kill Grand Inquisitor Isillien at Hearthglen.",
+          "Isillien still burns the innocent.",
+          "The Inquisitor is dead. Hearthglen will be quieter for it.",
+          n::VALORFIST, n::VALORFIST, 57, 55, qid::THE_SCARLET_THREAT,
+          { kill(e::GRAND_INQUISITOR_ISILLIEN, 1, "Isillien slain"), none, none }, xp(57, 30), money(57),
+          { i::INQUISITORS_HAUBERK, i::INQUISITORS_ROBE, i::INQUISITORS_VEST } },
+
+        { "Plagued Hatchlings",
+          "Dragon whelps nest on the shore of Darrowmere Lake, sick with the plague. Something in "
+          "Caer Darrow is feeding on them.\n\n"
+          "Kill ten, and I will study what is left.",
+          "Kill 10 Plagued Hatchlings around Darrowmere Lake.",
+          "I still need those hatchlings.",
+          "Disgusting. Fascinating! This plague was made, not born. Take this.",
+          n::ARBINGTON, n::ARBINGTON, 55, 53, qid::CHILLWIND_CAMP,
+          { kill(e::PLAGUED_HATCHLING, 10, "Plagued Hatchling slain"), none, none }, xp(55, 20), money(55),
+          { i::DARROWMERE_HELM, i::DARROWMERE_HOOD, i::DARROWMERE_CAP } },
+
+        { "Scholomance",
+          "The plague in those whelps comes from Caer Darrow, the island in the lake. Under its keep "
+          "is Scholomance, where the Cult of the Damned teaches necromancy.\n\n"
+          "A ghost walks the island: Eva Sarkhoff. She knows the school. Find her.",
+          "Cross to Caer Darrow and speak with Eva Sarkhoff.",
+          "",
+          "A living soul, come to Caer Darrow? Then listen. There is much to tell.",
+          n::ARBINGTON, n::EVA_SARKHOFF, 57, 55, qid::PLAGUED_HATCHLINGS,
+          { none, none, none }, xp(57, 15), money(57),
+          { i::NONE, i::NONE, i::NONE } },
+
+        // --- Scholomance -----------------------------------------------------------------------------
+        { "Skeletal Fragments",
+          "The risen of Scholomance are bound with bone charms. Bring me the fragments of their "
+          "bones and I will learn how to unbind them.\n\n"
+          "The guards and aberrations of the school will do.",
+          "Bring 12 Skeletal Fragments from the Risen Guards and Risen Aberrations of Scholomance to Eva Sarkhoff.",
+          "I need more of the bones.",
+          "Twelve. Their bindings are cruder than I feared. Thank you.",
+          n::EVA_SARKHOFF, n::EVA_SARKHOFF, 57, 55, qid::SCHOLOMANCE,
+          { collect(e::RISEN_GUARD, 12, 50, "Skeletal Fragment", e::RISEN_ABERRATION), none, none },
+          xp(57, 20), money(57),
+          { i::BONEWARDEN_GAUNTLETS, i::BONEWARDEN_GLOVES, i::BONEWARDEN_GRIPS } },
+
+        { "Doctor Theolen Krastinov",
+          "My husband and I were killed in our own home by a butcher: Doctor Theolen Krastinov. He "
+          "still works in the school's laboratory, with the lorekeeper Polkelt.\n\n"
+          "Free us. Kill them both.",
+          "Kill Doctor Theolen Krastinov and Lorekeeper Polkelt in Scholomance.",
+          "The butcher still works.",
+          "It is done. I feel lighter. Take these, from a better time.",
+          n::EVA_SARKHOFF, n::EVA_SARKHOFF, 58, 56, qid::SCHOLOMANCE,
+          { kill(e::DOCTOR_THEOLEN_KRASTINOV, 1, "Krastinov slain"),
+            kill(e::LOREKEEPER_POLKELT, 1, "Polkelt slain"), none }, xp(58, 30), money(58),
+          { i::SARKHOFFS_SABATONS, i::SARKHOFFS_SLIPPERS, i::SARKHOFFS_BOOTS } },
+
+        { "The Lich, Ras Frostwhisper",
+          "Ras Frostwhisper was a mage of Lordaeron. Now he is a lich, and he teaches the school's "
+          "students in the viewing room. Rattlegore, a giant of bone, guards the ossuary.\n\n"
+          "Destroy them both.",
+          "Kill Ras Frostwhisper and Rattlegore in Scholomance.",
+          "The lich still teaches.",
+          "Ras is gone. The school has lost its best teacher. Good.",
+          n::EVA_SARKHOFF, n::EVA_SARKHOFF, 59, 56, qid::SCHOLOMANCE,
+          { kill(e::RAS_FROSTWHISPER, 1, "Ras Frostwhisper slain"), kill(e::RATTLEGORE, 1, "Rattlegore slain"),
+            none }, xp(59, 30), money(59),
+          { i::COLDBONE_HELM, i::COLDBONE_COWL, i::COLDBONE_MASK } },
+
+        { "The Barov Family",
+          "My family, the Barovs, sold Caer Darrow to the Cult for eternal life. They got it: my "
+          "brother Alexei and my sister Illucia walk its vault as undead.\n\n"
+          "Give them the death they bargained away.",
+          "Kill Lord Alexei Barov and Lady Illucia Barov in Scholomance.",
+          "My family still haunts the vault.",
+          "So the Barovs end. I should feel more. Thank you, all the same.",
+          n::WELDON_BAROV, n::WELDON_BAROV, 59, 56, qid::NONE,
+          { kill(e::LORD_ALEXEI_BAROV, 1, "Alexei Barov slain"), kill(e::LADY_ILLUCIA_BAROV, 1, "Illucia Barov slain"),
+            none }, xp(59, 30), money(59),
+          { i::WELDONS_LEGGUARDS, i::WELDONS_LEGGINGS, i::WELDONS_PANTS } },
+
+        { "Darkmaster Gandling",
+          "The school's headmaster is Darkmaster Gandling. He hides in his study at the top of the "
+          "school and pulls intruders into his traps.\n\n"
+          "Kill him, and Scholomance dies with him.",
+          "Kill Darkmaster Gandling in the Headmaster's Study of Scholomance.",
+          "Gandling still teaches.",
+          "The Darkmaster is dead! Caer Darrow is free at last. I can rest now. Thank you.",
+          n::EVA_SARKHOFF, n::EVA_SARKHOFF, 60, 57, qid::DOCTOR_THEOLEN_KRASTINOV,
+          { kill(e::DARKMASTER_GANDLING, 1, "Darkmaster Gandling slain"), none, none }, xp(60, 40), money(60),
+          { i::NECROSBANE_GREATSWORD, i::STAFF_OF_CAER_DARROW, i::DARROWSHIRE_LONGBOW } },
+
+        // --- The Eastern Plaguelands -----------------------------------------------------------------
+        { "Light's Hope Chapel",
+          "East of the ridge is the Eastern Plaguelands, worse than here. In the middle of it stands "
+          "Light's Hope Chapel, where the Argent Dawn holds out.\n\n"
+          "Go to Lord Maxwell Tyrosus there. The chapel's gryphons will know you after.",
+          "Travel east to Light's Hope Chapel and speak with Maxwell Tyrosus.",
+          "",
+          "Valorfist sends us a fighter? The Light be praised. Welcome to Light's Hope.",
+          n::VALORFIST, n::TYROSUS, 56, 55, qid::CHILLWIND_CAMP,
+          { none, none, none }, xp(56, 15), money(56),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Plaguehounds",
+          "The Scourge breeds plaguehounds in the east. They hunt in packs across the fields and drag "
+          "our pilgrims down before they reach the chapel.\n\n"
+          "Hunt them instead.",
+          "Kill 10 Plaguehounds in the Eastern Plaguelands.",
+          "The hounds still hunt.",
+          "The pilgrims will reach us now. Well done.",
+          n::ELIGOR, n::ELIGOR, 56, 54, qid::LIGHTS_HOPE_CHAPEL,
+          { kill(e::PLAGUEHOUND, 10, "Plaguehound slain"), none, none }, xp(56, 20), money(56),
+          { i::DAWNWATCH_GAUNTLETS, i::DAWNWATCH_GLOVES, i::DAWNWATCH_GRIPS } },
+
+        { "The Gibbering Dead",
+          "The Plaguewood in the north-west is full of the dead: gibbering ghouls, and crypt horrors "
+          "that crawl out of the old tombs.\n\n"
+          "Burn the wood clean.",
+          "Kill 8 Gibbering Ghouls and 6 Crypt Horrors in the Plaguewood.",
+          "The Plaguewood still crawls.",
+          "The wood is quieter. Not clean, but quieter.",
+          n::ELIGOR, n::ELIGOR, 57, 55, qid::LIGHTS_HOPE_CHAPEL,
+          { kill(e::GIBBERING_GHOUL, 8, "Gibbering Ghoul slain"), kill(e::CRYPT_HORROR, 6, "Crypt Horror slain"),
+            none }, xp(57, 20), money(57),
+          { i::PLAGUEWOOD_HAUBERK, i::PLAGUEWOOD_ROBE, i::PLAGUEWOOD_VEST } },
+
+        { "Corin's Crossing",
+          "Corin's Crossing was a market town. Now the Cult of the Damned meets there: cursed mages "
+          "and death cultists who raise the dead of the road.\n\n"
+          "Break their circle.",
+          "Kill 6 Cursed Mages and 8 Death Cultists at Corin's Crossing.",
+          "The Cult still gathers at the crossing.",
+          "The crossing is ours again. The Dawn thanks you.",
+          n::TYROSUS, n::TYROSUS, 57, 55, qid::LIGHTS_HOPE_CHAPEL,
+          { kill(e::CURSED_MAGE, 6, "Cursed Mage slain"), kill(e::DEATH_CULTIST, 8, "Death Cultist slain"), none },
+          xp(57, 20), money(57),
+          { i::CROSSING_LEGGUARDS, i::CROSSING_LEGGINGS, i::CROSSING_PANTS } },
+
+        { "Hed'mush the Rotting",
+          "Something walks the ruins of Corin's Crossing that the Cult stitched together out of a "
+          "hundred bodies. The scouts call it Hed'mush.\n\n"
+          "Find it, and put it down.",
+          "Kill Hed'mush the Rotting at Corin's Crossing.",
+          "Hed'mush still walks.",
+          "That thing is finally dead. Take this, with the Dawn's thanks.",
+          n::TYROSUS, n::TYROSUS, 58, 56, qid::CORINS_CROSSING,
+          { kill(e::HED_MUSH_THE_ROTTING, 1, "Hed'mush slain"), none, none }, xp(58, 30), money(58),
+          { i::LIGHTWARDEN_HELM, i::LIGHTWARDEN_COWL, i::LIGHTWARDEN_MASK } },
+
+        { "Tyr's Hand",
+          "Tyr's Hand, in the south-east, is the Scarlet Crusade's last fortress. Its warders and "
+          "curates march out to kill our pilgrims as heretics.\n\n"
+          "Bring the fight to their walls.",
+          "Kill 8 Scarlet Warders and 6 Scarlet Curates at Tyr's Hand.",
+          "Tyr's Hand still sends out its zealots.",
+          "They will think twice before marching on us again.",
+          n::ELIGOR, n::ELIGOR, 58, 56, qid::LIGHTS_HOPE_CHAPEL,
+          { kill(e::SCARLET_WARDER, 8, "Scarlet Warder slain"), kill(e::SCARLET_CURATE, 6, "Scarlet Curate slain"),
+            none }, xp(58, 20), money(58),
+          { i::TYRS_SABATONS, i::TYRS_SLIPPERS, i::TYRS_BOOTS } },
+
+        { "Crusader Lord Valdelmar",
+          "I served with Valdelmar, before the Crusade went mad. Now he leads Tyr's Hand and hangs "
+          "anyone who wears the Dawn's colors.\n\n"
+          "He was a good man once. Give him a soldier's end.",
+          "Kill Crusader Lord Valdelmar at Tyr's Hand.",
+          "Valdelmar still leads them.",
+          "Rest, old friend. Take his place in the fight, hero. And this.",
+          n::ELIGOR, n::ELIGOR, 58, 56, qid::TYRS_HAND,
+          { kill(e::CRUSADER_LORD_VALDELMAR, 1, "Valdelmar slain"), none, none }, xp(58, 30), money(58),
+          { i::DAWNBRINGER_BLADE, i::STAFF_OF_FIRST_LIGHT, i::DAWNSTRIKE_LONGBOW } },
+
+        // --- Stratholme ------------------------------------------------------------------------------
+        { "The Crusade's Last Stand",
+          "Stratholme, in the north, burned when Arthas purged it. The Crusade holds its western half, "
+          "and its zealots answer to Malor the Zealous. Timmy the Cruel, a ghoul, stalks the square "
+          "before them.\n\nKill them both.",
+          "Kill Timmy the Cruel and Malor the Zealous in Stratholme.",
+          "The Crusade still holds its half of the city.",
+          "The Crusade's hold on the city is broken. Well fought.",
+          n::ELIGOR, n::ELIGOR, 59, 57, qid::LIGHTS_HOPE_CHAPEL,
+          { kill(e::TIMMY_THE_CRUEL, 1, "Timmy the Cruel slain"), kill(e::MALOR_THE_ZEALOUS, 1, "Malor slain"),
+            none }, xp(59, 30), money(59),
+          { i::STRATHOLME_SABATONS, i::STRATHOLME_SLIPPERS, i::STRATHOLME_BOOTS } },
+
+        { "The Truth Comes Crashing Down",
+          "We have learned the truth: Grand Crusader Dathrohan, who leads the Crusade, died long ago. "
+          "The thing wearing his face is Balnazzar, a dreadlord of the Burning Legion.\n\n"
+          "He waits in the Scarlet Bastion of Stratholme. Kill him.",
+          "Kill Balnazzar in the Scarlet Bastion of Stratholme.",
+          "The dreadlord still leads the Crusade.",
+          "A demon led the Crusade all along. The Light help them. Take this.",
+          n::TYROSUS, n::TYROSUS, 60, 57, qid::THE_CRUSADES_LAST_STAND,
+          { kill(e::BALNAZZAR, 1, "Balnazzar slain"), none, none }, xp(60, 30), money(60),
+          { i::TRUTHBEARER_LEGPLATES, i::TRUTHBEARER_LEGGINGS, i::TRUTHBEARER_PANTS } },
+
+        { "The Scourge's Lieutenants",
+          "The eastern half of Stratholme belongs to the Scourge. Maleki the Pallid, a lich, holds "
+          "the Elders' Square, and the abomination Ramstein guards the Baron's slaughterhouse.\n\n"
+          "Destroy them.",
+          "Kill Maleki the Pallid and Ramstein the Gorger in Stratholme.",
+          "The Baron's lieutenants still stand.",
+          "The Baron has lost his right hand and his left. Well done.",
+          n::TYROSUS, n::TYROSUS, 59, 57, qid::LIGHTS_HOPE_CHAPEL,
+          { kill(e::MALEKI_THE_PALLID, 1, "Maleki slain"), kill(e::RAMSTEIN_THE_GORGER, 1, "Ramstein slain"),
+            none }, xp(59, 30), money(59),
+          { i::LIGHTBOUND_GAUNTLETS, i::LIGHTBOUND_GLOVES, i::LIGHTBOUND_GRIPS } },
+
+        { "Dead Man's Plea",
+          "My wife Ysida is a prisoner of Baron Rivendare, in his slaughterhouse in Stratholme. The "
+          "moment anyone crosses into the Scourge's streets, he begins the ritual that will kill her.\n\n"
+          "Reach him before it ends. Please.",
+          "Kill Baron Rivendare before his ritual ends, once you cross into Stratholme's Scourge half.",
+          "Is Ysida safe?",
+          "Ysida is free... I can see her, on the road home. Bless you, hero.",
+          n::ANTHION, n::ANTHION, 60, 58, qid::NONE,
+          { rescue(e::BARON_RIVENDARE, "Ysida Harmon saved"), none, none }, xp(60, 40), money(60),
+          { i::BREASTPLATE_OF_THE_DAWN, i::ROBE_OF_THE_DAWN, i::VEST_OF_THE_DAWN } },
+
+        // --- Blackrock Spire -------------------------------------------------------------------------
+        { "The Spire's Warlords",
+          "Above the Depths lies Blackrock Spire, the Horde's last stronghold: ogres, trolls and the "
+          "orcs of the Blackhand. Their warlords are Highlord Omokk, War Master Voone and Overlord "
+          "Wyrmthalak.\n\nCut off the heads of the beast.",
+          "Kill Highlord Omokk, War Master Voone and Overlord Wyrmthalak in Blackrock Spire.",
+          "The warlords still rule the Spire.",
+          "Three warlords dead! The Spire will be at war with itself for months.",
+          n::MAXWELL, n::MAXWELL, 57, 55, qid::NONE,
+          { kill(e::HIGHLORD_OMOKK, 1, "Highlord Omokk slain"), kill(e::WAR_MASTER_VOONE, 1, "War Master Voone slain"),
+            kill(e::OVERLORD_WYRMTHALAK, 1, "Wyrmthalak slain") }, xp(57, 30), money(57),
+          { i::HORDEMAR_HAUBERK, i::HORDEMAR_ROBE, i::HORDEMAR_VEST } },
+
+        { "Mother's Milk",
+          "Did I tell you about the spider of the Spire? Big as a house. Mother Smolderweb, they call "
+          "her. I milked her once. Long story.\n\n"
+          "Go and kill her, and I'll tell you how it ends!",
+          "Kill Mother Smolderweb in the Skitterweb Tunnels of Blackrock Spire.",
+          "Is she dead yet?",
+          "Dead? Ha! Then my story has an ending at last. Here, take this.",
+          n::RAGGED_JOHN, n::RAGGED_JOHN, 57, 55, qid::NONE,
+          { kill(e::MOTHER_SMOLDERWEB, 1, "Mother Smolderweb slain"), none, none }, xp(57, 30), money(57),
+          { i::WEBWALKER_SABATONS, i::WEBWALKER_SLIPPERS, i::WEBWALKER_BOOTS } },
+
+        { "The Beast",
+          "The orcs of the Spire keep a beast in a lair of their halls: a red horror that eats their "
+          "own slaves. They let it loose on our patrols for sport.\n\n"
+          "Kill it before it eats anyone else.",
+          "Kill The Beast in its lair in Blackrock Spire.",
+          "The Beast still feeds.",
+          "No more sport for the orcs. Choose your reward.",
+          n::JALINDE, n::JALINDE, 58, 56, qid::NONE,
+          { kill(e::THE_BEAST, 1, "The Beast slain"), none, none }, xp(58, 30), money(58),
+          { i::BEASTSLAYER_AXE, i::BEASTCALLER_STAFF, i::BEASTSLAYER_RIFLE } },
+
+        { "Emberseer's Bonds",
+          "The Blackhand keep a fire elemental bound in the Spire's Hall of Binding: Pyroguard "
+          "Emberseer. They mean to set it on the Brotherhood.\n\n"
+          "Light the seven altars around its seal, then kill it when it breaks free.",
+          "Light the seven altars in the Hall of Binding, then kill Pyroguard Emberseer.",
+          "The pyroguard is still bound.",
+          "The Brotherhood breathes easier. Take this, from our forges.",
+          n::LOKHTOS, n::LOKHTOS, 58, 56, qid::NONE,
+          { kill(e::PYROGUARD_EMBERSEER, 1, "Emberseer slain"), none, none }, xp(58, 30), money(58),
+          { i::FLAMEBINDER_GAUNTLETS, i::FLAMEBINDER_GLOVES, i::FLAMEBINDER_GRIPS } },
+
+        { "General Drakkisath's Command",
+          "With Thaurissan dead, the black dragonflight rules the mountain. Its general is the "
+          "dragonkin Drakkisath, at the top of the Spire. He carries orders from his master.\n\n"
+          "Kill him and bring me those orders.",
+          "Kill General Drakkisath at the top of Blackrock Spire.",
+          "Drakkisath still commands the Spire.",
+          "These orders bear the seal of House Prestor... of Stormwind's own court. Light help us. "
+          "I must take this to Windsor.",
+          n::MAXWELL, n::MAXWELL, 59, 57, qid::THE_ROYAL_RESCUE,
+          { kill(e::GENERAL_DRAKKISATH, 1, "General Drakkisath slain"), none, none }, xp(59, 40), money(59),
+          { i::SPIREBREAKER_HELM, i::SPIREBREAKER_COWL, i::SPIREBREAKER_MASK } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));
@@ -2384,6 +2727,17 @@ void accept_quest(quest_id quest)
     if(quest == quest_id::THE_SUNKEN_TEMPLE)
     {
         (void) discover_flight(flight_id::SWAMP_OF_SORROWS);
+    }
+
+    // The Plaguelands lie past Tirisfal's eastern hills: the Argent Dawn's first errands mark both camps.
+    if(quest == quest_id::CHILLWIND_CAMP)
+    {
+        (void) discover_flight(flight_id::CHILLWIND_CAMP);
+    }
+
+    if(quest == quest_id::LIGHTS_HOPE_CHAPEL)
+    {
+        (void) discover_flight(flight_id::LIGHTS_HOPE);
     }
 
     (void) complete_if_done(quest);
@@ -2662,6 +3016,44 @@ bool quests_on_explore(const map_info& map, int x, int y, hud& hud_ref)
             {
                 completed_message(hud_ref, quest);
             }
+        }
+    }
+
+    return changed;
+}
+
+bool quests_on_rescue(enemy_id enemy, hud& hud_ref)
+{
+    bool changed = false;
+
+    for(int index = 1; index < int(quest_id::COUNT); ++index)
+    {
+        quest_id quest = quest_id(index);
+        quest_progress& progress = quest_state(quest);
+
+        if(progress.status != quest_status::ACTIVE)
+        {
+            continue;
+        }
+
+        const quest_def& def = get_quest(quest);
+
+        for(int objective_index = 0; objective_index < quest_objectives; ++objective_index)
+        {
+            const objective_def& objective = def.objectives[objective_index];
+            uint8_t& count = progress.counts[objective_index];
+
+            if(objective.type == objective_type::RESCUE && objective.enemy == enemy && count < objective.count)
+            {
+                count = objective.count;
+                progress_message(hud_ref, objective, count);
+                changed = true;
+            }
+        }
+
+        if(complete_if_done(quest))
+        {
+            completed_message(hud_ref, quest);
         }
     }
 

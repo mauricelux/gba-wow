@@ -9,6 +9,7 @@
 #include "gw_map_hillsbrad.h"
 #include "gw_map_inn.h"
 #include "gw_map_ironforge.h"
+#include "gw_map_plaguelands.h"
 #include "gw_map_redridge.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_stranglethorn.h"
@@ -37,6 +38,7 @@ namespace
         { "Feathermoon", map_id::FERALAS, map_data::feralas::feathermoon_respawn },
         { "Nijel's Point", map_id::DESOLACE, map_data::desolace::nijels_respawn },
         { "Morgan's Vigil", map_id::BURNING_STEPPES, map_data::burning_steppes::vigil_respawn },
+        { "Light's Hope Chapel", map_id::PLAGUELANDS, map_data::plaguelands::lights_hope_respawn },
     };
 
     static_assert(sizeof(homes) / sizeof(homes[0]) == int(home_id::COUNT));
@@ -93,6 +95,9 @@ home_id innkeeper_home(npc_id npc)
 
     case npc_id::VIGIL_INNKEEPER:
         return home_id::MORGANS_VIGIL;
+
+    case npc_id::LH_INNKEEPER:
+        return home_id::LIGHTS_HOPE;
 
     default:
         return home_id::COUNT;

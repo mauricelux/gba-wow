@@ -1,11 +1,14 @@
 #include "gw_combat.h"
 
 #include "bn_math.h"
+#include "bn_string.h"
 
 #include "gw_audio.h"
 #include "gw_enemies.h"
 #include "gw_hud.h"
+#include "gw_maps.h"
 #include "gw_map_blackrock_depths.h"
+#include "gw_map_blackrock_spire.h"
 #include "gw_map_dire_maul.h"
 #include "gw_map_razorfen_downs.h"
 #include "gw_map_sunken_temple.h"
@@ -36,6 +39,8 @@ namespace
     constexpr int leash = 360;                      // running this far from the event ends it
     constexpr int wave_size = 3;
     constexpr int max_waves = 3;
+    constexpr int minute = 60 * seconds;
+    constexpr int baron_minutes = 6;
 
     struct event_def
     {
@@ -59,6 +64,7 @@ namespace
     };
 
     namespace brd = map_data::blackrock_depths;
+    namespace brs = map_data::blackrock_spire;
     namespace dm = map_data::dire_maul;
     namespace rfd = map_data::razorfen_downs;
     namespace st = map_data::sunken_temple;
@@ -72,6 +78,7 @@ namespace
     constexpr enemy_id warder = enemy_id::VAULT_WARDER;
     constexpr enemy_id guardsman = enemy_id::ANVILRAGE_GUARDSMAN;
     constexpr enemy_id warden = enemy_id::ANVILRAGE_WARDEN;
+    constexpr enemy_id incarcerator = enemy_id::BLACKHAND_INCARCERATOR;
     constexpr enemy_id none = enemy_id::NONE;
 
     // The Ring of Law's champions.
@@ -118,6 +125,14 @@ namespace
           { brd::wave_a, brd::wave_b, brd::wave_c, brd::wave_d }, 4,
           { { guardsman, warden, none }, { warden, guardsman, warden }, {} }, 2, 12 * seconds,
           brd::event_boss, { enemy_id::GOROSH_THE_DERVISH, none }, nullptr, nullptr, true },
+        // Blackrock Spire: with the seven altars lit, touching the runes breaks Emberseer's bonds. His
+        // jailers come first.
+        { map_id::BLACKROCK_SPIRE, area_id::PRISON, "The runes crack!", "More jailers rush in!", "",
+          "Pyroguard Emberseer is free!", "The Hall of Binding is still.",
+          { brs::wave_a, brs::wave_b, brs::wave_c, brs::wave_d }, 4,
+          { { incarcerator, incarcerator, none }, { incarcerator, incarcerator, incarcerator }, {} }, 2,
+          12 * seconds, brs::event_boss, { enemy_id::PYROGUARD_EMBERSEER, none }, "The seal holds",
+          "Light the seven altars" },
     };
 
     constexpr int event_count = sizeof(events) / sizeof(events[0]);
@@ -358,6 +373,48 @@ void combat::_event_boss_killed(const enemy& boss)
 
     _events_done |= uint8_t(1 << _event);
     _event = -1;
+}
+
+void combat::_update_baron_clock()
+{
+    // Stratholme: stepping into the gauntlet starts the Baron's clock. Ysida Harmon is saved if
+    // Rivendare dies before it runs out (_boss_killed); one try per visit.
+    if(_baron_over || character().map != map_id::STRATHOLME)
+    {
+        return;
+    }
+
+    if(_baron_frames == 0)
+    {
+        int x = _player.position().x().floor_integer();
+        int y = _player.position().y().floor_integer();
+
+        if(event_area_at(world::map(), x, y) == area_id::GAUNTLET)
+        {
+            _baron_frames = baron_minutes * minute;
+            _hud.message("Rivendare: Ysida dies soon!", ui::color::RED);
+            _hud.message("Ysida has 6 minutes left", ui::color::YELLOW);
+            play_sound(sound_id::SPELL);
+        }
+
+        return;
+    }
+
+    --_baron_frames;
+
+    if(_baron_frames == 0)
+    {
+        _baron_over = true;
+        _hud.message("Ysida Harmon is lost...", ui::color::RED);
+    }
+    else if(_baron_frames % minute == 0)
+    {
+        bn::string<32> text = "Ysida has ";
+        int left = _baron_frames / minute;
+        text += bn::to_string<4>(left);
+        text += left == 1 ? " minute left" : " minutes left";
+        _hud.message(text, ui::color::YELLOW);
+    }
 }
 
 }

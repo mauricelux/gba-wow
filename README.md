@@ -87,6 +87,12 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![The Sunken Temple's statues light only in order](docs/screenshots/m24_statues.png)
 ![The Ring of Law in Blackrock Depths](docs/screenshots/m24_ring.png)
 ![Princess Moira comes free of Emperor Thaurissan's spell](docs/screenshots/m24_moira.png)
+![Light's Hope Chapel in the Eastern Plaguelands](docs/screenshots/m25_lights_hope.png)
+![Caer Darrow's island and the gate of Scholomance](docs/screenshots/m25_caer_darrow.png)
+![Emberseer's seal holds until the seven altars are lit](docs/screenshots/m25_seal.png)
+![Pyroguard Emberseer breaks free in the Hall of Binding](docs/screenshots/m25_emberseer.png)
+![Darkmaster Gandling's Shadow Portal and his risen students](docs/screenshots/m25_gandling.png)
+![Ysida Harmon is saved from Baron Rivendare in time](docs/screenshots/m25_ysida.png)
 
 ## Status
 
@@ -96,15 +102,15 @@ subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Mark
 then walk freely from Northshire Abbey down to Goldshire, west to the city of Stormwind, south to
 Westfall, east to the Redridge Mountains and south to Duskwood, ride the tram to Ironforge and go on
 to the Wetlands, Darkshore, the Hillsbrad Foothills and the jungle of Stranglethorn Vale, sail from
-Booty Bay to Tanaris and Thousand Needles, go on west to Feralas and north to Desolace, cross back to the Burning Steppes, the Searing Gorge, the Badlands and the Swamp of Sorrows, take on 184 quests from Northshire to Morgan's Vigil, fight with auto-attack and your subclass's abilities, loot and equip about 1,110 items, buy and sell at vendors, carry as much
+Booty Bay to Tanaris and Thousand Needles, go on west to Feralas and north to Desolace, cross back to the Burning Steppes, the Searing Gorge, the Badlands and the Swamp of Sorrows, walk east from Tirisfal into the Western and Eastern Plaguelands, take on 213 quests from Northshire to Light's Hope Chapel, fight with auto-attack and your subclass's abilities, loot and equip about 1,290 items, buy and sell at vendors, carry as much
 as you like in bags sorted by type, quality, level or age, use 19 ability slots on three bars and 4
 item slots, buy new abilities and ranks from your class trainer, spend talent points from level 10,
 face the elites Princess, Hogger, Gath'Ilzogg, Mor'Ladim, Stitches, Balgaras, Nek'rosh, Gravis
-Slipknot, Bloodfang, King Bangalash, Fleet Master Firallon, Caliph Scorpidsting, Andre Firebeard, Lord Shalzaru, Old Grizzlegut, the Gordunni Warlord, Overseer Maltorius, Gor'tesh, Gorgon'och and the War Reaver, clear the kobolds out of Echo Ridge and
-Fargodeep mines, hunt for 55 hidden
+Slipknot, Bloodfang, King Bangalash, Fleet Master Firallon, Caliph Scorpidsting, Andre Firebeard, Lord Shalzaru, Old Grizzlegut, the Gordunni Warlord, Overseer Maltorius, Gor'tesh, Gorgon'och, the War Reaver, Araj the Summoner, Grand Inquisitor Isillien, Hed'mush the Rotting and Crusader Lord Valdelmar, clear the kobolds out of Echo Ridge and
+Fargodeep mines, hunt for 60 hidden
 treasure chests, fish in Lake Everstill, hearth home to an inn, ride from level 30, fly by gryphon
 between Stormwind, Sentinel Hill, Lakeshire, Darkshire, Silverpine Forest, Ironforge, Menethil Harbor,
-Southshore, the Argent Watch in Tirisfal, Booty Bay, Gadgetzan, Feathermoon, Nijel's Point, Morgan's Vigil and the Swamp of Sorrows, take the Deeprun Tram and the boats to
+Southshore, the Argent Watch in Tirisfal, Booty Bay, Gadgetzan, Feathermoon, Nijel's Point, Morgan's Vigil, the Swamp of Sorrows, Chillwind Camp and Light's Hope Chapel, take the Deeprun Tram and the boats to
 Auberdine, Tanaris and Feathermoon, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
 Edwin VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, keep the night
 off Darkshire, climb Shadowfang Keep to Archmage Arugal, light the braziers of Blackfathom Deeps for
@@ -113,7 +119,9 @@ Monastery up to High Inquisitor Whitemane, break Razorfen Kraul, ring the gong o
 pyramid of Zul'Farrak up to Chief Ukorz Sandscalp, wade through the poison of Maraudon to Princess Theradras,
 break Immol'thar's prison in Dire Maul and take King Gordok's throne, wake Archaedas in Uldaman, light the
 Sunken Temple's statues in order down to the Shade of Eranikus, fight in Blackrock Depths' Ring of Law and
-free Princess Moira from Emperor Thaurissan, and save to the cartridge. Every zone has
+free Princess Moira from Emperor Thaurissan, break Pyroguard Emberseer's bonds and General Drakkisath's
+command in Blackrock Spire, dodge Darkmaster Gandling's portals in Scholomance, race Baron Rivendare's
+clock in Stratholme to save Ysida Harmon, and save to the cartridge. Every zone has
 its own music, and elite fights switch to a boss tune.
 
 Following the quests in order takes a hero to level 15 at the end of Westfall, about 19 after
@@ -122,8 +130,9 @@ after Arugal, about 28 after the Wetlands, 30 after Thermaplugg, 33 after Hillsb
 Arcanist Doan, about 37 halfway through Stranglethorn, 39 after King Bangalash, 40 after High
 Inquisitor Whitemane, about 41 after Razorfen Kraul, 43 after Amnennar the Coldbringer, 45 after
 Chief Ukorz Sandscalp, about 47 after Feralas, 49 after Princess Theradras, 51 after King Gordok,
-about 52 after Archaedas, 53 after the Burning Steppes, 54 after the Shade of Eranikus and 55 after
-Emperor Thaurissan,
+about 52 after Archaedas, 53 after the Burning Steppes, 54 after the Shade of Eranikus, 55 after
+Emperor Thaurissan, about 56 after the Western Plaguelands, 57 after General Drakkisath, 58 after the
+Eastern Plaguelands, 59 after Darkmaster Gandling and about 59 and a half after Baron Rivendare,
 without grinding. The level cap is
 60: the road there is planned in [docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12
 to M26).
@@ -155,7 +164,8 @@ to M26).
 | M22 Tanaris and the Razorfens | Kalimdor by boat from Booty Bay: Tanaris with Gadgetzan and Thousand Needles' Mirage Raceway (40 to 45), 20 quests, Razorfen Kraul, Razorfen Downs with its gong and Zul'Farrak with its gong and pyramid | Done |
 | M23 Feralas and Desolace | Feralas with Feathermoon Stronghold and Desolace with Nijel's Point (45 to 50), 20 quests, Maraudon with its poison pools and Princess Theradras, Dire Maul with Immol'thar's pylons and the Gordok tribute | Done |
 | M24 Burning Steppes | The Burning Steppes with Morgan's Vigil, the Searing Gorge with Thorium Point, the Badlands and the Swamp of Sorrows (50 to 55), 26 quests, Uldaman with Archaedas's altar, the Sunken Temple with its six statues and Blackrock Depths with the Ring of Law and the Imperial Seat | Done |
-| M25 and M26 | The Plaguelands, Blackrock Spire, Scholomance, Stratholme, Onyxia and the new ending | Planned |
+| M25 Plaguelands | The Western and Eastern Plaguelands with Chillwind Camp, Caer Darrow and Light's Hope Chapel (55 to 60), 29 quests, Blackrock Spire with Emberseer's seven altars, Scholomance with Gandling's portals and Stratholme with the Baron's clock | Done |
+| M26 Onyxia | Lady Prestor unmasked, Onyxia's three-phase fight, the new ending, dungeon set bonuses and a balance pass from 1 to 60 | Planned |
 
 ## Controls
 
@@ -229,7 +239,8 @@ Hill, Ariena Stormfeather in Lakeshire, Felicia Maline in Darkshire, Gryphon Rid
 camp in Silverpine, Gryth Thurden in Ironforge, Shellei Brondir in Menethil Harbor, Darla Harris in
 Southshore, Gyll in Booty Bay; on Kalimdor, the hippogryph master Caylais Moonfeather in Auberdine and
 Bera Stonehammer in Gadgetzan, Fyldren Moonfeather in Feathermoon and Baritanas Skyriver at Nijel's Point; back east, Borgus Steelhand at
-Morgan's Vigil and Thaena Lightwing in the Swamp of Sorrows)
+Morgan's Vigil and Thaena Lightwing in the Swamp of Sorrows, Bibilfaz Featherwhistle at Chillwind Camp and
+Khaelyn Steelwing at Light's Hope Chapel)
 remember you the first time you talk to them and
 fly you to any other one you have met, for a price that grows with the distance: the gryphon crosses
 the continent while the map scrolls under it. The Deeprun Tram leaves from the station house in
@@ -238,7 +249,7 @@ Ironforge. Boats work the same way: walk to the end of Menethil Harbor's pier to
 Darkshore, and back from Auberdine's dock; Booty Bay's south pier sails to Steamwheedle Port on the
 coast of Tanaris, and back; the pier on the Feralas coast sails to Feathermoon Stronghold, and Feathermoon's
 other pier to the Forgotten Coast. A pass in the north of the Redridge Mountains climbs into the Burning
-Steppes. Flights stay on their own continent.
+Steppes, and a road east out of Tirisfal leads into the Plaguelands. Flights stay on their own continent.
 
 Pets: a Beast Mastery hunter gets *Taming the Beast* from Einris Brightspear at level 10. Tame Beast
 (Utility bar) channels for six seconds on a beast of your level or lower, which fights back
@@ -458,6 +469,39 @@ Angerforge calls his reservists, Ambassador Flamelash calls burning spirits out 
 Magmus guards the gate of the Imperial Seat. Plugger Spazzring keeps the Grim Guzzler's bar.
 Emperor Dagran Thaurissan fights with Princess Moira Bronzebeard healing him; when he dies, his
 spell on her breaks. The Royal Rescue ends the chapter with a new page.
+
+The Plaguelands: the road east out of Tirisfal Glades leads into the land the Scourge took, level 55
+to 60, one map for both halves. At Chillwind Camp, Commander Ashlam Valorfist sends you to clear the
+farms, Alchemist Arbington wants the cauldrons of Andorhal shut down (and Araj the Summoner with
+them), and the Scarlet Crusade's Hearthglen hides Grand Inquisitor Isillien. Weldon Barov wants his
+family dead. On Caer Darrow's island in the lake, Eva Sarkhoff guards the gate of Scholomance. East
+of the ridge, Light's Hope Chapel has an inn, Maxwell Tyrosus and Eligor Dawnbringer of the Argent
+Dawn, and Nicholas Zverenhoff's Argent Dawn goods; plaguehounds run the fields, Corin's Crossing
+holds the cult and Hed'mush the Rotting, the Plaguewood its ghouls and crypt horrors, and Tyr's Hand
+the Scarlet Crusade's last fortress with Crusader Lord Valdelmar. Anthion Harmon waits at the gate
+of Stratholme. Chillwind Camp and Light's Hope each have a gryphon master, and the Plaguelands have
+their own lament.
+
+Blackrock Spire: a second gate beside Blackrock Depths' leads up into the Spire, level 55 to 60.
+Highlord Omokk smashes, War Master Voone throws axes, Mother Smolderweb's spiderlings swarm out and
+Overlord Wyrmthalak calls his veterans. In the Hall of Binding, Pyroguard Emberseer's runes hold
+until all seven altars around them are lit; then his jailers come first, and he follows. The Beast
+breathes fire, and General Drakkisath breathes flame and calls whelps. His fall ends a chapter with
+a new page.
+
+Scholomance: on Caer Darrow, level 56 to 60. Jandice Barov splits into illusions, Rattlegore
+smashes, Ras Frostwhisper calls a blizzard, Instructor Malicia teaches with shadow bolts, Doctor
+Theolen Krastinov loses his temper, Lorekeeper Polkelt spreads infection, and Lord Alexei and Lady
+Illucia Barov fight together in their family vault. Darkmaster Gandling's Shadow Portal throws you to
+another corner of his study and raises his students around you. His fall ends a chapter with a new
+page.
+
+Stratholme: the gate north of the Eastern Plaguelands, level 57 to 60. The Scarlet half holds Timmy
+the Cruel, Malor the Zealous and Grand Crusader Dathrohan, who is Balnazzar in disguise. The moment
+you step into the Scourge half, Baron Rivendare begins the ritual that will kill Ysida Harmon: six
+minutes to reach him through Maleki the Pallid and Ramstein the Gorger in the slaughterhouse, with
+the time left called out each minute. The Baron raises bone minions as he weakens. Kill him in time
+to save Ysida for Dead Man's Plea, which ends a chapter with a new page.
 
 Auto-attack keeps going after a kill if another enemy is on you, and turns to whoever is hitting you
 when your target is out of reach.

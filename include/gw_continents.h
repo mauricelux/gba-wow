@@ -66,8 +66,8 @@ struct zone_def
 
 constexpr zone_def zones[] = {
     { "Tirisfal Glades", 0, 36, 23, 30, 40, map_id::TIRISFAL },
-    { "Western Plaguelands", 0, 56, 26, 55, 60, map_id::NONE },
-    { "Eastern Plaguelands", 0, 80, 26, 55, 60, map_id::NONE },
+    { "Western Plaguelands", 0, 56, 26, 55, 60, map_id::PLAGUELANDS },
+    { "Eastern Plaguelands", 0, 80, 26, 55, 60, map_id::PLAGUELANDS },
     { "Silverpine Forest", 0, 31, 38, 20, 25, map_id::SILVERPINE },
     { "Hillsbrad Foothills", 0, 52, 42, 30, 35, map_id::HILLSBRAD },
     { "Wetlands", 0, 59, 57, 25, 30, map_id::WETLANDS },

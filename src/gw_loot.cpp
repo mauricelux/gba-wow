@@ -599,6 +599,114 @@ namespace
         // 200 Emperor Dagran Thaurissan
         { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::DARK_IRON_SCRAPS, 100, 2, 3 }, none }, true,
           { i::THAURISSANS_GREATHAMMER, i::STAFF_OF_THE_SHADOWFORGE, i::IMPERIAL_LONGBOW } },
+        // 201 the Scourge of the Western Plaguelands
+        { { { i::BONE_FRAGMENTS, 40, 1, 2 }, { i::RUNECLOTH, 30, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 202 plagued beasts
+        { { { i::THICK_FUR, 40, 1, 1 }, { i::SCOURGESTONE, 10, 1, 1 }, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 203 the Scarlet Crusade
+        { { { i::SCARLET_INSIGNIA, 40, 1, 1 }, { i::RUNECLOTH, 35, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 204 the Scourge of the Eastern Plaguelands
+        { { { i::SCOURGESTONE, 40, 1, 1 }, { i::NECROTIC_RUNE, 20, 1, 1 }, { i::RUNECLOTH, 30, 1, 2 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 205 plaguehounds
+        { { { i::THICK_FUR, 45, 1, 1 }, { i::SCOURGESTONE, 15, 1, 1 }, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 206 Araj the Summoner
+        { { { i::NECROTIC_RUNE, 100, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::ARAJS_SABATONS, i::ARAJS_SLIPPERS, i::ARAJS_BOOTS } },
+        // 207 Grand Inquisitor Isillien
+        { { { i::SCARLET_INSIGNIA, 100, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::ISILLIENS_GAUNTLETS, i::ISILLIENS_GLOVES, i::ISILLIENS_GRIPS } },
+        // 208 Hed'mush the Rotting
+        { { { i::SCOURGESTONE, 100, 2, 3 }, none, none }, false,
+          { i::HED_MUSHS_LEGPLATES, i::HED_MUSHS_LEGGINGS, i::HED_MUSHS_PANTS } },
+        // 209 Crusader Lord Valdelmar
+        { { { i::SCARLET_INSIGNIA, 100, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::VALDELMARS_HELM, i::VALDELMARS_COWL, i::VALDELMARS_MASK } },
+        // 210 Blackrock Spire's ogres, trolls and orcs
+        { { { i::BLACKROCK_EMBLEM, 40, 1, 1 }, { i::RUNECLOTH, 35, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 211 Blackrock Spire's spiders and dragonkin
+        { { { i::CHROMATIC_SCALE, 30, 1, 1 }, { i::IRONWEB_SPIDER_SILK, 30, 1, 1 }, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 212 Highlord Omokk
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::OGRE_TOOTH, 100, 1, 2 }, none }, true,
+          { i::OMOKKS_GAUNTLETS, i::OMOKKS_GLOVES, i::OMOKKS_GRIPS } },
+        // 213 War Master Voone
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::TROLL_TUSK, 100, 1, 2 }, none }, true,
+          { i::VOONES_CLEAVER, i::VOONES_STAFF, i::VOONES_LONGBOW } },
+        // 214 Mother Smolderweb
+        { { { i::IRONWEB_SPIDER_SILK, 100, 2, 3 }, none, none }, false,
+          { i::SMOLDERWEB_SABATONS, i::SMOLDERWEB_SLIPPERS, i::SMOLDERWEB_BOOTS } },
+        // 215 Overlord Wyrmthalak
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::BLACKROCK_EMBLEM, 100, 1, 2 }, none }, true,
+          { i::WYRMTHALAKS_LEGPLATES, i::WYRMTHALAKS_LEGGINGS, i::WYRMTHALAKS_PANTS } },
+        // 216 Pyroguard Emberseer
+        { { { i::SMOLDERING_COAL, 100, 2, 3 }, none, none }, false,
+          { i::EMBERSEER_HAUBERK, i::EMBERSEER_ROBE, i::EMBERSEER_VEST } },
+        // 217 The Beast
+        { { { i::THICK_FUR, 100, 2, 3 }, none, none }, false,
+          { i::BEASTMAW_HELM, i::BEASTMAW_COWL, i::BEASTMAW_MASK } },
+        // 218 General Drakkisath
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::CHROMATIC_SCALE, 100, 2, 3 }, none }, false,
+          { i::DRACONIC_GREATSWORD, i::STAFF_OF_DRAKKISATH, i::DRAGONSPUR_LONGBOW } },
+        // 219 the school of Scholomance
+        { { { i::NECROTIC_RUNE, 40, 1, 1 }, { i::BONE_FRAGMENTS, 30, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 220 Jandice Barov
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::ILLUSIONISTS_GAUNTLETS, i::ILLUSIONISTS_GLOVES, i::ILLUSIONISTS_GRIPS } },
+        // 221 Rattlegore
+        { { { i::BONE_FRAGMENTS, 100, 2, 3 }, none, none }, false,
+          { i::BONECRUSHER_LEGPLATES, i::BONECRUSHER_LEGGINGS, i::BONECRUSHER_PANTS } },
+        // 222 Ras Frostwhisper
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::NECROTIC_RUNE, 100, 1, 2 }, none }, false,
+          { i::FROSTBITE_GREATAXE, i::FROSTWHISPER_STAFF, i::FROSTWHISPER_LONGBOW } },
+        // 223 Instructor Malicia
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::NECROTIC_RUNE, 100, 1, 2 }, none }, true,
+          { i::INSTRUCTORS_SABATONS, i::INSTRUCTORS_SLIPPERS, i::INSTRUCTORS_BOOTS } },
+        // 224 Doctor Theolen Krastinov
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::SURGEONS_HAUBERK, i::SURGEONS_ROBE, i::SURGEONS_VEST } },
+        // 225 Lorekeeper Polkelt
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::NECROTIC_RUNE, 100, 1, 2 }, none }, false,
+          { i::LOREKEEPERS_HELM, i::LOREKEEPERS_COWL, i::LOREKEEPERS_MASK } },
+        // 226 Lord Alexei Barov
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::ALEXEIS_GAUNTLETS, i::ALEXEIS_GLOVES, i::ALEXEIS_GRIPS } },
+        // 227 Lady Illucia Barov
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::ILLUCIAS_SABATONS, i::ILLUCIAS_SLIPPERS, i::ILLUCIAS_BOOTS } },
+        // 228 Darkmaster Gandling
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::NECROTIC_RUNE, 100, 2, 3 }, none }, true,
+          { i::HEADMASTERS_HAUBERK, i::HEADMASTERS_ROBE, i::HEADMASTERS_VEST } },
+        // 229 Stratholme's Scarlet Crusade
+        { { { i::SCARLET_INSIGNIA, 40, 1, 1 }, { i::RUNECLOTH, 35, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 230 Stratholme's Scourge
+        { { { i::SCOURGESTONE, 40, 1, 1 }, { i::NECROTIC_RUNE, 25, 1, 1 }, { i::RUNECLOTH, 25, 1, 2 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 231 Timmy the Cruel
+        { { { i::SCOURGESTONE, 100, 2, 3 }, none, none }, false,
+          { i::CRUEL_GAUNTLETS, i::CRUEL_GLOVES, i::CRUEL_GRIPS } },
+        // 232 Malor the Zealous
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::SCARLET_INSIGNIA, 100, 1, 2 }, none }, true,
+          { i::ZEALOUS_WARHAMMER, i::ZEALOUS_STAFF, i::ZEALOUS_RIFLE } },
+        // 233 Balnazzar
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::SCARLET_INSIGNIA, 100, 2, 3 }, none }, true,
+          { i::DREADLORD_LEGPLATES, i::DREADLORD_LEGGINGS, i::DREADLORD_PANTS } },
+        // 234 Maleki the Pallid
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::NECROTIC_RUNE, 100, 1, 2 }, none }, false,
+          { i::PALLID_SABATONS, i::PALLID_SLIPPERS, i::PALLID_BOOTS } },
+        // 235 Ramstein the Gorger
+        { { { i::SCOURGESTONE, 100, 2, 3 }, none, none }, false,
+          { i::GORGERS_HAUBERK, i::GORGERS_ROBE, i::GORGERS_VEST } },
+        // 236 Baron Rivendare
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::SCOURGESTONE, 100, 2, 3 }, none }, true,
+          { i::RIVENDARES_RUNEBLADE, i::STAFF_OF_THE_BARON, i::BARONS_LONGBOW } },
     };
 
     // Uncommon items any enemy of a level band may drop.
@@ -625,6 +733,8 @@ namespace
                                     i::HIGHBORNE_BULWARK };
     constexpr item_id band_11[] = { i::VOLCANIC_HELM, i::FLAMEKISSED_ROBE, i::EMBERHIDE_LEGGINGS, i::BLAZING_GREATSWORD,
                                     i::STAFF_OF_EMBERS, i::ASHWOOD_LONGBOW, i::OBSIDIAN_BULWARK };
+    constexpr item_id band_12[] = { i::PLAGUEBRINGER_HELM, i::NECROTIC_ROBE, i::BLIGHTWALKER_LEGGINGS, i::LIGHTS_VENGEANCE,
+                                    i::STAFF_OF_THE_DEAD, i::DAWNGUARD_LONGBOW, i::BULWARK_OF_THE_DAWN };
 
     constexpr int world_drop_chance = 3;
     constexpr int elite_world_drop_chance = 35;
@@ -695,7 +805,12 @@ namespace
             return pick(band_10);
         }
 
-        return pick(band_11);
+        if(level <= 55)
+        {
+            return pick(band_11);
+        }
+
+        return pick(band_12);
     }
 
     void add(enemy& item, item_id loot, int count)

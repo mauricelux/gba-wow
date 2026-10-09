@@ -10,6 +10,7 @@
 #include "gw_input.h"
 #include "gw_map_blackfathom_deeps.h"
 #include "gw_map_blackrock_depths.h"
+#include "gw_map_blackrock_spire.h"
 #include "gw_map_burning_steppes.h"
 #include "gw_map_darkshore.h"
 #include "gw_map_deadmines.h"
@@ -26,9 +27,11 @@
 #include "gw_map_hillsbrad.h"
 #include "gw_map_ironforge.h"
 #include "gw_map_maraudon.h"
+#include "gw_map_plaguelands.h"
 #include "gw_map_razorfen_downs.h"
 #include "gw_map_razorfen_kraul.h"
 #include "gw_map_redridge.h"
+#include "gw_map_scholomance.h"
 #include "gw_map_shadowfang.h"
 #include "gw_map_silverpine.h"
 #include "gw_map_sm_graveyard.h"
@@ -38,6 +41,7 @@
 #include "gw_map_stranglethorn.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
+#include "gw_map_stratholme.h"
 #include "gw_map_sunken_temple.h"
 #include "gw_map_swamp_of_sorrows.h"
 #include "gw_map_tanaris.h"
@@ -151,6 +155,21 @@ namespace
         { "Ring of Law", map_id::BLACKROCK_DEPTHS, map_data::blackrock_depths::ring },
         { "Grim Guzzler", map_id::BLACKROCK_DEPTHS, map_data::blackrock_depths::guzzler },
         { "Imperial Seat", map_id::BLACKROCK_DEPTHS, map_data::blackrock_depths::imperial_seat },
+        { "Chillwind Camp", map_id::PLAGUELANDS, map_data::plaguelands::chillwind_respawn },
+        { "Andorhal", map_id::PLAGUELANDS, { 460, 510 } },
+        { "Light's Hope Chapel", map_id::PLAGUELANDS, map_data::plaguelands::lights_hope_respawn },
+        { "Corin's Crossing", map_id::PLAGUELANDS, { 1150, 540 } },
+        { "Caer Darrow", map_id::PLAGUELANDS, map_data::plaguelands::scholomance_exit },
+        { "Stratholme's Gate", map_id::PLAGUELANDS, map_data::plaguelands::stratholme_exit },
+        { "Blackrock Spire's Gate", map_id::BURNING_STEPPES, map_data::burning_steppes::brs_exit },
+        { "Blackrock Spire", map_id::BLACKROCK_SPIRE, map_data::blackrock_spire::entry },
+        { "Hall of Binding", map_id::BLACKROCK_SPIRE, map_data::blackrock_spire::binding },
+        { "Drakkisath's Hall", map_id::BLACKROCK_SPIRE, { 512, 200 } },
+        { "Scholomance", map_id::SCHOLOMANCE, map_data::scholomance::entry },
+        { "Headmaster's Study", map_id::SCHOLOMANCE, { 512, 190 } },
+        { "Stratholme", map_id::STRATHOLME, map_data::stratholme::entry },
+        { "Scarlet Bastion", map_id::STRATHOLME, { 192, 180 } },
+        { "The Slaughterhouse", map_id::STRATHOLME, { 512, 200 } },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);

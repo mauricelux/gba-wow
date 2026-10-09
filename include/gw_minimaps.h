@@ -5,6 +5,7 @@
 
 #include "bn_sprite_items_minimap_blackfathom_deeps.h"
 #include "bn_sprite_items_minimap_blackrock_depths.h"
+#include "bn_sprite_items_minimap_blackrock_spire.h"
 #include "bn_sprite_items_minimap_burning_steppes.h"
 #include "bn_sprite_items_minimap_darkshore.h"
 #include "bn_sprite_items_minimap_deadmines.h"
@@ -20,9 +21,11 @@
 #include "bn_sprite_items_minimap_hillsbrad.h"
 #include "bn_sprite_items_minimap_ironforge.h"
 #include "bn_sprite_items_minimap_maraudon.h"
+#include "bn_sprite_items_minimap_plaguelands.h"
 #include "bn_sprite_items_minimap_razorfen_downs.h"
 #include "bn_sprite_items_minimap_razorfen_kraul.h"
 #include "bn_sprite_items_minimap_redridge.h"
+#include "bn_sprite_items_minimap_scholomance.h"
 #include "bn_sprite_items_minimap_shadowfang.h"
 #include "bn_sprite_items_minimap_silverpine.h"
 #include "bn_sprite_items_minimap_sm_armory.h"
@@ -32,6 +35,7 @@
 #include "bn_sprite_items_minimap_stockade.h"
 #include "bn_sprite_items_minimap_stormwind.h"
 #include "bn_sprite_items_minimap_stranglethorn.h"
+#include "bn_sprite_items_minimap_stratholme.h"
 #include "bn_sprite_items_minimap_sunken_temple.h"
 #include "bn_sprite_items_minimap_swamp_of_sorrows.h"
 #include "bn_sprite_items_minimap_tanaris.h"
@@ -81,6 +85,7 @@ constexpr minimap_def minimaps[] = {
     { map_id::DESOLACE, bn::sprite_items::minimap_desolace, 22, 8, 1024 },
     { map_id::BURNING_STEPPES, bn::sprite_items::minimap_burning_steppes, 26, 8, 1536 },
     { map_id::SWAMP_OF_SORROWS, bn::sprite_items::minimap_swamp_of_sorrows, 8, 8, 768 },
+    { map_id::PLAGUELANDS, bn::sprite_items::minimap_plaguelands, 8, 26, 1536 },
     { map_id::ECHO_RIDGE, bn::sprite_items::minimap_echo_ridge, 8, 8, 512 },
     { map_id::FARGODEEP, bn::sprite_items::minimap_fargodeep, 8, 26, 768 },
     { map_id::DEADMINES, bn::sprite_items::minimap_deadmines, 8, 36, 1024 },
@@ -100,6 +105,9 @@ constexpr minimap_def minimaps[] = {
     { map_id::ULDAMAN, bn::sprite_items::minimap_uldaman, 8, 8, 1024 },
     { map_id::SUNKEN_TEMPLE, bn::sprite_items::minimap_sunken_temple, 8, 8, 1024 },
     { map_id::BLACKROCK_DEPTHS, bn::sprite_items::minimap_blackrock_depths, 8, 8, 1024 },
+    { map_id::BLACKROCK_SPIRE, bn::sprite_items::minimap_blackrock_spire, 8, 8, 1024 },
+    { map_id::SCHOLOMANCE, bn::sprite_items::minimap_scholomance, 8, 8, 1024 },
+    { map_id::STRATHOLME, bn::sprite_items::minimap_stratholme, 8, 8, 1024 },
 };
 
 constexpr int minimap_count = sizeof(minimaps) / sizeof(minimaps[0]);

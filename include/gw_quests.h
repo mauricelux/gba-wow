@@ -20,7 +20,8 @@ enum class objective_type : uint8_t
     EXPLORE,    // walk into the area
     TREASURE,   // open count treasure chests (chests opened before count too)
     TAME,       // tame count beasts
-    FISH        // each Fishing cast from inside the area catches one with chance percent
+    FISH,       // each Fishing cast from inside the area catches one with chance percent
+    RESCUE      // the enemy is slain before its clock runs out (see quests_on_rescue)
 };
 
 struct objective_def
@@ -110,6 +111,9 @@ bool quests_on_explore(const map_info& map, int x, int y, hud& hud_ref);
 bool quests_on_chest(hud& hud_ref);
 
 bool quests_on_tame(hud& hud_ref);
+
+// The enemy was slain in time to save its captive: credits each rescue objective naming it.
+bool quests_on_rescue(enemy_id enemy, hud& hud_ref);
 
 // A Fishing cast from (x, y) ended: rolls each fishing objective of the area the player stands in, and
 // tells what was caught.

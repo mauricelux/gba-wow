@@ -41,6 +41,8 @@ namespace
     constexpr uint8_t vigil_smith = 22;
     constexpr uint8_t thorium_brotherhood = 23;
     constexpr uint8_t grim_guzzler = 24;
+    constexpr uint8_t lights_hope_goods = 25;
+    constexpr uint8_t argent_dawn = 26;
 
     constexpr npc_info npcs[] = {
         { "", "", l::PEASANT, 0, c::WARRIOR, 0, "" },
@@ -421,6 +423,30 @@ namespace
           "Drink up, or get out. No fighting in my bar." },
         { "Grim Patron", "", l::GUZZLER_PATRON, 0, c::WARRIOR, 0,
           "Thunderbrew's in the cellar. Don't tell Plugger." },
+        // The Western Plaguelands
+        { "Ashlam Valorfist", "", l::ASHLAM_VALORFIST, 0, c::WARRIOR, 0,
+          "Chillwind Camp holds. The Scourge is all around us, but it holds." },
+        { "Alchemist Arbington", "", l::ALCHEMIST_ARBINGTON, 0, c::WARRIOR, 0,
+          "The plague is a recipe. Every recipe can be undone." },
+        { "Weldon Barov", "", l::WELDON_BAROV, 0, c::WARRIOR, 0,
+          "My family sold Caer Darrow to the Scourge. I want it back." },
+        { "Bibilfaz Featherwhistle", "Gryphon Master", l::BIBILFAZ_FEATHERWHISTLE, flight_master, c::WARRIOR, 0,
+          "Fly high. The plague rises off the fields." },
+        { "Eva Sarkhoff", "", l::EVA_SARKHOFF, 0, c::WARRIOR, 0,
+          "We died in our own home. Now the Darkmaster teaches death in it." },
+        // The Eastern Plaguelands
+        { "Maxwell Tyrosus", "Argent Dawn", l::MAXWELL_TYROSUS, 0, c::WARRIOR, 0,
+          "Light's Hope stands where the Scourge cannot tread." },
+        { "Eligor Dawnbringer", "Brotherhood of Light", l::ELIGOR_DAWNBRINGER, 0, c::WARRIOR, 0,
+          "We left the Crusade when it turned on its own." },
+        { "Nicholas Zverenhoff", "Argent Quartermaster", l::NICHOLAS_ZVERENHOFF, vendor, c::WARRIOR, argent_dawn,
+          "The Dawn arms those who fight the Scourge." },
+        { "Jessica Chambers", "Innkeeper", l::INNKEEPER_F, innkeeper, c::WARRIOR, lights_hope_goods,
+          "Bread, water and a bed on holy ground. Rest." },
+        { "Khaelyn Steelwing", "Gryphon Master", l::KHAELYN_STEELWING, flight_master, c::WARRIOR, 0,
+          "The chapel's gryphons fear nothing." },
+        { "Anthion Harmon", "", l::ANTHION_HARMON, 0, c::WARRIOR, 0,
+          "My Ysida is in there. The Baron has her. Please." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

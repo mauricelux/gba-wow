@@ -110,6 +110,18 @@ namespace
           "bells, Morgan's Vigil cheers, and high above, the black dragons on Blackrock's peak take note "
           "of your name. To the north, the Plaguelands wait.",
           quest_id::THE_ROYAL_RESCUE },
+        { "Scholomance Is Silent",
+          "Darkmaster Gandling is dead and his students lie still. Weldon Barov rows out to Caer Darrow "
+          "to look at his family's house, and Eva Sarkhoff lights a candle for the dead of the island.",
+          quest_id::DARKMASTER_GANDLING },
+        { "Ysida Is Free",
+          "Baron Rivendare is dead and Ysida Harmon walks out of the slaughterhouse. At Stratholme's "
+          "gate, Anthion Harmon fades with a smile, and the Argent Dawn writes your name in its book.",
+          quest_id::DEAD_MANS_PLEA },
+        { "The Spire Falls",
+          "General Drakkisath is dead in his hall, and the Blackrock legions lose their master. Marshal "
+          "Maxwell sends word to Stormwind. Behind the general's throne lie letters in a noble hand.",
+          quest_id::GENERAL_DRAKKISATHS_COMMAND },
     };
 
     constexpr int story_page_total = sizeof(story_pages) / sizeof(story_pages[0]);

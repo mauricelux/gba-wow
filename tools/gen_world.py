@@ -1902,7 +1902,7 @@ def gen_echo_ridge():
     c.cart(320, 392)
     c.crates(56, 300)
     c.crates(408, 344)
-    for x, y in ((200, 160), (232, 200), (330, 150), (372, 210), (96, 344), (452, 300)):
+    for x, y in ((200, 160), (232, 200), (330, 150), (96, 344), (452, 300)):
         c.candles(x, y)
     c.crossbeam(232, 336, 56)
     c.crossbeam(240, 216, 64)
@@ -3688,6 +3688,7 @@ def gen_tirisfal():
     wg.paint_cliffs(m)
 
     wg.corners_along(m, 'path', [(400, 470), (400, 400), (432, 320), (432, 240)], 1.1)
+    wg.corners_along(m, 'path', [(432, 240), (560, 232), (680, 224), (768, 224)], 1.0)   # east to the Plaguelands
     wg.corners_along(m, 'path', [(420, 330), (300, 320), (200, 300)], 0.9)
     wg.paint_paths(m)
     wg.corners_along(m, 'water', [(768, 260), (700, 300), (680, 400), (720, 512)], 1.3)
@@ -3748,6 +3749,8 @@ def gen_tirisfal():
             placed += 1
     wg.scatter_props(m, rng, 20, ('tall_grass', 'rock', 'stump', 'log', 'fern'), (40, 240, 680, 220),
                      avoid=[(290, 380, 220, 120), (96, 220, 220, 140)])
+    m.point('from_plaguelands', 744, 224)
+    m.warp(760, 200, 8, 48, 'plaguelands', 'from_tirisfal')
     m.area(0, 0, 768, 512, 'Tirisfal Glades')
     m.music = 'DUSKWOOD'
     m.save()
@@ -5952,6 +5955,10 @@ def gen_burning_steppes():
     m.warp(gate[0] - 16, gate[1] - 12, 32, 8, 'blackrock_depths', 'entry')
     m.point('brd_exit', gate[0], gate[1] + 20)
     m.point('brd_respawn', gate[0] + 120, gate[1] + 56)
+    # ... and beside it, the stair up to Blackrock Spire.
+    gate = mountain_gate(m, 616, 704, 96, 80, gate_w=40)
+    m.warp(gate[0] - 16, gate[1] - 12, 32, 8, 'blackrock_spire', 'entry')
+    m.point('brs_exit', gate[0], gate[1] + 20)
     m.area(160, 560, 600, 300, 'Blackrock Mountain')
 
     # --- the Searing Gorge: Thorium Point, the Cauldron and its slave pens -------------------------------------
@@ -5994,7 +6001,7 @@ def gen_burning_steppes():
     rng = np.random.default_rng(91)
     zones = [(688, 1256, 320, 240), (704, 900, 304, 260), (376, 980, 260, 240), (48, 880, 320, 300),
              (48, 1240, 400, 260), (504, 1360, 136, 136), (56, 104, 240, 176), (320, 120, 400, 320),
-             (64, 296, 120, 160), (728, 140, 280, 240), (440, 720, 144, 200)]
+             (64, 296, 120, 160), (728, 140, 280, 240), (440, 720, 144, 200), (600, 700, 128, 160)]
     zone_trees(m, trees, rng, 60, (60, 60, 900, 1420), zones)
     wg.scatter_props(m, rng, 70, STEPPES_PROPS, (60, 60, 900, 1420), avoid=zones)
 
@@ -6253,7 +6260,8 @@ def gen_sunken_temple():
     for chest_id, (x, y) in zip(range(65, 71), ((400, 736), (336, 600), (400, 432), (624, 432), (688, 600),
                                                 (624, 736))):
         c.pylon(chest_id, x, y)
-        c.idol(x - 24, y - 32)
+        # The west statue's idol stands on its hall side, clear of the passage west.
+        c.idol(x + 8 if x < 360 else x - 24, y - 32)
     c.pool(320, 376, 64, 48)
     c.pool(640, 376, 64, 48)
     for x in (72, 216):
@@ -6436,6 +6444,568 @@ def gen_blackrock_depths():
     return m
 
 
+# ---------------------------------------------------------------------------------------------
+# The Plaguelands
+# ---------------------------------------------------------------------------------------------
+
+PLAGUE_PROPS = ('rock', 'stump', 'log', 'big_rock', 'tall_grass', 'stump')
+
+
+def scarlet_house(m, x, y, w=80, h=80):
+    """A Scarlet stone house: limestone walls, a red slate roof and a crimson banner by the door."""
+    door = wg.house(m, x, y, w, h, style='stone')
+    g = m.ground
+    bx = door[0] + 12
+    wall_y = y + h - h // 2
+    g[wall_y + 6:wall_y + 26, bx:bx + 8] = m.g('banner')
+    g[wall_y + 6:wall_y + 26, bx] = m.g('banner_d')
+    g[wall_y + 6:wall_y + 8, bx:bx + 8] = m.g('gold')
+    return door
+
+
+def gen_plaguelands():
+    m = Map('plaguelands', 1536, 1024,
+            Palette([wg.TERRAIN_PLAGUE, wg.BUILDINGS_SCARLET, wg.FARM, wg.ROCK_PLAGUE]),
+            Palette([wg.OVERHEAD_LEAVES_TIRISFAL, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m, dead=True)
+
+    # --- mountains all around, a ridge between the west and the east with a gap for the road -----------
+    border_rock(m, (3, 3, 3, 3), seed=25)
+    rock = wg.corners(m, 'rock')
+    rock[12:17, 0:8] = 0                # the pass west into Tirisfal
+    rock[0:28, 47:50] = 1               # the ridge between the Western and Eastern Plaguelands
+    rock[37:64, 47:50] = 1
+    for cx, cy, rx, ry in ((296, 296, 40, 28), (680, 300, 36, 40), (960, 440, 40, 28), (1440, 360, 44, 36),
+                           (900, 960, 48, 28), (232, 640, 32, 24)):
+        wg.corners_ellipse(m, 'rock', cx, cy, rx, ry)
+    wg.paint_cliffs(m)
+
+    # --- Darrowmere Lake with Caer Darrow's island, and the Thondroril's pools ---------------------------
+    wg.corners_ellipse(m, 'water', 560, 768, 168, 112)
+    water = wg.corners(m, 'water')
+    ys, xs = np.mgrid[0:water.shape[0], 0:water.shape[1]]
+    water[((xs - 560 / 16) / (88 / 16)) ** 2 + ((ys - 784 / 16) / (60 / 16)) ** 2 <= 1] = 0     # the island
+    wg.corners_ellipse(m, 'water', 1000, 760, 56, 32)
+    wg.corners_ellipse(m, 'water', 160, 520, 40, 24)
+    wg.paint_water(m)
+
+    # --- roads ---------------------------------------------------------------------------------------
+    roads = [
+        [(0, 232), (120, 240), (240, 300), (360, 380), (440, 470)],                      # from Tirisfal
+        [(440, 470), (560, 520), (680, 500), (768, 496), (880, 500), (1000, 520), (1120, 540), (1240, 600),
+         (1340, 640)],                                                                     # east to Light's Hope
+        [(360, 380), (300, 520), (240, 660), (200, 780)],                                  # Chillwind Camp
+        [(240, 660), (320, 800), (400, 920), (560, 920), (560, 880)],                    # Caer Darrow
+        [(440, 470), (440, 320), (440, 200)],                                              # Hearthglen
+        [(1120, 540), (1160, 380), (1200, 240), (1200, 160)],                              # Stratholme
+        [(1340, 640), (1336, 760), (1320, 860)],                                           # Tyr's Hand
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.1)
+    wg.paint_paths(m)
+    ns_bridge(m, 544, 832, 32, 56)      # the causeway to Caer Darrow
+
+    # --- Chillwind Camp -------------------------------------------------------------------------------
+    wg.camp(m, 56, 776, 224, 152, tents=[(64, 784), (128, 784), (224, 784)], fire=(152, 856))
+    wg.crates(m, 232, 880)
+    m.npc('VALORFIST', 112, 840)
+    m.npc('ARBINGTON', 200, 840)
+    m.npc('WELDON_BAROV', 96, 896)
+    m.npc('BIBILFAZ', 248, 920)
+    m.point('chillwind_flight', 248, 940)
+    m.point('chillwind_respawn', 168, 960)
+    m.area(40, 760, 260, 220, 'Chillwind Camp')
+
+    # --- Felstone Field and Dalson's Tears: the dead farms ---------------------------------------------
+    wg.wheat_field(m, 64, 320, 128, 64)
+    wg.house(m, 200, 312, 80, 80)
+    wg.wheat_field(m, 48, 560, 112, 56)
+    wg.house(m, 64, 456, 80, 80)
+    m.spawn_group('SKELETAL_FLAYER', 140, 420, 6, 70, seed=501)
+    m.spawn_group('SLAVERING_GHOUL', 200, 600, 6, 70, seed=502)
+    m.spawn_group('DISEASED_WOLF', 320, 680, 4, 60, seed=503)
+    m.area(40, 300, 260, 140, 'Felstone Field')
+    m.area(40, 440, 200, 200, "Dalson's Tears")
+
+    # --- Andorhal ------------------------------------------------------------------------------------------
+    for rx, ry, seed in ((336, 400, 71), (432, 392, 72), (336, 520, 73), (480, 560, 74), (544, 408, 75),
+                         (384, 600, 76)):
+        ruin(m, rx, ry, 64, 40, seed=seed)
+    wg.house(m, 496, 440, 64, 64)
+    m.spawn_group('SCOURGE_WARDER', 420, 500, 6, 80, seed=504)
+    m.spawn_group('SCOURGE_NECROMANCER', 500, 600, 4, 50, seed=505)
+    m.spawn('ARAJ_THE_SUMMONER', 448, 540)
+    m.area(320, 380, 280, 260, 'Andorhal', 'ANDORHAL')
+
+    # --- Hearthglen: the Scarlet Crusade's town ------------------------------------------------------------
+    for hx, hy in ((320, 56), (512, 56), (320, 176)):
+        scarlet_house(m, hx, hy)
+    wg.cobbles(m, 416, 136, 64, 64)
+    m.spawn_group('SCARLET_KNIGHT', 420, 260, 5, 60, seed=506)
+    m.spawn_group('SCARLET_SPELLBINDER', 560, 200, 4, 50, seed=507)
+    m.spawn('GRAND_INQUISITOR_ISILLIEN', 448, 168)
+    m.area(296, 40, 320, 280, 'Hearthglen')
+
+    # --- Caer Darrow and the gate of Scholomance ------------------------------------------------------------
+    gate = keep_wall(m, 496, 736, 128, 48, gate_w=32)
+    m.warp(gate[0] - 12, gate[1] - 10, 24, 8, 'scholomance', 'entry')
+    m.point('scholomance_exit', gate[0], gate[1] + 16)
+    m.npc('EVA_SARKHOFF', 608, 816)
+    m.spawn_group('PLAGUED_HATCHLING', 720, 600, 5, 50, seed=508)
+    m.spawn_group('PLAGUED_HATCHLING', 440, 950, 4, 30, seed=509)
+    m.area(392, 640, 336, 340, 'Caer Darrow')
+
+    # --- the Plaguewood -------------------------------------------------------------------------------------
+    wg.forest(m, trees, 808, 64, 200, 120, holes=[(864, 96, 80, 64)], secrets=[(904, 160, 32, 24)])
+    m.chest(72, 904, 140, 58)
+    m.spawn_group('GIBBERING_GHOUL', 900, 280, 5, 70, seed=510)
+    m.spawn_group('CRYPT_HORROR', 1040, 200, 5, 60, seed=511)
+    m.area(800, 48, 300, 340, 'The Plaguewood')
+
+    # --- Stratholme's gate -----------------------------------------------------------------------------------
+    gate = keep_wall(m, 1104, 72, 192, 64, gate_w=48)
+    m.warp(gate[0] - 16, gate[1] - 12, 32, 8, 'stratholme', 'entry')
+    m.point('stratholme_exit', gate[0], gate[1] + 20)
+    m.npc('ANTHION', 1264, 176)
+    m.area(1100, 40, 220, 200, 'Stratholme')
+
+    # --- Corin's Crossing -----------------------------------------------------------------------------------
+    for rx, ry, seed in ((1040, 456, 81), (1136, 448, 82), (1056, 568, 83), (1192, 600, 84)):
+        ruin(m, rx, ry, 64, 40, seed=seed)
+    graveyard(m, 1176, 456, 96, 64, seed=85)
+    m.spawn_group('CURSED_MAGE', 1100, 520, 5, 60, seed=512)
+    m.spawn_group('DEATH_CULTIST', 1180, 600, 5, 60, seed=513)
+    m.spawn('HED_MUSH_THE_ROTTING', 1104, 600)
+    m.area(1020, 430, 260, 220, "Corin's Crossing")
+
+    # --- Light's Hope Chapel ------------------------------------------------------------------------------------
+    door = wg.abbey(m, 1312, 480)
+    wg.cobbles(m, 1352, 616, 80, 32)
+    m.npc('TYROSUS', door[0] - 24, door[1] + 8)
+    m.npc('ELIGOR', door[0] + 32, door[1] + 8)
+    m.npc('ZVERENHOFF', 1440, 672)
+    m.npc('LH_INNKEEPER', 1296, 664)
+    m.npc('KHAELYN', 1456, 712)
+    m.point('lights_hope_flight', 1456, 732)
+    m.point('lights_hope_respawn', 1384, 712)
+    m.area(1280, 460, 220, 300, "Light's Hope Chapel")
+
+    # --- the Eastern Plaguelands' fields: plaguehounds ----------------------------------------------------------
+    m.spawn_group('PLAGUEHOUND', 940, 640, 5, 70, seed=514)
+    m.spawn_group('PLAGUEHOUND', 1120, 760, 4, 60, seed=515)
+    m.spawn_group('DISEASED_WOLF', 860, 860, 4, 60, seed=516)
+
+    # --- Tyr's Hand ------------------------------------------------------------------------------------------
+    for hx, hy in ((1200, 816), (1392, 816), (1200, 920), (1392, 920)):
+        scarlet_house(m, hx, hy)
+    wg.cobbles(m, 1288, 880, 96, 48)
+    m.spawn_group('SCARLET_WARDER', 1320, 920, 5, 60, seed=517)
+    m.spawn_group('SCARLET_CURATE', 1300, 860, 4, 40, seed=518)
+    m.spawn('CRUSADER_LORD_VALDELMAR', 1336, 960)
+    m.area(1180, 800, 320, 200, "Tyr's Hand")
+
+    # --- the hidden chest of the west: a clearing in the dead wood east of Hearthglen -------------------------
+    wg.forest(m, trees, 632, 72, 112, 136, holes=[(656, 104, 56, 56)], secrets=[(672, 160, 32, 48)])
+    m.chest(71, 684, 152, 56)
+
+    # --- dead wood and rubble -----------------------------------------------------------------------------------
+    rng = np.random.default_rng(97)
+    zones = [(40, 760, 260, 220), (40, 300, 280, 340), (320, 380, 280, 260), (296, 40, 320, 280),
+             (392, 640, 336, 340), (800, 48, 300, 340), (1100, 40, 220, 200), (1020, 430, 260, 220),
+             (1280, 460, 220, 300), (1180, 800, 320, 200), (632, 72, 112, 136)]
+    zone_trees(m, trees, rng, 70, (48, 48, 1440, 928), zones)
+    zone_trees(m, trees, rng, 24, (800, 200, 300, 180), [])       # the Plaguewood's dead trees
+    wg.scatter_props(m, rng, 90, PLAGUE_PROPS, (48, 48, 1440, 928), avoid=zones)
+
+    m.point('from_tirisfal', 24, 232)
+    m.warp(0, 200, 8, 64, 'tirisfal', 'from_plaguelands')
+    m.area(0, 0, 1536, 1024, 'The Plaguelands')      # the map page's title; the halves name where the hero is
+    m.area(0, 0, 768, 1024, 'Western Plaguelands')
+    m.area(768, 0, 768, 1024, 'Eastern Plaguelands')
+    m.music = 'PLAGUELANDS'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Blackrock Spire, Scholomance and Stratholme
+# ---------------------------------------------------------------------------------------------
+
+# Blackrock Spire: the orcs' halls above the Depths, black stone stained red, Horde banners and lava.
+SPIRE = [
+    ('outline', (18, 12, 10)), ('top_d', (36, 24, 22)), ('top_m', (54, 38, 34)),
+    ('wall_d', (76, 50, 44)), ('wall_m', (104, 70, 60)), ('wall_l', (136, 96, 80)),
+    ('floor_d', (72, 58, 54)), ('floor_m', (96, 78, 72)), ('floor_l', (122, 100, 92)),
+    ('iron_d', (44, 40, 44)), ('iron_l', (156, 148, 148)), ('straw', (236, 120, 32)),
+    ('wood', (104, 64, 40)), ('flame', (248, 208, 96)), ('red', (168, 28, 24)),
+]
+
+SPIRE_OVERHEAD = SPIRE[:6]
+
+# Scholomance: the Barovs' cellars turned school of necromancy, cold violet stone, bone and green fire.
+SCHOLO = [
+    ('outline', (14, 12, 20)), ('top_d', (30, 26, 40)), ('top_m', (44, 40, 58)),
+    ('wall_d', (62, 58, 80)), ('wall_m', (88, 84, 108)), ('wall_l', (118, 114, 140)),
+    ('floor_d', (58, 62, 66)), ('floor_m', (80, 84, 88)), ('floor_l', (104, 108, 112)),
+    ('iron_d', (36, 34, 44)), ('iron_l', (150, 150, 170)), ('straw', (196, 200, 176)),
+    ('wood', (84, 58, 44)), ('flame', (152, 240, 136)), ('red', (96, 40, 120)),
+]
+
+SCHOLO_OVERHEAD = SCHOLO[:6]
+
+# Stratholme: the burned city's grey streets, Scarlet red in the west and plague slime in the east.
+STRATH = [
+    ('outline', (16, 16, 20)), ('top_d', (34, 34, 40)), ('top_m', (50, 50, 58)),
+    ('wall_d', (70, 70, 80)), ('wall_m', (100, 98, 108)), ('wall_l', (132, 130, 138)),
+    ('floor_d', (76, 72, 68)), ('floor_m', (100, 96, 90)), ('floor_l', (126, 120, 112)),
+    ('iron_d', (40, 40, 48)), ('iron_l', (152, 152, 164)), ('straw', (204, 196, 170)),
+    ('wood', (96, 64, 40)), ('flame', (248, 200, 96)), ('red', (168, 32, 40)),
+]
+
+STRATH_OVERHEAD = STRATH[:6]
+
+STRATH_SLIME = [
+    ('water_d', (28, 44, 36)), ('water_m', (44, 64, 48)), ('water_l', (84, 112, 80)),
+    ('lip', (116, 112, 104)), ('lip_o', (20, 20, 24)), ('lip_d', (84, 80, 76)),
+    ('slime_d', (64, 104, 32)), ('slime_m', (104, 156, 40)), ('slime_l', (184, 224, 80)),
+]
+
+
+def gen_blackrock_spire():
+    c = Depths('blackrock_spire', 1024, 1024, SPIRE, SPIRE_OVERHEAD)
+    m = c.m
+    c.rect(416, 880, 192, 120)      # the stair up from the mountain
+    c.rect(488, 1000, 48, 24)       # the way out
+    c.rect(488, 800, 48, 80)        # passage north
+    c.rect(360, 576, 304, 224)      # Hordemar City, Omokk's
+    c.rect(312, 664, 48, 48)        # passage west
+    c.rect(48, 576, 264, 224)       # the Skitterweb Tunnels, Mother Smolderweb's
+    c.rect(664, 664, 48, 48)        # passage east
+    c.rect(712, 576, 264, 224)      # Tazz'Alaor, Voone's
+    c.rect(488, 472, 48, 104)       # passage north
+    c.rect(360, 280, 304, 192)      # the Spire Throne, Wyrmthalak's
+    c.rect(312, 360, 48, 48)        # passage west
+    c.rect(48, 280, 264, 192)       # the Hall of Binding, Emberseer's
+    c.rect(664, 360, 48, 48)        # passage east
+    c.rect(712, 280, 264, 192)      # the Beast's lair
+    c.rect(904, 472, 48, 24)        # a hidden vault
+    c.rect(872, 496, 112, 56)
+    c.rect(488, 224, 48, 56)        # passage north
+    c.rect(304, 40, 416, 184)       # Drakkisath's hall
+    c.render()
+    c.exit(488, 1016, 'burning_steppes', 'brs_exit')
+
+    for x in (440, 568):
+        c.torch(x, 884)
+    for x in (472, 536):
+        c.banner(x, 882)
+    # Hordemar City: the ogres' camp in the great hall.
+    for x, y in ((400, 620), (600, 620), (400, 740), (600, 740)):
+        c.pillar(x, y)
+    for x, y in ((450, 700), (540, 700)):
+        c.crate(x, y)
+    c.barrel(480, 600)
+    # The Skitterweb Tunnels.
+    for x, y in ((56, 584), (288, 584), (64, 760), (280, 760), (176, 680)):
+        c.web(x, y)
+    for x, y in ((100, 700), (220, 620)):
+        c.bones(x, y)
+    # Tazz'Alaor: the trolls' huts.
+    for x, y in ((740, 620), (940, 620), (760, 760)):
+        c.totem(x, y)
+    c.straw(880, 740)
+    c.idol(840, 600)
+    # The Spire Throne.
+    c.rug(488, 320, 48, 152)
+    c.throne(568, 288)          # beside the stair up to Drakkisath
+    for x in (392, 616):
+        c.pillar(x, 330)
+    for x in (424, 632):
+        c.banner(x, 284)
+    c.lava(380, 400, 64, 48)
+    c.lava(580, 400, 64, 48)
+    # The Hall of Binding: seven altars ring Emberseer's seal; lit, they break it.
+    for chest_id, (x, y) in zip(range(73, 80), ((76, 316), (148, 312), (220, 312), (284, 316), (284, 452),
+                                                (180, 456), (76, 452))):
+        m.brazier(chest_id, x, y)
+    c.field(180, 384, 44)
+    # The Beast's lair: bones and lava.
+    c.lava(900, 300, 64, 48)
+    for x, y in ((740, 320), (800, 440), (940, 420)):
+        c.bones(x, y)
+    c.secret(904, 472, 48, 0)
+    m.chest(80, 928, 540, 58)
+    c.crate(888, 504)
+    # Drakkisath's hall: the general on a dais between lakes of fire.
+    c.rug(488, 120, 48, 104)
+    c.throne(488, 52)
+    for x in (360, 648):
+        c.pillar(x, 80)
+    c.lava(336, 140, 80, 56)
+    c.lava(608, 140, 80, 56)
+    for x in (440, 568):
+        c.banner(x, 44)
+
+    m.spawn('SPIRESTONE_BUTCHER', 456, 910)
+    m.spawn('SPIRESTONE_BUTCHER', 568, 910)
+    for x, y in ((440, 640), (580, 660), (420, 760), (600, 770)):
+        m.spawn('SPIRESTONE_BUTCHER' if y < 700 else 'SPIRESTONE_MYSTIC', x, y)
+    m.spawn('HIGHLORD_OMOKK', 512, 660)
+    for x, y in ((90, 620), (250, 640), (110, 740), (260, 760)):
+        m.spawn('SPIRE_SPIDER', x, y)
+    m.spawn('MOTHER_SMOLDERWEB', 180, 720)
+    for x, y in ((750, 680), (950, 680), (780, 780), (930, 780)):
+        m.spawn('SMOLDERTHORN_AXE_THROWER' if x < 850 else 'SMOLDERTHORN_MYSTIC', x, y)
+    m.spawn('WAR_MASTER_VOONE', 844, 700)
+    for x, y in ((420, 330), (600, 330), (440, 440), (590, 440)):
+        m.spawn('BLACKHAND_VETERAN' if y < 400 else 'BLACKHAND_DREADWEAVER', x, y)
+    m.spawn('OVERLORD_WYRMTHALAK', 512, 360)
+    for x, y in ((760, 340), (760, 430)):
+        m.spawn('BLACKHAND_VETERAN', x, y)
+    m.spawn('THE_BEAST', 860, 380)
+    for x, y in ((360, 100), (660, 100), (400, 200), (620, 200)):
+        m.spawn('RAGE_TALON_DRAGONSPAWN' if y < 150 else 'CHROMATIC_WHELP', x, y)
+    m.spawn('GENERAL_DRAKKISATH', 512, 120)
+    m.point('wave_a', 72, 360)
+    m.point('wave_b', 288, 360)
+    m.point('wave_c', 72, 430)
+    m.point('wave_d', 288, 430)
+    m.point('event_boss', 180, 384)
+    m.point('binding', 180, 410)
+    m.area(136, 344, 88, 80, '', 'PRISON')
+    m.area(0, 0, 1024, 1024, 'Blackrock Spire')
+    m.area(360, 576, 304, 224, 'Hordemar City')
+    m.area(48, 576, 264, 224, 'Skitterweb Tunnels')
+    m.area(712, 576, 264, 224, "Tazz'Alaor")
+    m.area(360, 280, 304, 192, 'The Spire Throne')
+    m.area(48, 280, 264, 192, 'Hall of Binding')
+    m.area(712, 280, 264, 192, "The Beast's Lair")
+    m.area(304, 40, 416, 184, "Drakkisath's Hall")
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
+def gen_scholomance():
+    c = Ruins('scholomance', 1024, 1024, SCHOLO, SCHOLO_OVERHEAD)
+    m = c.m
+    c.rect(416, 880, 192, 120)      # the cellar stairs down from Caer Darrow
+    c.rect(488, 1000, 48, 24)       # the way out
+    c.rect(488, 800, 48, 80)        # passage north
+    c.rect(360, 576, 304, 224)      # the Hall of Secrets, Jandice's
+    c.rect(312, 664, 48, 48)        # passage west
+    c.rect(48, 576, 264, 224)       # the Ossuary, Rattlegore's
+    c.rect(664, 664, 48, 48)        # passage east
+    c.rect(712, 576, 264, 224)      # the Viewing Room, Ras's
+    c.rect(488, 472, 48, 104)       # passage north
+    c.rect(360, 280, 304, 192)      # the Great Hall, Malicia's classroom
+    c.rect(312, 360, 48, 48)        # passage west
+    c.rect(48, 280, 264, 192)       # the Barov family vault
+    c.rect(664, 360, 48, 48)        # passage east
+    c.rect(712, 280, 264, 192)      # the laboratory, Krastinov's
+    c.rect(904, 472, 48, 24)        # a hidden cellar
+    c.rect(872, 496, 112, 56)
+    c.rect(488, 224, 48, 56)        # passage north
+    c.rect(304, 40, 416, 184)       # the Headmaster's Study
+    c.render()
+    c.exit(488, 1016, 'plaguelands', 'scholomance_exit')
+
+    for x in (440, 568):
+        c.candles(x, 884)
+    # The Hall of Secrets.
+    for x, y in ((380, 584), (600, 584)):
+        c.bookshelf(x, y, 48)
+    c.rug(488, 600, 48, 200)
+    for x, y in ((400, 680), (608, 680), (400, 760), (608, 760)):
+        c.candles(x, y)
+    # The Ossuary.
+    for x, y in ((80, 620), (160, 640), (240, 620), (100, 740), (220, 760), (160, 700)):
+        c.bones(x, y)
+    for x, y in ((72, 680), (264, 680)):
+        c.slab(x, y)
+    # The Viewing Room.
+    for x, y in ((736, 584), (880, 584)):
+        c.bookshelf(x, y, 64)
+    c.altar(812, 640, 64, 24)
+    for x in (760, 920):
+        c.candles(x, 740)
+    # The Great Hall: Malicia's benches before her lectern, beside the stair to the study.
+    c.desk(560, 300, 48, 24)
+    for y in (360, 400, 440):
+        c.table(392, y, 80, 20)
+        c.table(552, y, 80, 20)
+    for x in (376, 632):
+        c.bookshelf(x, 284, 32)
+    # The Barov family vault.
+    for x, y in ((72, 320), (144, 320), (216, 320), (72, 420), (216, 420)):
+        c.slab(x, y)
+    c.altar(140, 400, 64, 24)
+    # The laboratory.
+    for x, y in ((740, 320), (860, 320)):
+        c.table(x, y, 64, 20)
+    c.altar(900, 420, 48, 24)
+    c.desk(740, 420, 64, 24)
+    c.secret(904, 472, 48, 0)
+    m.chest(81, 928, 540, 59)
+    c.bones(888, 512)
+    # The Headmaster's Study.
+    c.rug(488, 96, 48, 128)
+    c.desk(480, 64, 64, 24)
+    for x in (320, 640):
+        c.bookshelf(x, 44, 64)
+    for x, y in ((340, 120), (660, 120), (340, 190), (660, 190)):
+        c.candles(x, y)
+
+    m.spawn('SCHOLOMANCE_ACOLYTE', 456, 910)
+    m.spawn('SCHOLOMANCE_ACOLYTE', 568, 910)
+    for x, y in ((420, 640), (600, 640), (430, 760), (590, 760)):
+        m.spawn('SCHOLOMANCE_ACOLYTE' if y < 700 else 'SCHOLOMANCE_NECROLYTE', x, y)
+    m.spawn('JANDICE_BAROV', 512, 680)
+    for x, y in ((90, 620), (260, 660), (100, 760), (250, 770)):
+        m.spawn('RISEN_GUARD' if x < 200 else 'RISEN_ABERRATION', x, y)
+    m.spawn('RATTLEGORE', 170, 700)
+    for x, y in ((760, 660), (940, 660), (780, 770), (920, 770)):
+        m.spawn('RISEN_GUARD' if y < 700 else 'SCHOLOMANCE_NECROLYTE', x, y)
+    m.spawn('RAS_FROSTWHISPER', 844, 700)
+    for x, y in ((420, 340), (610, 340), (430, 460), (600, 460)):
+        m.spawn('SCHOLOMANCE_ACOLYTE' if y < 400 else 'SCHOLOMANCE_NECROLYTE', x, y)
+    m.spawn('INSTRUCTOR_MALICIA', 512, 340)
+    for x, y in ((90, 360), (270, 360)):
+        m.spawn('RISEN_GUARD', x, y)
+    m.spawn('LORD_ALEXEI_BAROV', 150, 380)
+    m.spawn('LADY_ILLUCIA_BAROV', 210, 380)
+    for x, y in ((760, 360), (950, 400)):
+        m.spawn('RISEN_CONSTRUCT', x, y)
+    m.spawn('DOCTOR_THEOLEN_KRASTINOV', 820, 380)
+    m.spawn('LOREKEEPER_POLKELT', 900, 340)
+    for x, y in ((380, 100), (640, 100)):
+        m.spawn('SCHOLOMANCE_NECROLYTE', x, y)
+    m.spawn('DARKMASTER_GANDLING', 512, 130)
+    m.point('gandling_a', 400, 96)
+    m.point('gandling_b', 624, 96)
+    m.point('gandling_c', 400, 196)
+    m.point('gandling_d', 624, 196)
+    m.area(0, 0, 1024, 1024, 'Scholomance')
+    m.area(360, 576, 304, 224, 'Hall of Secrets')
+    m.area(48, 576, 264, 224, 'The Ossuary')
+    m.area(712, 576, 264, 224, 'The Viewing Room')
+    m.area(360, 280, 304, 192, 'The Great Hall')
+    m.area(48, 280, 264, 192, 'Barov Family Vault')
+    m.area(712, 280, 264, 192, 'The Laboratory')
+    m.area(304, 40, 416, 184, "Headmaster's Study")
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
+def gen_stratholme():
+    c = Ruins('stratholme', 1024, 1024, STRATH, STRATH_OVERHEAD, extra=(STRATH_SLIME,))
+    m = c.m
+    c.rect(416, 880, 192, 120)      # the city gate
+    c.rect(488, 1000, 48, 24)       # the way out
+    c.rect(488, 800, 48, 80)        # passage north
+    c.rect(352, 576, 320, 224)      # King's Square, Timmy's
+    c.rect(304, 664, 48, 48)        # passage west, to the Scarlet half
+    c.rect(48, 576, 256, 224)       # Market Row
+    c.rect(112, 800, 48, 24)        # a hidden cellar
+    c.rect(80, 824, 112, 64)
+    c.rect(152, 520, 48, 56)        # passage north
+    c.rect(48, 280, 256, 240)       # Crusaders' Square, Malor's
+    c.rect(152, 224, 48, 56)        # passage north
+    c.rect(48, 40, 288, 184)        # the Scarlet Bastion, Balnazzar's
+    c.rect(672, 664, 48, 48)        # passage east, to the Scourge half
+    c.rect(720, 576, 256, 224)      # Festival Lane
+    c.rect(824, 520, 48, 56)        # passage north
+    c.rect(720, 280, 256, 240)      # Elders' Square, Maleki's
+    c.rect(824, 224, 48, 56)        # passage north
+    c.rect(688, 40, 288, 184)       # Slaughter Square, Ramstein's
+    c.rect(640, 104, 48, 56)        # passage west
+    c.rect(384, 40, 256, 200)       # the Slaughterhouse, the Baron's
+    c.render()
+    c.exit(488, 1016, 'plaguelands', 'stratholme_exit')
+
+    for x in (440, 568):
+        c.torch(x, 884)
+    # King's Square: the fountain and the burned stalls.
+    c.pool(472, 648, 80, 56)
+    for x, y in ((380, 600), (620, 600), (380, 760), (620, 760)):
+        c.crate(x, y)
+    c.barrel(400, 700)
+    # Market Row and the Scarlet halls.
+    for x, y in ((72, 600), (240, 600), (80, 760)):
+        c.crate(x, y)
+    c.banner(96, 580)
+    c.banner(232, 580)
+    c.secret(112, 800, 48, 0)
+    m.chest(82, 136, 876, 60)
+    c.barrel(96, 840)
+    c.rug(152, 300, 48, 220)
+    c.altar(216, 304, 64, 24)   # beside the way up to the Bastion
+    for x in (72, 264):
+        c.banner(x, 284)
+    for x, y in ((80, 400), (240, 400)):
+        c.candles(x, y)
+    c.rug(168, 80, 48, 144)
+    c.altar(160, 56, 64, 24)
+    for x in (80, 296):
+        c.banner(x, 44)
+    # The Scourge half: plague slime, bones and the Baron's slaughterhouse.
+    c.poison(760, 640, 64, 48)
+    c.poison(880, 720, 64, 48)
+    for x, y in ((740, 760), (940, 600)):
+        c.bones(x, y)
+    c.poison(752, 360, 56, 48)
+    c.poison(896, 440, 56, 40)
+    for x, y in ((760, 300), (940, 300)):
+        c.slab(x, y)
+    for x, y in ((720, 120), (920, 120)):
+        c.bones(x, y)
+    c.poison(800, 160, 80, 40)
+    c.rug(488, 96, 48, 144)
+    c.altar(480, 52, 64, 24)
+    for x, y in ((400, 120), (608, 120), (400, 200), (608, 200)):
+        c.slab(x, y)
+
+    m.spawn('CRIMSON_DEFENDER', 456, 910)
+    m.spawn('CRIMSON_DEFENDER', 568, 910)
+    for x, y in ((420, 620), (600, 640), (430, 760), (600, 770)):
+        m.spawn('SPECTRAL_CITIZEN' if y < 700 else 'GHOUL_RAVENER', x, y)
+    m.spawn('TIMMY_THE_CRUEL', 512, 740)
+    for x, y in ((90, 640), (250, 660), (130, 760), (240, 760)):
+        m.spawn('CRIMSON_DEFENDER' if x < 200 else 'CRIMSON_SORCERER', x, y)
+    for x, y in ((80, 340), (260, 340), (100, 460), (240, 470)):
+        m.spawn('CRIMSON_PRIEST' if y > 400 else 'CRIMSON_DEFENDER', x, y)
+    m.spawn('MALOR_THE_ZEALOUS', 176, 400)
+    for x, y in ((80, 120), (300, 120)):
+        m.spawn('CRIMSON_SORCERER', x, y)
+    m.spawn('BALNAZZAR', 192, 120)
+    for x, y in ((760, 620), (940, 640), (780, 770), (930, 780)):
+        m.spawn('GHOUL_RAVENER' if y < 700 else 'SKELETAL_GUARDIAN', x, y)
+    for x, y in ((760, 320), (940, 340), (780, 460), (940, 480)):
+        m.spawn('THUZADIN_SHADOWCASTER' if x < 850 else 'SKELETAL_GUARDIAN', x, y)
+    m.spawn('MALEKI_THE_PALLID', 848, 400)
+    for x, y in ((720, 80), (960, 200)):
+        m.spawn('VENOM_BELCHER', x, y)
+    m.spawn('RAMSTEIN_THE_GORGER', 840, 120)
+    for x, y in ((420, 180), (600, 180)):
+        m.spawn('THUZADIN_SHADOWCASTER', x, y)
+    m.spawn('BARON_RIVENDARE', 512, 130)
+    m.area(720, 576, 256, 224, '', 'GAUNTLET')
+    m.area(0, 0, 1024, 1024, 'Stratholme')
+    m.area(352, 576, 320, 224, "King's Square")
+    m.area(48, 576, 256, 224, 'Market Row')
+    m.area(48, 280, 256, 240, "Crusaders' Square")
+    m.area(48, 40, 288, 184, 'The Scarlet Bastion')
+    m.area(720, 576, 256, 224, 'Festival Lane')
+    m.area(720, 280, 256, 240, "Elders' Square")
+    m.area(688, 40, 288, 184, 'Slaughter Square')
+    m.area(384, 40, 256, 200, 'The Slaughterhouse')
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
 GENERATORS = {
     'abbey': gen_abbey,
     'inn': gen_inn,
@@ -6478,6 +7048,10 @@ GENERATORS = {
     'uldaman': gen_uldaman,
     'sunken_temple': gen_sunken_temple,
     'blackrock_depths': gen_blackrock_depths,
+    'plaguelands': gen_plaguelands,
+    'blackrock_spire': gen_blackrock_spire,
+    'scholomance': gen_scholomance,
+    'stratholme': gen_stratholme,
 }
 
 
@@ -6492,7 +7066,8 @@ def main():
               'wetlands': 'from_dun_morogh', 'darkshore': 'from_menethil', 'hillsbrad': 'from_wetlands',
               'tirisfal': 'flight', 'stranglethorn': 'from_duskwood', 'tanaris': 'from_booty_bay',
               'thousand_needles': 'from_tanaris', 'feralas': 'from_needles', 'desolace': 'from_feralas',
-              'burning_steppes': 'from_redridge', 'swamp_of_sorrows': 'flight'}
+              'burning_steppes': 'from_redridge', 'swamp_of_sorrows': 'flight',
+              'plaguelands': 'from_tirisfal'}
     for name, m in maps.items():
         m.check_reachable(starts.get(name, 'entry'))
     write_minimaps(maps)
@@ -6502,10 +7077,10 @@ def main():
 # Interiors show the map their door leads to.
 MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'duskwood', 'silverpine', 'ironforge', 'dun_morogh',
             'wetlands', 'darkshore', 'hillsbrad', 'tirisfal', 'stranglethorn', 'tanaris', 'thousand_needles',
-            'feralas', 'desolace', 'burning_steppes', 'swamp_of_sorrows', 'echo_ridge', 'fargodeep', 'deadmines',
+            'feralas', 'desolace', 'burning_steppes', 'swamp_of_sorrows', 'plaguelands', 'echo_ridge', 'fargodeep', 'deadmines',
             'stockade', 'shadowfang', 'blackfathom_deeps', 'gnomeregan', 'sm_graveyard', 'sm_library', 'sm_armory',
             'sm_cathedral', 'razorfen_kraul', 'razorfen_downs', 'zul_farrak', 'maraudon', 'dire_maul', 'uldaman',
-            'sunken_temple', 'blackrock_depths']
+            'sunken_temple', 'blackrock_depths', 'blackrock_spire', 'scholomance', 'stratholme']
 
 
 def write_minimaps(maps):

@@ -44,6 +44,12 @@ namespace
         return world::map().id == map_id::SUNKEN_TEMPLE;
     }
 
+    // Blackrock Spire's braziers are the seven altars that hold Pyroguard Emberseer in his bonds.
+    [[nodiscard]] bool altars()
+    {
+        return world::map().id == map_id::BLACKROCK_SPIRE;
+    }
+
     [[nodiscard]] item_id potion_for(int level)
     {
         return level <= 6 ? item_id::MINOR_HEALING_POTION :
@@ -185,7 +191,7 @@ bool chests::open(int index, hud& hud_ref)
         }
 
         bn::string<32> text = pylons() ? "The pylon goes dark (" : statues() ? "The statue glows (" :
-                                                                           "The brazier flares (";
+                              altars() ? "The altar blazes (" : "The brazier flares (";
         text += bn::to_string<4>(lit);
         text += "/";
         text += bn::to_string<4>(total);
@@ -195,7 +201,7 @@ bool chests::open(int index, hud& hud_ref)
         if(lit == total)
         {
             hud_ref.message(pylons() ? "Immol'thar's field flickers" : statues() ? "The altar hums with power" :
-                                                                   "A sealed door grinds open", ui::color::GREEN);
+                            altars() ? "Emberseer's bonds weaken" : "A sealed door grinds open", ui::color::GREEN);
         }
 
         item.sparkle.reset();

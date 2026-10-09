@@ -227,6 +227,16 @@ TERRAIN_SWAMP = [
     ('flower', (168, 120, 176)),
 ]
 
+# The Plaguelands: grey-yellow blighted grass, ashen mud roads and green-black water.
+TERRAIN_PLAGUE = [
+    ('shadow', (36, 40, 36)), ('grass_d', (76, 80, 56)), ('grass_m', (100, 104, 68)),
+    ('grass_l', (128, 128, 84)), ('grass_h', (160, 156, 108)),
+    ('dirt_d', (72, 64, 60)), ('dirt_m', (100, 92, 84)), ('dirt_l', (132, 122, 110)),
+    ('water_d', (28, 44, 36)), ('water_m', (44, 64, 48)), ('water_l', (84, 112, 80)),
+    ('foam', (168, 180, 152)), ('trunk_d', (48, 40, 36)), ('trunk_m', (80, 68, 60)),
+    ('flower', (136, 168, 72)),
+]
+
 BUILDINGS = [
     ('outline', (32, 32, 48)), ('stone_d', (88, 88, 104)), ('stone_m', (128, 128, 144)),
     ('stone_l', (168, 168, 176)), ('stone_h', (208, 208, 200)),
@@ -518,7 +528,7 @@ class Map:
             reach = grown
 
     def check_reachable(self, start, step=4):
-        """Every chest and NPC must be in range of a spot the player can walk to from start, or from
+        """Every chest, NPC and enemy must be in range of a spot the player can walk to from start, or from
         where a warp to this same map (the tram) puts them."""
         reach = self.reachable_from(*self.points[start], step=step)
         for *_, target, point, _, _ in self.warps:
@@ -527,6 +537,8 @@ class Map:
         ys, xs = np.nonzero(reach)
         targets = [(f'chest {c}', x, y - 4, 20) for c, x, y, _ in self.chests]
         targets += [(npc, x, y, 28) for npc, x, y in self.npcs]
+        # An enemy only has to be near: it walks out to the hero (a prop in a doorway walls off rooms).
+        targets += [(enemy, x, y, 40) for enemy, x, y in self.spawns]
         for name, x, y, distance in targets:
             if not (np.hypot(xs * step - x, ys * step - y) < distance).any():
                 raise SystemExit(f'{self.name}: {name} at ({x}, {y}) cannot be reached')
@@ -980,6 +992,14 @@ ROCK_SWAMP = [
     ('r_grass_l', (80, 108, 64)), ('r_grass_h', (112, 136, 88)),
     ('rock_0', (20, 24, 20)), ('rock_1', (48, 52, 44)), ('rock_2', (72, 76, 64)),
     ('rock_3', (100, 104, 88)), ('rock_4', (132, 136, 116)), ('rock_5', (168, 172, 152)),
+]
+
+# The Plaguelands' grey crags, with twins of TERRAIN_PLAGUE's grass.
+ROCK_PLAGUE = [
+    ('r_shadow', (36, 44, 40)), ('r_grass_d', (76, 80, 64)), ('r_grass_m', (100, 104, 76)),
+    ('r_grass_l', (128, 128, 92)), ('r_grass_h', (160, 156, 116)),
+    ('rock_0', (36, 36, 40)), ('rock_1', (64, 64, 68)), ('rock_2', (92, 92, 96)),
+    ('rock_3', (120, 120, 120)), ('rock_4', (152, 150, 146)), ('rock_5', (188, 184, 176)),
 ]
 
 # Terrain colors as the rock bank draws them.

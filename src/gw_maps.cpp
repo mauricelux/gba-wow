@@ -6,6 +6,8 @@
 #include "bn_regular_bg_items_map_blackfathom_deeps_overhead.h"
 #include "bn_regular_bg_items_map_blackrock_depths_ground.h"
 #include "bn_regular_bg_items_map_blackrock_depths_overhead.h"
+#include "bn_regular_bg_items_map_blackrock_spire_ground.h"
+#include "bn_regular_bg_items_map_blackrock_spire_overhead.h"
 #include "bn_regular_bg_items_map_burning_steppes_ground.h"
 #include "bn_regular_bg_items_map_burning_steppes_overhead.h"
 #include "bn_regular_bg_items_map_darkshore_ground.h"
@@ -40,12 +42,16 @@
 #include "bn_regular_bg_items_map_ironforge_overhead.h"
 #include "bn_regular_bg_items_map_maraudon_ground.h"
 #include "bn_regular_bg_items_map_maraudon_overhead.h"
+#include "bn_regular_bg_items_map_plaguelands_ground.h"
+#include "bn_regular_bg_items_map_plaguelands_overhead.h"
 #include "bn_regular_bg_items_map_razorfen_downs_ground.h"
 #include "bn_regular_bg_items_map_razorfen_downs_overhead.h"
 #include "bn_regular_bg_items_map_razorfen_kraul_ground.h"
 #include "bn_regular_bg_items_map_razorfen_kraul_overhead.h"
 #include "bn_regular_bg_items_map_redridge_ground.h"
 #include "bn_regular_bg_items_map_redridge_overhead.h"
+#include "bn_regular_bg_items_map_scholomance_ground.h"
+#include "bn_regular_bg_items_map_scholomance_overhead.h"
 #include "bn_regular_bg_items_map_shadowfang_ground.h"
 #include "bn_regular_bg_items_map_shadowfang_overhead.h"
 #include "bn_regular_bg_items_map_silverpine_ground.h"
@@ -64,6 +70,8 @@
 #include "bn_regular_bg_items_map_stormwind_overhead.h"
 #include "bn_regular_bg_items_map_stranglethorn_ground.h"
 #include "bn_regular_bg_items_map_stranglethorn_overhead.h"
+#include "bn_regular_bg_items_map_stratholme_ground.h"
+#include "bn_regular_bg_items_map_stratholme_overhead.h"
 #include "bn_regular_bg_items_map_sunken_temple_ground.h"
 #include "bn_regular_bg_items_map_sunken_temple_overhead.h"
 #include "bn_regular_bg_items_map_swamp_of_sorrows_ground.h"
@@ -86,6 +94,7 @@
 #include "gw_map_abbey.h"
 #include "gw_map_blackfathom_deeps.h"
 #include "gw_map_blackrock_depths.h"
+#include "gw_map_blackrock_spire.h"
 #include "gw_map_burning_steppes.h"
 #include "gw_map_darkshore.h"
 #include "gw_map_deadmines.h"
@@ -103,9 +112,11 @@
 #include "gw_map_inn.h"
 #include "gw_map_ironforge.h"
 #include "gw_map_maraudon.h"
+#include "gw_map_plaguelands.h"
 #include "gw_map_razorfen_downs.h"
 #include "gw_map_razorfen_kraul.h"
 #include "gw_map_redridge.h"
+#include "gw_map_scholomance.h"
 #include "gw_map_shadowfang.h"
 #include "gw_map_silverpine.h"
 #include "gw_map_sm_armory.h"
@@ -115,6 +126,7 @@
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_stranglethorn.h"
+#include "gw_map_stratholme.h"
 #include "gw_map_sunken_temple.h"
 #include "gw_map_swamp_of_sorrows.h"
 #include "gw_map_tanaris.h"
@@ -188,6 +200,13 @@ namespace
     constexpr point_def uldaman_graveyards[] = { map_data::uldaman::respawn };
     constexpr point_def sunken_temple_graveyards[] = { map_data::sunken_temple::respawn };
     constexpr point_def blackrock_depths_graveyards[] = { map_data::blackrock_depths::respawn };
+    constexpr point_def plaguelands_graveyards[] = { map_data::plaguelands::chillwind_respawn,
+                                                     map_data::plaguelands::lights_hope_respawn,
+                                                     map_data::plaguelands::scholomance_exit,
+                                                     map_data::plaguelands::stratholme_exit };
+    constexpr point_def blackrock_spire_graveyards[] = { map_data::blackrock_spire::respawn };
+    constexpr point_def scholomance_graveyards[] = { map_data::scholomance::respawn };
+    constexpr point_def stratholme_graveyards[] = { map_data::stratholme::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
@@ -254,6 +273,10 @@ namespace
         GW_MAP_INFO(ULDAMAN, uldaman, true, true),
         GW_MAP_INFO(SUNKEN_TEMPLE, sunken_temple, true, true),
         GW_MAP_INFO(BLACKROCK_DEPTHS, blackrock_depths, true, true),
+        GW_MAP_INFO(PLAGUELANDS, plaguelands, false, false),
+        GW_MAP_INFO(BLACKROCK_SPIRE, blackrock_spire, true, true),
+        GW_MAP_INFO(SCHOLOMANCE, scholomance, true, true),
+        GW_MAP_INFO(STRATHOLME, stratholme, true, true),
     };
 
     [[nodiscard]] int count_chests()
@@ -325,7 +348,7 @@ namespace
     [[nodiscard]] bool is_event_area(area_id id)
     {
         return id == area_id::GONG || id == area_id::CAGE || id == area_id::PRISON || id == area_id::ALTAR ||
-               id == area_id::ARENA;
+               id == area_id::ARENA || id == area_id::GAUNTLET;
     }
 }
 

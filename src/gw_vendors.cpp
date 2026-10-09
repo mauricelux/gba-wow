@@ -162,6 +162,17 @@ namespace
     constexpr item_id grim_guzzler[] = {
         i::DARK_IRON_ALE, i::HOMEMADE_CHERRY_PIE, i::MOUNTAIN_SPRING_WATER, i::MAJOR_HEALING_POTION
     };
+
+    constexpr item_id lights_hope_goods[] = {
+        i::HOMEMADE_CHERRY_PIE, i::ARGENT_RATION, i::MOUNTAIN_SPRING_WATER, i::DAWNWELL_WATER,
+        i::MAJOR_HEALING_POTION, i::TELEPORTATION_RUNE
+    };
+
+    // Duke Zverenhoff arms the Argent Dawn's friends.
+    constexpr item_id argent_dawn[] = {
+        i::ARGENT_AVENGER, i::ARGENT_CRUSADER, i::ARGENT_GREATBOW, i::ARGENT_DEFENDER, i::ARGENT_WARHELM,
+        i::DAWNWEAVE_COWL, i::ARGENT_SCOUTS_CAP
+    };
 }
 
 bn::span<const item_id> vendor_stock(int vendor)
@@ -240,6 +251,12 @@ bn::span<const item_id> vendor_stock(int vendor)
 
     case 24:
         return grim_guzzler;
+
+    case 25:
+        return lights_hope_goods;
+
+    case 26:
+        return argent_dawn;
 
     default:
         return general_goods;

@@ -26,6 +26,8 @@ enum class flight_id : uint8_t
     NIJELS_POINT,
     MORGANS_VIGIL,
     SWAMP_OF_SORROWS,
+    CHILLWIND_CAMP,
+    LIGHTS_HOPE,
     COUNT
 };
 

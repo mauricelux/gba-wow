@@ -105,6 +105,10 @@ enum class map_id : uint16_t
     ULDAMAN,
     SUNKEN_TEMPLE,
     BLACKROCK_DEPTHS,
+    PLAGUELANDS,
+    BLACKROCK_SPIRE,
+    SCHOLOMANCE,
+    STRATHOLME,
     COUNT
 };
 
@@ -126,7 +130,8 @@ enum class music_id : uint8_t
     STRANGLETHORN,
     TANARIS,
     FERALAS,
-    STEPPES
+    STEPPES,
+    PLAGUELANDS
 };
 
 enum class area_id : uint8_t
@@ -146,7 +151,9 @@ enum class area_id : uint8_t
     PRISON,             // the same for a prison whose force field falls once the map's braziers are lit
     RUINS_OF_THAURISSAN,
     ALTAR,              // the same for an altar: Archaedas's, or Atal'alarion's once the six statues burn
-    ARENA               // the same for the Ring of Law
+    ARENA,              // the same for the Ring of Law
+    ANDORHAL,
+    GAUNTLET            // Stratholme's Scourge half: walking in starts the Baron's clock; unnamed
 };
 
 enum class npc_id : uint16_t
@@ -345,6 +352,17 @@ enum class npc_id : uint16_t
     WINDSOR,
     PLUGGER,
     GUZZLER_PATRON,
+    VALORFIST,
+    ARBINGTON,
+    WELDON_BAROV,
+    BIBILFAZ,
+    EVA_SARKHOFF,
+    TYROSUS,
+    ELIGOR,
+    ZVERENHOFF,
+    LH_INNKEEPER,
+    KHAELYN,
+    ANTHION,
     COUNT
 };
 
@@ -729,6 +747,74 @@ enum class enemy_id : uint16_t
     MAGMUS,
     PRINCESS_MOIRA_BRONZEBEARD,
     EMPEROR_DAGRAN_THAURISSAN,
+    SKELETAL_FLAYER,
+    SLAVERING_GHOUL,
+    SCOURGE_WARDER,
+    SCOURGE_NECROMANCER,
+    ARAJ_THE_SUMMONER,
+    DISEASED_WOLF,
+    PLAGUED_HATCHLING,
+    SCARLET_KNIGHT,
+    SCARLET_SPELLBINDER,
+    GRAND_INQUISITOR_ISILLIEN,
+    PLAGUEHOUND,
+    GIBBERING_GHOUL,
+    CRYPT_HORROR,
+    CURSED_MAGE,
+    DEATH_CULTIST,
+    HED_MUSH_THE_ROTTING,
+    SCARLET_WARDER,
+    SCARLET_CURATE,
+    CRUSADER_LORD_VALDELMAR,
+    SPIRESTONE_BUTCHER,
+    SPIRESTONE_MYSTIC,
+    SPIRE_SPIDER,
+    SMOLDERTHORN_AXE_THROWER,
+    SMOLDERTHORN_MYSTIC,
+    BLACKHAND_VETERAN,
+    BLACKHAND_DREADWEAVER,
+    RAGE_TALON_DRAGONSPAWN,
+    CHROMATIC_WHELP,
+    BLACKHAND_INCARCERATOR,
+    SPIRE_SPIDERLING,
+    HIGHLORD_OMOKK,
+    WAR_MASTER_VOONE,
+    MOTHER_SMOLDERWEB,
+    OVERLORD_WYRMTHALAK,
+    PYROGUARD_EMBERSEER,
+    THE_BEAST,
+    GENERAL_DRAKKISATH,
+    SCHOLOMANCE_ACOLYTE,
+    SCHOLOMANCE_NECROLYTE,
+    RISEN_GUARD,
+    RISEN_ABERRATION,
+    RISEN_CONSTRUCT,
+    RISEN_STUDENT,
+    ILLUSION_OF_JANDICE,
+    JANDICE_BAROV,
+    RATTLEGORE,
+    RAS_FROSTWHISPER,
+    INSTRUCTOR_MALICIA,
+    DOCTOR_THEOLEN_KRASTINOV,
+    LOREKEEPER_POLKELT,
+    LORD_ALEXEI_BAROV,
+    LADY_ILLUCIA_BAROV,
+    DARKMASTER_GANDLING,
+    CRIMSON_DEFENDER,
+    CRIMSON_SORCERER,
+    CRIMSON_PRIEST,
+    SPECTRAL_CITIZEN,
+    GHOUL_RAVENER,
+    SKELETAL_GUARDIAN,
+    THUZADIN_SHADOWCASTER,
+    VENOM_BELCHER,
+    BONE_MINION,
+    TIMMY_THE_CRUEL,
+    MALOR_THE_ZEALOUS,
+    BALNAZZAR,
+    MALEKI_THE_PALLID,
+    RAMSTEIN_THE_GORGER,
+    BARON_RIVENDARE,
     COUNT
 };
 

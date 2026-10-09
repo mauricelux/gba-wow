@@ -139,3 +139,19 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
 - M24 added the enemy families `DRAGONKIN` and `TITAN`, the `dragon` creature drawer (wings on the
   back, its own dead pose) and the `dwarf_staff` sheet. Quest kill objectives take an optional second
   enemy (`kill(..., enemy2)`), like `collect`.
+- The Plaguelands are one 1536x1024 map (`PLAGUELANDS`) for both halves: a whole-map area named
+  "The Plaguelands" titles the map page, and the two half areas name where the hero is. Tirisfal's
+  east edge warps there (`from_plaguelands`); Blackrock Spire's gate is beside Blackrock Depths' in
+  the Burning Steppes (`brs_exit`).
+- Blackrock Spire's braziers (chests 73 to 79) are the seven altars sealing Emberseer's `PRISON`
+  event (`altars()` in `gw_chests.cpp` words the messages).
+- `objective_type::RESCUE` (`rescue(enemy, name)`) is credited by `quests_on_rescue`, called from
+  `combat::_boss_killed`. Stratholme's `GAUNTLET` area is an event area (not named by `area_at`):
+  stepping into it starts the Baron's clock (`combat::_update_baron_clock`, six minutes, once per
+  map load); Baron Rivendare dying while it runs saves Ysida.
+- Darkmaster Gandling's Shadow Portal (`combat::_gandling_portal`) moves the hero to the
+  `gandling_a`..`d` point of his study farthest from them and raises two Risen Students.
+- `check_reachable` checks enemy spawns as well as chests and NPCs (within 40 pixels), since a prop
+  in a doorway can wall off a boss room: in M25 it caught a lectern and two thrones on the new
+  dungeons' stairs, an idol closing the Sunken Temple's west halls and candles in an Echo Ridge
+  tunnel.
