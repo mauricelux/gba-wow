@@ -287,6 +287,9 @@ private:
     uint8_t _events_done = 0;                // a bit per event beaten since the map was loaded
     int _baron_frames = 0;                   // Stratholme: frames left to save Ysida, 0 when not running
     bool _baron_over = false;                // the clock ran out or Rivendare died since the map was loaded
+    int _air_frames = 0;                     // Onyxia: frames left before she lands
+    int _whelp_frames = 0;                   // Onyxia: frames until her next whelps
+    bool _lane_vertical = false;             // Onyxia: her next Deep Breath runs north to south
 
     void _read_input();
     void _cycle_target();
@@ -320,6 +323,8 @@ private:
     void _event_boss_killed(const enemy& boss);
     void _update_baron_clock();
     void _gandling_portal();
+    bool _update_onyxia(int index, int health_percent);
+    void _update_deep_breath(enemy& boss);
     [[nodiscard]] int _find_enemy(enemy_id id) const;
     void _gain_rage(int damage, bool dealt);
     void _spend(int cost);

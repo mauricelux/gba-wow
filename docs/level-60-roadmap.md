@@ -189,7 +189,7 @@ telegraph their big attacks (red circles, cast bars) so a solo player can dodge 
 | 19 | Scholomance | 57–59 | Western Plaguelands | Jandice Barov, Rattlegore, Ras Frostwhisper, Instructor Malicia, Lord Alexei Barov, Lady Illucia Barov, **Darkmaster Gandling** | Jandice's mirror images; Gandling teleports the hero into a sealed room full of risen students |
 | 20 | Stratholme | 59–60 | Eastern Plaguelands | Timmy the Cruel, Malor the Zealous, Balnazzar, Maleki the Pallid, Ramstein the Gorger, **Baron Rivendare** | Two halves (Scarlet and Scourge); a timer to save the captive before Rivendare's countdown ends |
 
-### The finale
+### The finale ✓
 
 The current game ends when Bazil Thredd dies and Bolvar thanks you. At 60 the ending moves, and it
 reuses Bolvar: in WoW the Alliance's real enemy is **Lady Katrana Prestor**, Bolvar's advisor, who
@@ -561,7 +561,8 @@ keep "sell all junk".
   Onyxia.
 - Each dungeon's last boss drops a piece of a dungeon set, inspired by WoW's Dungeon Set 1: Battlegear
   of Valor (Warrior), Magister's Regalia (Mage), Beaststalker Armor (Hunter). Collecting pieces from
-  different dungeons gives set bonuses.
+  different dungeons gives set bonuses. ✓ (M26: five pieces from Thaurissan, Drakkisath, Gandling,
+  Balnazzar and Rivendare, with bonuses at two, three and five pieces)
 - Item names, stats and rarity follow WoW items of the same level where one fits.
 - More equipment slots become possible but are not required: shoulders, back, rings and a trinket
   would fit the menu. They are listed as optional in milestone M18.
@@ -631,7 +632,7 @@ are one bracket each so they can be played and tuned one at a time.
 | **M23 Feralas** (45–50) ✓ | Feathermoon, Desolace and Nijel's Point, Maraudon, Dire Maul | M22 |
 | **M24 Burning Steppes** (50–55) ✓ | Morgan's Vigil, Uldaman, Sunken Temple, Blackrock Depths | M23 |
 | **M25 Plaguelands** (55–60) ✓ | Light's Hope, Blackrock Spire, Scholomance, Stratholme, all talent tiers and top ranks | M24 |
-| **M26 Onyxia and the ending** | Prestor unmasked in Stormwind Keep, Onyxia's three-phase fight, new ending, dungeon set bonuses, full balance pass 1 to 60 | M25 |
+| **M26 Onyxia and the ending** ✓ | Prestor unmasked in Stormwind Keep, Dustwallow Marsh and Theramore, Onyxia's three-phase fight, new ending, dungeon set bonuses; the quest route now reaches 60 at the door of Onyxia's lair | M25 |
 
 M12 to M16 are engine work and can be played on the current 1–20 content: by the end of M16, the
 existing world already has subclasses, ranks, the new bars, sorted bags, smarter enemies, flight

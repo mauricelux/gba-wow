@@ -7,6 +7,7 @@
 #include "gw_map_darkshore.h"
 #include "gw_map_desolace.h"
 #include "gw_map_duskwood.h"
+#include "gw_map_dustwallow.h"
 #include "gw_map_feralas.h"
 #include "gw_map_hillsbrad.h"
 #include "gw_map_ironforge.h"
@@ -47,6 +48,7 @@ namespace
         { "Chillwind Camp", npc_id::BIBILFAZ, map_id::PLAGUELANDS, map_data::plaguelands::chillwind_flight, 0, 54, 32 },
         { "Light's Hope Chapel", npc_id::KHAELYN, map_id::PLAGUELANDS, map_data::plaguelands::lights_hope_flight,
           0, 90, 26 },
+        { "Theramore Isle", npc_id::BALDRUC, map_id::DUSTWALLOW, map_data::dustwallow::flight, 1, 86, 58 },
     };
 
     static_assert(sizeof(flights) / sizeof(flights[0]) == int(flight_id::COUNT));

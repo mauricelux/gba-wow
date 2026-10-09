@@ -1375,7 +1375,45 @@
     X(LIGHTS_VENGEANCE, weapon("Light's Vengeance", U, TWO_HANDED, 58, 36, 25, 0, 17, 0, 0)) \
     X(STAFF_OF_THE_DEAD, weapon("Staff of the Dead", U, STAFF, 58, 32, 0, 0, 15, 26, 17)) \
     X(DAWNGUARD_LONGBOW, weapon("Dawnguard Longbow", U, BOW, 58, 28, 0, 25, 15, 0, 0)) \
-    X(BULWARK_OF_THE_DAWN, shield("Bulwark of the Dawn", U, 57, 4, 0, 12, 0, 0))
+    X(BULWARK_OF_THE_DAWN, shield("Bulwark of the Dawn", U, 57, 4, 0, 12, 0, 0)) \
+    /* Dungeon sets: each dungeon's last boss drops the class's piece (gw_item_sets) */ \
+    X(GAUNTLETS_OF_VALOR, armor("Gauntlets of Valor", R, MAIL, HANDS, 55, 20, 0, 16, 0, 0)) \
+    X(MAGISTERS_GLOVES, armor("Magister's Gloves", R, CLOTH, HANDS, 55, 0, 0, 15, 22, 17)) \
+    X(BEASTSTALKERS_GLOVES, armor("Beaststalker's Gloves", R, LEATHER, HANDS, 55, 0, 21, 16, 0, 0)) \
+    X(BREASTPLATE_OF_VALOR, armor("Breastplate of Valor", R, MAIL, CHEST, 59, 23, 0, 19, 0, 0)) \
+    X(MAGISTERS_ROBES, armor("Magister's Robes", R, CLOTH, CHEST, 59, 0, 0, 18, 25, 20)) \
+    X(BEASTSTALKERS_TUNIC, armor("Beaststalker's Tunic", R, LEATHER, CHEST, 59, 0, 24, 19, 0, 0)) \
+    X(HELM_OF_VALOR, armor("Helm of Valor", R, MAIL, HEAD, 60, 24, 0, 20, 0, 0)) \
+    X(MAGISTERS_CROWN, armor("Magister's Crown", R, CLOTH, HEAD, 60, 0, 0, 19, 26, 21)) \
+    X(BEASTSTALKERS_CAP, armor("Beaststalker's Cap", R, LEATHER, HEAD, 60, 0, 25, 20, 0, 0)) \
+    X(BOOTS_OF_VALOR, armor("Boots of Valor", R, MAIL, FEET, 60, 24, 0, 20, 0, 0)) \
+    X(MAGISTERS_BOOTS, armor("Magister's Boots", R, CLOTH, FEET, 60, 0, 0, 19, 26, 21)) \
+    X(BEASTSTALKERS_BOOTS, armor("Beaststalker's Boots", R, LEATHER, FEET, 60, 0, 25, 20, 0, 0)) \
+    X(LEGPLATES_OF_VALOR, armor("Legplates of Valor", R, MAIL, LEGS, 60, 24, 0, 20, 0, 0)) \
+    X(MAGISTERS_LEGGINGS, armor("Magister's Leggings", R, CLOTH, LEGS, 60, 0, 0, 19, 26, 21)) \
+    X(BEASTSTALKERS_PANTS, armor("Beaststalker's Pants", R, LEATHER, LEGS, 60, 0, 25, 20, 0, 0)) \
+    /* Dustwallow Marsh quests and drops */ \
+    X(THERAMORE_GAUNTLETS, armor("Theramore Gauntlets", R, MAIL, HANDS, 59, 22, 0, 18, 0, 0)) \
+    X(THERAMORE_GLOVES, armor("Theramore Gloves", R, CLOTH, HANDS, 59, 0, 0, 17, 24, 19)) \
+    X(THERAMORE_GRIPS, armor("Theramore Grips", R, LEATHER, HANDS, 59, 0, 23, 18, 0, 0)) \
+    X(WYRMBOG_LEGGUARDS, armor("Wyrmbog Legguards", R, MAIL, LEGS, 59, 22, 0, 18, 0, 0)) \
+    X(WYRMBOG_LEGGINGS, armor("Wyrmbog Leggings", R, CLOTH, LEGS, 59, 0, 0, 17, 24, 19)) \
+    X(WYRMBOG_PANTS, armor("Wyrmbog Pants", R, LEATHER, LEGS, 59, 0, 23, 18, 0, 0)) \
+    X(WYRMGUARD_HELM, armor("Wyrmguard Helm", R, MAIL, HEAD, 60, 23, 0, 19, 0, 0)) \
+    X(WYRMGUARD_HOOD, armor("Wyrmguard Hood", R, CLOTH, HEAD, 60, 0, 0, 18, 25, 20)) \
+    X(WYRMGUARD_CAP, armor("Wyrmguard Cap", R, LEATHER, HEAD, 60, 0, 24, 19, 0, 0)) \
+    X(EMBERSTRIFE_SABATONS, armor("Emberstrife's Sabatons", R, MAIL, FEET, 59, 22, 0, 18, 0, 0)) \
+    X(EMBERSTRIFE_SLIPPERS, armor("Emberstrife's Slippers", R, CLOTH, FEET, 59, 0, 0, 17, 24, 19)) \
+    X(EMBERSTRIFE_BOOTS, armor("Emberstrife's Boots", R, LEATHER, FEET, 59, 0, 23, 18, 0, 0)) \
+    /* Onyxia, and Bolvar's thanks */ \
+    X(DEATHBRINGER, weapon("Deathbringer", E, TWO_HANDED, 60, 36, 33, 0, 25, 0, 0)) \
+    X(STAFF_OF_THE_BLACK_FLIGHT, weapon("Staff of the Black Flight", E, STAFF, 60, 32, 0, 0, 21, 34, 22)) \
+    X(DRAGONBREATH_HAND_CANNON, weapon("Dragonbreath Hand Cannon", E, GUN, 60, 28, 0, 32, 21, 0, 0)) \
+    X(DRAGONSLAYERS_GREATSWORD, weapon("Dragonslayer's Greatsword", E, TWO_HANDED, 60, 36, 32, 0, 24, 0, 0)) \
+    X(DRAGONSLAYERS_STAFF, weapon("Dragonslayer's Staff", E, STAFF, 60, 32, 0, 0, 21, 33, 21)) \
+    X(DRAGONSLAYERS_LONGBOW, weapon("Dragonslayer's Longbow", E, BOW, 60, 28, 0, 31, 21, 0, 0)) \
+    X(MUDROCK_SHELL, junk("Mudrock Shell", 180, 20)) \
+    X(SCALE_OF_ONYXIA, junk("Scale of Onyxia", 5000, 20))
 
 namespace gw
 {

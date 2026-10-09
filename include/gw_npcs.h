@@ -30,7 +30,7 @@ class npcs
 {
 
 public:
-    static constexpr int max_npcs = 16;
+    static constexpr int max_npcs = 24;
 
     explicit npcs(const bn::camera_ptr& camera);
 

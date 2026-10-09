@@ -93,6 +93,14 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Pyroguard Emberseer breaks free in the Hall of Binding](docs/screenshots/m25_emberseer.png)
 ![Darkmaster Gandling's Shadow Portal and his risen students](docs/screenshots/m25_gandling.png)
 ![Ysida Harmon is saved from Baron Rivendare in time](docs/screenshots/m25_ysida.png)
+![Lady Katrana Prestor at Highlord Bolvar's side in Stormwind Keep](docs/screenshots/m26_prestor.png)
+![Bolvar reads Drakkisath's orders and Prestor flees](docs/screenshots/m26_masquerade.png)
+![Jaina Proudmoore's Theramore Isle in Dustwallow Marsh](docs/screenshots/m26_theramore.png)
+![Onyxia breathes fire in her lair](docs/screenshots/m26_onyxia.png)
+![Deep Breath sweeps a lane of the cave while the whelps pour in](docs/screenshots/m26_deep_breath.png)
+![Onyxia lands for the last phase](docs/screenshots/m26_onyxia_lands.png)
+![A piece of the Battlegear of Valor with its set count](docs/screenshots/m26_set_tooltip.png)
+![The last page after Victory for the Alliance](docs/screenshots/m26_the_end.png)
 
 ## Status
 
@@ -102,16 +110,16 @@ subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Mark
 then walk freely from Northshire Abbey down to Goldshire, west to the city of Stormwind, south to
 Westfall, east to the Redridge Mountains and south to Duskwood, ride the tram to Ironforge and go on
 to the Wetlands, Darkshore, the Hillsbrad Foothills and the jungle of Stranglethorn Vale, sail from
-Booty Bay to Tanaris and Thousand Needles, go on west to Feralas and north to Desolace, cross back to the Burning Steppes, the Searing Gorge, the Badlands and the Swamp of Sorrows, walk east from Tirisfal into the Western and Eastern Plaguelands, take on 213 quests from Northshire to Light's Hope Chapel, fight with auto-attack and your subclass's abilities, loot and equip about 1,290 items, buy and sell at vendors, carry as much
+Booty Bay to Tanaris and Thousand Needles, go on west to Feralas and north to Desolace, cross back to the Burning Steppes, the Searing Gorge, the Badlands and the Swamp of Sorrows, walk east from Tirisfal into the Western and Eastern Plaguelands, sail from Menethil Harbor to Theramore Isle in Dustwallow Marsh, take on 219 quests from Northshire to Theramore, fight with auto-attack and your subclass's abilities, loot and equip about 1,330 items, collect your class's dungeon set, buy and sell at vendors, carry as much
 as you like in bags sorted by type, quality, level or age, use 19 ability slots on three bars and 4
 item slots, buy new abilities and ranks from your class trainer, spend talent points from level 10,
 face the elites Princess, Hogger, Gath'Ilzogg, Mor'Ladim, Stitches, Balgaras, Nek'rosh, Gravis
-Slipknot, Bloodfang, King Bangalash, Fleet Master Firallon, Caliph Scorpidsting, Andre Firebeard, Lord Shalzaru, Old Grizzlegut, the Gordunni Warlord, Overseer Maltorius, Gor'tesh, Gorgon'och, the War Reaver, Araj the Summoner, Grand Inquisitor Isillien, Hed'mush the Rotting and Crusader Lord Valdelmar, clear the kobolds out of Echo Ridge and
-Fargodeep mines, hunt for 60 hidden
+Slipknot, Bloodfang, King Bangalash, Fleet Master Firallon, Caliph Scorpidsting, Andre Firebeard, Lord Shalzaru, Old Grizzlegut, the Gordunni Warlord, Overseer Maltorius, Gor'tesh, Gorgon'och, the War Reaver, Araj the Summoner, Grand Inquisitor Isillien, Hed'mush the Rotting, Crusader Lord Valdelmar and Emberstrife, clear the kobolds out of Echo Ridge and
+Fargodeep mines, hunt for 62 hidden
 treasure chests, fish in Lake Everstill, hearth home to an inn, ride from level 30, fly by gryphon
 between Stormwind, Sentinel Hill, Lakeshire, Darkshire, Silverpine Forest, Ironforge, Menethil Harbor,
-Southshore, the Argent Watch in Tirisfal, Booty Bay, Gadgetzan, Feathermoon, Nijel's Point, Morgan's Vigil, the Swamp of Sorrows, Chillwind Camp and Light's Hope Chapel, take the Deeprun Tram and the boats to
-Auberdine, Tanaris and Feathermoon, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
+Southshore, the Argent Watch in Tirisfal, Booty Bay, Gadgetzan, Feathermoon, Nijel's Point, Morgan's Vigil, the Swamp of Sorrows, Chillwind Camp, Light's Hope Chapel and Theramore, take the Deeprun Tram and the boats to
+Auberdine, Tanaris, Feathermoon and Theramore, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
 Edwin VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, keep the night
 off Darkshire, climb Shadowfang Keep to Archmage Arugal, light the braziers of Blackfathom Deeps for
 Aku'mai, take Gnomeregan back from Mekgineer Thermaplugg, clear all four wings of the Scarlet
@@ -121,7 +129,8 @@ break Immol'thar's prison in Dire Maul and take King Gordok's throne, wake Archa
 Sunken Temple's statues in order down to the Shade of Eranikus, fight in Blackrock Depths' Ring of Law and
 free Princess Moira from Emperor Thaurissan, break Pyroguard Emberseer's bonds and General Drakkisath's
 command in Blackrock Spire, dodge Darkmaster Gandling's portals in Scholomance, race Baron Rivendare's
-clock in Stratholme to save Ysida Harmon, and save to the cartridge. Every zone has
+clock in Stratholme to save Ysida Harmon, unmask Lady Katrana Prestor in Stormwind Keep, slay Onyxia in
+her lair under the Wyrmbog, and save to the cartridge. Every zone has
 its own music, and elite fights switch to a boss tune.
 
 Following the quests in order takes a hero to level 15 at the end of Westfall, about 19 after
@@ -132,9 +141,9 @@ Inquisitor Whitemane, about 41 after Razorfen Kraul, 43 after Amnennar the Coldb
 Chief Ukorz Sandscalp, about 47 after Feralas, 49 after Princess Theradras, 51 after King Gordok,
 about 52 after Archaedas, 53 after the Burning Steppes, 54 after the Shade of Eranikus, 55 after
 Emperor Thaurissan, about 56 after the Western Plaguelands, 57 after General Drakkisath, 58 after the
-Eastern Plaguelands, 59 after Darkmaster Gandling and about 59 and a half after Baron Rivendare,
-without grinding. The level cap is
-60: the road there is planned in [docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12
+Eastern Plaguelands, 59 after Darkmaster Gandling, about 59 and a half after Baron Rivendare and 60 at the door of
+Onyxia's lair, without grinding. The level cap is
+60: the road there was planned in [docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12
 to M26).
 
 | Milestone | What it adds | State |
@@ -165,7 +174,7 @@ to M26).
 | M23 Feralas and Desolace | Feralas with Feathermoon Stronghold and Desolace with Nijel's Point (45 to 50), 20 quests, Maraudon with its poison pools and Princess Theradras, Dire Maul with Immol'thar's pylons and the Gordok tribute | Done |
 | M24 Burning Steppes | The Burning Steppes with Morgan's Vigil, the Searing Gorge with Thorium Point, the Badlands and the Swamp of Sorrows (50 to 55), 26 quests, Uldaman with Archaedas's altar, the Sunken Temple with its six statues and Blackrock Depths with the Ring of Law and the Imperial Seat | Done |
 | M25 Plaguelands | The Western and Eastern Plaguelands with Chillwind Camp, Caer Darrow and Light's Hope Chapel (55 to 60), 29 quests, Blackrock Spire with Emberseer's seven altars, Scholomance with Gandling's portals and Stratholme with the Baron's clock | Done |
-| M26 Onyxia | Lady Prestor unmasked, Onyxia's three-phase fight, the new ending, dungeon set bonuses and a balance pass from 1 to 60 | Planned |
+| M26 Onyxia | Lady Prestor unmasked in Stormwind Keep, Dustwallow Marsh and Theramore Isle (58 to 60), 6 quests, Onyxia's three-phase fight in her lair, the last ending and dungeon sets with set bonuses | Done |
 
 ## Controls
 
@@ -502,6 +511,24 @@ you step into the Scourge half, Baron Rivendare begins the ritual that will kill
 minutes to reach him through Maleki the Pallid and Ramstein the Gorger in the slaughterhouse, with
 the time left called out each minute. The Baron raises bone minions as he weakens. Kill him in time
 to save Ysida for Dead Man's Plea, which ends a chapter with a new page.
+
+Dungeon sets: five bosses, Emperor Thaurissan in Blackrock Depths, General Drakkisath in Blackrock
+Spire, Darkmaster Gandling in Scholomance, and Balnazzar and Baron Rivendare in Stratholme, each drop
+one piece of your class's set: the Battlegear of Valor for warriors, the Magister's Regalia for mages
+and the Beaststalker Armor for hunters. Two, three and five pieces worn give a bonus each; the
+tooltip shows how many you wear and which bonuses are on.
+
+Onyxia: back from Stratholme, Maxwell Tyrosus has read Drakkisath's orders. They were written by Lady
+Katrana Prestor, Highlord Bolvar's advisor, who stands beside him in Stormwind Keep. The Great
+Masquerade shows them to Bolvar in front of her, and she flees as the black dragon she is. Bolvar
+sends you by boat from Menethil Harbor to Theramore Isle in Dustwallow Marsh, level 58 to 60, where
+Lady Jaina Proudmoore keeps watch over the swamp. Captain Garran Vimes wants the spiders of Darkmist
+Cavern cleared, the Wyrmbog crawls with Onyxian whelps and Firemane scalebanes, and the drake
+Emberstrife guards the way into Onyxia's Lair. Two Onyxian Warders hold its tunnel. Onyxia breathes
+fire on the ground; at 65% she takes to the air, out of reach, sweeps whole lanes of her cave with
+Deep Breath and calls her whelps from the nests; then she lands, the floor erupts under you and she
+grows frenzied near the end. Her head on Stormwind's gates for Victory for the Alliance is the last
+page of the story. Theramore has an inn and a gryphon master.
 
 Auto-attack keeps going after a kill if another enemy is on you, and turns to whoever is hitting you
 when your target is out of reach.

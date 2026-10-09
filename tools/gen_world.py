@@ -1666,6 +1666,7 @@ def gen_stormwind():
     si7_door = wg.house(m, 872, 872, 112, 96, style='stone', **SLATE)
     wg.house(m, 744, 880, 96, 96, style='timber', **THATCH)
     m.npc('ANDER', 900, 800)
+    m.npc('PRESTOR', 232, 276)
     wg.grove(m, trees, [(880, 744), (944, 736)], seed=4, kinds=('oak', 'birch'))
     m.chest(10, 972, 864, 10)
     m.area(720, 624, 272, 368, 'Old Town')
@@ -3009,6 +3010,10 @@ def gen_wetlands():
     m.point('menethil_respawn', 296, 840)
     m.point('from_darkshore', 176, 880)
     m.warp(164, 912, 24, 8, 'darkshore', 'from_menethil', ride='boat')
+    wg.bridge(m, 72, 712, 96, 32)
+    m.block(72, 712, 4, 32)
+    m.point('from_dustwallow', 176, 728)
+    m.warp(76, 716, 8, 24, 'dustwallow', 'from_menethil', ride='boat')
     m.area(120, 640, 320, 330, 'Menethil Harbor')
 
     # --- Whelgar's Excavation Site (gnolls looting the dig) -----------------------------------------
@@ -7006,6 +7011,149 @@ def gen_stratholme():
     return m
 
 
+# ---------------------------------------------------------------------------------------------
+# Dustwallow Marsh and Onyxia's Lair
+# ---------------------------------------------------------------------------------------------
+
+def gen_dustwallow():
+    m = Map('dustwallow', 1024, 1024,
+            Palette([wg.TERRAIN_SWAMP, wg.BUILDINGS, wg.FARM, wg.ROCK_SWAMP]),
+            Palette([wg.OVERHEAD_LEAVES_WETLANDS, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    # --- hills to the north, west and south; the sea to the east, with Theramore's island in it -------
+    border_rock(m, (4, 4, 3, 0), seed=12)
+    rock = wg.corners(m, 'rock')
+    rock[:, 44:] = 0
+    wg.corners_ellipse(m, 'rock', 352, 880, 120, 72)     # the Wyrmbog's crags around the lair
+    wg.paint_cliffs(m)
+
+    wg.corners_rect(m, 'water', 736, 0, 288, 1024)
+    wg.corners_along(m, 'water', [(728, 0), (712, 200), (728, 400), (704, 600), (720, 800), (712, 1024)], 1.4)
+    wg.corners_ellipse(m, 'water', 200, 480, 72, 44)      # the Quagmire's pools
+    wg.corners_ellipse(m, 'water', 520, 360, 64, 40)
+    wg.corners_ellipse(m, 'water', 560, 760, 56, 36)
+    water = wg.corners(m, 'water')
+    ys, xs = np.mgrid[0:water.shape[0], 0:water.shape[1]]
+    water[((xs - 864 / 16) / (112 / 16)) ** 2 + ((ys - 472 / 16) / (152 / 16)) ** 2 <= 1] = 0   # Theramore Isle
+    wg.paint_water(m)
+
+    roads = [
+        [(696, 488), (560, 500), (400, 480), (240, 560), (120, 600)],      # the bridge road west
+        [(400, 480), (360, 360), (320, 240), (288, 176)],                   # north to Darkmist
+        [(400, 480), (440, 620), (420, 760), (416, 920)],                   # south to the Wyrmbog
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.1)
+    wg.paint_paths(m)
+
+    # --- Theramore Isle: the Foothold Citadel, the inn and the barracks, the bridge and the dock ---------
+    wg.bridge(m, 680, 472, 104, 32)
+    wg.cobbles(m, 784, 424, 160, 176)
+    blue = dict(roof_colors=('roof_d', 'roof_m', 'roof_l'), roof_ridge='roof_h', roof_outline='outline')
+    citadel = wg.tower(m, 832, 304, 64, 128)
+    inn = wg.house(m, 784, 520, 64, 64, style='stone', **blue)
+    barracks = wg.house(m, 880, 520, 64, 64, style='stone', **blue)
+    wg.crates(m, 904, 440)
+    wg.pier(m, 848, 600, 32, 112)
+    m.npc('JAINA', citadel[0], citadel[1] + 12)
+    m.npc('THERAMORE_INNKEEPER', inn[0] + 16, inn[1] + 4)
+    m.npc('VIMES', barracks[0] - 16, barracks[1] + 4)
+    m.npc('BALDRUC', 800, 448)
+    m.point('flight', 816, 464)
+    m.point('theramore_respawn', 864, 496)
+    m.point('from_menethil', 864, 616)
+    m.warp(852, 696, 24, 8, 'wetlands', 'from_dustwallow', ride='boat')
+    m.area(752, 312, 224, 320, 'Theramore Isle')
+
+    # --- Darkmist Cavern in the northern hills: the widows' nest ------------------------------------------
+    cave_mouth(m, 240, 96, 96, 72)
+    m.spawn_group('DARKMIST_WIDOW', 300, 230, 5, 60, seed=531)
+    m.spawn_group('DARKMIST_WIDOW', 180, 260, 4, 50, seed=532)
+    m.spawn_group('DARKMIST_WIDOW', 440, 200, 4, 50, seed=533)
+    m.chest(83, 200, 184, 58)
+    m.area(120, 120, 400, 220, 'Darkmist Cavern')
+
+    # --- the Quagmire: snapjaws in the pools ------------------------------------------------------------------
+    m.spawn_group('MUDROCK_SNAPJAW', 200, 540, 4, 60, seed=534)
+    m.spawn_group('MUDROCK_SNAPJAW', 540, 420, 4, 60, seed=535)
+    m.spawn_group('MUDROCK_SNAPJAW', 620, 640, 3, 50, seed=536)
+    m.area(80, 360, 620, 240, 'The Quagmire')
+
+    # --- the Wyrmbog: Onyxia's brood on scorched ground, her lair in the crags ------------------------------
+    for cx, cy, w, h in ((160, 680, 160, 96), (528, 640, 144, 80), (200, 840, 96, 64), (520, 848, 112, 64)):
+        wg.camp(m, cx, cy, w, h, tents=[])
+    m.spawn_group('ONYXIAN_WHELP', 240, 720, 5, 60, seed=537)
+    m.spawn_group('ONYXIAN_WHELP', 600, 680, 5, 60, seed=538)
+    m.spawn_group('ONYXIAN_WHELP', 250, 870, 3, 40, seed=539)
+    m.spawn_group('FIREMANE_SCALEBANE', 300, 780, 3, 60, seed=540)
+    m.spawn_group('FIREMANE_SCALEBANE', 560, 860, 3, 50, seed=541)
+    lair = cave_mouth(m, 352, 816, 128, 96)
+    m.warp(lair[0] - 16, lair[1] - 12, 32, 8, 'onyxias_lair', 'entry')
+    m.point('lair_exit', lair[0], lair[1] + 20)
+    m.spawn('EMBERSTRIFE', lair[0] + 48, lair[1] + 24)
+    m.point('wyrmbog_respawn', 448, 648)
+    m.area(80, 620, 640, 360, 'The Wyrmbog')
+    m.area(0, 0, 1024, 1024, 'Dustwallow Marsh')
+
+    rng = np.random.default_rng(97)
+    zones = [(744, 300, 240, 340), (120, 80, 400, 260), (150, 670, 180, 110), (518, 630, 164, 100),
+             (190, 830, 116, 84), (510, 838, 132, 84), (330, 790, 180, 200)]
+    zone_trees(m, trees, rng, 60, (48, 64, 640, 880), zones)
+    wg.scatter_props(m, rng, 50, ('fern', 'tall_grass', 'bush', 'log', 'fern'), (48, 64, 640, 880), avoid=zones)
+    m.music = 'WETLANDS'
+    m.save()
+    return m
+
+
+# Onyxia's Lair: black volcanic rock, hot stone and the dragon's hoard.
+LAIR = [
+    ('outline', (14, 10, 12)), ('top_d', (30, 22, 24)), ('top_m', (46, 34, 34)),
+    ('wall_d', (64, 46, 42)), ('wall_m', (88, 64, 56)), ('wall_l', (116, 86, 72)),
+    ('floor_d', (60, 48, 46)), ('floor_m', (80, 64, 60)), ('floor_l', (104, 84, 76)),
+    ('iron_d', (40, 36, 40)), ('iron_l', (216, 184, 96)), ('straw', (240, 128, 32)),
+    ('wood', (96, 60, 40)), ('flame', (252, 216, 104)), ('red', (176, 40, 24)),
+]
+
+LAIR_OVERHEAD = LAIR[:6]
+
+
+def gen_onyxias_lair():
+    c = Depths('onyxias_lair', 512, 768, LAIR, LAIR_OVERHEAD)
+    m = c.m
+    c.rect(200, 664, 112, 88)       # the mouth of the lair
+    c.rect(232, 752, 48, 16)        # the way out
+    c.tunnel([(256, 672), (240, 560), (256, 420)], 48)     # the warders' tunnel
+    c.blob(256, 232, 216, 196, seed=26)                    # Onyxia's chamber
+    c.render()
+    c.exit(232, 760, 'dustwallow', 'lair_exit')
+
+    for x in (208, 288):
+        c.torch(x, 668)
+    # The chamber: lava pools around the edge, the bones of her meals by the walls and her hoard at the
+    # back.
+    c.lava(104, 104, 56, 40)
+    c.lava(352, 104, 56, 40)
+    c.lava(80, 320, 56, 40)
+    c.lava(376, 320, 56, 40)
+    for x, y in ((72, 200), (72, 248), (432, 200), (432, 248), (200, 400), (312, 400)):
+        c.bones(x, y)
+    m.chest(84, 256, 72, 60)
+
+    m.spawn('ONYXIAN_WARDER', 248, 520)
+    m.spawn('ONYXIAN_WARDER', 256, 640)
+    m.spawn('ONYXIA', 256, 200)
+    m.point('lift', 256, 212)
+    m.point('whelps_a', 80, 224)
+    m.point('whelps_b', 432, 224)
+    m.point('roost', 256, 272)
+    m.area(0, 0, 512, 768, "Onyxia's Lair")
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
 GENERATORS = {
     'abbey': gen_abbey,
     'inn': gen_inn,
@@ -7052,6 +7200,8 @@ GENERATORS = {
     'blackrock_spire': gen_blackrock_spire,
     'scholomance': gen_scholomance,
     'stratholme': gen_stratholme,
+    'dustwallow': gen_dustwallow,
+    'onyxias_lair': gen_onyxias_lair,
 }
 
 
@@ -7067,7 +7217,7 @@ def main():
               'tirisfal': 'flight', 'stranglethorn': 'from_duskwood', 'tanaris': 'from_booty_bay',
               'thousand_needles': 'from_tanaris', 'feralas': 'from_needles', 'desolace': 'from_feralas',
               'burning_steppes': 'from_redridge', 'swamp_of_sorrows': 'flight',
-              'plaguelands': 'from_tirisfal'}
+              'plaguelands': 'from_tirisfal', 'dustwallow': 'from_menethil'}
     for name, m in maps.items():
         m.check_reachable(starts.get(name, 'entry'))
     write_minimaps(maps)
@@ -7077,10 +7227,11 @@ def main():
 # Interiors show the map their door leads to.
 MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'duskwood', 'silverpine', 'ironforge', 'dun_morogh',
             'wetlands', 'darkshore', 'hillsbrad', 'tirisfal', 'stranglethorn', 'tanaris', 'thousand_needles',
-            'feralas', 'desolace', 'burning_steppes', 'swamp_of_sorrows', 'plaguelands', 'echo_ridge', 'fargodeep', 'deadmines',
-            'stockade', 'shadowfang', 'blackfathom_deeps', 'gnomeregan', 'sm_graveyard', 'sm_library', 'sm_armory',
-            'sm_cathedral', 'razorfen_kraul', 'razorfen_downs', 'zul_farrak', 'maraudon', 'dire_maul', 'uldaman',
-            'sunken_temple', 'blackrock_depths', 'blackrock_spire', 'scholomance', 'stratholme']
+            'feralas', 'desolace', 'burning_steppes', 'swamp_of_sorrows', 'plaguelands', 'dustwallow', 'echo_ridge',
+            'fargodeep', 'deadmines', 'stockade', 'shadowfang', 'blackfathom_deeps', 'gnomeregan', 'sm_graveyard',
+            'sm_library', 'sm_armory', 'sm_cathedral', 'razorfen_kraul', 'razorfen_downs', 'zul_farrak', 'maraudon',
+            'dire_maul', 'uldaman', 'sunken_temple', 'blackrock_depths', 'blackrock_spire', 'scholomance',
+            'stratholme', 'onyxias_lair']
 
 
 def write_minimaps(maps):

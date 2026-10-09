@@ -26,6 +26,7 @@ namespace
     constexpr int awake_distance = 260;
     constexpr int social_distance = 40;
     constexpr int wander_radius = 40;
+    constexpr int airborne_lift = 20;       // how high a flying enemy is drawn over its shadow
     constexpr int patrol_rest = 2 * seconds;  // at each point of a patrol road
     constexpr int caster_reach = 56;        // casters stop this far from the player
     constexpr int cast_bar_steps = 16;      // fx_castbar: 17 fills that can be interrupted, then 17 that can't
@@ -654,6 +655,7 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
             item.phase = 0;
             item.special_timer = 0;
             item.telegraph_frames = 0;
+            item.airborne = false;
 
             if(item.summoned)
             {
@@ -693,6 +695,7 @@ void enemies::_update_sprite(enemy& item, const bn::fixed_point& player_feet)
     }
 
     item.sprite->set_dead(item.state == enemy_state::DEAD);
+    item.sprite->set_offset(0, item.airborne ? -airborne_lift : 0);
     item.sprite->update(item.position, item.direction, item.moving, item.walk_counter);
     _update_status(item);
     _update_cast_bar(item, world::to_screen_space(item.position));

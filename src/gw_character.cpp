@@ -4,6 +4,7 @@
 
 #include "bn_math.h"
 
+#include "gw_item_sets.h"
 #include "gw_map_elwynn.h"
 #include "gw_maps.h"
 #include "gw_talents.h"
@@ -635,8 +636,11 @@ bool uses_mana()
     return data.player_class != class_id::WARRIOR;
 }
 
-stats compute_stats(const stat_bonus& bonus)
+stats compute_stats(const stat_bonus& extra)
 {
+    // Buffs and talents come in through extra; the dungeon sets add theirs.
+    stat_bonus bonus = extra;
+    add_item_set_bonuses(bonus);
     const class_base& base = class_bases[int(data.player_class)];
     const race_bonus& race = race_bonuses[int(data.race)];
     int level = data.level;

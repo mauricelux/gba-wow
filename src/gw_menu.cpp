@@ -8,6 +8,7 @@
 #include "gw_combat.h"
 #include "gw_hud.h"
 #include "gw_input.h"
+#include "gw_item_sets.h"
 #include "gw_map_blackfathom_deeps.h"
 #include "gw_map_blackrock_depths.h"
 #include "gw_map_blackrock_spire.h"
@@ -19,6 +20,7 @@
 #include "gw_map_dire_maul.h"
 #include "gw_map_dun_morogh.h"
 #include "gw_map_duskwood.h"
+#include "gw_map_dustwallow.h"
 #include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
@@ -27,6 +29,7 @@
 #include "gw_map_hillsbrad.h"
 #include "gw_map_ironforge.h"
 #include "gw_map_maraudon.h"
+#include "gw_map_onyxias_lair.h"
 #include "gw_map_plaguelands.h"
 #include "gw_map_razorfen_downs.h"
 #include "gw_map_razorfen_kraul.h"
@@ -170,6 +173,11 @@ namespace
         { "Stratholme", map_id::STRATHOLME, map_data::stratholme::entry },
         { "Scarlet Bastion", map_id::STRATHOLME, { 192, 180 } },
         { "The Slaughterhouse", map_id::STRATHOLME, { 512, 200 } },
+        { "Stormwind Keep", map_id::STORMWIND, { 192, 290 } },
+        { "Theramore Isle", map_id::DUSTWALLOW, map_data::dustwallow::theramore_respawn },
+        { "The Wyrmbog", map_id::DUSTWALLOW, map_data::dustwallow::wyrmbog_respawn },
+        { "Onyxia's Lair", map_id::ONYXIAS_LAIR, map_data::onyxias_lair::entry },
+        { "Onyxia's Roost", map_id::ONYXIAS_LAIR, map_data::onyxias_lair::roost },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);
@@ -244,7 +252,8 @@ namespace
                 continue;
             }
 
-            int score = def.level * 4 + int(def.quality);
+            // A set piece beats another item of its level and quality, so the set bonuses can be tried.
+            int score = def.level * 4 + int(def.quality) + (get_item_set(item_id(index)) != item_set::NONE);
             int slot = int(def.slot);
 
             if(score > best_level[slot])

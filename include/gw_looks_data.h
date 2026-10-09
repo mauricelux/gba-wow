@@ -396,6 +396,10 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_hum_sword, palettes::malor_the_zealous, false },
     { bn::sprite_items::char_satyr_staff, palettes::balnazzar, false },
     { bn::sprite_items::char_hum_sword, palettes::baron_rivendare, false },
+    { bn::sprite_items::char_fem_robe, palettes::katrana_prestor, false },
+    { bn::sprite_items::char_fem_robe, palettes::jaina_proudmoore, false },
+    { bn::sprite_items::char_hum_sword, palettes::garran_vimes, false },
+    { bn::sprite_items::char_dwarf_plain, palettes::baldruc, false },
     { bn::sprite_items::char_wolf, palettes::young_wolf, true },
     { bn::sprite_items::char_wolf, palettes::timber_wolf, true },
     { bn::sprite_items::char_boar, palettes::boar, true },
@@ -626,6 +630,12 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_ghoul, palettes::timmy_the_cruel, true },
     { bn::sprite_items::char_skeleton_mage, palettes::maleki_the_pallid, true },
     { bn::sprite_items::char_abomination, palettes::ramstein_the_gorger, true },
+    { bn::sprite_items::char_spider, palettes::darkmist_widow, true },
+    { bn::sprite_items::char_turtle, palettes::mudrock_snapjaw, true },
+    { bn::sprite_items::char_centaur, palettes::firemane_scalebane, true },
+    { bn::sprite_items::char_centaur, palettes::onyxian_warder, true },
+    { bn::sprite_items::char_dragon, palettes::emberstrife, true },
+    { bn::sprite_items::char_dragon, palettes::onyxia, true },
 };
 
 static_assert(sizeof(look_table) / sizeof(look_table[0]) == int(look_id::COUNT));

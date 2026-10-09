@@ -879,6 +879,24 @@ namespace
           f::UNDEAD, MELEE, { a::KNOCKDOWN, a::WAR_STOMP } },
         { "Baron Rivendare", l::BARON_RIVENDARE, 60, 60, DUNGEON_BOSS, 500, 150, 24, 135, 0, 236,
           f::UNDEAD, MELEE, { a::MORTAL_STRIKE, a::CLEAVE } },
+        // Dustwallow Marsh
+        { "Darkmist Widow", l::DARKMIST_WIDOW, 56, 57, 0, 125, 110, 18, 100, 60, 237,
+          f::BEAST, MELEE, { a::POISON, a::WEB } },
+        { "Mudrock Snapjaw", l::MUDROCK_SNAPJAW, 56, 57, 0, 150, 110, 26, 115, 60, 238,
+          f::BEAST, MELEE, { a::KNOCKDOWN } },
+        // The Wyrmbog's dragonkin; Onyxia calls the whelps to her lair too.
+        { "Onyxian Whelp", l::BLACK_BROODLING, 57, 58, FAST, 80, 105, 20, 75, 60, 239,
+          f::DRAGONKIN, MELEE, {} },
+        { "Firemane Scalebane", l::FIREMANE_SCALEBANE, 58, 59, 0, 150, 115, 26, 115, 60, 239,
+          f::DRAGONKIN, MELEE, { a::CLEAVE, a::WAR_STOMP } },
+        { "Onyxian Warder", l::ONYXIAN_WARDER, 59, 60, ELITE, 300, 140, 26, 125, 255, 240,
+          f::DRAGONKIN, MELEE, { a::CLEAVE, a::KNOCKDOWN } },
+        // The red drake who guards the way into Onyxia's lair.
+        { "Emberstrife", l::EMBERSTRIFE, 59, 59, ELITE, 450, 145, 24, 150, 255, 241,
+          f::DRAGONKIN, MELEE, { a::WAR_STOMP } },
+        // Lady Katrana Prestor's true face, and the game's last fight.
+        { "Onyxia", l::ONYXIA, 60, 60, DUNGEON_BOSS, 640, 140, 26, 230, 0, 242,
+          f::DRAGONKIN, MELEE, { a::CLEAVE } },
     };
 
     static_assert(sizeof(enemies) / sizeof(enemies[0]) == int(enemy_id::COUNT));

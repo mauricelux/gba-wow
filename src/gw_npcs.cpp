@@ -18,6 +18,13 @@ namespace
     constexpr int face_player_distance = 48;
     constexpr int marker_bg_priority = 1;
 
+    // Lady Prestor stands beside Bolvar until the masquerade ends.
+    [[nodiscard]] bool present(npc_id id)
+    {
+        return id != npc_id::PRESTOR ||
+               quest_state(quest_id::THE_GREAT_MASQUERADE).status != quest_status::TURNED_IN;
+    }
+
     [[nodiscard]] int marker_frame(quest_marker marker)
     {
         switch(marker)
@@ -49,7 +56,7 @@ void npcs::load(const map_info& map)
 
     for(const npc_def& def : map.npcs)
     {
-        if(def.npc == npc_id::NONE || _npcs.full())
+        if(def.npc == npc_id::NONE || _npcs.full() || ! present(def.npc))
         {
             continue;
         }
@@ -65,6 +72,19 @@ void npcs::load(const map_info& map)
 
 void npcs::refresh_markers()
 {
+    // Quests can send an npc away for good.
+    for(auto it = _npcs.begin(); it != _npcs.end();)
+    {
+        if(present(it->id))
+        {
+            ++it;
+        }
+        else
+        {
+            it = _npcs.erase(it);
+        }
+    }
+
     for(npc& item : _npcs)
     {
         quest_marker marker = npc_quest_marker(item.id);

@@ -633,6 +633,9 @@ class Map:
             out.append('        { 0, 0, 0, 0, map_id::NONE, 0, 0 },')
         out.append('    };')
         out.append('')
+        # npcs::max_npcs in gw_npcs.h: more would silently not load.
+        if len(self.npcs) > 24:
+            raise SystemExit(f'{self.name}: {len(self.npcs)} npcs, at most 24 load')
         out.append('    constexpr npc_def npcs[] = {')
         for npc_id, x, y in self.npcs:
             out.append(f'        {{ npc_id::{npc_id}, {x}, {y} }},')

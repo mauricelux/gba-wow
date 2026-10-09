@@ -4,6 +4,7 @@
 #include "gw_map_darkshore.h"
 #include "gw_map_desolace.h"
 #include "gw_map_duskwood.h"
+#include "gw_map_dustwallow.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_feralas.h"
 #include "gw_map_hillsbrad.h"
@@ -39,6 +40,7 @@ namespace
         { "Nijel's Point", map_id::DESOLACE, map_data::desolace::nijels_respawn },
         { "Morgan's Vigil", map_id::BURNING_STEPPES, map_data::burning_steppes::vigil_respawn },
         { "Light's Hope Chapel", map_id::PLAGUELANDS, map_data::plaguelands::lights_hope_respawn },
+        { "Theramore Isle", map_id::DUSTWALLOW, map_data::dustwallow::theramore_respawn },
     };
 
     static_assert(sizeof(homes) / sizeof(homes[0]) == int(home_id::COUNT));
@@ -98,6 +100,9 @@ home_id innkeeper_home(npc_id npc)
 
     case npc_id::LH_INNKEEPER:
         return home_id::LIGHTS_HOPE;
+
+    case npc_id::THERAMORE_INNKEEPER:
+        return home_id::THERAMORE;
 
     default:
         return home_id::COUNT;

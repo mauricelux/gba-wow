@@ -13,6 +13,7 @@
 #include "bn_sprite_items_minimap_dire_maul.h"
 #include "bn_sprite_items_minimap_dun_morogh.h"
 #include "bn_sprite_items_minimap_duskwood.h"
+#include "bn_sprite_items_minimap_dustwallow.h"
 #include "bn_sprite_items_minimap_echo_ridge.h"
 #include "bn_sprite_items_minimap_elwynn.h"
 #include "bn_sprite_items_minimap_fargodeep.h"
@@ -21,6 +22,7 @@
 #include "bn_sprite_items_minimap_hillsbrad.h"
 #include "bn_sprite_items_minimap_ironforge.h"
 #include "bn_sprite_items_minimap_maraudon.h"
+#include "bn_sprite_items_minimap_onyxias_lair.h"
 #include "bn_sprite_items_minimap_plaguelands.h"
 #include "bn_sprite_items_minimap_razorfen_downs.h"
 #include "bn_sprite_items_minimap_razorfen_kraul.h"
@@ -86,6 +88,7 @@ constexpr minimap_def minimaps[] = {
     { map_id::BURNING_STEPPES, bn::sprite_items::minimap_burning_steppes, 26, 8, 1536 },
     { map_id::SWAMP_OF_SORROWS, bn::sprite_items::minimap_swamp_of_sorrows, 8, 8, 768 },
     { map_id::PLAGUELANDS, bn::sprite_items::minimap_plaguelands, 8, 26, 1536 },
+    { map_id::DUSTWALLOW, bn::sprite_items::minimap_dustwallow, 8, 8, 1024 },
     { map_id::ECHO_RIDGE, bn::sprite_items::minimap_echo_ridge, 8, 8, 512 },
     { map_id::FARGODEEP, bn::sprite_items::minimap_fargodeep, 8, 26, 768 },
     { map_id::DEADMINES, bn::sprite_items::minimap_deadmines, 8, 36, 1024 },
@@ -108,6 +111,7 @@ constexpr minimap_def minimaps[] = {
     { map_id::BLACKROCK_SPIRE, bn::sprite_items::minimap_blackrock_spire, 8, 8, 1024 },
     { map_id::SCHOLOMANCE, bn::sprite_items::minimap_scholomance, 8, 8, 1024 },
     { map_id::STRATHOLME, bn::sprite_items::minimap_stratholme, 8, 8, 1024 },
+    { map_id::ONYXIAS_LAIR, bn::sprite_items::minimap_onyxias_lair, 26, 8, 768 },
 };
 
 constexpr int minimap_count = sizeof(minimaps) / sizeof(minimaps[0]);

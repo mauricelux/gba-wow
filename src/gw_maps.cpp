@@ -24,6 +24,8 @@
 #include "bn_regular_bg_items_map_dun_morogh_overhead.h"
 #include "bn_regular_bg_items_map_duskwood_ground.h"
 #include "bn_regular_bg_items_map_duskwood_overhead.h"
+#include "bn_regular_bg_items_map_dustwallow_ground.h"
+#include "bn_regular_bg_items_map_dustwallow_overhead.h"
 #include "bn_regular_bg_items_map_echo_ridge_ground.h"
 #include "bn_regular_bg_items_map_echo_ridge_overhead.h"
 #include "bn_regular_bg_items_map_elwynn_ground.h"
@@ -42,6 +44,8 @@
 #include "bn_regular_bg_items_map_ironforge_overhead.h"
 #include "bn_regular_bg_items_map_maraudon_ground.h"
 #include "bn_regular_bg_items_map_maraudon_overhead.h"
+#include "bn_regular_bg_items_map_onyxias_lair_ground.h"
+#include "bn_regular_bg_items_map_onyxias_lair_overhead.h"
 #include "bn_regular_bg_items_map_plaguelands_ground.h"
 #include "bn_regular_bg_items_map_plaguelands_overhead.h"
 #include "bn_regular_bg_items_map_razorfen_downs_ground.h"
@@ -103,6 +107,7 @@
 #include "gw_map_dire_maul.h"
 #include "gw_map_dun_morogh.h"
 #include "gw_map_duskwood.h"
+#include "gw_map_dustwallow.h"
 #include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
@@ -112,6 +117,7 @@
 #include "gw_map_inn.h"
 #include "gw_map_ironforge.h"
 #include "gw_map_maraudon.h"
+#include "gw_map_onyxias_lair.h"
 #include "gw_map_plaguelands.h"
 #include "gw_map_razorfen_downs.h"
 #include "gw_map_razorfen_kraul.h"
@@ -207,6 +213,9 @@ namespace
     constexpr point_def blackrock_spire_graveyards[] = { map_data::blackrock_spire::respawn };
     constexpr point_def scholomance_graveyards[] = { map_data::scholomance::respawn };
     constexpr point_def stratholme_graveyards[] = { map_data::stratholme::respawn };
+    constexpr point_def dustwallow_graveyards[] = { map_data::dustwallow::theramore_respawn,
+                                                    map_data::dustwallow::wyrmbog_respawn };
+    constexpr point_def onyxias_lair_graveyards[] = { map_data::onyxias_lair::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
@@ -277,6 +286,8 @@ namespace
         GW_MAP_INFO(BLACKROCK_SPIRE, blackrock_spire, true, true),
         GW_MAP_INFO(SCHOLOMANCE, scholomance, true, true),
         GW_MAP_INFO(STRATHOLME, stratholme, true, true),
+        GW_MAP_INFO(DUSTWALLOW, dustwallow, false, false),
+        GW_MAP_INFO(ONYXIAS_LAIR, onyxias_lair, true, true),
     };
 
     [[nodiscard]] int count_chests()

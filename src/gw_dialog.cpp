@@ -433,9 +433,14 @@ void dialog::_complete()
        _quest == quest_id::THE_MADNESS_WITHIN || _quest == quest_id::THE_DISCS_OF_NORGANNON ||
        _quest == quest_id::THE_SHADE_OF_ERANIKUS || _quest == quest_id::THE_ROYAL_RESCUE ||
        _quest == quest_id::DARKMASTER_GANDLING || _quest == quest_id::DEAD_MANS_PLEA ||
-       _quest == quest_id::GENERAL_DRAKKISATHS_COMMAND)
+       _quest == quest_id::GENERAL_DRAKKISATHS_COMMAND || _quest == quest_id::VICTORY_FOR_THE_ALLIANCE)
     {
         ending_requested = true;
+    }
+
+    if(_quest == quest_id::THE_GREAT_MASQUERADE)
+    {
+        _hud.message("Prestor is Onyxia! She flees", ui::color::RED);
     }
 
     _close_or_continue();

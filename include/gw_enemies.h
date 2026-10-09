@@ -94,6 +94,7 @@ struct enemy
     int telegraph_frames = 0;   // a marked area goes off when this reaches zero
     bn::fixed_point special_position;
     bool summoned = false;      // added during a fight, removed when it ends
+    bool airborne = false;      // Onyxia in flight: out of reach, so immune
     bool revived = false;       // raised from its corpse: no more loot or experience
     // Table abilities (gw_enemy_abilities): casting, charging, fleeing and its own buffs
     enemy_ability_state ai;

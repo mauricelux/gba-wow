@@ -2,6 +2,7 @@
 
 #include "gw_character.h"
 #include "gw_enemies.h"
+#include "gw_item_sets.h"
 #include "gw_types.h"
 
 namespace gw
@@ -707,6 +708,22 @@ namespace
         // 236 Baron Rivendare
         { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::SCOURGESTONE, 100, 2, 3 }, none }, true,
           { i::RIVENDARES_RUNEBLADE, i::STAFF_OF_THE_BARON, i::BARONS_LONGBOW } },
+        // 237 Darkmist widows
+        { { { i::IRONWEB_SPIDER_SILK, 50, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 238 Mudrock snapjaws
+        { { { i::MUDROCK_SHELL, 50, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 239 the Wyrmbog's dragonkin
+        { { { i::BLACK_DRAGONSCALE, 45, 1, 1 }, { i::MAJOR_HEALING_POTION, 4, 1, 1 }, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 240 Onyxian Warders
+        { { { i::CHROMATIC_SCALE, 50, 1, 2 }, { i::MAJOR_HEALING_POTION, 15, 1, 1 }, none }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 241 Emberstrife
+        { { { i::CHROMATIC_SCALE, 100, 2, 3 }, none, none }, false,
+          { i::EMBERSTRIFE_SABATONS, i::EMBERSTRIFE_SLIPPERS, i::EMBERSTRIFE_BOOTS } },
+        // 242 Onyxia
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::SCALE_OF_ONYXIA, 100, 2, 3 }, none }, true,
+          { i::DEATHBRINGER, i::STAFF_OF_THE_BLACK_FLIGHT, i::DRAGONBREATH_HAND_CANNON } },
     };
 
     // Uncommon items any enemy of a level band may drop.
@@ -861,7 +878,15 @@ void roll_loot(enemy& item)
         add(item, table.choice[random_range(0, choices - 1)], 1);
     }
 
-    if(random_chance(item.elite() || item.rare() ? elite_world_drop_chance : world_drop_chance))
+    // The last bosses of the late dungeons always drop the hero's piece of their class's set, in
+    // place of the world drop.
+    item_id set_piece = item_set_drop(item.id);
+
+    if(set_piece != item_id::NONE)
+    {
+        add(item, set_piece, 1);
+    }
+    else if(random_chance(item.elite() || item.rare() ? elite_world_drop_chance : world_drop_chance))
     {
         add(item, world_drop(level), 1);
     }

@@ -961,6 +961,18 @@ namespace gw::palettes
     constexpr bn::color baron_rivendare_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(12, 14, 15), bn::color(17, 19, 20), bn::color(17, 17, 16), bn::color(29, 29, 28), bn::color(3, 3, 4), bn::color(6, 6, 7), bn::color(12, 12, 14), bn::color(4, 9, 11), bn::color(7, 15, 19), bn::color(22, 29, 31), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(15, 20, 21), bn::color(17, 19, 21) };
     constexpr bn::sprite_palette_item baron_rivendare(baron_rivendare_colors, bn::bpp_mode::BPP_4);
 
+    constexpr bn::color katrana_prestor_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(1, 1, 2), bn::color(3, 2, 3), bn::color(8, 1, 3), bn::color(14, 3, 5), bn::color(20, 6, 8), bn::color(3, 2, 3), bn::color(5, 3, 5), bn::color(29, 24, 12), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 17, 8), bn::color(29, 21, 17) };
+    constexpr bn::sprite_palette_item katrana_prestor(katrana_prestor_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color jaina_proudmoore_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(18, 16, 12), bn::color(30, 28, 21), bn::color(16, 17, 18), bn::color(27, 27, 29), bn::color(30, 30, 31), bn::color(4, 7, 13), bn::color(8, 12, 23), bn::color(29, 24, 12), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 17, 8), bn::color(29, 21, 17) };
+    constexpr bn::sprite_palette_item jaina_proudmoore(jaina_proudmoore_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color garran_vimes_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(10, 7, 5), bn::color(17, 13, 9), bn::color(11, 12, 13), bn::color(19, 19, 21), bn::color(25, 25, 27), bn::color(4, 6, 12), bn::color(7, 11, 21), bn::color(29, 24, 12), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 17, 8), bn::color(17, 13, 9) };
+    constexpr bn::sprite_palette_item garran_vimes(garran_vimes_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color baldruc_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 20, 16), bn::color(8, 5, 3), bn::color(14, 9, 5), bn::color(8, 7, 6), bn::color(13, 11, 10), bn::color(17, 15, 13), bn::color(4, 6, 12), bn::color(7, 11, 20), bn::color(29, 24, 12), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 17, 8), bn::color(14, 9, 5) };
+    constexpr bn::sprite_palette_item baldruc(baldruc_colors, bn::bpp_mode::BPP_4);
+
     constexpr bn::color young_wolf_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 9, 8), bn::color(17, 15, 13), bn::color(22, 19, 16), bn::color(17, 16, 14), bn::color(25, 23, 20), bn::color(29, 5, 3), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
     constexpr bn::sprite_palette_item young_wolf(young_wolf_colors, bn::bpp_mode::BPP_4);
 
@@ -1650,6 +1662,24 @@ namespace gw::palettes
 
     constexpr bn::color ramstein_the_gorger_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(15, 13, 13), bn::color(25, 22, 21), bn::color(31, 28, 27), bn::color(14, 10, 9), bn::color(21, 15, 14), bn::color(31, 27, 8), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(19, 4, 5), bn::color(11, 2, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(12, 12, 13), bn::color(21, 21, 22) };
     constexpr bn::sprite_palette_item ramstein_the_gorger(ramstein_the_gorger_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color darkmist_widow_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(3, 3, 4), bn::color(6, 5, 7), bn::color(7, 7, 9), bn::color(11, 10, 15), bn::color(17, 15, 22), bn::color(29, 15, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item darkmist_widow(darkmist_widow_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color mudrock_snapjaw_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(8, 7, 5), bn::color(13, 12, 9), bn::color(16, 15, 11), bn::color(7, 9, 6), bn::color(11, 14, 9), bn::color(29, 25, 8), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(21, 19, 14), bn::color(12, 11, 8), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item mudrock_snapjaw(mudrock_snapjaw_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color firemane_scalebane_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(11, 4, 2), bn::color(19, 7, 4), bn::color(24, 9, 5), bn::color(5, 4, 4), bn::color(8, 6, 6), bn::color(31, 27, 8), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(31, 19, 6), bn::color(18, 11, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item firemane_scalebane(firemane_scalebane_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color onyxian_warder_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(3, 2, 3), bn::color(5, 4, 5), bn::color(6, 5, 7), bn::color(10, 3, 3), bn::color(15, 5, 4), bn::color(31, 20, 6), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(27, 25, 22), bn::color(16, 15, 13), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item onyxian_warder(onyxian_warder_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color emberstrife_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(13, 3, 2), bn::color(21, 6, 4), bn::color(27, 7, 5), bn::color(21, 13, 4), bn::color(30, 19, 7), bn::color(31, 30, 16), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(28, 26, 21), bn::color(16, 15, 12), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item emberstrife(emberstrife_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color onyxia_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(2, 2, 3), bn::color(4, 4, 5), bn::color(5, 5, 6), bn::color(8, 5, 7), bn::color(12, 8, 11), bn::color(31, 22, 6), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(26, 24, 21), bn::color(15, 14, 12), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item onyxia(onyxia_colors, bn::bpp_mode::BPP_4);
 
 }
 

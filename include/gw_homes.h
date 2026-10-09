@@ -26,6 +26,7 @@ enum class home_id : uint8_t
     NIJELS_POINT,
     MORGANS_VIGIL,
     LIGHTS_HOPE,
+    THERAMORE,
     COUNT
 };
 

@@ -155,3 +155,14 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
   in a doorway can wall off a boss room: in M25 it caught a lectern and two thrones on the new
   dungeons' stairs, an idol closing the Sunken Temple's west halls and candles in an Echo Ridge
   tunnel.
+- `npcs::max_npcs` is 24 (it was 16, and Stormwind's 18 NPCs left Brann and Ander unloaded);
+  `worldgen.py` refuses a map with more. `npcs::present(id)` hides an NPC once a quest says so
+  (Lady Prestor after The Great Masquerade).
+- A background map's height must be a multiple of 256 (Onyxia's Lair is 512x768).
+- `enemy::airborne` (Onyxia's air phase): damage to her shows "Immune", her table abilities stop
+  and her sprite is drawn higher. `combat::_update_onyxia` runs her three phases with the lair's
+  `lift` and `whelps_a`/`whelps_b` points; `_update_deep_breath` throws a lane of circles through
+  the hero, north to south and west to east in turn.
+- Dungeon sets live in `gw_item_sets.cpp`: `item_set_drop(boss)` gives the boss's piece of the
+  hero's class in place of the world drop, `add_item_set_bonuses` is applied in `compute_stats`,
+  and the tooltip lists the set with the bonuses that are on in green.

@@ -2586,6 +2586,78 @@ namespace
           n::MAXWELL, n::MAXWELL, 59, 57, qid::THE_ROYAL_RESCUE,
           { kill(e::GENERAL_DRAKKISATH, 1, "General Drakkisath slain"), none, none }, xp(59, 40), money(59),
           { i::SPIREBREAKER_HELM, i::SPIREBREAKER_COWL, i::SPIREBREAKER_MASK } },
+
+        // --- Stormwind Keep, Dustwallow Marsh and Onyxia's Lair --------------------------------------
+        { "The Great Masquerade",
+          "Drakkisath's orders were written by Lady Katrana Prestor, the Highlord's own advisor. Windsor "
+          "always said she was more than she seemed.\n\n"
+          "Take these to Highlord Bolvar in Stormwind Keep. Show him, in front of her.",
+          "Bring Drakkisath's orders to Highlord Bolvar Fordragon in Stormwind Keep.",
+          "",
+          "Katrana... no. The seal is hers. Guards, seize... Light above, look at her eyes!\n\n"
+          "She is Onyxia, daughter of Deathwing, and she has sat at my side for years. She is gone, "
+          "back to her lair. This is not over.",
+          n::MAXWELL, n::BOLVAR, 60, 58, qid::GENERAL_DRAKKISATHS_COMMAND,
+          { none, none, none }, xp(60, 15), money(60),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Theramore's Aid",
+          "Onyxia lairs in the Wyrmbog of Dustwallow Marsh, across the sea in Kalimdor. Lady Jaina "
+          "Proudmoore holds Theramore Isle on its coast, and she has watched that bog for years.\n\n"
+          "Take the boat from Menethil Harbor to Theramore and give her my letter.",
+          "Take the boat from Menethil Harbor to Theramore Isle and speak with Lady Jaina Proudmoore.",
+          "",
+          "Bolvar writes that Prestor was Onyxia all along. I wish I could say I was surprised. "
+          "Welcome to Theramore.",
+          n::BOLVAR, n::JAINA, 60, 58, qid::THE_GREAT_MASQUERADE,
+          { none, none, none }, xp(60, 15), money(60),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Spiders of Darkmist",
+          "Darkmist widows nest in the cavern north of the road, and they have grown bold. Two of my "
+          "patrols came back wrapped in silk.\n\n"
+          "Thin them out, and the road to the Wyrmbog stays open.",
+          "Kill 10 Darkmist Widows north of Theramore.",
+          "The widows still hunt the road.",
+          "The road's clear. My men owe you a drink, and the quartermaster owes you these.",
+          n::VIMES, n::VIMES, 59, 58, qid::THERAMORES_AID,
+          { kill(e::DARKMIST_WIDOW, 10, "Darkmist Widows slain"), none, none }, xp(59, 15), money(59),
+          { i::THERAMORE_GAUNTLETS, i::THERAMORE_GLOVES, i::THERAMORE_GRIPS } },
+
+        { "The Wyrmbog's Brood",
+          "With her secret out, Onyxia is raising an army in the Wyrmbog: whelps by the dozen, and "
+          "the Firemane dragonkin to lead them.\n\n"
+          "Break her brood before it takes wing over Theramore.",
+          "Kill 10 Onyxian Whelps and 6 Firemane Scalebanes in the Wyrmbog.",
+          "The brood still grows.",
+          "That will slow her. Not stop her, but slow her.",
+          n::JAINA, n::JAINA, 59, 58, qid::THERAMORES_AID,
+          { kill(e::ONYXIAN_WHELP, 10, "Onyxian Whelps slain"),
+            kill(e::FIREMANE_SCALEBANE, 6, "Firemane Scalebanes slain"), none }, xp(59, 20), money(59),
+          { i::WYRMBOG_LEGGUARDS, i::WYRMBOG_LEGGINGS, i::WYRMBOG_PANTS } },
+
+        { "Emberstrife",
+          "A red drake named Emberstrife guards the mouth of Onyxia's lair, bound to her service. "
+          "Nothing passes him alive.\n\n"
+          "Kill him, and the way to her lies open.",
+          "Kill Emberstrife at the entrance to Onyxia's Lair, in the south of the Wyrmbog.",
+          "Emberstrife still guards the lair.",
+          "Then nothing stands between you and her. Take this, and rest before you go in.",
+          n::JAINA, n::JAINA, 60, 58, qid::THE_WYRMBOGS_BROOD,
+          { kill(e::EMBERSTRIFE, 1, "Emberstrife slain"), none, none }, xp(60, 25), money(60),
+          { i::WYRMGUARD_HELM, i::WYRMGUARD_HOOD, i::WYRMGUARD_CAP } },
+
+        { "Victory for the Alliance",
+          "Onyxia waits in her lair, under the Wyrmbog. On the ground she breathes fire; in the air "
+          "she rains it on the whole cave, and her brood answers when she calls.\n\n"
+          "Kill her, and carry her head to Bolvar in Stormwind. Let the city see it.",
+          "Kill Onyxia in her lair and bring her head to Highlord Bolvar in Stormwind Keep.",
+          "The court still whispers about Lady Prestor.",
+          "Onyxia's head, at the gates of Stormwind. For years she ruled this city from the shadows, "
+          "and you ended it. The Alliance owes you more than a king can pay. Choose your reward, champion.",
+          n::JAINA, n::BOLVAR, 60, 59, qid::EMBERSTRIFE,
+          { kill(e::ONYXIA, 1, "Head of Onyxia"), none, none }, xp(60, 40), money(60),
+          { i::DRAGONSLAYERS_GREATSWORD, i::DRAGONSLAYERS_STAFF, i::DRAGONSLAYERS_LONGBOW } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));

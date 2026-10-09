@@ -28,6 +28,7 @@ enum class flight_id : uint8_t
     SWAMP_OF_SORROWS,
     CHILLWIND_CAMP,
     LIGHTS_HOPE,
+    THERAMORE,
     COUNT
 };
 

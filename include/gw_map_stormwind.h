@@ -308,6 +308,7 @@ namespace gw::map_data::stormwind
         { npc_id::EINRIS, 950, 210 },
         { npc_id::BRANN, 792, 186 },
         { npc_id::ANDER, 900, 800 },
+        { npc_id::PRESTOR, 232, 276 },
     };
 
     constexpr spawn_def spawns[] = {

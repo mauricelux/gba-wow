@@ -4,6 +4,7 @@
 
 #include "gw_character.h"
 #include "gw_homes.h"
+#include "gw_item_sets.h"
 #include "gw_items.h"
 #include "gw_text_page.h"
 
@@ -279,6 +280,31 @@ void add_item_details(text_page& page, item_id item)
         if(count)
         {
             page.add_copy(suits, suited & (1 << int(data.subclass)) ? ui::color::GREEN : ui::color::GRAY);
+        }
+    }
+
+    // A set piece names its set, how much of it is worn, and the bonuses, green once they count.
+    item_set set = get_item_set(item);
+
+    if(set != item_set::NONE)
+    {
+        int worn = item_set_worn(set);
+        bn::string<48> name = item_set_name(set);
+        name += " (";
+        name += bn::to_string<4>(worn);
+        name += "/";
+        name += bn::to_string<4>(item_set_pieces);
+        name += ")";
+        page.add_copy(name, ui::color::YELLOW);
+
+        for(int index = 0; index < item_set_bonuses; ++index)
+        {
+            const item_set_bonus& bonus = get_item_set_bonus(set, index);
+            bn::string<48> line = "(";
+            line += bn::to_string<4>(bonus.pieces);
+            line += ") ";
+            line += bonus.text;
+            page.add_copy(line, worn >= bonus.pieces ? ui::color::GREEN : ui::color::GRAY);
         }
     }
 

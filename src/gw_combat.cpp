@@ -9,6 +9,7 @@
 #include "gw_floating_text.h"
 #include "gw_homes.h"
 #include "gw_hud.h"
+#include "gw_map_onyxias_lair.h"
 #include "gw_map_scholomance.h"
 #include "gw_pet.h"
 #include "gw_player.h"
@@ -34,6 +35,7 @@ namespace
     constexpr int breath_radius = 30;
     constexpr int breath_reach = 30;                 // how far in front of a dragon its breath lands
     constexpr int shadow_port_interval = 9 * seconds;
+    constexpr int onyxia_air_frames = 45 * seconds;
     constexpr int bane_guard_percent = 90;     // Morbent Fel without Sirra's bane
     constexpr int bomb_interval = 10 * seconds; // Thermaplugg sends a Walking Bomb
     constexpr int max_bombs = 3;
@@ -508,6 +510,8 @@ void combat::on_map_change()
     _events_done = 0;
     _baron_frames = 0;
     _baron_over = false;
+    _air_frames = 0;
+    _whelp_frames = 0;
 }
 
 void combat::engage()
@@ -1158,6 +1162,17 @@ bool combat::damage_enemy(int index, int amount, bool crit, bool periodic, schoo
     if(target.state == enemy_state::EVADE)
     {
         _texts.show(_head(target.position, 24), "Evade", floating_texts::style::INFO);
+        return false;
+    }
+
+    if(target.airborne)
+    {
+        if(! periodic)
+        {
+            _texts.show(_head(target.position, target.sprite ? target.sprite->height() : 24), "Immune",
+                        floating_texts::style::INFO);
+        }
+
         return false;
     }
 
@@ -5105,6 +5120,18 @@ bool combat::boss_update(int index)
         }
         break;
 
+    case enemy_id::EMBERSTRIFE:
+        _boss_greeting(boss, "Emberstrife roars!");
+
+        if(_update_breath(boss, "Flame Breath", projectile_kind::FIRE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::ONYXIA:
+        return _update_onyxia(index, health_percent);
+
     case enemy_id::BARON_RIVENDARE:
         // Raises bone minions at three quarters, half and a quarter of his health.
         _boss_greeting(boss, "Rivendare: Kneel to the Lich!");
@@ -5124,6 +5151,142 @@ bool combat::boss_update(int index)
     }
 
     return false;
+}
+
+bool combat::_update_onyxia(int index, int health_percent)
+{
+    namespace ol = map_data::onyxias_lair;
+    enemy& boss = _enemies.at(index);
+
+    // Three phases. On the ground she breathes fire in front of her. From 65% health she takes to the
+    // air for a while, out of reach: she breathes fire down whole lanes of the cave and her whelps
+    // pour out of the nests at the sides. Then she lands, the floor erupts under the hero and she
+    // grows frenzied near the end.
+    _boss_greeting(boss, "Onyxia: You dare enter here?");
+
+    if(boss.phase == 1)
+    {
+        if(health_percent > 65)
+        {
+            return _update_breath(boss, "Flame Breath", projectile_kind::FIRE);
+        }
+
+        boss.phase = 2;
+        boss.airborne = true;
+        boss.telegraph_frames = 0;
+        boss.special_timer = 4 * seconds;
+        _air_frames = onyxia_air_frames;
+        _whelp_frames = 2 * seconds;
+        _lane_vertical = false;
+
+        if(boss.casting())
+        {
+            stop_enemy_cast(index, false);
+        }
+
+        _hud.message("Onyxia takes to the air!", ui::color::RED);
+    }
+
+    if(boss.phase == 2)
+    {
+        // Flies up over the middle of the cave and hangs there.
+        bn::fixed_point lift(ol::lift.x, ol::lift.y);
+        bn::fixed dx = bn::clamp(lift.x() - boss.position.x(), bn::fixed(-2), bn::fixed(2));
+        bn::fixed dy = bn::clamp(lift.y() - boss.position.y(), bn::fixed(-2), bn::fixed(2));
+        boss.position = bn::fixed_point(boss.position.x() + dx, boss.position.y() + dy);
+        boss.moving = dx != 0 || dy != 0;
+        boss.direction = facing_towards(boss.position, _player.position());
+
+        if(--_whelp_frames <= 0)
+        {
+            _whelp_frames = 15 * seconds;
+
+            const point_def nests[] = { ol::whelps_a, ol::whelps_b };
+
+            for(const point_def& nest : nests)
+            {
+                bn::fixed_point position(nest.x, nest.y);
+
+                if(_enemies.summon(enemy_id::ONYXIAN_WHELP, position) >= 0)
+                {
+                    _effects.burst(position, projectile_kind::FIRE);
+                }
+            }
+
+            _hud.message("Whelps pour from the nests!", ui::color::RED);
+        }
+
+        _update_deep_breath(boss);
+
+        if(--_air_frames <= 0)
+        {
+            boss.phase = 3;
+            boss.airborne = false;
+            boss.telegraph_frames = 0;
+            boss.special_timer = 3 * seconds;
+            _hud.message("Onyxia lands!", ui::color::RED);
+        }
+
+        return true;
+    }
+
+    // Back on the ground: Bellowing Roar cracks the floor under the hero.
+    _update_frenzy(boss, health_percent, 25, 4, "Onyxia");
+    return _update_telegraph(boss, false, ground_radius, "Bellowing Roar", projectile_kind::FIRE);
+}
+
+void combat::_update_deep_breath(enemy& boss)
+{
+    // Deep Breath: a lane of fire across the cave through where the hero stands, north to south or
+    // west to east in turn. It goes off after the usual wind-up: step out of the lane.
+    constexpr int lane_circles = 5;
+    constexpr int lane_step = 52;
+
+    if(boss.telegraph_frames > 0)
+    {
+        if(--boss.telegraph_frames > 0)
+        {
+            return;
+        }
+
+        bool hit = false;
+
+        for(int index = 0; index < lane_circles; ++index)
+        {
+            int offset = (index - lane_circles / 2) * lane_step;
+            bn::fixed_point spot = _lane_vertical ?
+                        bn::fixed_point(boss.special_position.x(), boss.special_position.y() + offset) :
+                        bn::fixed_point(boss.special_position.x() + offset, boss.special_position.y());
+            _effects.burst(spot, projectile_kind::FIRE);
+            hit = hit || distance_squared(_player.position(), spot) <= breath_radius * breath_radius;
+        }
+
+        if(hit)
+        {
+            damage_player(boss.damage * 4, boss.special_position, school::FIRE);
+        }
+
+        _lane_vertical = ! _lane_vertical;
+        boss.special_timer = 6 * seconds;
+        return;
+    }
+
+    if(boss.special_timer == 0)
+    {
+        boss.special_position = _player.position();
+        boss.telegraph_frames = telegraph_windup;
+
+        for(int index = 0; index < lane_circles; ++index)
+        {
+            int offset = (index - lane_circles / 2) * lane_step;
+            bn::fixed_point spot = _lane_vertical ?
+                        bn::fixed_point(boss.special_position.x(), boss.special_position.y() + offset) :
+                        bn::fixed_point(boss.special_position.x() + offset, boss.special_position.y());
+            _effects.circle(spot, breath_radius, telegraph_windup, circle_style::DANGER);
+        }
+
+        _texts.show(_head(boss.position, 52), "Deep Breath", floating_texts::style::DAMAGE_TAKEN);
+    }
 }
 
 void combat::_gandling_portal()

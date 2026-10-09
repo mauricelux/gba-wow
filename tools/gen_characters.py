@@ -4155,6 +4155,15 @@ HUMANOID_LOOKS = {
     'baron_rivendare': ('hum_sword', humanoid_palette(skin=(136, 152, 160), hair=(232, 232, 224), armor=(48, 48, 60),
                                                       tabard=(56, 120, 152), trim=(176, 232, 248),
                                                       armor_light=(96, 100, 116))),
+    # Stormwind Keep and Theramore
+    'katrana_prestor': ('fem_robe', humanoid_palette(hair=(24, 20, 28), armor=(112, 24, 40), tabard=(40, 28, 44),
+                                                     trim=(232, 196, 96), armor_light=(160, 48, 64))),
+    'jaina_proudmoore': ('fem_robe', humanoid_palette(hair=(240, 224, 168), armor=(216, 220, 236), tabard=(64, 96, 184),
+                                                      trim=(232, 196, 96), armor_light=(240, 240, 252))),
+    'garran_vimes': ('hum_sword', humanoid_palette(hair=(136, 104, 72), armor=(152, 156, 168), tabard=(56, 88, 168),
+                                                   trim=(232, 196, 96), lower_face=(136, 104, 72))),
+    'baldruc': ('dwarf_plain', dwarf_palette(hair=(112, 72, 40), armor=(104, 92, 84), tabard=(56, 88, 160),
+                                             trim=(232, 196, 96))),
 }
 
 CREATURE_LOOKS = {
@@ -4616,6 +4625,17 @@ CREATURE_LOOKS = {
                                                             flame=(216, 240, 255), flame_dark=(112, 176, 232))),
     'ramstein_the_gorger': ('abomination', creature_palette((200, 176, 168), (168, 120, 112), eye=(248, 216, 64),
                                                             extra=(152, 32, 40), weapon=(168, 168, 176))),
+    # Dustwallow Marsh and Onyxia's Lair
+    'darkmist_widow': ('spider', creature_palette((48, 44, 60), (136, 120, 176), eye=(232, 120, 255))),
+    'mudrock_snapjaw': ('turtle', creature_palette((104, 96, 72), (88, 112, 72), eye=(232, 200, 64),
+                                                   extra=(168, 152, 112))),
+    'firemane_scalebane': ('centaur', creature_palette((152, 56, 32), (64, 52, 52), eye=(255, 216, 64),
+                                                       extra=(248, 152, 48))),
+    'onyxian_warder': ('centaur', creature_palette((40, 36, 44), (120, 40, 36), eye=(255, 160, 48),
+                                                   extra=(216, 200, 176))),
+    'emberstrife': ('dragon', creature_palette((168, 48, 32), (240, 152, 56), eye=(255, 240, 128),
+                                               extra=(224, 208, 168))),
+    'onyxia': ('dragon', creature_palette((36, 32, 40), (96, 64, 88), eye=(255, 176, 48), extra=(208, 192, 168))),
 }
 
 

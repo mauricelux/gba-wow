@@ -109,6 +109,8 @@ enum class map_id : uint16_t
     BLACKROCK_SPIRE,
     SCHOLOMANCE,
     STRATHOLME,
+    DUSTWALLOW,
+    ONYXIAS_LAIR,
     COUNT
 };
 
@@ -363,6 +365,11 @@ enum class npc_id : uint16_t
     LH_INNKEEPER,
     KHAELYN,
     ANTHION,
+    PRESTOR,
+    JAINA,
+    VIMES,
+    THERAMORE_INNKEEPER,
+    BALDRUC,
     COUNT
 };
 
@@ -815,6 +822,13 @@ enum class enemy_id : uint16_t
     MALEKI_THE_PALLID,
     RAMSTEIN_THE_GORGER,
     BARON_RIVENDARE,
+    DARKMIST_WIDOW,
+    MUDROCK_SNAPJAW,
+    ONYXIAN_WHELP,
+    FIREMANE_SCALEBANE,
+    ONYXIAN_WARDER,
+    EMBERSTRIFE,
+    ONYXIA,
     COUNT
 };
 

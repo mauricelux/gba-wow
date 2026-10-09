@@ -122,6 +122,16 @@ namespace
           "General Drakkisath is dead in his hall, and the Blackrock legions lose their master. Marshal "
           "Maxwell sends word to Stormwind. Behind the general's throne lie letters in a noble hand.",
           quest_id::GENERAL_DRAKKISATHS_COMMAND },
+        { "The Masquerade Ends",
+          "Lady Katrana Prestor is gone from Stormwind Keep, and the court learns what she was. For "
+          "years the daughter of Deathwing whispered in Bolvar's ear while her brood grew in the "
+          "Wyrmbog.",
+          quest_id::THE_GREAT_MASQUERADE },
+        { "Onyxia Is Slain",
+          "Onyxia's head hangs from the gates of Stormwind. The black dragonflight has lost its "
+          "queen in the west, Jaina Proudmoore sleeps easy in Theramore, and Highlord Bolvar names "
+          "you Champion of the Alliance before the whole city.",
+          quest_id::VICTORY_FOR_THE_ALLIANCE },
     };
 
     constexpr int story_page_total = sizeof(story_pages) / sizeof(story_pages[0]);
@@ -206,7 +216,8 @@ void ending::_draw()
     }
 
     const character_data& data = character();
-    ui::text_center(1, "End of Chapter One", ui::color::YELLOW, true);
+    bool finished = quest_state(quest_id::VICTORY_FOR_THE_ALLIANCE).status == quest_status::TURNED_IN;
+    ui::text_center(1, finished ? "The End" : "End of Chapter One", ui::color::YELLOW, true);
 
     bn::string<32> line = "Level ";
     line += bn::to_string<4>(data.level);
@@ -253,8 +264,10 @@ void ending::_draw()
     ui::money_right(27, 8, data.money);
 
     ui::text_wrapped(2, 10, 26, 5,
-                     "Thanks for playing! The world stays open: finish your quests, hunt for better gear, "
-                     "or start over with another race and class.", ui::color::GRAY, true);
+                     finished ? "Thanks for playing! Onyxia is dead and your road ends here. The world stays "
+                                "open: finish your quests or start a new hero." :
+                                "Thanks for playing! The world stays open: finish your quests, hunt for better "
+                                "gear, or start over with another race and class.", ui::color::GRAY, true);
     ui::text(2, 18, "A Keep exploring", ui::color::WHITE, true);
 }
 

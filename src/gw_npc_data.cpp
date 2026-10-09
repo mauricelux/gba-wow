@@ -447,6 +447,18 @@ namespace
           "The chapel's gryphons fear nothing." },
         { "Anthion Harmon", "", l::ANTHION_HARMON, 0, c::WARRIOR, 0,
           "My Ysida is in there. The Baron has her. Please." },
+        // Stormwind Keep, until the masquerade ends
+        { "Lady Katrana Prestor", "Royal Advisor", l::KATRANA_PRESTOR, 0, c::WARRIOR, 0,
+          "The Highlord has no time for every sellsword with a story. Run along." },
+        // Theramore Isle
+        { "Lady Jaina Proudmoore", "Lord of Theramore", l::JAINA_PROUDMOORE, 0, c::WARRIOR, 0,
+          "Theramore keeps watch over the marsh, and over what sleeps in its south." },
+        { "Captain Garran Vimes", "", l::GARRAN_VIMES, 0, c::WARRIOR, 0,
+          "The marsh tries to kill my men every day. Some days it wins." },
+        { "Innkeeper Janene", "Innkeeper", l::INNKEEPER_F, innkeeper, c::WARRIOR, lights_hope_goods,
+          "Dry beds and hot food. In Dustwallow, that's luxury." },
+        { "Baldruc", "Gryphon Master", l::BALDRUC, flight_master, c::WARRIOR, 0,
+          "My birds fly to anywhere in Kalimdor. Mind the dragons over the bog." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

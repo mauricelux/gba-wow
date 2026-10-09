@@ -170,6 +170,12 @@ bool combat::enemy_ai_update(int index)
         return true;
     }
 
+    // Up in the air it only follows its boss script.
+    if(item.airborne)
+    {
+        return false;
+    }
+
     int player_distance_squared = distance_squared(item.position, _player.position());
 
     for(int slot = 0; slot < enemy_ability_slots; ++slot)
