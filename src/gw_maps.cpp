@@ -10,6 +10,10 @@
 #include "bn_regular_bg_items_map_deadmines_overhead.h"
 #include "bn_regular_bg_items_map_deeprun_tram_ground.h"
 #include "bn_regular_bg_items_map_deeprun_tram_overhead.h"
+#include "bn_regular_bg_items_map_desolace_ground.h"
+#include "bn_regular_bg_items_map_desolace_overhead.h"
+#include "bn_regular_bg_items_map_dire_maul_ground.h"
+#include "bn_regular_bg_items_map_dire_maul_overhead.h"
 #include "bn_regular_bg_items_map_dun_morogh_ground.h"
 #include "bn_regular_bg_items_map_dun_morogh_overhead.h"
 #include "bn_regular_bg_items_map_duskwood_ground.h"
@@ -20,6 +24,8 @@
 #include "bn_regular_bg_items_map_elwynn_overhead.h"
 #include "bn_regular_bg_items_map_fargodeep_ground.h"
 #include "bn_regular_bg_items_map_fargodeep_overhead.h"
+#include "bn_regular_bg_items_map_feralas_ground.h"
+#include "bn_regular_bg_items_map_feralas_overhead.h"
 #include "bn_regular_bg_items_map_gnomeregan_ground.h"
 #include "bn_regular_bg_items_map_gnomeregan_overhead.h"
 #include "bn_regular_bg_items_map_hillsbrad_ground.h"
@@ -28,6 +34,8 @@
 #include "bn_regular_bg_items_map_inn_overhead.h"
 #include "bn_regular_bg_items_map_ironforge_ground.h"
 #include "bn_regular_bg_items_map_ironforge_overhead.h"
+#include "bn_regular_bg_items_map_maraudon_ground.h"
+#include "bn_regular_bg_items_map_maraudon_overhead.h"
 #include "bn_regular_bg_items_map_razorfen_downs_ground.h"
 #include "bn_regular_bg_items_map_razorfen_downs_overhead.h"
 #include "bn_regular_bg_items_map_razorfen_kraul_ground.h"
@@ -38,20 +46,20 @@
 #include "bn_regular_bg_items_map_shadowfang_overhead.h"
 #include "bn_regular_bg_items_map_silverpine_ground.h"
 #include "bn_regular_bg_items_map_silverpine_overhead.h"
-#include "bn_regular_bg_items_map_sm_graveyard_ground.h"
-#include "bn_regular_bg_items_map_sm_graveyard_overhead.h"
-#include "bn_regular_bg_items_map_sm_library_ground.h"
-#include "bn_regular_bg_items_map_sm_library_overhead.h"
 #include "bn_regular_bg_items_map_sm_armory_ground.h"
 #include "bn_regular_bg_items_map_sm_armory_overhead.h"
 #include "bn_regular_bg_items_map_sm_cathedral_ground.h"
 #include "bn_regular_bg_items_map_sm_cathedral_overhead.h"
-#include "bn_regular_bg_items_map_stranglethorn_ground.h"
-#include "bn_regular_bg_items_map_stranglethorn_overhead.h"
+#include "bn_regular_bg_items_map_sm_graveyard_ground.h"
+#include "bn_regular_bg_items_map_sm_graveyard_overhead.h"
+#include "bn_regular_bg_items_map_sm_library_ground.h"
+#include "bn_regular_bg_items_map_sm_library_overhead.h"
 #include "bn_regular_bg_items_map_stockade_ground.h"
 #include "bn_regular_bg_items_map_stockade_overhead.h"
 #include "bn_regular_bg_items_map_stormwind_ground.h"
 #include "bn_regular_bg_items_map_stormwind_overhead.h"
+#include "bn_regular_bg_items_map_stranglethorn_ground.h"
+#include "bn_regular_bg_items_map_stranglethorn_overhead.h"
 #include "bn_regular_bg_items_map_tanaris_ground.h"
 #include "bn_regular_bg_items_map_tanaris_overhead.h"
 #include "bn_regular_bg_items_map_thousand_needles_ground.h"
@@ -70,27 +78,31 @@
 #include "gw_map_darkshore.h"
 #include "gw_map_deadmines.h"
 #include "gw_map_deeprun_tram.h"
+#include "gw_map_desolace.h"
+#include "gw_map_dire_maul.h"
 #include "gw_map_dun_morogh.h"
 #include "gw_map_duskwood.h"
 #include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
+#include "gw_map_feralas.h"
 #include "gw_map_gnomeregan.h"
 #include "gw_map_hillsbrad.h"
 #include "gw_map_inn.h"
 #include "gw_map_ironforge.h"
+#include "gw_map_maraudon.h"
 #include "gw_map_razorfen_downs.h"
 #include "gw_map_razorfen_kraul.h"
 #include "gw_map_redridge.h"
 #include "gw_map_shadowfang.h"
 #include "gw_map_silverpine.h"
-#include "gw_map_sm_graveyard.h"
-#include "gw_map_sm_library.h"
 #include "gw_map_sm_armory.h"
 #include "gw_map_sm_cathedral.h"
-#include "gw_map_stranglethorn.h"
+#include "gw_map_sm_graveyard.h"
+#include "gw_map_sm_library.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
+#include "gw_map_stranglethorn.h"
 #include "gw_map_tanaris.h"
 #include "gw_map_thousand_needles.h"
 #include "gw_map_tirisfal.h"
@@ -146,6 +158,13 @@ namespace
     constexpr point_def razorfen_kraul_graveyards[] = { map_data::razorfen_kraul::respawn };
     constexpr point_def razorfen_downs_graveyards[] = { map_data::razorfen_downs::respawn };
     constexpr point_def zul_farrak_graveyards[] = { map_data::zul_farrak::respawn };
+    constexpr point_def feralas_graveyards[] = { map_data::feralas::feathermoon_respawn,
+                                                 map_data::feralas::coast_respawn,
+                                                 map_data::feralas::maul_respawn };
+    constexpr point_def desolace_graveyards[] = { map_data::desolace::nijels_respawn,
+                                                  map_data::desolace::maraudon_exit };
+    constexpr point_def maraudon_graveyards[] = { map_data::maraudon::respawn };
+    constexpr point_def dire_maul_graveyards[] = { map_data::dire_maul::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
@@ -203,6 +222,10 @@ namespace
         GW_MAP_INFO(RAZORFEN_KRAUL, razorfen_kraul, true, true),
         GW_MAP_INFO(RAZORFEN_DOWNS, razorfen_downs, true, true),
         GW_MAP_INFO(ZUL_FARRAK, zul_farrak, true, true),
+        GW_MAP_INFO(FERALAS, feralas, false, false),
+        GW_MAP_INFO(DESOLACE, desolace, false, false),
+        GW_MAP_INFO(MARAUDON, maraudon, true, true),
+        GW_MAP_INFO(DIRE_MAUL, dire_maul, true, true),
     };
 
     [[nodiscard]] int count_chests()
@@ -276,7 +299,8 @@ const area_def* area_at(const map_info& map, int x, int y)
 
     for(const area_def& area : map.areas)
     {
-        if(area.id == area_id::RADIATION || area.id == area_id::GONG || area.id == area_id::CAGE)
+        if(area.id == area_id::RADIATION || area.id == area_id::GONG || area.id == area_id::CAGE ||
+           area.id == area_id::PRISON)
         {
             continue;
         }
@@ -300,8 +324,8 @@ area_id event_area_at(const map_info& map, int x, int y)
 {
     for(const area_def& area : map.areas)
     {
-        if((area.id == area_id::GONG || area.id == area_id::CAGE) && x >= area.x && y >= area.y &&
-           x < area.x + area.width && y < area.y + area.height)
+        if((area.id == area_id::GONG || area.id == area_id::CAGE || area.id == area_id::PRISON) &&
+           x >= area.x && y >= area.y && x < area.x + area.width && y < area.y + area.height)
         {
             return area.id;
         }

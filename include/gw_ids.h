@@ -96,6 +96,10 @@ enum class map_id : uint16_t
     RAZORFEN_KRAUL,
     RAZORFEN_DOWNS,
     ZUL_FARRAK,
+    FERALAS,
+    DESOLACE,
+    MARAUDON,
+    DIRE_MAUL,
     COUNT
 };
 
@@ -115,7 +119,8 @@ enum class music_id : uint8_t
     HILLSBRAD,
     MONASTERY,
     STRANGLETHORN,
-    TANARIS
+    TANARIS,
+    FERALAS
 };
 
 enum class area_id : uint8_t
@@ -131,7 +136,8 @@ enum class area_id : uint8_t
     RADIATION,          // fallout that burns whoever stands in it; unnamed, under a named room
     THE_STACKS,
     GONG,               // where A rings a gong that starts an event (combat::start_event); unnamed
-    CAGE                // the same for a cage whose lock is broken
+    CAGE,               // the same for a cage whose lock is broken
+    PRISON              // the same for a prison whose force field falls once the map's braziers are lit
 };
 
 enum class npc_id : uint16_t
@@ -291,6 +297,26 @@ enum class npc_id : uint16_t
     FIZZLE_BRASSBOLTS,
     WIZZLE_BRASSBOLTS,
     ARGENT_GUARD_DALEN,
+    // Feralas and Desolace
+    SHANDRIS,
+    LATRONICUS,
+    ANGELAS,
+    PRATT,
+    KINDAL,
+    SHYRIA,
+    VIVIANNA,
+    BRANNOL,
+    FYLDREN,
+    FEATHERMOON_SENTINEL,
+    ZORBIN,
+    AZJ_TORDIN,
+    TALENDRIA,
+    MARANDIS,
+    WILLOW,
+    LYSHAERYA,
+    BARITANAS,
+    CAVINDRA,
+    SHENDRALAR_ANCIENT,
     COUNT
 };
 
@@ -539,6 +565,67 @@ enum class enemy_id : uint16_t
     CHIEF_UKORZ_SANDSCALP,
     SANDFURY_SLAVE,
     SANDFURY_DRUDGE,
+    // Feralas
+    HATECREST_WARRIOR,
+    HATECREST_SIREN,
+    LORD_SHALZARU,
+    SHORE_STRIDER,
+    RAGE_SCAR_YETI,
+    OLD_GRIZZLEGUT,
+    GORDUNNI_OGRE,
+    GORDUNNI_MAGE,
+    GORDUNNI_WARLORD,
+    GRIMTOTEM_RAIDER,
+    GRIMTOTEM_NATURALIST,
+    ENRAGED_WILDKIN,
+    WILDKIN_ORACLE,
+    JADEMIR_ECHOSPAWN,
+    JADEMIR_BOUGHGUARD,
+    // Desolace
+    MAGRAM_WRANGLER,
+    MAGRAM_STORMER,
+    // Maraudon
+    PUTRIDUS_SATYR,
+    PUTRIDUS_SHADOWSTALKER,
+    CREEPING_SLUDGE,
+    BARBED_LASHER,
+    DEEPROT_STOMPER,
+    THERADRIM_SHARDLING,
+    THERADRIM_GUARDIAN,
+    SUBTERRANEAN_DIEMETRADON,
+    NOXXIOUS_SPAWN,
+    NOXXION,
+    RAZORLASH,
+    LORD_VYLETONGUE,
+    CELEBRAS_THE_CURSED,
+    LANDSLIDE,
+    TINKERER_GIZLOCK,
+    ROTGRIP,
+    PRINCESS_THERADRAS,
+    // Dire Maul
+    WILDSPAWN_SATYR,
+    WILDSPAWN_FELSWORN,
+    WHIP_LASHER,
+    WARPWOOD_CRUSHER,
+    HYDROLING,
+    ZEVRIM_THORNHOOF,
+    HYDROSPAWN,
+    LETHTENDRIS,
+    ALZZIN_THE_WILDSHAPER,
+    HIGHBORNE_SUMMONER,
+    ARCANE_ABERRATION,
+    ELDRETH_SPECTRE,
+    PETRIFIED_TREANT,
+    IRONBARK_PROTECTOR,
+    EYE_OF_IMMOL_THAR,
+    TENDRIS_WARPWOOD,
+    IMMOL_THAR,
+    PRINCE_TORTHELDRIN,
+    GORDOK_BRUTE,
+    GORDOK_MAGE_LORD,
+    GORDOK_MASTIFF,
+    CHO_RUSH_THE_OBSERVER,
+    KING_GORDOK,
     COUNT
 };
 

@@ -299,6 +299,59 @@ jobs:
             hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
             hold:A:2 wait:90 hold:A:2 wait:30 shot:screenshots/59_pyramid_cage.ppm wait:100 hold:D:80 \
             shot:screenshots/60_pyramid_wave.ppm
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 shot:screenshots/61_feathermoon.ppm
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 shot:screenshots/62_maraudon.ppm
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 shot:screenshots/63_zaetars_grave.ppm
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 shot:screenshots/64_dire_maul.ppm
+          # Immol'thar waits in his force field until the four pylons around it are shut down.
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 \
+            hold:A:2 wait:60 shot:screenshots/65_immolthar_prison.ppm
+
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm
 

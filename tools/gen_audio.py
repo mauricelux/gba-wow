@@ -657,6 +657,29 @@ def song_tanaris():
     return s
 
 
+def song_feralas():
+    """Feralas: an old elven forest, a lilting tune in D Dorian over soft pads, under giant trees."""
+    s = Song('feralas', 9)
+    drums = 'k.......t.......|k.......t...h...'
+    a = arrange(['Dm', 'G', 'Dm', 'C'],
+                'D5 - - - E5 - F5 - A5 - - - G5 - - - '
+                'B5 - - - A5 - G5 - D5 - - - - - - - '
+                'F5 - - - A5 - - - C6 - - - A5 - G5 - '
+                'E5 - - - G5 - - - C5 - - - - - - - ',
+                lead='bell', lead_volume=40, harmony='arp_up_down', harmony_sample='soft', harmony_volume=16,
+                bass='root_fifth', drums=drums)
+    b = arrange(['Am', 'G', 'F', 'C'],
+                'E5 - - - - - D5 - C5 - - - A4 - - - '
+                'B4 - - - D5 - - - G5 - - - - - - - '
+                'A5 - - - G5 - F5 - C5 - - - F5 - - - '
+                'E5 - - - - - D5 - C5 - - - - - - - ',
+                lead='soft', lead_volume=40, harmony='pad', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=20, bass='roots', drums=drums)
+    s.add(a)
+    s.add(b)
+    return s
+
+
 def song_dungeon():
     s = Song('dungeon', 10)
     drums = 'k...............|k.......k.......'
@@ -762,7 +785,8 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     for song in (song_title(), song_elwynn(), song_town(), song_westfall(), song_dungeon(), song_boss(),
                  song_redridge(), song_duskwood(), song_ironforge(), song_wetlands(), song_hillsbrad(),
-                 song_monastery(), song_stranglethorn(), song_tanaris()):
+                 song_monastery(), song_stranglethorn(), song_tanaris(),
+                 song_feralas()):
         write_mod(song)
         print(f'{song.name}.mod: {len(song.patterns)} patterns, {len(song.order)} in order')
     write_sounds()

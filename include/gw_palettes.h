@@ -646,6 +646,81 @@ namespace gw::palettes
     constexpr bn::color amnennar_the_coldbringer_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(17, 18, 18), bn::color(29, 29, 30), bn::color(31, 31, 31), bn::color(15, 16, 17), bn::color(22, 23, 25), bn::color(12, 25, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(19, 22, 28), bn::color(11, 13, 17), bn::color(28, 31, 31), bn::color(12, 21, 30), bn::color(4, 4, 6), bn::color(8, 7, 10) };
     constexpr bn::sprite_palette_item amnennar_the_coldbringer(amnennar_the_coldbringer_colors, bn::bpp_mode::BPP_4);
 
+    constexpr bn::color shandris_feathermoon_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(16, 14, 21), bn::color(22, 19, 28), bn::color(3, 5, 12), bn::color(6, 9, 20), bn::color(15, 15, 17), bn::color(25, 25, 28), bn::color(29, 29, 31), bn::color(5, 4, 11), bn::color(9, 7, 19), bn::color(29, 24, 9), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 16, 6), bn::color(22, 19, 29) };
+    constexpr bn::sprite_palette_item shandris_feathermoon(shandris_feathermoon_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color latronicus_moonspear_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(16, 14, 21), bn::color(22, 19, 28), bn::color(16, 16, 17), bn::color(28, 28, 29), bn::color(7, 9, 13), bn::color(12, 15, 22), bn::color(18, 21, 27), bn::color(4, 5, 9), bn::color(7, 9, 16), bn::color(26, 26, 28), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(18, 18, 19), bn::color(22, 19, 29) };
+    constexpr bn::sprite_palette_item latronicus_moonspear(latronicus_moonspear_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color feathermoon_ranger_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(16, 14, 21), bn::color(22, 19, 28), bn::color(4, 10, 7), bn::color(7, 18, 13), bn::color(6, 8, 5), bn::color(10, 14, 9), bn::color(15, 19, 13), bn::color(4, 6, 3), bn::color(7, 10, 6), bn::color(25, 23, 15), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(17, 16, 10), bn::color(22, 19, 29) };
+    constexpr bn::sprite_palette_item feathermoon_ranger(feathermoon_ranger_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color feathermoon_druid_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(16, 14, 21), bn::color(22, 19, 28), bn::color(14, 16, 17), bn::color(24, 27, 29), bn::color(4, 9, 7), bn::color(8, 16, 12), bn::color(13, 21, 16), bn::color(3, 7, 5), bn::color(6, 12, 9), bn::color(28, 25, 15), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(19, 17, 10), bn::color(22, 19, 29) };
+    constexpr bn::sprite_palette_item feathermoon_druid(feathermoon_druid_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color pratt_mcgrubben_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 15, 12), bn::color(29, 21, 16), bn::color(9, 6, 3), bn::color(15, 10, 6), bn::color(10, 7, 4), bn::color(16, 12, 7), bn::color(21, 15, 9), bn::color(7, 5, 3), bn::color(12, 8, 5), bn::color(25, 22, 15), bn::color(6, 4, 3), bn::color(12, 8, 5), bn::color(17, 15, 10), bn::color(15, 10, 6) };
+    constexpr bn::sprite_palette_item pratt_mcgrubben(pratt_mcgrubben_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color feathermoon_vendor_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(16, 14, 21), bn::color(22, 19, 28), bn::color(12, 5, 12), bn::color(20, 9, 20), bn::color(14, 11, 7), bn::color(23, 19, 12), bn::color(30, 25, 15), bn::color(9, 6, 4), bn::color(15, 11, 7), bn::color(29, 27, 20), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 18, 14), bn::color(22, 19, 29) };
+    constexpr bn::sprite_palette_item feathermoon_vendor(feathermoon_vendor_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color feathermoon_smith_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(16, 14, 21), bn::color(22, 19, 28), bn::color(3, 7, 10), bn::color(6, 12, 17), bn::color(9, 8, 8), bn::color(15, 14, 14), bn::color(19, 18, 18), bn::color(6, 4, 3), bn::color(11, 8, 6), bn::color(22, 22, 23), bn::color(5, 3, 2), bn::color(10, 7, 5), bn::color(15, 15, 16), bn::color(22, 19, 29) };
+    constexpr bn::sprite_palette_item feathermoon_smith(feathermoon_smith_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color zorbin_fandazzle_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 17, 14), bn::color(30, 23, 19), bn::color(17, 9, 3), bn::color(29, 15, 5), bn::color(4, 9, 13), bn::color(8, 15, 21), bn::color(10, 19, 27), bn::color(3, 6, 9), bn::color(5, 10, 15), bn::color(27, 22, 9), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(18, 15, 6), bn::color(30, 23, 20) };
+    constexpr bn::sprite_palette_item zorbin_fandazzle(zorbin_fandazzle_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color highborne_exile_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(19, 16, 22), bn::color(25, 22, 29), bn::color(18, 17, 16), bn::color(30, 29, 27), bn::color(8, 4, 11), bn::color(13, 7, 19), bn::color(19, 13, 24), bn::color(17, 17, 18), bn::color(29, 28, 30), bn::color(29, 24, 9), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 16, 6), bn::color(25, 22, 30) };
+    constexpr bn::sprite_palette_item highborne_exile(highborne_exile_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color nijel_sentinel_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(16, 14, 21), bn::color(22, 19, 28), bn::color(15, 15, 17), bn::color(26, 26, 28), bn::color(8, 6, 11), bn::color(14, 11, 19), bn::color(19, 16, 24), bn::color(5, 4, 7), bn::color(9, 7, 13), bn::color(26, 25, 27), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(18, 17, 18), bn::color(22, 19, 29) };
+    constexpr bn::sprite_palette_item nijel_sentinel(nijel_sentinel_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color nijel_druid_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(16, 14, 21), bn::color(22, 19, 28), bn::color(4, 10, 5), bn::color(8, 17, 9), bn::color(9, 6, 4), bn::color(15, 11, 7), bn::color(20, 15, 10), bn::color(4, 8, 4), bn::color(8, 14, 7), bn::color(25, 22, 12), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(17, 15, 8), bn::color(22, 19, 29) };
+    constexpr bn::sprite_palette_item nijel_druid(nijel_druid_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color shendralar_ancient_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(16, 20, 22), bn::color(22, 27, 29), bn::color(17, 18, 18), bn::color(29, 30, 31), bn::color(7, 12, 14), bn::color(12, 20, 24), bn::color(19, 25, 28), bn::color(15, 17, 18), bn::color(25, 29, 30), bn::color(28, 30, 31), bn::color(5, 8, 10), bn::color(10, 15, 19), bn::color(19, 21, 21), bn::color(22, 27, 30) };
+    constexpr bn::sprite_palette_item shendralar_ancient(shendralar_ancient_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color grimtotem_raider_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(13, 9, 6), bn::color(17, 12, 9), bn::color(5, 3, 3), bn::color(9, 6, 5), bn::color(10, 7, 4), bn::color(17, 12, 7), bn::color(22, 15, 9), bn::color(11, 3, 2), bn::color(19, 5, 4), bn::color(28, 27, 24), bn::color(6, 4, 2), bn::color(11, 7, 5), bn::color(19, 18, 16), bn::color(23, 18, 14) };
+    constexpr bn::sprite_palette_item grimtotem_raider(grimtotem_raider_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color grimtotem_naturalist_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(9, 7, 7), bn::color(12, 10, 9), bn::color(3, 3, 2), bn::color(6, 5, 4), bn::color(13, 12, 8), bn::color(22, 20, 14), bn::color(26, 24, 19), bn::color(9, 2, 2), bn::color(15, 4, 4), bn::color(28, 27, 24), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(19, 18, 16), bn::color(18, 16, 14) };
+    constexpr bn::sprite_palette_item grimtotem_naturalist(grimtotem_naturalist_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color putridus_satyr_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(13, 11, 9), bn::color(18, 15, 12), bn::color(4, 5, 3), bn::color(7, 9, 5), bn::color(6, 8, 4), bn::color(11, 13, 7), bn::color(14, 17, 9), bn::color(4, 5, 3), bn::color(8, 9, 5), bn::color(11, 8, 7), bn::color(5, 4, 2), bn::color(10, 7, 5), bn::color(7, 5, 5), bn::color(7, 9, 5) };
+    constexpr bn::sprite_palette_item putridus_satyr(putridus_satyr_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color putridus_shadowstalker_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(10, 9, 10), bn::color(14, 12, 14), bn::color(3, 2, 3), bn::color(5, 4, 6), bn::color(4, 4, 5), bn::color(7, 6, 9), bn::color(9, 8, 11), bn::color(3, 2, 3), bn::color(5, 4, 6), bn::color(11, 8, 7), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(7, 5, 5), bn::color(5, 4, 6) };
+    constexpr bn::sprite_palette_item putridus_shadowstalker(putridus_shadowstalker_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color lord_vyletongue_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(11, 13, 8), bn::color(15, 18, 11), bn::color(3, 3, 4), bn::color(6, 5, 7), bn::color(7, 4, 9), bn::color(12, 7, 16), bn::color(18, 12, 22), bn::color(4, 3, 6), bn::color(8, 5, 11), bn::color(5, 4, 4), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(3, 3, 2), bn::color(6, 5, 7) };
+    constexpr bn::sprite_palette_item lord_vyletongue(lord_vyletongue_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color wildspawn_satyr_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(15, 9, 12), bn::color(21, 13, 16), bn::color(4, 3, 4), bn::color(8, 5, 7), bn::color(11, 4, 3), bn::color(18, 8, 6), bn::color(23, 10, 7), bn::color(7, 3, 2), bn::color(12, 5, 4), bn::color(11, 8, 7), bn::color(6, 3, 2), bn::color(11, 7, 5), bn::color(7, 5, 5), bn::color(8, 5, 7) };
+    constexpr bn::sprite_palette_item wildspawn_satyr(wildspawn_satyr_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color wildspawn_felsworn_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(11, 8, 13), bn::color(15, 11, 18), bn::color(2, 2, 3), bn::color(4, 3, 5), bn::color(4, 10, 4), bn::color(8, 17, 7), bn::color(14, 23, 11), bn::color(3, 7, 3), bn::color(5, 12, 5), bn::color(11, 8, 7), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(7, 5, 5), bn::color(4, 3, 5) };
+    constexpr bn::sprite_palette_item wildspawn_felsworn(wildspawn_felsworn_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color zevrim_thornhoof_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(16, 6, 6), bn::color(22, 9, 8), bn::color(3, 2, 2), bn::color(5, 3, 3), bn::color(4, 3, 3), bn::color(7, 5, 6), bn::color(13, 11, 12), bn::color(10, 2, 2), bn::color(17, 4, 4), bn::color(27, 25, 21), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(18, 17, 14), bn::color(5, 3, 3) };
+    constexpr bn::sprite_palette_item zevrim_thornhoof(zevrim_thornhoof_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color alzzin_the_wildshaper_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(9, 11, 6), bn::color(12, 15, 9), bn::color(5, 3, 2), bn::color(9, 6, 4), bn::color(5, 8, 3), bn::color(9, 13, 6), bn::color(15, 19, 11), bn::color(8, 5, 3), bn::color(14, 9, 5), bn::color(29, 27, 24), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 19, 17), bn::color(9, 6, 4) };
+    constexpr bn::sprite_palette_item alzzin_the_wildshaper(alzzin_the_wildshaper_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color highborne_summoner_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(15, 17, 19), bn::color(20, 23, 26), bn::color(16, 16, 17), bn::color(27, 28, 29), bn::color(5, 6, 11), bn::color(9, 11, 19), bn::color(14, 17, 24), bn::color(13, 14, 16), bn::color(22, 23, 27), bn::color(25, 27, 30), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(17, 18, 21), bn::color(20, 23, 27) };
+    constexpr bn::sprite_palette_item highborne_summoner(highborne_summoner_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color lethtendris_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(22, 18, 15), bn::color(29, 24, 20), bn::color(18, 15, 7), bn::color(30, 26, 13), bn::color(11, 3, 3), bn::color(19, 5, 6), bn::color(25, 10, 10), bn::color(3, 2, 3), bn::color(5, 4, 5), bn::color(29, 24, 9), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(20, 16, 6), bn::color(29, 24, 21) };
+    constexpr bn::sprite_palette_item lethtendris(lethtendris_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color prince_tortheldrin_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(17, 15, 21), bn::color(23, 20, 28), bn::color(18, 17, 16), bn::color(30, 29, 27), bn::color(16, 14, 6), bn::color(27, 23, 10), bn::color(31, 28, 17), bn::color(7, 3, 11), bn::color(13, 6, 19), bn::color(30, 28, 20), bn::color(8, 5, 3), bn::color(15, 10, 6), bn::color(21, 19, 14), bn::color(23, 20, 29) };
+    constexpr bn::sprite_palette_item prince_tortheldrin(prince_tortheldrin_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color tinkerer_gizlock_colors[] = { bn::color(31, 0, 31), bn::color(3, 3, 4), bn::color(11, 16, 6), bn::color(15, 22, 9), bn::color(4, 7, 2), bn::color(8, 12, 4), bn::color(9, 8, 6), bn::color(15, 13, 11), bn::color(19, 17, 14), bn::color(15, 9, 3), bn::color(25, 15, 5), bn::color(25, 25, 26), bn::color(5, 3, 2), bn::color(10, 7, 5), bn::color(17, 17, 18), bn::color(30, 29, 25) };
+    constexpr bn::sprite_palette_item tinkerer_gizlock(tinkerer_gizlock_colors, bn::bpp_mode::BPP_4);
+
     constexpr bn::color young_wolf_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 9, 8), bn::color(17, 15, 13), bn::color(22, 19, 16), bn::color(17, 16, 14), bn::color(25, 23, 20), bn::color(29, 5, 3), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
     constexpr bn::sprite_palette_item young_wolf(young_wolf_colors, bn::bpp_mode::BPP_4);
 
@@ -972,6 +1047,138 @@ namespace gw::palettes
 
     constexpr bn::color gahz_rilla_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(6, 13, 13), bn::color(11, 21, 22), bn::color(17, 26, 26), bn::color(16, 19, 19), bn::color(23, 28, 28), bn::color(25, 30, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(6, 13, 17), bn::color(3, 7, 10), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
     constexpr bn::sprite_palette_item gahz_rilla(gahz_rilla_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color hatecrest_warrior_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(3, 9, 8), bn::color(6, 15, 14), bn::color(7, 19, 18), bn::color(15, 17, 13), bn::color(22, 25, 19), bn::color(31, 27, 8), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(13, 8, 15), bn::color(7, 4, 9), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(13, 13, 13), bn::color(22, 22, 23) };
+    constexpr bn::sprite_palette_item hatecrest_warrior(hatecrest_warrior_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color hatecrest_siren_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(7, 11, 14), bn::color(12, 19, 23), bn::color(15, 24, 29), bn::color(19, 18, 20), bn::color(28, 27, 29), bn::color(31, 27, 8), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(8, 20, 19), bn::color(4, 12, 11), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item hatecrest_siren(hatecrest_siren_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color lord_shalzaru_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(8, 4, 9), bn::color(14, 8, 16), bn::color(18, 10, 20), bn::color(18, 15, 18), bn::color(26, 22, 26), bn::color(31, 29, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(29, 24, 9), bn::color(17, 14, 5), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(15, 15, 16), bn::color(25, 25, 27) };
+    constexpr bn::sprite_palette_item lord_shalzaru(lord_shalzaru_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color shore_strider_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(6, 9, 11), bn::color(11, 16, 19), bn::color(14, 20, 24), bn::color(15, 17, 17), bn::color(22, 24, 25), bn::color(25, 30, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(8, 12, 14), bn::color(4, 7, 8), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item shore_strider(shore_strider_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color rage_scar_yeti_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(13, 11, 9), bn::color(22, 19, 15), bn::color(28, 24, 19), bn::color(8, 6, 4), bn::color(12, 9, 7), bn::color(31, 9, 5), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(26, 24, 20), bn::color(15, 14, 12), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item rage_scar_yeti(rage_scar_yeti_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color old_grizzlegut_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(9, 7, 5), bn::color(15, 12, 9), bn::color(19, 15, 11), bn::color(5, 4, 3), bn::color(8, 6, 5), bn::color(31, 25, 8), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(22, 20, 16), bn::color(13, 12, 9), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item old_grizzlegut(old_grizzlegut_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color gordunni_ogre_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 11, 9), bn::color(17, 19, 15), bn::color(22, 24, 19), bn::color(6, 4, 3), bn::color(9, 7, 5), bn::color(30, 27, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 11, 7), bn::color(9, 6, 4), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item gordunni_ogre(gordunni_ogre_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color gordunni_mage_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(9, 11, 13), bn::color(16, 18, 21), bn::color(20, 23, 27), bn::color(5, 3, 7), bn::color(8, 5, 10), bn::color(25, 21, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(13, 8, 19), bn::color(7, 4, 11), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item gordunni_mage(gordunni_mage_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color gordunni_warlord_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(8, 9, 7), bn::color(13, 15, 12), bn::color(16, 20, 15), bn::color(4, 3, 3), bn::color(7, 5, 4), bn::color(31, 9, 5), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(23, 19, 8), bn::color(13, 11, 4), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(13, 13, 13), bn::color(22, 22, 23) };
+    constexpr bn::sprite_palette_item gordunni_warlord(gordunni_warlord_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color enraged_wildkin_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(8, 6, 9), bn::color(14, 11, 15), bn::color(18, 14, 19), bn::color(16, 15, 14), bn::color(24, 22, 20), bn::color(31, 27, 8), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(29, 25, 12), bn::color(17, 15, 7), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item enraged_wildkin(enraged_wildkin_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color wildkin_oracle_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(7, 8, 10), bn::color(12, 13, 17), bn::color(15, 16, 22), bn::color(18, 17, 18), bn::color(26, 25, 27), bn::color(25, 30, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(29, 25, 12), bn::color(17, 15, 7), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item wildkin_oracle(wildkin_oracle_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color jademir_echospawn_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(4, 13, 9), bn::color(8, 21, 15), bn::color(10, 27, 19), bn::color(17, 20, 15), bn::color(25, 29, 22), bn::color(31, 29, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 12, 25), bn::color(9, 7, 15), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item jademir_echospawn(jademir_echospawn_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color jademir_boughguard_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(5, 10, 4), bn::color(9, 17, 8), bn::color(11, 22, 10), bn::color(11, 9, 6), bn::color(17, 14, 9), bn::color(31, 29, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(13, 9, 6), bn::color(7, 5, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item jademir_boughguard(jademir_boughguard_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color magram_wrangler_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(8, 6, 4), bn::color(14, 10, 8), bn::color(18, 13, 10), bn::color(15, 11, 9), bn::color(22, 17, 13), bn::color(5, 3, 3), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(20, 6, 5), bn::color(12, 3, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item magram_wrangler(magram_wrangler_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color magram_stormer_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 9, 10), bn::color(17, 16, 17), bn::color(22, 20, 22), bn::color(16, 15, 14), bn::color(24, 22, 20), bn::color(25, 29, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(8, 12, 20), bn::color(4, 7, 12), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item magram_stormer(magram_stormer_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color creeping_sludge_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(8, 11, 4), bn::color(13, 19, 7), bn::color(16, 24, 9), bn::color(15, 18, 8), bn::color(22, 27, 12), bn::color(31, 29, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item creeping_sludge(creeping_sludge_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color noxxious_spawn_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 8, 12), bn::color(17, 13, 20), bn::color(22, 16, 26), bn::color(16, 18, 9), bn::color(23, 27, 13), bn::color(31, 29, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item noxxious_spawn(noxxious_spawn_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color barbed_lasher_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(15, 6, 11), bn::color(25, 11, 19), bn::color(31, 14, 24), bn::color(6, 11, 4), bn::color(9, 16, 7), bn::color(31, 29, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(14, 4, 7), bn::color(8, 2, 4), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item barbed_lasher(barbed_lasher_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color razorlash_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 4, 13), bn::color(17, 8, 22), bn::color(22, 10, 28), bn::color(4, 9, 4), bn::color(7, 13, 6), bn::color(31, 10, 5), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(9, 3, 7), bn::color(5, 1, 4), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item razorlash(razorlash_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color deeprot_stomper_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(7, 8, 4), bn::color(12, 13, 7), bn::color(15, 16, 9), bn::color(9, 7, 6), bn::color(13, 11, 9), bn::color(25, 31, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(10, 8, 6), bn::color(6, 4, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item deeprot_stomper(deeprot_stomper_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color theradrim_shardling_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(13, 10, 7), bn::color(19, 14, 10), bn::color(23, 19, 14), bn::color(18, 15, 18), bn::color(26, 21, 27), bn::color(31, 25, 8), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item theradrim_shardling(theradrim_shardling_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color theradrim_guardian_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 8, 6), bn::color(15, 12, 9), bn::color(20, 16, 13), bn::color(16, 12, 19), bn::color(23, 17, 28), bn::color(31, 15, 6), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item theradrim_guardian(theradrim_guardian_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color landslide_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(8, 7, 7), bn::color(12, 11, 10), bn::color(17, 16, 15), bn::color(18, 15, 9), bn::color(27, 22, 14), bn::color(31, 9, 5), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item landslide(landslide_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color princess_theradras_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(14, 9, 5), bn::color(21, 14, 8), bn::color(26, 19, 12), bn::color(13, 18, 8), bn::color(19, 27, 12), bn::color(31, 29, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item princess_theradras(princess_theradras_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color noxxion_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(7, 13, 5), bn::color(12, 20, 8), bn::color(18, 25, 12), bn::color(17, 20, 9), bn::color(25, 29, 14), bn::color(31, 9, 5), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item noxxion(noxxion_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color subterranean_diemetradon_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(7, 5, 8), bn::color(12, 9, 13), bn::color(15, 11, 16), bn::color(16, 14, 10), bn::color(23, 20, 15), bn::color(31, 27, 8), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item subterranean_diemetradon(subterranean_diemetradon_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color rotgrip_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(5, 7, 4), bn::color(9, 12, 7), bn::color(11, 15, 9), bn::color(14, 14, 9), bn::color(20, 21, 14), bn::color(31, 9, 5), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item rotgrip(rotgrip_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color celebras_the_cursed_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(4, 7, 4), bn::color(8, 12, 7), bn::color(10, 15, 9), bn::color(10, 7, 9), bn::color(15, 11, 14), bn::color(25, 31, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(11, 7, 14), bn::color(6, 4, 8), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item celebras_the_cursed(celebras_the_cursed_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color whip_lasher_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(16, 12, 4), bn::color(27, 20, 8), bn::color(31, 26, 10), bn::color(5, 9, 4), bn::color(8, 14, 7), bn::color(31, 9, 5), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(13, 5, 5), bn::color(7, 3, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item whip_lasher(whip_lasher_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color warpwood_crusher_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(8, 9, 5), bn::color(13, 15, 9), bn::color(16, 19, 11), bn::color(10, 8, 5), bn::color(15, 12, 8), bn::color(31, 15, 6), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(11, 8, 6), bn::color(6, 4, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item warpwood_crusher(warpwood_crusher_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color petrified_treant_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(9, 9, 9), bn::color(16, 16, 15), bn::color(20, 20, 19), bn::color(15, 15, 14), bn::color(22, 21, 20), bn::color(25, 30, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(13, 12, 12), bn::color(7, 7, 7), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item petrified_treant(petrified_treant_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color ironbark_protector_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(6, 9, 4), bn::color(11, 15, 8), bn::color(14, 19, 10), bn::color(13, 13, 14), bn::color(19, 19, 21), bn::color(31, 27, 8), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(10, 9, 9), bn::color(6, 5, 5), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item ironbark_protector(ironbark_protector_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color tendris_warpwood_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(8, 4, 9), bn::color(14, 8, 15), bn::color(18, 10, 19), bn::color(11, 9, 6), bn::color(16, 13, 9), bn::color(31, 9, 5), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(9, 7, 5), bn::color(5, 4, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item tendris_warpwood(tendris_warpwood_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color hydroling_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(5, 12, 15), bn::color(9, 20, 25), bn::color(11, 26, 31), bn::color(18, 21, 21), bn::color(27, 30, 31), bn::color(31, 31, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item hydroling(hydroling_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color hydrospawn_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(4, 9, 17), bn::color(6, 13, 23), bn::color(13, 20, 28), bn::color(15, 19, 21), bn::color(22, 28, 31), bn::color(31, 29, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item hydrospawn(hydrospawn_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color arcane_aberration_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(13, 8, 21), bn::color(19, 12, 27), bn::color(25, 20, 31), bn::color(20, 17, 22), bn::color(29, 25, 31), bn::color(31, 31, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item arcane_aberration(arcane_aberration_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color eldreth_spectre_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 18, 18), bn::color(16, 25, 24), bn::color(23, 29, 28), bn::color(20, 21, 21), bn::color(29, 31, 30), bn::color(31, 31, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item eldreth_spectre(eldreth_spectre_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color eye_of_immol_thar_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(7, 14, 5), bn::color(11, 21, 7), bn::color(19, 27, 12), bn::color(18, 21, 10), bn::color(27, 31, 15), bn::color(31, 9, 5), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item eye_of_immol_thar(eye_of_immol_thar_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color immol_thar_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(5, 8, 4), bn::color(9, 14, 7), bn::color(11, 18, 9), bn::color(15, 17, 8), bn::color(22, 25, 12), bn::color(31, 9, 5), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 8, 19), bn::color(9, 4, 11), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item immol_thar(immol_thar_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color gordok_brute_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(13, 9, 6), bn::color(22, 15, 11), bn::color(28, 19, 14), bn::color(7, 4, 3), bn::color(10, 7, 5), bn::color(30, 27, 12), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(19, 5, 5), bn::color(11, 3, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item gordok_brute(gordok_brute_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color gordok_mage_lord_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(11, 9, 10), bn::color(19, 15, 17), bn::color(24, 19, 22), bn::color(5, 3, 7), bn::color(8, 5, 10), bn::color(25, 21, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(14, 7, 19), bn::color(8, 4, 11), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item gordok_mage_lord(gordok_mage_lord_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color gordok_mastiff_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(9, 6, 4), bn::color(15, 11, 8), bn::color(19, 14, 10), bn::color(16, 13, 10), bn::color(23, 19, 15), bn::color(31, 9, 5), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item gordok_mastiff(gordok_mastiff_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color cho_rush_the_observer_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(10, 11, 13), bn::color(17, 18, 22), bn::color(22, 23, 28), bn::color(4, 3, 6), bn::color(7, 5, 9), bn::color(25, 21, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(27, 23, 9), bn::color(16, 13, 5), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item cho_rush_the_observer(cho_rush_the_observer_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color king_gordok_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(14, 8, 5), bn::color(24, 13, 9), bn::color(31, 16, 11), bn::color(5, 3, 3), bn::color(8, 5, 4), bn::color(31, 27, 8), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(29, 24, 9), bn::color(17, 14, 5), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(15, 15, 16), bn::color(25, 25, 27) };
+    constexpr bn::sprite_palette_item king_gordok(king_gordok_colors, bn::bpp_mode::BPP_4);
 
 }
 

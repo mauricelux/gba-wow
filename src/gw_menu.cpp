@@ -12,14 +12,18 @@
 #include "gw_map_darkshore.h"
 #include "gw_map_deadmines.h"
 #include "gw_map_deeprun_tram.h"
+#include "gw_map_desolace.h"
+#include "gw_map_dire_maul.h"
 #include "gw_map_dun_morogh.h"
 #include "gw_map_duskwood.h"
 #include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
+#include "gw_map_feralas.h"
 #include "gw_map_gnomeregan.h"
 #include "gw_map_hillsbrad.h"
 #include "gw_map_ironforge.h"
+#include "gw_map_maraudon.h"
 #include "gw_map_razorfen_downs.h"
 #include "gw_map_razorfen_kraul.h"
 #include "gw_map_redridge.h"
@@ -119,6 +123,16 @@ namespace
         { "Zul'Farrak", map_id::ZUL_FARRAK, map_data::zul_farrak::entry },
         { "The Pyramid", map_id::ZUL_FARRAK, { 512, 480 } },
         { "Zul'Farrak's Gate", map_id::TANARIS, map_data::tanaris::zf_exit },
+        { "Feathermoon", map_id::FERALAS, map_data::feralas::feathermoon_respawn },
+        { "Forgotten Coast", map_id::FERALAS, map_data::feralas::coast_respawn },
+        { "Dire Maul's Gate", map_id::FERALAS, map_data::feralas::dm_exit },
+        { "Nijel's Point", map_id::DESOLACE, map_data::desolace::nijels_respawn },
+        { "Maraudon's Mouth", map_id::DESOLACE, map_data::desolace::maraudon_exit },
+        { "Maraudon", map_id::MARAUDON, map_data::maraudon::entry },
+        { "Zaetar's Grave", map_id::MARAUDON, map_data::maraudon::theradras },
+        { "Dire Maul", map_id::DIRE_MAUL, map_data::dire_maul::entry },
+        { "Immol'thar's Prison", map_id::DIRE_MAUL, map_data::dire_maul::prison },
+        { "The Gordok Throne", map_id::DIRE_MAUL, map_data::dire_maul::gordok_throne },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);

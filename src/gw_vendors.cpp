@@ -125,6 +125,19 @@ namespace
         i::DUNEWALKER_CAP, i::DUNEWALKER_VEST, i::DUNEWALKER_GLOVES, i::DUNEWALKER_PANTS, i::DUNEWALKER_BOOTS,
         i::SANDSILK_HOOD, i::SANDSILK_ROBE, i::SANDSILK_GLOVES, i::SANDSILK_PANTS, i::SANDSILK_BOOTS
     };
+
+    constexpr item_id feathermoon_goods[] = {
+        i::ROASTED_QUAIL, i::GOLDENBARK_APPLE, i::SPARKLING_DESERT_WATER, i::MORNING_GLORY_DEW,
+        i::SUPERIOR_HEALING_POTION, i::MAJOR_HEALING_POTION, i::TELEPORTATION_RUNE
+    };
+
+    constexpr item_id feathermoon_smith[] = {
+        i::FEATHERMOON_GLAIVE, i::SENTINEL_HATCHET, i::MOONSTEEL_MACE, i::FEATHERMOON_STAFF, i::FEATHERMOON_WARBLADE,
+        i::SENTINEL_LONGBOW, i::MOONSTEEL_RIFLE, i::FEATHERMOON_KITE_SHIELD,
+        i::MOONSTEEL_HELM, i::MOONSTEEL_HAUBERK, i::MOONSTEEL_GAUNTLETS, i::MOONSTEEL_LEGGINGS, i::MOONSTEEL_BOOTS,
+        i::WILDWOOD_CAP, i::WILDWOOD_VEST, i::WILDWOOD_GLOVES, i::WILDWOOD_PANTS, i::WILDWOOD_BOOTS,
+        i::MOONWEAVE_HOOD, i::MOONWEAVE_ROBE, i::MOONWEAVE_GLOVES, i::MOONWEAVE_PANTS, i::MOONWEAVE_BOOTS
+    };
 }
 
 bn::span<const item_id> vendor_stock(int vendor)
@@ -185,6 +198,12 @@ bn::span<const item_id> vendor_stock(int vendor)
 
     case 18:
         return gadgetzan_smith;
+
+    case 19:
+        return feathermoon_goods;
+
+    case 20:
+        return feathermoon_smith;
 
     default:
         return general_goods;

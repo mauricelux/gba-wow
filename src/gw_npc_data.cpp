@@ -35,6 +35,8 @@ namespace
     constexpr uint8_t booty_bay_smith = 16;
     constexpr uint8_t gadgetzan_goods = 17;
     constexpr uint8_t gadgetzan_smith = 18;
+    constexpr uint8_t feathermoon_goods = 19;
+    constexpr uint8_t feathermoon_smith = 20;
 
     constexpr npc_info npcs[] = {
         { "", "", l::PEASANT, 0, c::WARRIOR, 0, "" },
@@ -334,6 +336,47 @@ namespace
           "A hydra in Zul'Farrak's pool! Its scales would make a fine racing engine." },
         { "Argent Guard Dalen", "The Argent Dawn", l::ARGENT_GUARD_DALEN, 0, c::WARRIOR, 0,
           "The Scourge took the Razorfen Downs. Now the quilboar dead walk." },
+        // Feralas
+        { "Shandris Feathermoon", "General", l::SHANDRIS_FEATHERMOON, 0, c::WARRIOR, 0,
+          "Feathermoon stands. The ogres and naga will learn to fear it." },
+        { "Latronicus Moonspear", "", l::LATRONICUS_MOONSPEAR, 0, c::WARRIOR, 0,
+          "The Hatecrest naga crawl up our shores. I want them back in the sea." },
+        { "Angelas Moonbreeze", "", l::FEATHERMOON_RANGER, 0, c::WARRIOR, 0,
+          "The wildkin of Feralas have gone mad. Something poisons the Dream Bough." },
+        { "Pratt McGrubben", "Leatherworker", l::PRATT_MCGRUBBEN, 0, c::WARRIOR, 0,
+          "Yeti hide makes the best leather there is. If you can get it." },
+        { "Kindal Moonweaver", "", l::FEATHERMOON_DRUID, 0, c::WARRIOR, 0,
+          "The Grimtotem tauren trap the wild things of the forest. I want it stopped." },
+        { "Innkeeper Shyria", "Innkeeper", l::NIGHT_ELF_INNKEEPER, innkeeper, c::WARRIOR, feathermoon_goods,
+          "Rest here. The sea keeps the ogres off the island." },
+        { "Vivianna", "Trade Goods", l::FEATHERMOON_VENDOR, vendor, c::WARRIOR, feathermoon_goods,
+          "Everything the boat brings, I sell. Mostly." },
+        { "Brannol Eaglemoon", "Blacksmith", l::FEATHERMOON_SMITH, vendor, c::WARRIOR, feathermoon_smith,
+          "Moonsteel, forged on the island. Light and true." },
+        { "Fyldren Moonfeather", "Hippogryph Master", l::HIPPOGRYPH_MASTER, flight_master, c::WARRIOR, 0,
+          "Hold on tight over the sea." },
+        { "Feathermoon Sentinel", "", l::SENTINEL, 0, c::WARRIOR, 0,
+          "The boat takes you to the Forgotten Coast. Mind the naga." },
+        { "Zorbin Fandazzle", "", l::ZORBIN_FANDAZZLE, 0, c::WARRIOR, 0,
+          "Shore striders! Giants of the sea, and I'll prove it with science." },
+        { "Azj'Tordin", "", l::HIGHBORNE_EXILE, 0, c::WARRIOR, 0,
+          "Eldre'Thalas was ours once. Now it is the Dire Maul, and the Felvine grows in it." },
+        // Desolace
+        { "Captain Talendria", "", l::NIJEL_SENTINEL, 0, c::WARRIOR, 0,
+          "Nijel's Point holds, but the centaurs and the satyrs press us hard." },
+        { "Marandis", "", l::NIJEL_DRUID, 0, c::WARRIOR, 0,
+          "The earth itself is sick here. Its heart lies in Maraudon." },
+        { "Willow", "", l::FEATHERMOON_DRUID, 0, c::WARRIOR, 0,
+          "Theradras's servants carve her name into crystal. I want to know why." },
+        { "Innkeeper Lyshaerya", "Innkeeper", l::NIGHT_ELF_INNKEEPER, innkeeper, c::WARRIOR, feathermoon_goods,
+          "A warm bed in a cold land." },
+        { "Baritanas Skyriver", "Hippogryph Master", l::HIPPOGRYPH_MASTER, flight_master, c::WARRIOR, 0,
+          "Desolace looks better from the sky." },
+        { "Cavindra", "", l::FEATHERMOON_DRUID, 0, c::WARRIOR, 0,
+          "Maraudon was Zaetar's grave. Now it is a sickness that spreads." },
+        // Dire Maul
+        { "Shen'dralar Ancient", "", l::SHENDRALAR_ANCIENT, 0, c::WARRIOR, 0,
+          "We fed a demon to keep our magic. Now it will eat us all." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

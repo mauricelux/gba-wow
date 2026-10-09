@@ -4297,6 +4297,200 @@ bool combat::boss_update(int index)
         _update_frenzy(boss, health_percent, 25, 2, "Ukorz");
         break;
 
+    // --- Maraudon ----------------------------------------------------------------------------------
+
+    case enemy_id::NOXXION:
+        // Splits off two spawn of slime at two thirds and one third of its health.
+        _boss_greeting(boss, "Noxxion bubbles and seethes!");
+
+        if((boss.phase == 1 && health_percent <= 66) || (boss.phase == 2 && health_percent <= 33))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::NOXXIOUS_SPAWN);
+            _summon_add(boss, enemy_id::NOXXIOUS_SPAWN);
+            _hud.message("Noxxion splits apart!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::RAZORLASH:
+        _update_frenzy(boss, health_percent, 30, 1, "Razorlash");
+        break;
+
+    case enemy_id::LORD_VYLETONGUE:
+        // A shadowstalker steps out of the dark at half his health.
+        _boss_greeting(boss, "Vyletongue: You will rot here!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::PUTRIDUS_SHADOWSTALKER);
+            _hud.message("Vyletongue: Kill the intruder!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::CELEBRAS_THE_CURSED:
+        // From under two thirds of his health, thorns burst out of the ground around him.
+        _boss_greeting(boss, "Celebras: Free... me...");
+
+        if(health_percent <= 66 &&
+           _update_telegraph(boss, true, flurry_radius, "Thorn Burst", projectile_kind::NATURE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::LANDSLIDE:
+        // Breaks a shardling off himself at half health, and rages near the end.
+        _boss_greeting(boss, "The ground shakes!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::THERADRIM_SHARDLING);
+            _hud.message("A shard breaks off Landslide!", ui::color::RED);
+        }
+
+        _update_frenzy(boss, health_percent, 25, 3, "Landslide");
+        break;
+
+    case enemy_id::TINKERER_GIZLOCK:
+        // Lobs bombs at where the hero stands, marked on the ground before they go off.
+        _boss_greeting(boss, "Gizlock: Get out of my lab!");
+
+        if(health_percent <= 80 &&
+           _update_telegraph(boss, false, saw_radius, "Bomb", projectile_kind::FIRE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::ROTGRIP:
+        _update_frenzy(boss, health_percent, 30, 1, "Rotgrip");
+        break;
+
+    case enemy_id::PRINCESS_THERADRAS:
+    {
+        // Hurls boulders at where the hero stands: one that lands on the hero throws them away from her.
+        _boss_greeting(boss, "Theradras: You will be buried!");
+
+        bool landing = boss.telegraph_frames == 1;
+        bn::fixed_point landing_spot = boss.special_position;
+
+        if(_update_telegraph(boss, false, smoke_radius, "Boulder", projectile_kind::NATURE))
+        {
+            return true;
+        }
+
+        if(landing && distance_squared(_player.position(), landing_spot) <= smoke_radius * smoke_radius)
+        {
+            _player.knock_back(boss.position, 48);
+            _hud.message("The boulder throws you back!", ui::color::RED);
+        }
+
+        _update_frenzy(boss, health_percent, 25, 2, "Theradras");
+        break;
+    }
+
+    // --- Dire Maul ---------------------------------------------------------------------------------
+
+    case enemy_id::ZEVRIM_THORNHOOF:
+        _boss_greeting(boss, "Zevrim: Your blood for the altar!");
+        _update_frenzy(boss, health_percent, 30, 2, "Zevrim");
+        break;
+
+    case enemy_id::HYDROSPAWN:
+        // Splits into two hydrolings at half its health.
+        if(boss.phase <= 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::HYDROLING);
+            _summon_add(boss, enemy_id::HYDROLING);
+            _hud.message("Hydrospawn splits!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::LETHTENDRIS:
+        // Bolts of void at where the hero stands, from two thirds of her health.
+        _boss_greeting(boss, "Lethtendris: Caught in my web!");
+
+        if(health_percent <= 66 &&
+           _update_telegraph(boss, false, saw_radius, "Void Bolt", projectile_kind::SHADOW))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::ALZZIN_THE_WILDSHAPER:
+        // Calls a lasher out of the Felvine at half health, and rages near the end.
+        _boss_greeting(boss, "Alzzin: The Felvine is mine!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::WHIP_LASHER);
+            _hud.message("Alzzin calls the Felvine!", ui::color::RED);
+        }
+
+        _update_frenzy(boss, health_percent, 25, 3, "Alzzin");
+        break;
+
+    case enemy_id::TENDRIS_WARPWOOD:
+        // Wakes a lasher at two thirds and one third of his health.
+        _boss_greeting(boss, "Tendris: The grove will crush you!");
+
+        if((boss.phase == 1 && health_percent <= 66) || (boss.phase == 2 && health_percent <= 33))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::WHIP_LASHER);
+            _hud.message("Tendris wakes the grove!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::IMMOL_THAR:
+        // Opens an eye at two thirds and one third of its health; maddened near the end.
+        _boss_greeting(boss, "Immol'thar roars!");
+
+        if((boss.phase == 1 && health_percent <= 66) || (boss.phase == 2 && health_percent <= 33))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::EYE_OF_IMMOL_THAR);
+            _hud.message("An eye of Immol'thar opens!", ui::color::RED);
+        }
+
+        _update_frenzy(boss, health_percent, 20, 4, "Immol'thar");
+        break;
+
+    case enemy_id::PRINCE_TORTHELDRIN:
+        // Arcane blasts around himself from half his health.
+        _boss_greeting(boss, "Tortheldrin: You freed the demon?");
+
+        if(health_percent <= 50 &&
+           _update_telegraph(boss, true, flurry_radius, "Arcane Blast", projectile_kind::ARCANE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::CHO_RUSH_THE_OBSERVER:
+        _boss_greeting(boss, "Cho'Rush: The king sees you.");
+        break;
+
+    case enemy_id::KING_GORDOK:
+        // Cho'Rush, his adviser, joins the fight.
+        if(boss.phase == 0)
+        {
+            int cho_rush = _find_enemy(enemy_id::CHO_RUSH_THE_OBSERVER);
+
+            if(cho_rush >= 0 && _enemies.at(cho_rush).state == enemy_state::IDLE)
+            {
+                _enemies.aggro(cho_rush);
+            }
+        }
+
+        _boss_greeting(boss, "Gordok: Me smash you!");
+        _update_frenzy(boss, health_percent, 25, 2, "King Gordok");
+        break;
+
     default:
         break;
     }
@@ -4319,6 +4513,22 @@ void combat::_boss_killed(const enemy& boss)
         }
 
         _hud.message("The trainees rush in!", ui::color::RED);
+        break;
+
+    case enemy_id::KING_GORDOK:
+        // The Gordok left standing bow to the hero who killed their king, and leave.
+        for(int index = 0, limit = _enemies.count(); index < limit; ++index)
+        {
+            const enemy& item = _enemies.at(index);
+
+            if(item.alive() && item.def->family == enemy_family::OGRE)
+            {
+                _effects.burst(item.position, projectile_kind::ARCANE);
+                _enemies.remove(index);
+            }
+        }
+
+        _hud.message("The Gordok bow to their new king!", ui::color::GREEN);
         break;
 
     case enemy_id::SCARLET_COMMANDER_MOGRAINE:

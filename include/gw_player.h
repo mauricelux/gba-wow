@@ -59,6 +59,9 @@ public:
     // Jumps up to distance pixels the way the player last moved (Blink), stopping at walls.
     void blink(int distance);
 
+    // Thrown up to distance pixels straight away from a point (Theradras), stopping at walls.
+    void knock_back(const bn::fixed_point& from, int distance);
+
     [[nodiscard]] bool dashing() const
     {
         return _dashing;

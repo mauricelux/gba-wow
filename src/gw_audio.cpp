@@ -61,6 +61,9 @@ namespace
         case music_id::TANARIS:
             return bn::music_items::tanaris;
 
+        case music_id::FERALAS:
+            return bn::music_items::feralas;
+
         default:
             return bn::nullopt;
         }

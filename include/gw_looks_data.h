@@ -14,6 +14,8 @@
 #include "bn_sprite_items_char_dwarf_plain.h"
 #include "bn_sprite_items_char_dwarf_sword.h"
 #include "bn_sprite_items_char_elf_bow.h"
+#include "bn_sprite_items_char_elf_plain.h"
+#include "bn_sprite_items_char_elf_staff.h"
 #include "bn_sprite_items_char_elf_sword.h"
 #include "bn_sprite_items_char_fem_bow.h"
 #include "bn_sprite_items_char_fem_robe.h"
@@ -33,6 +35,7 @@
 #include "bn_sprite_items_char_hydra.h"
 #include "bn_sprite_items_char_kobold.h"
 #include "bn_sprite_items_char_kobold_candle.h"
+#include "bn_sprite_items_char_lasher.h"
 #include "bn_sprite_items_char_murloc.h"
 #include "bn_sprite_items_char_naga.h"
 #include "bn_sprite_items_char_naga_caster.h"
@@ -44,12 +47,17 @@
 #include "bn_sprite_items_char_quilboar_sword.h"
 #include "bn_sprite_items_char_raptor.h"
 #include "bn_sprite_items_char_robot.h"
+#include "bn_sprite_items_char_satyr_staff.h"
+#include "bn_sprite_items_char_satyr_sword.h"
 #include "bn_sprite_items_char_scorpid.h"
 #include "bn_sprite_items_char_skeleton.h"
 #include "bn_sprite_items_char_skeleton_mage.h"
 #include "bn_sprite_items_char_spider.h"
 #include "bn_sprite_items_char_spirit.h"
+#include "bn_sprite_items_char_tauren_staff.h"
+#include "bn_sprite_items_char_tauren_sword.h"
 #include "bn_sprite_items_char_tiger.h"
+#include "bn_sprite_items_char_treant.h"
 #include "bn_sprite_items_char_trogg.h"
 #include "bn_sprite_items_char_troll_staff.h"
 #include "bn_sprite_items_char_troll_sword.h"
@@ -281,6 +289,31 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_skeleton, palettes::splinterbone_warrior, true },
     { bn::sprite_items::char_skeleton_mage, palettes::mordresh_fire_eye, true },
     { bn::sprite_items::char_skeleton_mage, palettes::amnennar_the_coldbringer, true },
+    { bn::sprite_items::char_fem_bow, palettes::shandris_feathermoon, false },
+    { bn::sprite_items::char_elf_sword, palettes::latronicus_moonspear, false },
+    { bn::sprite_items::char_fem_bow, palettes::feathermoon_ranger, false },
+    { bn::sprite_items::char_fem_robe, palettes::feathermoon_druid, false },
+    { bn::sprite_items::char_hum_plain, palettes::pratt_mcgrubben, false },
+    { bn::sprite_items::char_fem_robe, palettes::feathermoon_vendor, false },
+    { bn::sprite_items::char_elf_plain, palettes::feathermoon_smith, false },
+    { bn::sprite_items::char_gnome_plain, palettes::zorbin_fandazzle, false },
+    { bn::sprite_items::char_elf_staff, palettes::highborne_exile, false },
+    { bn::sprite_items::char_fem_bow, palettes::nijel_sentinel, false },
+    { bn::sprite_items::char_elf_staff, palettes::nijel_druid, false },
+    { bn::sprite_items::char_elf_staff, palettes::shendralar_ancient, false },
+    { bn::sprite_items::char_tauren_sword, palettes::grimtotem_raider, false },
+    { bn::sprite_items::char_tauren_staff, palettes::grimtotem_naturalist, false },
+    { bn::sprite_items::char_satyr_sword, palettes::putridus_satyr, false },
+    { bn::sprite_items::char_satyr_sword, palettes::putridus_shadowstalker, false },
+    { bn::sprite_items::char_satyr_staff, palettes::lord_vyletongue, false },
+    { bn::sprite_items::char_satyr_sword, palettes::wildspawn_satyr, false },
+    { bn::sprite_items::char_satyr_staff, palettes::wildspawn_felsworn, false },
+    { bn::sprite_items::char_satyr_sword, palettes::zevrim_thornhoof, false },
+    { bn::sprite_items::char_satyr_staff, palettes::alzzin_the_wildshaper, false },
+    { bn::sprite_items::char_elf_staff, palettes::highborne_summoner, false },
+    { bn::sprite_items::char_elf_staff, palettes::lethtendris, false },
+    { bn::sprite_items::char_elf_sword, palettes::prince_tortheldrin, false },
+    { bn::sprite_items::char_goblin_sword, palettes::tinkerer_gizlock, false },
     { bn::sprite_items::char_wolf, palettes::young_wolf, true },
     { bn::sprite_items::char_wolf, palettes::timber_wolf, true },
     { bn::sprite_items::char_boar, palettes::boar, true },
@@ -390,6 +423,50 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_spider, palettes::scarab, true },
     { bn::sprite_items::char_crocolisk, palettes::sullithuz_broodling, true },
     { bn::sprite_items::char_hydra, palettes::gahz_rilla, true },
+    { bn::sprite_items::char_naga, palettes::hatecrest_warrior, true },
+    { bn::sprite_items::char_naga_caster, palettes::hatecrest_siren, true },
+    { bn::sprite_items::char_naga, palettes::lord_shalzaru, true },
+    { bn::sprite_items::char_ogre, palettes::shore_strider, true },
+    { bn::sprite_items::char_yeti, palettes::rage_scar_yeti, true },
+    { bn::sprite_items::char_yeti, palettes::old_grizzlegut, true },
+    { bn::sprite_items::char_ogre, palettes::gordunni_ogre, true },
+    { bn::sprite_items::char_ogre, palettes::gordunni_mage, true },
+    { bn::sprite_items::char_ogre, palettes::gordunni_warlord, true },
+    { bn::sprite_items::char_bear, palettes::enraged_wildkin, true },
+    { bn::sprite_items::char_bear, palettes::wildkin_oracle, true },
+    { bn::sprite_items::char_raptor, palettes::jademir_echospawn, true },
+    { bn::sprite_items::char_treant, palettes::jademir_boughguard, true },
+    { bn::sprite_items::char_centaur, palettes::magram_wrangler, true },
+    { bn::sprite_items::char_centaur, palettes::magram_stormer, true },
+    { bn::sprite_items::char_ooze, palettes::creeping_sludge, true },
+    { bn::sprite_items::char_ooze, palettes::noxxious_spawn, true },
+    { bn::sprite_items::char_lasher, palettes::barbed_lasher, true },
+    { bn::sprite_items::char_lasher, palettes::razorlash, true },
+    { bn::sprite_items::char_treant, palettes::deeprot_stomper, true },
+    { bn::sprite_items::char_water_elemental, palettes::theradrim_shardling, true },
+    { bn::sprite_items::char_water_elemental, palettes::theradrim_guardian, true },
+    { bn::sprite_items::char_water_elemental, palettes::landslide, true },
+    { bn::sprite_items::char_water_elemental, palettes::princess_theradras, true },
+    { bn::sprite_items::char_water_elemental, palettes::noxxion, true },
+    { bn::sprite_items::char_crocolisk, palettes::subterranean_diemetradon, true },
+    { bn::sprite_items::char_crocolisk, palettes::rotgrip, true },
+    { bn::sprite_items::char_centaur, palettes::celebras_the_cursed, true },
+    { bn::sprite_items::char_lasher, palettes::whip_lasher, true },
+    { bn::sprite_items::char_treant, palettes::warpwood_crusher, true },
+    { bn::sprite_items::char_treant, palettes::petrified_treant, true },
+    { bn::sprite_items::char_treant, palettes::ironbark_protector, true },
+    { bn::sprite_items::char_treant, palettes::tendris_warpwood, true },
+    { bn::sprite_items::char_water_elemental, palettes::hydroling, true },
+    { bn::sprite_items::char_water_elemental, palettes::hydrospawn, true },
+    { bn::sprite_items::char_spirit, palettes::arcane_aberration, true },
+    { bn::sprite_items::char_spirit, palettes::eldreth_spectre, true },
+    { bn::sprite_items::char_spirit, palettes::eye_of_immol_thar, true },
+    { bn::sprite_items::char_gorilla, palettes::immol_thar, true },
+    { bn::sprite_items::char_ogre, palettes::gordok_brute, true },
+    { bn::sprite_items::char_ogre, palettes::gordok_mage_lord, true },
+    { bn::sprite_items::char_wolf, palettes::gordok_mastiff, true },
+    { bn::sprite_items::char_ogre, palettes::cho_rush_the_observer, true },
+    { bn::sprite_items::char_ogre, palettes::king_gordok, true },
 };
 
 static_assert(sizeof(look_table) / sizeof(look_table[0]) == int(look_id::COUNT));

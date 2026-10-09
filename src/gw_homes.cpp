@@ -1,8 +1,10 @@
 #include "gw_homes.h"
 
 #include "gw_map_darkshore.h"
+#include "gw_map_desolace.h"
 #include "gw_map_duskwood.h"
 #include "gw_map_elwynn.h"
+#include "gw_map_feralas.h"
 #include "gw_map_hillsbrad.h"
 #include "gw_map_inn.h"
 #include "gw_map_ironforge.h"
@@ -31,6 +33,8 @@ namespace
         { "Southshore", map_id::HILLSBRAD, map_data::hillsbrad::southshore_respawn },
         { "Booty Bay", map_id::STRANGLETHORN, map_data::stranglethorn::booty_bay_respawn },
         { "Gadgetzan", map_id::TANARIS, map_data::tanaris::gadgetzan_respawn },
+        { "Feathermoon", map_id::FERALAS, map_data::feralas::feathermoon_respawn },
+        { "Nijel's Point", map_id::DESOLACE, map_data::desolace::nijels_respawn },
     };
 
     static_assert(sizeof(homes) / sizeof(homes[0]) == int(home_id::COUNT));
@@ -78,6 +82,12 @@ home_id innkeeper_home(npc_id npc)
 
     case npc_id::FIZZGRIMBLE:
         return home_id::GADGETZAN;
+
+    case npc_id::SHYRIA:
+        return home_id::FEATHERMOON;
+
+    case npc_id::LYSHAERYA:
+        return home_id::NIJELS_POINT;
 
     default:
         return home_id::COUNT;

@@ -22,6 +22,8 @@ enum class home_id : uint8_t
     SOUTHSHORE,
     BOOTY_BAY,
     GADGETZAN,
+    FEATHERMOON,
+    NIJELS_POINT,
     COUNT
 };
 

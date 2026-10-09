@@ -1709,6 +1709,235 @@ namespace
           n::ARGENT_GUARD_DALEN, n::ARGENT_GUARD_DALEN, 43, 41, qid::DOWNS_OF_THE_DEAD,
           { kill(e::AMNENNAR_THE_COLDBRINGER, 1, "Amnennar slain"), none, none }, xp(43, 150), money(43),
           { i::LIGHTFORGED_BLADE, i::STAFF_OF_THE_DAWN, i::ARGENT_LONGBOW } },
+
+        // --- Feralas -----------------------------------------------------------------------------------
+        { "Feathermoon Stronghold",
+          "The night elves hold an island off the Feralas coast: Feathermoon Stronghold. Their general, "
+          "Shandris Feathermoon, wants hands for a war with ogres and naga.\n\n"
+          "Take the pass west of the Needles into Feralas, then the boat from the coast.",
+          "Travel west into Feralas and take the boat to Feathermoon Stronghold. Speak with Shandris Feathermoon.",
+          "",
+          "Pozzik sent you? Good. Feathermoon needs every blade it can get.",
+          n::POZZIK, n::SHANDRIS, 45, 43, qid::THE_MIRAGE_RACEWAY,
+          { none, none, none }, xp(45, 25), money(45),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Against the Hatecrest",
+          "The Hatecrest naga come out of the sea onto the Forgotten Coast, south of the pier. Warriors "
+          "with spears and sirens who sing you to sleep.\n\n"
+          "Drive them back into the water.",
+          "Kill 8 Hatecrest Warriors and 5 Hatecrest Sirens on the Forgotten Coast.",
+          "The naga still hold the coast.",
+          "The coast is ours again, for now. Take this, with Feathermoon's thanks.",
+          n::LATRONICUS, n::LATRONICUS, 45, 43, qid::FEATHERMOON_STRONGHOLD,
+          { kill(e::HATECREST_WARRIOR, 8, "Hatecrest Warrior slain"),
+            kill(e::HATECREST_SIREN, 5, "Hatecrest Siren slain"), none }, xp(45, 75), money(45),
+          { i::HATECREST_GAUNTLETS, i::SIREN_GLOVES, i::TIDEHUNTER_GRIPS } },
+
+        { "Lord Shalzaru",
+          "The Hatecrest answer to Lord Shalzaru. He hides on the Isle of Dread at the southern tip of "
+          "the coast, where a sandbar runs out at low tide.\n\n"
+          "Cross to the isle and end him.",
+          "Kill Lord Shalzaru on the Isle of Dread, south of the Forgotten Coast.",
+          "Shalzaru still sends his naga.",
+          "Shalzaru is dead! The Hatecrest will scatter. Choose your reward.",
+          n::LATRONICUS, n::LATRONICUS, 47, 45, qid::AGAINST_THE_HATECREST,
+          { kill(e::LORD_SHALZARU, 1, "Lord Shalzaru slain"), none, none }, xp(47, 125), money(47),
+          { i::CORAL_CUTLASS, i::DREADMIST_STAFF, i::CORALWOOD_BOW } },
+
+        { "Zapped Giants",
+          "The shore striders walk the coast like hills with legs. Giants of the sea! I need samples, "
+          "and they will not hold still for them.\n\n"
+          "Bring six of them down so I can study them.",
+          "Kill 6 Shore Striders on the Feralas coast.",
+          "My notes are still empty.",
+          "Marvelous samples! Science thanks you, and so does my purse.",
+          n::ZORBIN, n::ZORBIN, 45, 43, qid::FEATHERMOON_STRONGHOLD,
+          { kill(e::SHORE_STRIDER, 6, "Shore Strider slain"), none, none }, xp(45, 75), money(45),
+          { i::STRIDER_SABATONS, i::SEASPRAY_SLIPPERS, i::GIANTHIDE_BOOTS } },
+
+        { "The Ruins of Isildien",
+          "The Gordunni ogres camp in the Ruins of Isildien, east of the coast. Brutes and mages, and "
+          "every week there are more.\n\n"
+          "Thin them out before they march on the coast.",
+          "Kill 8 Gordunni Ogres and 4 Gordunni Mages at the Ruins of Isildien.",
+          "The Gordunni still gather.",
+          "Fewer ogres. Good. Their warlord will notice.",
+          n::SHANDRIS, n::SHANDRIS, 46, 44, qid::FEATHERMOON_STRONGHOLD,
+          { kill(e::GORDUNNI_OGRE, 8, "Gordunni Ogre slain"),
+            kill(e::GORDUNNI_MAGE, 4, "Gordunni Mage slain"), none }, xp(46, 75), money(46),
+          { i::ISILDIEN_LEGGUARDS, i::HIGHBORNE_TROUSERS, i::RUINSTALKER_PANTS } },
+
+        { "The Gordunni Warlord",
+          "The Gordunni have a warlord. He sits in the ruins with his guards and sends the others out to "
+          "die.\n\n"
+          "Find him and kill him.",
+          "Kill the Gordunni Warlord at the Ruins of Isildien.",
+          "The warlord still lives.",
+          "Their warlord is dead. The Gordunni will look to Dire Maul now, to their king.",
+          n::SHANDRIS, n::SHANDRIS, 47, 45, qid::THE_RUINS_OF_ISILDIEN,
+          { kill(e::GORDUNNI_WARLORD, 1, "Gordunni Warlord slain"), none, none }, xp(47, 125), money(47),
+          { i::WARLORDS_HAUBERK, i::GORDUNNI_ROBE, i::OGREHUNTER_VEST } },
+
+        { "Improved Quality",
+          "The Rage Scar yetis live in the caves east of the coast. Their hide is thick, and it makes the "
+          "finest leather I know.\n\n"
+          "Bring me eight good hides.",
+          "Bring 8 Rage Scar Yeti Hides to Pratt McGrubben in Feathermoon.",
+          "No hides yet?",
+          "Fine hides! I'll make something good of these. Here, take one I made earlier.",
+          n::PRATT, n::PRATT, 46, 44, qid::FEATHERMOON_STRONGHOLD,
+          { collect(e::RAGE_SCAR_YETI, 8, 60, "Rage Scar Yeti Hide"), none, none }, xp(46, 75), money(46),
+          { i::YETIHIDE_HAUBERK, i::FUR_LINED_ROBE, i::RAGE_SCAR_VEST } },
+
+        { "Doling Justice",
+          "The Grimtotem tauren have come down from the mountains. They trap the creatures of the forest "
+          "and burn the groves.\n\n"
+          "Find their camp in the east and stop them.",
+          "Kill 8 Grimtotem Raiders and 5 Grimtotem Naturalists in eastern Feralas.",
+          "The Grimtotem still hunt the forest.",
+          "The forest breathes easier. Thank you.",
+          n::KINDAL, n::KINDAL, 47, 45, qid::FEATHERMOON_STRONGHOLD,
+          { kill(e::GRIMTOTEM_RAIDER, 8, "Grimtotem Raider slain"),
+            kill(e::GRIMTOTEM_NATURALIST, 5, "Grimtotem Naturalist slain"), none }, xp(47, 75), money(47),
+          { i::GRIMTOTEM_HELM, i::NATURALISTS_HOOD, i::TOTEMHIDE_CAP } },
+
+        { "The Enraged Wildkin",
+          "The wildkin of Feralas were gentle once. Now they rage and tear at anything that walks by.\n\n"
+          "I cannot heal them. Put eight of them to rest.",
+          "Kill 8 Enraged Wildkin in Feralas.",
+          "The wildkin still rage.",
+          "It is done, then. Something drove them mad, and I fear I know what.",
+          n::ANGELAS, n::ANGELAS, 46, 44, qid::FEATHERMOON_STRONGHOLD,
+          { kill(e::ENRAGED_WILDKIN, 8, "Enraged Wildkin slain"), none, none }, xp(46, 75), money(46),
+          { i::MOONKIN_MACE, i::FEATHERWOOD_STAFF, i::TALONWOOD_BOW } },
+
+        { "The Dream Bough",
+          "The Dream Bough is a great tree with a moonwell under it, north of the ruins. The green dragons "
+          "guard it. But their echospawn and the treants there have turned on all who come near.\n\n"
+          "Find out what poisons the bough. Clear its guardians.",
+          "Kill 6 Jademir Echospawn and 4 Jademir Boughguards at the Dream Bough.",
+          "The Dream Bough is still sick.",
+          "The Bough breathes again. Whatever poisoned it came from the Maul. Be careful there.",
+          n::ANGELAS, n::ANGELAS, 48, 46, qid::THE_ENRAGED_WILDKIN,
+          { kill(e::JADEMIR_ECHOSPAWN, 6, "Jademir Echospawn slain"),
+            kill(e::JADEMIR_BOUGHGUARD, 4, "Jademir Boughguard slain"), none }, xp(48, 75), money(48),
+          { i::DREAMBOUGH_SABATONS, i::DREAMWEAVE_SLIPPERS, i::EMERALD_BOOTS } },
+
+        { "Lethtendris's Web",
+          "A blood elf witch has come to Dire Maul, in the mountains north of the ruins. Lethtendris. She "
+          "spins a web of magic to drink from the city's power.\n\n"
+          "Find her in the eastern halls and cut her web.",
+          "Kill Lethtendris in the eastern halls of Dire Maul.",
+          "The witch still spins.",
+          "Her web is cut. The Maul has one danger fewer.",
+          n::LATRONICUS, n::LATRONICUS, 49, 46, qid::AGAINST_THE_HATECREST,
+          { kill(e::LETHTENDRIS, 1, "Lethtendris slain"), none, none }, xp(49, 100), money(49),
+          { i::WEBWARDEN_GAUNTLETS, i::DARKWEAVE_GLOVES, i::SHADOWSILK_GRIPS } },
+
+        { "Shards of the Felvine",
+          "The Felvine grows in the Dire Maul. A plant of the demons, and the satyr Alzzin the Wildshaper "
+          "tends it in the eastern gardens.\n\n"
+          "Kill him and bring me a shard of the Felvine, before its poison spreads further.",
+          "Kill Alzzin the Wildshaper in Dire Maul and bring a Felvine Shard to Azj'Tordin.",
+          "The Felvine still grows.",
+          "A shard of it. I will seal it where it can do no harm. Thank you, friend.",
+          n::AZJ_TORDIN, n::AZJ_TORDIN, 50, 47, qid::NONE,
+          { collect(e::ALZZIN_THE_WILDSHAPER, 1, 100, "Felvine Shard"), none, none }, xp(50, 125), money(50),
+          { i::FELVINE_LEGGUARDS, i::FELVINE_LEGGINGS, i::FELVINE_PANTS } },
+
+        { "The Madness Within",
+          "We, the Shen'dralar, chained a demon under our city: Immol'thar. Its power kept our magic alive. "
+          "Our prince, Tortheldrin, still feeds it.\n\n"
+          "Shut down the four pylons in the west wing. The field will fall. Kill the demon, then the prince "
+          "who chained it.",
+          "Shut down the four pylons in Dire Maul, then kill Immol'thar and Prince Tortheldrin.",
+          "The demon still feeds.",
+          "It is over. The Shen'dralar are free, and the Highborne can finally rest.",
+          n::SHENDRALAR_ANCIENT, n::SHENDRALAR_ANCIENT, 50, 47, qid::NONE,
+          { kill(e::IMMOL_THAR, 1, "Immol'thar slain"),
+            kill(e::PRINCE_TORTHELDRIN, 1, "Prince Tortheldrin slain"), none }, xp(50, 175), money(50),
+          { i::BREASTPLATE_OF_THE_SHENDRALAR, i::ROBE_OF_THE_SHENDRALAR, i::VEST_OF_THE_SHENDRALAR } },
+
+        { "King Gordok",
+          "The Gordunni were the scouts. Their masters are the Gordok, who hold the north halls of Dire "
+          "Maul. Their king, King Gordok, sits on a throne with his adviser Cho'Rush.\n\n"
+          "Kill the king. Without him, the ogres will fall in line.",
+          "Kill King Gordok in the northern halls of Dire Maul.",
+          "The Gordok still have their king.",
+          "The king is dead, and the ogres bowed to you? Feralas will sleep easier. Take this.",
+          n::SHANDRIS, n::SHANDRIS, 50, 47, qid::THE_GORDUNNI_WARLORD,
+          { kill(e::KING_GORDOK, 1, "King Gordok slain"), none, none }, xp(50, 125), money(50),
+          { i::KINGSLAYERS_HELM, i::KINGSLAYERS_COWL, i::KINGSLAYERS_MASK } },
+
+        // --- Desolace ----------------------------------------------------------------------------------
+        { "Nijel's Point",
+          "North of Feralas lies Desolace, a dead land. Our outpost there, Nijel's Point, is under siege "
+          "by centaurs and worse.\n\n"
+          "Take the road north and report to Captain Talendria.",
+          "Travel north into Desolace and speak with Captain Talendria at Nijel's Point.",
+          "",
+          "Shandris sent you? Then we have a chance.",
+          n::SHANDRIS, n::TALENDRIA, 46, 44, qid::FEATHERMOON_STRONGHOLD,
+          { none, none, none }, xp(46, 25), money(46),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "The Magram Feud",
+          "The Magram centaurs raid us from their village south of here. Wranglers with nets and "
+          "stormers who call down lightning.\n\n"
+          "Hit them in their village.",
+          "Kill 8 Magram Wranglers and 5 Magram Stormers in Desolace.",
+          "The Magram still raid us.",
+          "That will keep them busy licking their wounds. Well done.",
+          n::TALENDRIA, n::TALENDRIA, 46, 44, qid::NIJELS_POINT,
+          { kill(e::MAGRAM_WRANGLER, 8, "Magram Wrangler slain"),
+            kill(e::MAGRAM_STORMER, 5, "Magram Stormer slain"), none }, xp(46, 75), money(46),
+          { i::MAGRAM_SABATONS, i::KODOHIDE_SLIPPERS, i::CENTAUR_HIDE_BOOTS } },
+
+        { "Twisted Evils",
+          "In Maraudon, the cave in the western cliffs, Theradras's children carve her name into crystal. "
+          "The carvings spread her corruption.\n\n"
+          "Bring me six of them, from the Theradrim inside.",
+          "Bring 6 Theradric Crystal Carvings from the Theradrim in Maraudon to Willow.",
+          "The carvings still spread their sickness.",
+          "Six of them. I can break their hold now. Thank you.",
+          n::WILLOW, n::WILLOW, 47, 45, qid::NIJELS_POINT,
+          { collect(e::THERADRIM_SHARDLING, 6, 50, "Theradric Crystal Carving", e::THERADRIM_GUARDIAN),
+            none, none }, xp(47, 75), money(47),
+          { i::CARVED_STONE_AXE, i::WILLOW_BRANCH_STAFF, i::THERADRIC_HAND_CANNON } },
+
+        { "Vyletongue Corruption",
+          "The satyrs of Maraudon serve Lord Vyletongue, and they foul the waters with their poison.\n\n"
+          "Go into the satyr den in Maraudon. Kill Vyletongue and six of his satyrs.",
+          "Kill Lord Vyletongue and 6 Putridus Satyrs in Maraudon.",
+          "The satyrs still foul Maraudon.",
+          "Vyletongue is dead? The waters will clear. You have my thanks.",
+          n::TALENDRIA, n::TALENDRIA, 47, 45, qid::THE_MAGRAM_FEUD,
+          { kill(e::LORD_VYLETONGUE, 1, "Lord Vyletongue slain"),
+            kill(e::PUTRIDUS_SATYR, 6, "Putridus Satyr slain"), none }, xp(47, 100), money(47),
+          { i::SATYRBANE_LEGGUARDS, i::SATYRBANE_LEGGINGS, i::SATYRBANE_PANTS } },
+
+        { "Legends of Maraudon",
+          "Celebras was Zaetar's son, a keeper of the grove. Theradras cursed him, and he guards a pool in "
+          "Maraudon. He carries the Celebrian Diamond.\n\n"
+          "Free him of his curse, and bring me the diamond.",
+          "Kill Celebras the Cursed in Maraudon and bring the Celebrian Diamond to Cavindra.",
+          "Celebras still suffers.",
+          "The diamond. Celebras is free, at last. Take this, for his sake.",
+          n::CAVINDRA, n::CAVINDRA, 48, 45, qid::NIJELS_POINT,
+          { collect(e::CELEBRAS_THE_CURSED, 1, 100, "Celebrian Diamond"), none, none }, xp(48, 100), money(48),
+          { i::CELEBRIAN_GAUNTLETS, i::CELEBRIAN_GLOVES, i::CELEBRIAN_GRIPS } },
+
+        { "Corruption of Earth and Seed",
+          "The sickness of Desolace has one heart: Princess Theradras, the earth's daughter. She lies in "
+          "Zaetar's Grave, at the bottom of Maraudon.\n\n"
+          "Her boulders will throw you back. Keep your feet, and end her.",
+          "Kill Princess Theradras in Zaetar's Grave, at the bottom of Maraudon.",
+          "Theradras still poisons the earth.",
+          "The earth is quiet. Desolace will heal, slowly, because of you.",
+          n::MARANDIS, n::MARANDIS, 49, 46, qid::NIJELS_POINT,
+          { kill(e::PRINCESS_THERADRAS, 1, "Princess Theradras slain"), none, none }, xp(49, 150), money(49),
+          { i::ZAETARS_LEGGUARDS, i::SEEDWEAVE_LEGGINGS, i::EARTHWARDEN_PANTS } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));

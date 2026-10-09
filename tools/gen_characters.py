@@ -352,6 +352,82 @@ HEAD_PATCHES = {
             '..ooooAAoohHHo..',
         ])),
     },
+    # A satyr: two ridged horns (the trim) curling up from the temples, pointed ears, and a goat's beard (the
+    # lower face) hanging from the chin over the chest.
+    'satyr': {
+        'front': dict(enumerate([
+            '.g......',
+            'gdg...oo',
+            'gdo.ooHH',
+            '.gdoHHHH',
+            '..gdHHHh',
+            'S.ohSSSS',
+            'SSohSoSS',
+            '..ohsSSS',
+            '...osSmm',
+            '.ooAAomm',
+        ])),
+        'back': dict(enumerate([
+            '.g......',
+            'gdg...oo',
+            'gdo.ooHH',
+            '.gdoHHHH',
+            '..gdHHHH',
+            'S.ohHHHH',
+            'SSohhHHH',
+        ])),
+        'side': dict(enumerate([
+            '.....oooo.gg....',
+            '....oHHHHogdg...',
+            '...oHHHHHHodg...',
+            '..oHHHHHHgdo....',
+            '..oSHHHHgdHo....',
+            '.oSSSHHhhhHoS...',
+            '.oSoSSShhhHSS...',
+            '.oSSSSsShhho....',
+            '.mmmmmsooo......',
+            '..mmoAAooogo....',
+        ])),
+    },
+    # A tauren: a broad bull's head with two horns (the trim) sweeping out and up, ears sticking out sideways,
+    # a mane (the hair) and a wide muzzle (the lower face) with its nostrils.
+    'tauren': {
+        'front': dict(enumerate([
+            '........',
+            'g.......',
+            'gd......',
+            '.gdd.ooH',
+            '..ggoHHH',
+            '..oSSSSS',
+            'SSoSoSSS',
+            '..oSSmmm',
+            '..oSmmom',
+            '.ooAommm',
+        ])),
+        'back': dict(enumerate([
+            '........',
+            'g.......',
+            'gd......',
+            '.gdd.ooH',
+            '..ggoHHH',
+            '..oSHHHH',
+            'SSoSHHHH',
+            '..oSShHH',
+            '...osshH',
+        ])),
+        'side': dict(enumerate([
+            '................',
+            '..........g.....',
+            '.........gd.....',
+            '.....ooooddg....',
+            '....oSSSSHHo....',
+            '...oSoSSSHHo....',
+            '.mmSSSSSSHHoSS..',
+            'ommmSSSSSSHo....',
+            'mmmmSSSSShho....',
+            '.mmmmoAAooogo...',
+        ])),
+    },
 }
 
 # The gnome's cast pose: the arms raised out to the sides, below the ears.
@@ -763,6 +839,12 @@ HUMANOID_SHEETS = {
     'goblin_sword': Humanoid('goblin', 'armor', 'sword'),
     'quilboar_sword': Humanoid('quilboar', 'armor', 'sword'),
     'quilboar_staff': Humanoid('quilboar', 'robe', 'staff'),
+    'elf_plain': Humanoid('elf', 'armor', 'none'),
+    'elf_staff': Humanoid('elf', 'robe', 'staff'),
+    'satyr_sword': Humanoid('satyr', 'armor', 'sword'),
+    'satyr_staff': Humanoid('satyr', 'robe', 'staff'),
+    'tauren_sword': Humanoid('tauren', 'armor', 'sword'),
+    'tauren_staff': Humanoid('tauren', 'robe', 'staff'),
 }
 
 # --- creatures --------------------------------------------------------------------------------------
@@ -2802,6 +2884,71 @@ def scorpid(step, pose):
     return c.done()
 
 
+def lasher(step, pose):
+    """A lasher: a carnivorous flower on a thick stalk, creeping on its roots and swinging two thorny vines; it
+    lashes one out to strike."""
+    c = Canvas()
+    if pose == 'dead':
+        c.line(4, 28, 26, 27, 'second', width=2, dark='second_dark')                         # the fallen stalk
+        for dx, dy in ((-3, -1), (3, -1), (0, -3)):
+            c.ellipse(24 + dx, 26 + dy, 3, 2, 'main', dark='dark')
+        c.ellipse(24, 26, 2.5, 2, 'extra', dark='extra_dark')
+        return c.done()
+    wig = [0, 1, 0, -1][step]
+    attack = pose == 'attack'
+    for x0, x1 in ((14, 7), (17, 24), (15, 11 - wig), (16, 20 + wig)):
+        c.line(x0, 25, x1, 29, 'second_dark', width=2)                                   # roots
+    c.line(16, 26, 16 + wig, 14, 'second', width=3, dark='second_dark')                    # stalk
+    if attack:
+        c.line(14, 15, 2, 12, 'second', width=2)
+        c.line(18, 15, 25, 20, 'second', width=2)
+        for x, y in ((5, 12), (9, 13), (22, 18)):
+            c.px(x, y, 'tooth')
+    else:
+        c.line(14, 15, 7, 18 + wig, 'second', width=2)
+        c.line(7, 18 + wig, 5, 23, 'second', width=2)
+        c.line(18, 15, 25, 18 - wig, 'second', width=2)
+        c.line(25, 18 - wig, 27, 23, 'second', width=2)
+        for x, y in ((9, 17 + wig), (23, 17 - wig), (5, 21), (27, 21)):
+            c.px(x, y, 'tooth')
+    cx = 16 + wig
+    for dx, dy in ((-5, -1), (5, -1), (-3, -5), (3, -5), (0, 3)):
+        c.ellipse(cx + dx, 9 + dy, 3, 2.5, 'main', dark='dark', light='light')               # petals
+    c.ellipse(cx, 9, 3.5, 3, 'extra', dark='extra_dark')                                    # the maw
+    c.line(cx - 2, 9, cx + 2, 9, 'outline', edge=False)
+    c.px(cx - 1, 8, 'tooth')
+    c.px(cx + 1, 10, 'tooth')
+    c.px(cx - 1, 7, 'eye')
+    c.px(cx + 1, 7, 'eye')
+    return c.done()
+
+
+def treant(step, pose):
+    """A treant: a walking tree with a face in its bark, branch arms and a crown of leaves."""
+    c = Canvas()
+    s = STRIDE[step] // 2
+    bob = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    c.rect(18 + s, 22, 20 + s, 29, 'extra_dark')                                            # legs
+    c.rect(11 - s, 22, 13 - s, 29, 'extra', dark='extra_dark')
+    c.poly([(10, 24 + bob), (11, 11 + bob), (21, 11 + bob), (22, 24 + bob)], 'extra', dark='extra_dark',
+           light='second')                                                                  # trunk
+    c.line(13, 14 + bob, 13, 22 + bob, 'extra_dark', edge=False)
+    c.line(19, 15 + bob, 18, 22 + bob, 'extra_dark', edge=False)
+    lift = 7 if attack else 0
+    c.line(11, 14 + bob, 4, 20 + bob - lift, 'extra', width=2)                             # branch arms
+    c.line(21, 14 + bob, 28, 20 + bob - lift, 'extra', width=2)
+    for x in (3, 28):
+        c.ellipse(x, 20 + bob - lift, 2, 2, 'main', light='light')
+    c.ellipse(16, 7 + bob, 10, 6, 'main', dark='dark', light='light')                        # crown
+    c.ellipse(9, 9 + bob, 4, 3, 'main', dark='dark')
+    c.ellipse(23, 9 + bob, 4, 3, 'main', dark='dark')
+    c.px(14, 15 + bob, 'eye')
+    c.px(18, 15 + bob, 'eye')
+    c.line(14, 19 + bob, 18, 19 + bob, 'outline', edge=False)
+    return c.done()
+
+
 CREATURES = {
     'water_elemental': water_elemental,
     'wolf': wolf,
@@ -2838,16 +2985,18 @@ CREATURES = {
     'tiger': lambda step, pose: cat(step, pose, stripes=True),         # the cat's own sheet stays unstriped
     'centaur': centaur,
     'scorpid': scorpid,
+    'lasher': lasher,
+    'treant': treant,
 }
 
 
 # Upright creatures fall on their back instead of turning over like beasts.
-LYING_DEAD = {'worgen', 'worgen_caster', 'skeleton', 'skeleton_mage', 'yeti'}
+LYING_DEAD = {'worgen', 'worgen_caster', 'skeleton', 'skeleton_mage', 'yeti', 'treant'}
 
 # Creatures that draw their own dead frame (pose 'dead'): an ooze dies as a puddle, a robot as a wreck, a spirit
 # as a fading wisp, a gorilla sprawled on its belly, a centaur on its side and a scorpid on its back.
 OWN_DEAD = {'raptor', 'naga', 'naga_caster', 'hydra', 'trogg', 'ooze', 'robot', 'bomb', 'spirit', 'gorilla',
-            'centaur', 'scorpid'}
+            'centaur', 'scorpid', 'lasher'}
 
 
 def creature_sheet(draw, lying=False, own_dead=False):
@@ -3103,6 +3252,26 @@ def quilboar_palette(armor, tabard, hair=QUILBOAR_QUILLS, trim=TUSK, skin=SKIN_Q
     skin unless it is given)."""
     snout = snout or (min(255, skin[0] + 56), min(255, skin[1] + 52), min(255, skin[2] + 52))
     return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=trim, lower_face=snout, **kw)
+
+
+SKIN_SATYR = (168, 104, 128)
+SATYR_HORNS = (88, 68, 60)
+
+
+def satyr_palette(armor, tabard, hair=(64, 40, 56), horns=SATYR_HORNS, skin=SKIN_SATYR, **kw):
+    """A satyr: the horns are the trim and the goat's beard the lower face, the color of the hair."""
+    return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=horns, lower_face=hair, **kw)
+
+
+SKIN_TAUREN = (140, 100, 72)
+TAUREN_HORNS = (224, 216, 192)
+
+
+def tauren_palette(armor, tabard, hair=(72, 52, 40), horns=TAUREN_HORNS, skin=SKIN_TAUREN, muzzle=None, **kw):
+    """A tauren: the horns are the trim and the muzzle the lower face (a paler shade of the fur unless it is
+    given)."""
+    muzzle = muzzle or (min(255, skin[0] + 48), min(255, skin[1] + 44), min(255, skin[2] + 40))
+    return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=horns, lower_face=muzzle, **kw)
 
 
 # Looks used by the player (race_class) and by NPCs and humanoid enemies. Each is a sheet + palette.
@@ -3668,6 +3837,77 @@ HUMANOID_LOOKS = {
     'amnennar_the_coldbringer': ('skeleton_mage', creature_palette((232, 236, 240), (176, 184, 200), eye=(96, 200, 255),
                                                                    extra=(152, 180, 228), weapon=(64, 60, 80),
                                                                    flame=(224, 248, 255), flame_dark=(96, 168, 240))),
+    # Feralas: Feathermoon Stronghold and the Highborne of Dire Maul
+    'shandris_feathermoon': ('fem_bow', humanoid_palette(skin=SKIN_ELF, hair=(48, 72, 160), armor=(200, 204, 224),
+                                                         tabard=(72, 56, 152), trim=(232, 192, 72),
+                                                         armor_light=(232, 236, 248))),
+    'latronicus_moonspear': ('elf_sword', humanoid_palette(skin=SKIN_ELF, hair=(224, 224, 236), armor=(96, 120, 176),
+                                                           tabard=(56, 72, 128), trim=(208, 208, 224),
+                                                           armor_light=(144, 168, 216))),
+    'feathermoon_ranger': ('fem_bow', humanoid_palette(skin=SKIN_ELF, hair=(56, 144, 104), armor=(80, 112, 72),
+                                                       tabard=(56, 80, 52), trim=(200, 184, 120),
+                                                       armor_light=(120, 156, 104))),
+    'feathermoon_druid': ('fem_robe', humanoid_palette(skin=SKIN_ELF, hair=(192, 216, 232), armor=(64, 128, 96),
+                                                       tabard=(48, 96, 72), trim=(224, 200, 120),
+                                                       armor_light=(104, 168, 132))),
+    'pratt_mcgrubben': ('hum_plain', humanoid_palette(hair=(120, 80, 48), armor=(132, 96, 60), tabard=(96, 68, 44),
+                                                      trim=(200, 176, 120), lower_face=(120, 80, 48),
+                                                      leather=(96, 68, 44))),
+    'feathermoon_vendor': ('fem_robe', humanoid_palette(skin=SKIN_ELF, hair=(160, 72, 160), armor=(184, 152, 96),
+                                                        tabard=(120, 88, 60), trim=(232, 216, 160))),
+    'feathermoon_smith': ('elf_plain', humanoid_palette(skin=SKIN_ELF, hair=(48, 96, 136), armor=(120, 112, 112),
+                                                        tabard=(88, 64, 48), trim=(176, 176, 184),
+                                                        leather=(80, 56, 40))),
+    'zorbin_fandazzle': ('gnome_plain', gnome_palette(hair=(232, 120, 40), armor=(64, 120, 168), tabard=(40, 80, 120),
+                                                      trim=(216, 176, 72))),
+    'highborne_exile': ('elf_staff', humanoid_palette(skin=(200, 176, 232), hair=(240, 236, 216), armor=(104, 56, 152),
+                                                      tabard=(232, 228, 240), trim=(232, 192, 72),
+                                                      armor_light=(152, 104, 196))),
+    'nijel_sentinel': ('fem_bow', humanoid_palette(skin=SKIN_ELF, hair=(208, 212, 228), armor=(112, 88, 152),
+                                                   tabard=(72, 56, 104), trim=(208, 200, 216),
+                                                   armor_light=(156, 132, 192))),
+    'nijel_druid': ('elf_staff', humanoid_palette(skin=SKIN_ELF, hair=(64, 136, 72), armor=(120, 88, 56),
+                                                  tabard=(64, 112, 56), trim=(200, 176, 96),
+                                                  armor_light=(160, 124, 84))),
+    'shendralar_ancient': ('elf_staff', humanoid_palette(skin=(176, 216, 232), hair=(232, 244, 248),
+                                                         armor=(96, 160, 192), tabard=(200, 232, 240),
+                                                         trim=(224, 240, 248), armor_light=(152, 204, 228),
+                                                         leather=(80, 120, 152))),
+    # Feralas: the Grimtotem tauren
+    'grimtotem_raider': ('tauren_sword', tauren_palette(armor=(136, 96, 60), tabard=(152, 40, 36),
+                                                        leather=(88, 60, 40))),
+    'grimtotem_naturalist': ('tauren_staff', tauren_palette(skin=(96, 84, 76), hair=(48, 40, 36),
+                                                            armor=(176, 160, 112), tabard=(120, 36, 32),
+                                                            armor_light=(208, 196, 152))),
+    # Maraudon and Dire Maul: the satyrs
+    'putridus_satyr': ('satyr_sword', satyr_palette(skin=(144, 120, 96), hair=(56, 72, 40), armor=(88, 104, 56),
+                                                    tabard=(64, 76, 40), leather=(80, 60, 40))),
+    'putridus_shadowstalker': ('satyr_sword', satyr_palette(skin=(112, 96, 112), hair=(40, 36, 48),
+                                                            armor=(56, 52, 72), tabard=(40, 36, 52))),
+    'lord_vyletongue': ('satyr_staff', satyr_palette(skin=(120, 144, 88), hair=(48, 40, 56), armor=(96, 56, 128),
+                                                     tabard=(64, 40, 88), armor_light=(144, 100, 176),
+                                                     horns=(40, 36, 32))),
+    'wildspawn_satyr': ('satyr_sword', satyr_palette(armor=(144, 64, 48), tabard=(96, 44, 36), leather=(88, 56, 40))),
+    'wildspawn_felsworn': ('satyr_staff', satyr_palette(skin=(120, 88, 144), hair=(32, 28, 40), armor=(64, 136, 56),
+                                                        tabard=(40, 96, 40), armor_light=(112, 184, 88))),
+    'zevrim_thornhoof': ('satyr_sword', satyr_palette(skin=(176, 72, 64), hair=(40, 28, 28), armor=(56, 44, 48),
+                                                      tabard=(136, 32, 32), armor_light=(104, 88, 96),
+                                                      horns=(216, 200, 168))),
+    'alzzin_the_wildshaper': ('satyr_staff', satyr_palette(skin=(96, 120, 72), hair=(72, 48, 32), armor=(72, 104, 48),
+                                                           tabard=(112, 72, 44), armor_light=(120, 152, 88),
+                                                           horns=(232, 220, 196))),
+    # Dire Maul: the Highborne ghosts and their prince, Lethtendris the blood elf, and Gizlock in Maraudon
+    'highborne_summoner': ('elf_staff', humanoid_palette(skin=(160, 184, 208), hair=(216, 224, 236),
+                                                         armor=(72, 88, 152), tabard=(176, 188, 220),
+                                                         trim=(200, 216, 240), armor_light=(116, 136, 192))),
+    'lethtendris': ('elf_staff', humanoid_palette(skin=(236, 196, 164), hair=(240, 208, 104), armor=(152, 40, 48),
+                                                  tabard=(40, 36, 40), trim=(232, 192, 72),
+                                                  armor_light=(200, 80, 80))),
+    'prince_tortheldrin': ('elf_sword', humanoid_palette(skin=(184, 160, 224), hair=(240, 236, 216),
+                                                         armor=(216, 184, 80), tabard=(104, 48, 152),
+                                                         trim=(240, 224, 160), armor_light=(248, 224, 136))),
+    'tinkerer_gizlock': ('goblin_sword', goblin_palette(armor=(120, 104, 88), tabard=(200, 120, 40),
+                                                        trim=(200, 200, 208), leather=(80, 56, 40))),
 }
 
 CREATURE_LOOKS = {
@@ -3888,6 +4128,92 @@ CREATURE_LOOKS = {
     'sullithuz_broodling': ('crocolisk', creature_palette((208, 184, 112), (236, 220, 168), eye=(232, 72, 40))),
     'gahz_rilla': ('hydra', creature_palette((88, 168, 176), (184, 224, 224), eye=(200, 240, 255), extra=(48, 104, 136),
                                              light=(136, 208, 212))),
+    # Feralas
+    'hatecrest_warrior': ('naga', creature_palette((48, 120, 112), (176, 200, 152), eye=(248, 216, 64),
+                                                   extra=(104, 64, 120), weapon=(176, 176, 184))),
+    'hatecrest_siren': ('naga_caster', creature_palette((96, 152, 184), (224, 216, 232), eye=(248, 216, 64),
+                                                        extra=(64, 160, 152))),
+    'lord_shalzaru': ('naga', creature_palette((112, 64, 128), (208, 176, 208), eye=(248, 232, 96),
+                                               extra=(232, 192, 72), weapon=(200, 200, 216))),
+    'shore_strider': ('ogre', creature_palette((88, 128, 152), (176, 196, 200), eye=(200, 240, 255),
+                                               extra=(64, 96, 112))),
+    'rage_scar_yeti': ('yeti', creature_palette((176, 152, 120), (96, 72, 56), eye=(248, 72, 40),
+                                                extra=(208, 192, 160))),
+    'old_grizzlegut': ('yeti', creature_palette((120, 96, 72), (64, 48, 40), eye=(248, 200, 64),
+                                                extra=(176, 160, 128))),
+    'gordunni_ogre': ('ogre', creature_palette((136, 152, 120), (72, 56, 44), eye=(240, 216, 96),
+                                               extra=(120, 88, 56))),
+    'gordunni_mage': ('ogre', creature_palette((128, 144, 168), (64, 44, 80), eye=(200, 168, 255),
+                                               extra=(104, 64, 152))),
+    'gordunni_warlord': ('ogre', creature_palette((104, 124, 96), (56, 40, 36), eye=(248, 72, 40),
+                                                  extra=(184, 152, 64), weapon=(176, 176, 184))),
+    'enraged_wildkin': ('bear', creature_palette((112, 88, 120), (192, 176, 160), eye=(248, 216, 64),
+                                                 extra=(232, 200, 96))),
+    'wildkin_oracle': ('bear', creature_palette((96, 104, 136), (208, 200, 216), eye=(200, 240, 255),
+                                                extra=(232, 200, 96))),
+    'jademir_echospawn': ('raptor', creature_palette((64, 168, 120), (200, 232, 176), eye=(248, 232, 96),
+                                                     extra=(120, 96, 200))),
+    'jademir_boughguard': ('treant', creature_palette((72, 136, 64), (136, 112, 72), eye=(248, 232, 96),
+                                                      extra=(104, 76, 48))),
+    # Desolace: the Magram centaurs
+    'magram_wrangler': ('centaur', creature_palette((112, 84, 64), (176, 136, 104), eye=(40, 28, 24),
+                                                    extra=(160, 48, 40))),
+    'magram_stormer': ('centaur', creature_palette((136, 128, 136), (192, 176, 160), eye=(200, 232, 255),
+                                                   extra=(64, 96, 160))),
+    # Maraudon
+    'creeping_sludge': ('ooze', creature_palette((104, 152, 56), (176, 216, 96), eye=(248, 232, 96))),
+    'noxxious_spawn': ('ooze', creature_palette((136, 104, 160), (184, 216, 104), eye=(248, 232, 96))),
+    'barbed_lasher': ('lasher', creature_palette((200, 88, 152), (72, 128, 56), eye=(248, 232, 96),
+                                                 extra=(112, 32, 56))),
+    'razorlash': ('lasher', creature_palette((136, 64, 176), (56, 104, 48), eye=(248, 80, 40),
+                                             extra=(72, 24, 56))),
+    'deeprot_stomper': ('treant', creature_palette((96, 104, 56), (104, 88, 72), eye=(200, 248, 96),
+                                                   extra=(84, 64, 52))),
+    'theradrim_shardling': ('water_elemental', creature_palette((152, 116, 84), (208, 172, 216), eye=(248, 200, 64),
+                                                                dark=(104, 80, 60), light=(188, 152, 116))),
+    'theradrim_guardian': ('water_elemental', creature_palette((120, 96, 72), (184, 140, 224), eye=(248, 120, 48),
+                                                               dark=(84, 64, 52), light=(160, 132, 104))),
+    'landslide': ('water_elemental', creature_palette((96, 88, 80), (216, 176, 112), eye=(248, 72, 40),
+                                                      dark=(64, 60, 56), light=(140, 132, 120))),
+    'princess_theradras': ('water_elemental', creature_palette((168, 112, 64), (152, 216, 96), eye=(248, 232, 96),
+                                                               dark=(116, 76, 44), light=(208, 152, 96))),
+    'noxxion': ('water_elemental', creature_palette((96, 160, 64), (200, 232, 112), eye=(248, 72, 40),
+                                                    dark=(56, 104, 40), light=(144, 200, 96))),
+    'subterranean_diemetradon': ('crocolisk', creature_palette((96, 72, 104), (184, 160, 120), eye=(248, 216, 64))),
+    'rotgrip': ('crocolisk', creature_palette((72, 96, 56), (160, 168, 112), eye=(248, 72, 40))),
+    'celebras_the_cursed': ('centaur', creature_palette((64, 96, 56), (120, 88, 112), eye=(200, 248, 96),
+                                                        extra=(88, 56, 112))),
+    # Dire Maul
+    'whip_lasher': ('lasher', creature_palette((216, 160, 64), (64, 112, 56), eye=(248, 72, 40),
+                                               extra=(104, 40, 40))),
+    'warpwood_crusher': ('treant', creature_palette((104, 120, 72), (120, 96, 64), eye=(248, 120, 48),
+                                                    extra=(88, 64, 48))),
+    'petrified_treant': ('treant', creature_palette((128, 128, 120), (176, 172, 160), eye=(200, 240, 255),
+                                                    extra=(104, 100, 96))),
+    'ironbark_protector': ('treant', creature_palette((88, 120, 64), (152, 152, 168), eye=(248, 216, 64),
+                                                      extra=(80, 72, 72))),
+    'tendris_warpwood': ('treant', creature_palette((112, 64, 120), (128, 104, 72), eye=(248, 72, 40),
+                                                    extra=(76, 56, 44))),
+    'hydroling': ('water_elemental', creature_palette((72, 160, 200), (216, 240, 248), eye=(248, 248, 255))),
+    'hydrospawn': ('water_elemental', creature_palette((48, 104, 184), (176, 224, 248), eye=(248, 232, 96),
+                                                       dark=(32, 72, 136), light=(104, 160, 224))),
+    'arcane_aberration': ('spirit', creature_palette((152, 96, 216), (232, 200, 255), eye=(255, 255, 255),
+                                                     dark=(104, 64, 168), light=(200, 160, 248))),
+    'eldreth_spectre': ('spirit', creature_palette((128, 200, 192), (232, 248, 240), eye=(255, 255, 255),
+                                                   dark=(80, 144, 144), light=(184, 232, 224))),
+    'eye_of_immol_thar': ('spirit', creature_palette((88, 168, 56), (216, 248, 120), eye=(248, 72, 40),
+                                                     dark=(56, 112, 40), light=(152, 216, 96))),
+    'immol_thar': ('gorilla', creature_palette((72, 112, 56), (176, 200, 96), eye=(248, 72, 40),
+                                               extra=(120, 64, 152))),
+    'gordok_brute': ('ogre', creature_palette((176, 120, 88), (80, 56, 40), eye=(240, 216, 96),
+                                              extra=(152, 40, 40))),
+    'gordok_mage_lord': ('ogre', creature_palette((152, 120, 136), (64, 40, 80), eye=(200, 168, 255),
+                                                  extra=(112, 56, 152))),
+    'gordok_mastiff': ('wolf', creature_palette((120, 88, 64), (184, 152, 120), eye=(248, 72, 40))),
+    'cho_rush_the_observer': ('ogre', creature_palette((136, 144, 176), (56, 44, 72), eye=(200, 168, 255),
+                                                       extra=(216, 184, 72))),
+    'king_gordok': ('ogre', creature_palette((192, 104, 72), (64, 44, 36), eye=(248, 216, 64),
+                                             extra=(232, 192, 72), weapon=(200, 200, 216))),
 }
 
 

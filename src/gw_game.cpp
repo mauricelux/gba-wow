@@ -399,11 +399,11 @@ void game::_interact()
         return;
     }
 
-    // A gong or a cage starts a dungeon event.
+    // A gong, a cage or a prison starts a dungeon event.
     area_id event = event_area_at(world::map(), _player.position().x().floor_integer(),
                                   _player.position().y().floor_integer());
 
-    if(event != area_id::NONE && _combat.start_event(event))
+    if(event != area_id::NONE && _combat.start_event(event, ! _chests.all_braziers_lit()))
     {
         return;
     }
@@ -823,7 +823,8 @@ void game::_update_death()
 
 void game::_update_radiation()
 {
-    // Gnomeregan's fallout pools burn a little every second while the player stands in them.
+    // Gnomeregan's fallout pools and Maraudon's slime burn a little every second while the player
+    // stands in them.
     if(! in_radiation(world::map(), _player.position().x().floor_integer(), _player.position().y().floor_integer()))
     {
         _radiation_frames = 0;
@@ -832,7 +833,8 @@ void game::_update_radiation()
 
     if(_radiation_frames == 0)
     {
-        _hud.message("The fallout burns you", ui::color::RED);
+        _hud.message(world::map().id == map_id::MARAUDON ? "The poison burns you" : "The fallout burns you",
+                     ui::color::RED);
     }
 
     if(++_radiation_frames % radiation_interval == 0)

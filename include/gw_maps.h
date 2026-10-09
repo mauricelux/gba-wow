@@ -43,10 +43,11 @@ struct map_info
 // The graveyard closest to the point.
 [[nodiscard]] const point_def& nearest_graveyard(const map_info& map, int x, int y);
 
-// The smallest named area containing the point, or nullptr. Radiation pools, gongs and cages don't count.
+// The smallest named area containing the point, or nullptr. Radiation pools and event areas don't count.
 [[nodiscard]] const area_def* area_at(const map_info& map, int x, int y);
 
-// GONG or CAGE when the point is where an event starts (a gong to ring, a cage to open), else NONE.
+// GONG, CAGE or PRISON when the point is where an event starts (a gong to ring, a cage to open, a
+// prison whose force field is down), else NONE.
 [[nodiscard]] area_id event_area_at(const map_info& map, int x, int y);
 
 // Whether the point is in a radiation pool (area_id::RADIATION), which hurts while the player stands in it.

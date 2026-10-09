@@ -160,6 +160,39 @@ void player::blink(int distance)
     _update_sprites(false);
 }
 
+void player::knock_back(const bn::fixed_point& from, int distance)
+{
+    // Only the direction matters: kept small so its square stays in range.
+    bn::fixed dx = bn::clamp(_position.x() - from.x(), bn::fixed(-256), bn::fixed(256));
+    bn::fixed dy = bn::clamp(_position.y() - from.y(), bn::fixed(-256), bn::fixed(256));
+    bn::fixed length = bn::sqrt(dx * dx + dy * dy);
+
+    if(length < 1)
+    {
+        dx = 0;
+        dy = 1;
+        length = 1;
+    }
+
+    bn::fixed step_x = dx * 2 / length;
+    bn::fixed step_y = dy * 2 / length;
+
+    for(int moved = 0; moved < distance; moved += 2)
+    {
+        bn::fixed_point next(_position.x() + step_x, _position.y() + step_y);
+
+        if(! _fits(next.x(), next.y()))
+        {
+            break;
+        }
+
+        _position = next;
+    }
+
+    _dashing = false;
+    _update_sprites(false);
+}
+
 void player::update(bool input_enabled, bool can_run, int speed_percent, const bn::fixed_point* flee_from)
 {
     if(_dashing)

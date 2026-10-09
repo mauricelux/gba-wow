@@ -320,6 +320,33 @@ def brazier(lit, flicker=0):
     return img
 
 
+def pylon(active, flicker=0):
+    """Dire Maul's pylons, kept like braziers: a stone obelisk with a glowing crystal on top while it
+    holds Immol'thar's field, and a dark one once the hero shuts it down."""
+    c = Canvas(16)
+    img = c.img
+    img[14:16, 3:13] = CH['shadow']
+    img[12:15, 3:13] = CH['iron_d']
+    img[12, 3:13] = CH['out']
+    img[14, 3:13] = CH['out']
+    img[12:15, 3] = CH['out']
+    img[12:15, 12] = CH['out']
+    img[5:12, 5:11] = CH['iron']
+    img[5:12, 5] = CH['out']
+    img[5:12, 10] = CH['out']
+    img[5:12, 9] = CH['iron_d']
+    img[7, 6:9] = CH['gold_d']
+    img[10, 6:9] = CH['gold_d']
+    crystal = c.poly([(8, -0.5), (11.5, 3), (8, 6.5), (4.5, 3)])
+    if active:
+        c.fill(crystal, CH['flame'] if flicker else CH['gold'], CH['out'])
+        c.fill(c.ellipse(8, 3, 1.5, 1.5), CH['flame_l'] if flicker else CH['gold_l'])
+    else:
+        c.fill(crystal, CH['inside'], CH['out'])
+        img[2, 7] = CH['iron_d']
+    return img
+
+
 # --- world map marks (8x8): the player, quest givers and found chests ---------------------------------
 
 def map_marks():
@@ -982,8 +1009,8 @@ def main():
     write('circle', circle(), CIRCLE_PALETTE, 64)
     write('castbar', castbars(), CASTBAR_PALETTE, 8)
     write('petbar', petbars(), PETBAR_PALETTE, 8)
-    write('chest', [chest(False), chest(True), brazier(False), brazier(True), brazier(True, 1)],
-          CHEST_PALETTE, 16)
+    write('chest', [chest(False), chest(True), brazier(False), brazier(True), brazier(True, 1), pylon(True),
+                    pylon(True, 1), pylon(False)], CHEST_PALETTE, 16)
     write('map_marks', map_marks(), MARKER_PALETTE, 8)
     icon_map = icons()
     write('icons', [c.img for c in icon_map.values()], ICON_PALETTE, 16)

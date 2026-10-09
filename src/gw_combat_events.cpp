@@ -5,6 +5,7 @@
 #include "gw_audio.h"
 #include "gw_enemies.h"
 #include "gw_hud.h"
+#include "gw_map_dire_maul.h"
 #include "gw_map_razorfen_downs.h"
 #include "gw_map_zul_farrak.h"
 #include "gw_player.h"
@@ -15,8 +16,9 @@
 namespace gw
 {
 
-// Dungeon events the player starts with A: a gong rung or a cage opened, inside an area_id::GONG or
-// CAGE area (event_area_at). An event sends waves of enemies at the hero from its spots, then its
+// Dungeon events the player starts with A: a gong rung, a cage opened or a prison's field broken,
+// inside an area_id::GONG, CAGE or PRISON area (event_area_at). A prison's field holds until every
+// pylon (brazier) of the map is shut down; then it has no waves, only its boss. An event sends waves of enemies at the hero from its spots, then its
 // bosses. A gong sends one wave per ring, so the hero can eat between them; the cage sends its waves
 // one after another, with a breather in between. An event lives only while the map is loaded: dying
 // or running off ends it, and the hero can try again; once its bosses are dead it stays done until
@@ -48,6 +50,7 @@ namespace
         enemy_id bosses[2];
     };
 
+    namespace dm = map_data::dire_maul;
     namespace rfd = map_data::razorfen_downs;
     namespace zf = map_data::zul_farrak;
 
@@ -75,6 +78,10 @@ namespace
           { zf::wave_a, zf::wave_b, zf::wave_c }, 3,
           { { slave, drudge, none }, { slave, slave, drudge }, { slave, drudge, slave } }, 3, 15 * seconds,
           zf::event_boss, { enemy_id::NEKRUM_GUTCHEWER, enemy_id::SHADOWPRIEST_SEZZ_ZIZ } },
+        // Dire Maul: with the four pylons shut down, Immol'thar's field falls and the demon comes out.
+        { map_id::DIRE_MAUL, area_id::PRISON, "The force field falls!", "", "", "Immol'thar is free!",
+          "The prison is empty.", { dm::event_boss }, 1, {}, 0, 0, dm::event_boss,
+          { enemy_id::IMMOL_THAR, none } },
     };
 
     constexpr int event_count = sizeof(events) / sizeof(events[0]);
@@ -97,7 +104,7 @@ namespace
     }
 }
 
-bool combat::start_event(area_id area)
+bool combat::start_event(area_id area, bool sealed)
 {
     // Not while enemies fight the hero (a lingering disease is fine): then A attacks as usual.
     if(_enemies.any_in_combat())
@@ -119,6 +126,13 @@ bool combat::start_event(area_id area)
         if(_events_done & (1 << index))
         {
             _hud.message(event.done_message, ui::color::WHITE);
+            return true;
+        }
+
+        if(area == area_id::PRISON && sealed)
+        {
+            _hud.message("The force field holds", ui::color::RED);
+            _hud.message("Shut down the four pylons", ui::color::YELLOW);
             return true;
         }
 

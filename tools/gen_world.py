@@ -4605,6 +4605,7 @@ def gen_thousand_needles():
     rock[4:6, 4:16] = 1
     rock[0:6, 20:32] = 1
     rock[4:7, 0:4] = 1
+    rock[48:53, 0:3] = 0                # the pass west into Feralas
     rng = np.random.default_rng(61)
     needles = [(96, 360), (200, 300), (320, 260), (440, 330), (120, 520), (260, 760), (420, 880), (140, 880),
                (480, 640), (340, 420), (80, 700), (220, 940), (600, 200), (760, 140), (900, 230), (680, 300),
@@ -4619,6 +4620,7 @@ def gen_thousand_needles():
         [(672, 656), (560, 600), (400, 560), (300, 600), (240, 640)],                # west into the canyons
         [(400, 560), (380, 400), (400, 220), (432, 132)],                            # north to the Downs
         [(380, 400), (260, 220), (176, 172)],                                        # northwest to the Kraul
+        [(240, 640), (190, 790), (0, 800)],                                          # west to Feralas
     ]
     for points in roads:
         wg.corners_along(m, 'path', points, 1.0)
@@ -4691,6 +4693,8 @@ def gen_thousand_needles():
 
     m.point('from_tanaris', 744, 988)
     m.warp(720, 1016, 48, 8, 'tanaris', 'from_needles')
+    m.point('from_feralas', 24, 800)
+    m.warp(0, 776, 8, 48, 'feralas', 'from_needles')
     m.area(0, 0, 1024, 1024, 'Thousand Needles')
     m.music = 'TANARIS'
     m.save()
@@ -5170,6 +5174,675 @@ def gen_zul_farrak():
     return m
 
 
+# ---------------------------------------------------------------------------------------------
+# Feralas and Desolace
+# ---------------------------------------------------------------------------------------------
+
+def paint_beach(m, kind='beach'):
+    """Sand along a coast, painted like paths: 'foam' with a few 'dirt_l' grains and a pale rim. Paint
+    it after the water and the roads; it only takes grass."""
+    c = wg.corners(m, kind)
+    grass = [m.g(role) for role in ('grass_d', 'grass_m', 'grass_l', 'grass_h', 'flower', 'shadow')]
+    for my in range(m.metas_y):
+        for mx in range(m.metas_x):
+            if c[my:my + 2, mx:mx + 2].max() == 0:
+                continue
+            tile = m.ground[my * 16:(my + 1) * 16, mx * 16:(mx + 1) * 16]
+            f = np.ones((16, 16)) if c[my:my + 2, mx:mx + 2].min() == 1 else wg.corner_field(c, mx, my)
+            ground = np.isin(tile, grass)
+            inner = (f > 0.6) & ground
+            tile[(f > 0.42) & (f <= 0.6) & ground] = m.g('grass_h')
+            tile[inner] = m.g('foam')
+            tile[inner & (wg.SPECKLE > 0.92)] = m.g('dirt_l')
+
+
+def great_tree(m, trees, x, y, variant=0):
+    """One of Feralas's giant trees: three crowns over a trunk twice as wide as an oak's, 64x80. Solid at
+    its foot. Returns False where it doesn't fit."""
+    x, y = x // 8 * 8, y // 8 * 8
+    crowns = ((x, y + 16), (x + 32, y + 16), (x + 16, y))
+    kinds = trees.kinds['oak']
+    for i, (cx, cy) in enumerate(crowns):
+        if not wg.bank_fits(m.overhead, kinds[(variant + i) % 3][0], cx, cy):
+            return False
+    trunk = wg.make_trunk(m, height=36, width=14)
+    wg.plain_grass_under(m, x + 16, y + 44, 32, 36)
+    m.stamp(m.ground, trunk, x + 16, y + 44)
+    for i, (cx, cy) in enumerate(crowns):
+        m.stamp(m.overhead, kinds[(variant + i) % 3][0], cx, cy)
+    m.block(x + 20, y + 64, 24, 16)
+    return True
+
+
+def cave_mouth(m, x, y, w, h):
+    """A cave in a mound of rock (rock bank) with a dark mouth at its foot. x, y, w, h are multiples of
+    8. Returns the mouth's bottom-center."""
+    g = m.ground
+    ys, xs = np.mgrid[y:y + h, x:x + w]
+    d = np.hypot((xs + 0.5 - x - w / 2) / (w / 2), (ys + 0.5 - y - h) / h)
+    mound = d < 1
+    u, v = xs % 16, ys % 16
+    tex = np.full((h, w), m.g('rock_2'), dtype=np.uint8)
+    tex[(u * 3 + v * 5) % 16 < 3] = m.g('rock_1')
+    tex[(u + v) % 16 == 0] = m.g('rock_3')
+    tex[(ys - y) < h // 3] = m.g('rock_3')
+    tex[((ys - y) < h // 3) & ((u * 5 + v * 3) % 16 < 2)] = m.g('rock_4')
+    area = g[y:y + h, x:x + w]
+    area[mound] = tex[mound]
+    edge = mound & ~(np.pad(mound, 1)[2:, 1:-1] & np.pad(mound, 1)[:-2, 1:-1] & np.pad(mound, 1)[1:-1, 2:] &
+                     np.pad(mound, 1)[1:-1, :-2])
+    area[edge] = m.g('rock_0')
+    ox = x + w // 2 - 16
+    hole = np.hypot((np.arange(32)[None, :] + 0.5 - 16) / 16, (np.arange(32)[:, None] + 0.5 - 32) / 30) < 1
+    mouth = g[y + h - 32:y + h, ox:ox + 32]
+    mouth[hole] = m.g('rock_0')
+    for py in range(y, y + h, 8):
+        for px in range(x, x + w, 8):
+            if mound[py - y:py - y + 8, px - x:px - x + 8].sum() >= 32:
+                m.block(px, py, 8, 8)
+    m.unblock(ox, y + h - 24, 32, 24)
+    return (ox + 16, y + h)
+
+
+def zone_trees(m, trees, rng, count, area, avoid, great=False):
+    """Scatters trees (or giant trees) over area, away from roads, water and the avoid rectangles."""
+    x0, y0, w, h = area
+    paths = m.corners.get('path')
+    placed = 0
+    size = (64, 80) if great else (32, 48)
+    for _ in range(count * 40):
+        if placed >= count:
+            break
+        x, y = int(rng.uniform(x0, x0 + w - size[0])), int(rng.uniform(y0, y0 + h - size[1]))
+        if any(wg.overlaps((x - 8, y - 8, size[0] + 16, size[1] + 16), a) for a in avoid):
+            continue
+        near = paths[max(y // 16 - 1, 0):(y + size[1]) // 16 + 2, max(x // 16 - 1, 0):(x + size[0]) // 16 + 2]
+        if near.max() > 0 or not m.area_free(x, y + size[1] - 24, size[0], 24):
+            continue
+        if great:
+            ok = great_tree(m, trees, x, y, placed)
+        else:
+            ok = wg.tree(m, trees, x, y, placed, kind=('oak', 'pine', 'oak')[placed % 3])
+        placed += bool(ok)
+
+
+def gen_feralas():
+    m = Map('feralas', 1024, 1536,
+            Palette([wg.TERRAIN_FERALAS, wg.BUILDINGS, wg.FARM, wg.ROCK_FERALAS]),
+            Palette([wg.OVERHEAD_LEAVES_FERALAS, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    # --- cliffs along the north and east edges, with passes to Desolace and Thousand Needles; the Twin
+    # Colossals' two great stacks in the northwest ------------------------------------------------------
+    rock = wg.corners(m, 'rock')
+    rock[0:3, 14:] = 1
+    rock[0:3, 36:41] = 0                # the pass north into Desolace
+    rock[:, 62:] = 1
+    rock[66:71, 62:] = 0                # the pass east into Thousand Needles
+    rock[94:, 14:] = 1
+    for cx, cy, rx, ry in ((336, 144, 40, 36), (472, 112, 36, 40), (760, 1180, 30, 24), (408, 1080, 28, 22)):
+        wg.corners_ellipse(m, 'rock', cx, cy, rx, ry)
+    wg.paint_cliffs(m)
+
+    # --- the sea along the west, Feathermoon's island and the Isle of Dread, the Forgotten Coast's bay ----
+    wg.corners_rect(m, 'water', 0, 0, 240, 1536)
+    wg.corners_along(m, 'water', [(240, 0), (256, 200), (240, 420), (264, 640), (248, 900), (264, 1140),
+                                  (240, 1400), (256, 1536)], 1.6)
+    wg.corners_ellipse(m, 'water', 300, 760, 52, 36)     # the Forgotten Coast's bay
+    water = wg.corners(m, 'water')
+    ys, xs = np.mgrid[0:water.shape[0], 0:water.shape[1]]
+    water[((xs - 112 / 16) / (88 / 16)) ** 2 + ((ys - 488 / 16) / (128 / 16)) ** 2 <= 1] = 0    # Feathermoon
+    water[((xs - 104 / 16) / (80 / 16)) ** 2 + ((ys - 1320 / 16) / (88 / 16)) ** 2 <= 1] = 0   # Isle of Dread
+    water[81:85, 10:17] = 0                                                                  # the sandbar
+    wg.paint_water(m)
+
+    # --- roads ---------------------------------------------------------------------------------------
+    roads = [
+        [(1024, 1088), (880, 1088), (760, 1020), (620, 940), (480, 880), (360, 760), (320, 700)],  # from the Needles
+        [(620, 940), (640, 760), (704, 600), (704, 488)],                                          # to Dire Maul
+        [(704, 600), (704, 488)],
+        [(704, 488), (640, 300), (608, 120), (608, 0)],                                            # to Desolace
+        [(480, 880), (520, 1060), (580, 1220)],                                                    # Isildien
+        [(704, 600), (860, 680)],                                                                  # the Grimtotem
+        [(360, 760), (330, 960), (300, 1150), (272, 1290), (232, 1320)],                           # down the coast
+        [(640, 300), (820, 200), (880, 160)],                                                      # the Dream Bough
+        [(608, 120), (440, 216), (320, 300)],                                                      # the Colossals
+        [(760, 1020), (880, 960)],                                                                 # Lariss Pavilion
+        [(620, 940), (760, 1220), (840, 1280)],                                                    # the Highlands
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.1)
+    wg.paint_paths(m)
+
+    # --- the beaches ----------------------------------------------------------------------------------
+    wg.corners_along(m, 'beach', [(264, 0), (280, 200), (264, 420), (284, 640), (272, 900), (288, 1140),
+                                  (264, 1400), (280, 1536)], 1.4)
+    wg.corners_ellipse(m, 'beach', 112, 488, 96, 136)
+    wg.corners_ellipse(m, 'beach', 104, 1320, 88, 96)
+    wg.corners_along(m, 'beach', [(170, 1320), (240, 1320)], 1.6)
+    paint_beach(m)
+
+    # --- Feathermoon Stronghold on its island ---------------------------------------------------------
+    elf = dict(roof_colors=('roof_d', 'roof_m', 'roof_l'), roof_ridge='roof_h', roof_outline='outline')
+    inn = wg.house(m, 40, 384, 80, 80, style='stone', **elf)
+    hall = wg.house(m, 128, 400, 64, 64, style='stone', **elf)
+    moonwell(m, 96, 488)
+    wg.cobbles(m, 144, 544, 32, 32)
+    wg.anvil(m, 152, 552)
+    wg.pier(m, 96, 600, 32, 64)
+    m.npc('SHYRIA', inn[0], inn[1] + 4)
+    m.npc('SHANDRIS', hall[0], hall[1] + 4)
+    m.npc('LATRONICUS', 64, 496)
+    m.npc('ANGELAS', 152, 496)
+    m.npc('PRATT', 56, 544)
+    m.npc('KINDAL', 176, 528)
+    m.npc('VIVIANNA', 80, 572)
+    m.npc('BRANNOL', 160, 576)
+    m.npc('FYLDREN', 136, 560)
+    m.point('flight', 136, 576)
+    m.npc('FEATHERMOON_SENTINEL', 72, 592)
+    m.point('feathermoon_respawn', 112, 536)
+    m.point('island_pier', 112, 612)
+    m.warp(100, 652, 24, 8, 'feralas', 'coast_pier', ride='boat')
+    m.area(16, 352, 200, 280, 'Feathermoon Stronghold')
+
+    # --- the Forgotten Coast: the pier to Feathermoon, the Hatecrest naga down the shore ------------------
+    wg.pier(m, 280, 704, 32, 72)
+    wg.crates(m, 320, 672)
+    m.point('coast_pier', 296, 712)
+    m.point('coast_respawn', 336, 712)
+    m.warp(284, 768, 24, 8, 'feralas', 'island_pier', ride='boat')
+    m.spawn_group('HATECREST_WARRIOR', 320, 1000, 5, 60, seed=301)
+    m.spawn_group('HATECREST_SIREN', 300, 1100, 3, 50, seed=302)
+    m.spawn_group('HATECREST_WARRIOR', 330, 1200, 3, 40, seed=303)
+    m.area(240, 600, 180, 760, 'The Forgotten Coast')
+
+    # --- the Isle of Dread: Lord Shalzaru --------------------------------------------------------------
+    ruin(m, 48, 1264, 96, 32, seed=41)
+    m.spawn('HATECREST_WARRIOR', 152, 1336)
+    m.spawn('HATECREST_SIREN', 120, 1380)
+    m.spawn('HATECREST_WARRIOR', 72, 1360)
+    m.spawn('LORD_SHALZARU', 104, 1312)
+    m.chest(53, 64, 1384, 48)
+    m.area(16, 1220, 220, 200, 'Isle of Dread')
+
+    # --- the Twin Colossals: shore striders and Zorbin's camp ---------------------------------------------
+    wg.camp(m, 272, 312, 96, 64, tents=[(280, 320)], fire=(328, 344))
+    m.npc('ZORBIN', 344, 328)
+    m.spawn_group('SHORE_STRIDER', 300, 220, 3, 60, seed=304)
+    m.spawn_group('SHORE_STRIDER', 420, 220, 3, 50, seed=305)
+    m.area(256, 48, 320, 320, 'Twin Colossals')
+
+    # --- Feral Scar Vale: the yetis, and a hidden clearing in the woods to its west ---------------------
+    m.spawn_group('RAGE_SCAR_YETI', 480, 520, 6, 80, seed=306)
+    m.spawn('OLD_GRIZZLEGUT', 520, 580)
+    m.area(400, 420, 200, 220, 'Feral Scar Vale')
+    wg.forest(m, trees, 288, 400, 104, 176, kinds=('oak', 'pine'), holes=[(304, 440, 56, 56)],
+              secrets=[(352, 456, 40, 32)])
+    m.chest(52, 328, 476, 47)
+
+    # --- Dire Maul: the great gate of Eldre'Thalas and the ogres who keep it ------------------------------
+    for rx, ry, seed in ((600, 360, 42), (784, 360, 43), (608, 520, 44), (776, 520, 45)):
+        ruin(m, rx, ry, 64, 32, seed=seed)
+    gate = mountain_gate(m, 648, 384, 112, 80, gate_w=40)
+    m.warp(gate[0] - 16, gate[1] - 12, 32, 8, 'dire_maul', 'entry')
+    m.point('dm_exit', gate[0], gate[1] + 18)
+    m.point('maul_respawn', gate[0], gate[1] + 48)
+    m.spawn('GORDUNNI_OGRE', gate[0] - 48, gate[1] + 24)
+    m.spawn('GORDUNNI_OGRE', gate[0] + 48, gate[1] + 24)
+    m.area(592, 340, 240, 220, 'Dire Maul')
+
+    # --- the Dream Bough: the Emerald Dream's portal and its green dragonkin -------------------------------
+    moonwell(m, 904, 104)
+    for rx, ry, seed in ((856, 64, 51), (936, 64, 52)):
+        ruin(m, rx, ry, 48, 32, seed=seed)
+    m.spawn_group('JADEMIR_ECHOSPAWN', 880, 160, 4, 50, seed=307)
+    m.spawn_group('JADEMIR_BOUGHGUARD', 940, 120, 3, 40, seed=308)
+    m.area(832, 40, 176, 200, 'The Dream Bough')
+
+    # --- the Grimtotem Compound --------------------------------------------------------------------------
+    wg.camp(m, 840, 624, 160, 112, tents=[(848, 632), (952, 632)], fire=(904, 680))
+    m.spawn_group('GRIMTOTEM_RAIDER', 900, 740, 6, 70, seed=309)
+    m.spawn_group('GRIMTOTEM_NATURALIST', 880, 660, 4, 50, seed=310)
+    m.area(820, 600, 190, 240, 'Grimtotem Compound')
+
+    # --- Lariss Pavilion: Azj'Tordin --------------------------------------------------------------------
+    ruin(m, 856, 912, 96, 32, seed=46)
+    moonwell(m, 896, 952)
+    m.npc('AZJ_TORDIN', 872, 968)
+    m.area(840, 880, 170, 130, 'Lariss Pavilion')
+
+    # --- the Ruins of Isildien: the Gordunni ogres and their warlord ---------------------------------------
+    for rx, ry, seed in ((472, 1224, 47), (632, 1240, 48), (512, 1368, 49), (664, 1376, 50)):
+        ruin(m, rx, ry, 80, 32, seed=seed)
+    m.spawn_group('GORDUNNI_OGRE', 560, 1300, 6, 80, seed=311)
+    m.spawn_group('GORDUNNI_MAGE', 620, 1330, 4, 60, seed=312)
+    m.spawn('GORDUNNI_WARLORD', 600, 1272)
+    m.area(440, 1180, 300, 260, 'Ruins of Isildien')
+
+    # --- the Frayfeather Highlands: the wildkin ------------------------------------------------------------
+    m.spawn_group('ENRAGED_WILDKIN', 860, 1280, 6, 80, seed=313)
+    m.spawn_group('WILDKIN_ORACLE', 920, 1360, 3, 50, seed=314)
+    m.area(780, 1160, 230, 290, 'Frayfeather Highlands')
+
+    # --- the forest: giant trees everywhere the roads and camps leave room, the edges thick with them -----
+    wg.forest(m, trees, 976, 0, 48, 1056, kinds=('oak', 'pine'))
+    wg.forest(m, trees, 976, 1120, 48, 416, kinds=('oak', 'pine'))
+    zones = [(16, 352, 200, 280), (256, 600, 120, 200), (256, 48, 320, 330), (400, 420, 200, 220),
+             (592, 340, 240, 220), (832, 40, 176, 200), (820, 600, 190, 240), (840, 880, 170, 130),
+             (440, 1180, 300, 260), (780, 1160, 230, 290), (16, 1220, 220, 200), (288, 400, 104, 176),
+             (240, 900, 120, 380)]
+    rng = np.random.default_rng(71)
+    zone_trees(m, trees, rng, 22, (300, 40, 680, 1460), zones, great=True)
+    zone_trees(m, trees, rng, 70, (300, 40, 680, 1460), zones)
+    wg.scatter_props(m, rng, 50, ('rock', 'tall_grass', 'stump', 'tall_grass', 'big_rock'), (300, 60, 660, 1420),
+                     avoid=zones)
+
+    m.point('from_needles', 1000, 1088)
+    m.warp(1016, 1064, 8, 48, 'thousand_needles', 'from_feralas')
+    m.point('from_desolace', 608, 24)
+    m.warp(584, 0, 48, 8, 'desolace', 'from_feralas')
+    m.area(0, 0, 1024, 1536, 'Feralas')
+    m.music = 'FERALAS'
+    m.save()
+    return m
+
+
+def gen_desolace():
+    m = Map('desolace', 768, 1024,
+            Palette([wg.TERRAIN_DESOLACE, wg.BUILDINGS, wg.FARM, wg.ROCK_DESOLACE]),
+            Palette([wg.OVERHEAD_LEAVES_DARKSHORE, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m, dead=True)
+
+    rock = wg.corners(m, 'rock')
+    rock[0:3, :] = 1
+    rock[:, 0:2] = 1
+    rock[:, 46:] = 1
+    rock[61:, :] = 1
+    rock[61:, 22:26] = 0                # the pass south into Feralas
+    for cx, cy, rx, ry in ((200, 300, 60, 40), (560, 440, 44, 30), (300, 760, 50, 34), (120, 860, 40, 30),
+                           (620, 900, 40, 30)):
+        wg.corners_ellipse(m, 'rock', cx, cy, rx, ry)
+    wg.paint_cliffs(m)
+    wg.corners_ellipse(m, 'water', 440, 620, 60, 28)
+    wg.paint_water(m)
+
+    roads = [
+        [(384, 1024), (384, 840), (400, 640), (480, 420), (560, 260), (600, 200)],   # from Feralas
+        [(400, 640), (280, 560), (176, 520)],                                       # Maraudon
+        [(480, 420), (600, 560), (620, 620)],                                       # Magram Village
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.1)
+    wg.paint_paths(m)
+
+    # --- Nijel's Point -----------------------------------------------------------------------------------
+    elf = dict(roof_colors=('roof_d', 'roof_m', 'roof_l'), roof_ridge='roof_h', roof_outline='outline')
+    inn = wg.house(m, 504, 72, 96, 80, style='stone', **elf)
+    wg.house(m, 624, 72, 80, 80, style='stone', **elf)
+    moonwell(m, 576, 184)
+    m.npc('LYSHAERYA', inn[0], inn[1] + 4)
+    m.npc('TALENDRIA', 640, 176)
+    m.npc('MARANDIS', 520, 200)
+    m.npc('WILLOW', 664, 216)
+    m.npc('BARITANAS', 688, 176)
+    m.point('flight', 688, 192)
+    m.point('nijels_respawn', 600, 240)
+    m.area(480, 48, 260, 220, "Nijel's Point")
+
+    # --- Magram Village: the Magram centaurs ------------------------------------------------------------
+    wg.camp(m, 560, 600, 160, 96, tents=[(568, 608), (672, 608)], fire=(624, 648))
+    m.spawn_group('MAGRAM_WRANGLER', 620, 700, 6, 80, seed=321)
+    m.spawn_group('MAGRAM_STORMER', 640, 560, 4, 50, seed=322)
+    m.area(520, 520, 240, 240, 'Magram Village')
+
+    # --- Maraudon's mouth in the western cliffs, and Cavindra's camp beside it --------------------------
+    cave = cave_mouth(m, 64, 400, 144, 96)
+    m.warp(cave[0] - 16, cave[1] - 12, 32, 8, 'maraudon', 'entry')
+    m.point('maraudon_exit', cave[0], cave[1] + 20)
+    wg.camp(m, 192, 528, 80, 56, tents=[(200, 536)], fire=(240, 552))
+    m.npc('CAVINDRA', 216, 592)
+    m.spawn('PUTRIDUS_SATYR', 120, 560)
+    m.spawn('PUTRIDUS_SATYR', 176, 600)
+    m.area(40, 360, 280, 300, 'Maraudon')
+
+    # --- the Valley of Spears: bones of the centaur wars, and a cache behind the boulders ----------------
+    for bx, by in ((240, 860), (360, 900), (480, 800)):
+        wg.big_rock(m, bx, by)
+    wg.forest(m, trees, 40, 720, 120, 96, kinds=('oak', 'small'), holes=[(64, 744, 48, 40)],
+              secrets=[(112, 752, 48, 32)])
+    m.chest(54, 88, 776, 46)
+    m.spawn_group('MAGRAM_WRANGLER', 300, 880, 3, 50, seed=323)
+    m.area(160, 700, 400, 260, 'Valley of Spears')
+
+    zones = [(480, 48, 260, 220), (520, 520, 240, 240), (40, 360, 280, 300), (40, 720, 120, 96)]
+    rng = np.random.default_rng(73)
+    zone_trees(m, trees, rng, 30, (40, 60, 690, 900), zones)
+    wg.scatter_props(m, rng, 50, ('rock', 'stump', 'big_rock', 'rock'), (40, 60, 690, 900), avoid=zones)
+
+    m.point('from_feralas', 384, 1000)
+    m.warp(360, 1016, 48, 8, 'feralas', 'from_desolace')
+    m.area(0, 0, 768, 1024, 'Desolace')
+    m.music = 'FERALAS'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Maraudon and Dire Maul
+# ---------------------------------------------------------------------------------------------
+
+# Maraudon: violet crystal caves grown over with vines, the earth fouled by Theradras.
+MARAUDON = [
+    ('outline', (16, 12, 20)), ('top_d', (36, 56, 28)), ('top_m', (64, 88, 40)),
+    ('wall_d', (64, 44, 80)), ('wall_m', (92, 68, 112)), ('wall_l', (128, 100, 148)),
+    ('floor_d', (72, 60, 64)), ('floor_m', (96, 82, 84)), ('floor_l', (122, 106, 104)),
+    ('iron_d', (44, 36, 52)), ('iron_l', (196, 184, 220)), ('straw', (156, 196, 88)),
+    ('wood', (96, 68, 44)), ('flame', (208, 152, 240)), ('red', (168, 64, 148)),
+]
+
+MARAUDON_OVERHEAD = MARAUDON[:6]
+
+# Its clear pools, and the green slime of the Foulspore Cavern, in a bank of their own.
+MARAUDON_WATER = [
+    ('water_d', (24, 60, 92)), ('water_m', (40, 92, 128)), ('water_l', (100, 160, 196)),
+    ('lip', (136, 108, 156)), ('lip_o', (24, 16, 32)), ('lip_d', (80, 56, 96)),
+    ('slime_d', (56, 96, 24)), ('slime_m', (96, 148, 32)), ('slime_l', (176, 216, 72)),
+]
+
+# Dire Maul: the Highborne city of Eldre'Thalas, pale stone overgrown, arcane teal and violet.
+DIRE_MAUL = [
+    ('outline', (18, 20, 30)), ('top_d', (40, 56, 48)), ('top_m', (60, 80, 64)),
+    ('wall_d', (84, 88, 112)), ('wall_m', (120, 124, 148)), ('wall_l', (164, 166, 184)),
+    ('floor_d', (88, 96, 96)), ('floor_m', (112, 120, 118)), ('floor_l', (140, 148, 142)),
+    ('iron_d', (48, 44, 64)), ('iron_l', (200, 200, 216)), ('straw', (200, 176, 104)),
+    ('wood', (96, 68, 52)), ('flame', (140, 232, 216)), ('red', (112, 64, 152)),
+]
+
+DIRE_MAUL_OVERHEAD = DIRE_MAUL[:6]
+
+DM_WATER = [
+    ('water_d', (24, 72, 96)), ('water_m', (40, 108, 136)), ('water_l', (104, 172, 200)),
+    ('lip', (176, 176, 196)), ('lip_o', (24, 28, 40)), ('lip_d', (100, 104, 128)),
+]
+
+
+class Ruins(Temple):
+    """Temple halls with the props of Maraudon and Dire Maul."""
+
+    def poison(self, x, y, w, h):
+        """A pool of green slime with a stone lip, in the water bank. Walkable, and it burns. x, y, w, h
+        are multiples of 8."""
+        g, m = self.m.ground, self.m
+        ys, xs = np.mgrid[y:y + h, x:x + w]
+        slime = np.full((h, w), m.g('slime_m'), dtype=np.uint8)
+        slime[((xs % 16) * 5 + (ys % 16) * 3) % 16 < 2] = m.g('slime_l')
+        slime[((xs % 16) * 3 + (ys % 16) * 7) % 16 == 9] = m.g('slime_d')
+        g[y:y + h, x:x + w] = slime
+        g[y:y + 2, x:x + w] = m.g('lip')
+        g[y + 2, x:x + w] = m.g('slime_d')
+        g[y + h - 2:y + h, x:x + w] = m.g('lip_d')
+        g[y:y + h, x:x + 2] = m.g('lip')
+        g[y:y + h, x + w - 2:x + w] = m.g('lip')
+        m.area(x + 4, y + 4, w - 8, h - 8, '', 'RADIATION')
+
+    def crystal(self, x, y):
+        """A cluster of violet crystals, 16x24. Solid at its foot."""
+        g, m = self.m.ground, self.m
+        for cx, top, width in ((x + 2, y + 8, 4), (x + 6, y, 5), (x + 11, y + 6, 4)):
+            g[top:y + 22, cx - 1:cx + width + 1] = m.g('outline')
+            g[top + 1:y + 21, cx:cx + width] = m.g('flame')
+            g[top + 2:y + 20, cx + width - 1] = m.g('red')
+            g[top + 1:top + 4, cx] = m.g('iron_l')
+        g[y + 20:y + 24, x:x + 16] = m.g('wall_d')
+        g[y + 23, x:x + 16] = m.g('outline')
+        self.m.block(x, y + 14, 16, 10)
+
+    def field(self, cx, cy, r):
+        """A circle of arcane runes on the floor, Immol'thar's prison. Walkable."""
+        g, m = self.m.ground, self.m
+        ys, xs = np.mgrid[cy - r:cy + r, cx - r:cx + r]
+        d = np.hypot(xs + 0.5 - cx, ys + 0.5 - cy)
+        area = g[cy - r:cy + r, cx - r:cx + r]
+        area[(d < r) & (d >= r - 2)] = m.g('flame')
+        area[(d < r - 2) & (d >= r - 3)] = m.g('outline')
+        area[(d < r - 8) & (d >= r - 9)] = m.g('red')
+        angle = np.arctan2(ys + 0.5 - cy, xs + 0.5 - cx)
+        runes = (d < r - 3) & (d >= r - 8) & (np.round(angle * 8 / np.pi) % 2 == 0) & ((xs + ys) % 3 == 0)
+        area[runes] = m.g('flame')
+
+    def pylon(self, chest_id, x, y):
+        """A crystal pylon the hero shuts down, kept like a brazier: bottom-center at (x, y)."""
+        self.m.brazier(chest_id, x, y)
+
+
+def gen_maraudon():
+    c = Ruins('maraudon', 1024, 1024, MARAUDON, MARAUDON_OVERHEAD, extra=(MARAUDON_WATER,), thorny=True)
+    m = c.m
+    c.rect(448, 880, 128, 120)      # the cave mouth
+    c.rect(488, 1000, 48, 24)       # the way out
+    c.rect(456, 720, 112, 160)      # the crossing
+    c.rect(352, 760, 104, 48)       # passage west
+    c.rect(48, 640, 304, 256)       # the Foulspore Cavern, Noxxion's
+    c.rect(152, 560, 48, 80)        # passage north
+    c.rect(48, 336, 256, 224)       # the satyr den, Vyletongue's
+    c.rect(568, 760, 104, 48)       # passage east
+    c.rect(672, 640, 304, 256)      # the Wicked Grotto, Razorlash's and Gizlock's
+    c.rect(904, 896, 48, 24)        # a hidden cave
+    c.rect(872, 920, 112, 88)
+    c.rect(824, 560, 48, 80)        # passage north
+    c.rect(720, 336, 256, 224)      # Celebras's pool
+    c.rect(488, 560, 48, 160)       # passage north
+    c.rect(352, 304, 320, 256)      # Earth Song Falls
+    c.rect(488, 264, 48, 40)        # passage north
+    c.rect(304, 40, 416, 224)       # Zaetar's Grave, Theradras's
+    c.render()
+    c.exit(488, 1016, 'desolace', 'maraudon_exit')
+
+    # Vines narrow the passages; crystals light the caves.
+    c.thorns(352, 760, 40, 16)
+    c.thorns(632, 760, 40, 16)
+    c.thorns(152, 600, 24, 16)
+    c.thorns(848, 584, 24, 16)
+    for x, y in ((464, 888), (544, 888), (464, 728), (544, 728)):
+        c.crystal(x, y)
+    c.poison(80, 680, 96, 64)
+    c.poison(232, 800, 96, 64)
+    c.poison(232, 664, 64, 48)
+    for x, y in ((64, 360), (272, 360), (160, 520)):
+        c.crystal(x, y)
+    for x, y in ((90, 440), (240, 470)):
+        c.bones(x, y)
+    for x, y in ((688, 660), (944, 660), (800, 860)):
+        c.crystal(x, y)
+    c.thorns(760, 720, 72, 16)
+    c.crate(904, 700)
+    c.barrel(928, 700)
+    c.secret(904, 896, 48, 0)
+    m.chest(55, 928, 980, 47)
+    c.crystal(888, 944)
+    c.pool(760, 368, 176, 72)
+    for x, y in ((736, 470), (944, 470)):
+        c.crystal(x, y)
+    c.pool(376, 344, 96, 64)
+    c.pool(552, 344, 96, 64)
+    for x, y in ((368, 440), (640, 440), (368, 520), (640, 520)):
+        c.crystal(x, y)
+    for x, y in ((320, 56), (688, 56), (400, 120), (608, 120)):
+        c.crystal(x, y)
+    c.thorns(320, 200, 64, 16)
+    c.thorns(640, 200, 64, 16)
+
+    m.spawn('PUTRIDUS_SATYR', 476, 940)
+    m.spawn('PUTRIDUS_SATYR', 548, 940)
+    m.spawn('CREEPING_SLUDGE', 484, 780)
+    m.spawn('BARBED_LASHER', 540, 840)
+    for x, y in ((120, 790), (300, 720), (80, 860), (200, 680)):
+        m.spawn('CREEPING_SLUDGE' if x != 300 else 'NOXXIOUS_SPAWN', x, y)
+    m.spawn('NOXXION', 190, 760)
+    for x, y in ((90, 400), (250, 420), (120, 500), (230, 520)):
+        m.spawn('PUTRIDUS_SHADOWSTALKER' if y > 480 else 'PUTRIDUS_SATYR', x, y)
+    m.spawn('LORD_VYLETONGUE', 176, 400)
+    for x, y in ((720, 700), (920, 760), (700, 840), (860, 680)):
+        m.spawn('BARBED_LASHER' if x < 800 else 'DEEPROT_STOMPER', x, y)
+    m.spawn('RAZORLASH', 790, 780)
+    m.spawn('TINKERER_GIZLOCK', 920, 840)
+    for x, y in ((760, 480), (900, 480), (840, 520)):
+        m.spawn('DEEPROT_STOMPER' if x != 840 else 'BARBED_LASHER', x, y)
+    m.spawn('CELEBRAS_THE_CURSED', 848, 460)
+    for x, y in ((400, 460), (620, 460), (460, 520), (580, 520)):
+        m.spawn('THERADRIM_SHARDLING' if y < 500 else 'SUBTERRANEAN_DIEMETRADON', x, y)
+    m.spawn('LANDSLIDE', 430, 430)
+    m.spawn('ROTGRIP', 600, 430)
+    m.spawn('THERADRIM_GUARDIAN', 512, 500)
+    for x, y in ((360, 160), (660, 160), (420, 220), (600, 220)):
+        m.spawn('THERADRIM_GUARDIAN' if y < 200 else 'THERADRIM_SHARDLING', x, y)
+    m.spawn('PRINCESS_THERADRAS', 512, 110)
+    m.point('theradras', 512, 230)
+    m.area(0, 0, 1024, 1024, 'Maraudon')
+    m.area(48, 640, 304, 256, 'Foulspore Cavern')
+    m.area(48, 336, 256, 224, 'The Satyr Den')
+    m.area(672, 640, 304, 256, 'The Wicked Grotto')
+    m.area(720, 336, 256, 224, "Celebras' Pool")
+    m.area(352, 304, 320, 256, 'Earth Song Falls')
+    m.area(304, 40, 416, 224, "Zaetar's Grave")
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
+def gen_dire_maul():
+    c = Ruins('dire_maul', 1024, 1024, DIRE_MAUL, DIRE_MAUL_OVERHEAD, extra=(DM_WATER,))
+    m = c.m
+    c.rect(416, 832, 192, 168)      # the gate court
+    c.rect(488, 1000, 48, 24)       # the way out
+    c.rect(400, 600, 224, 232)      # the Courtyard
+    c.rect(624, 680, 64, 48)        # passage east
+    c.rect(688, 600, 312, 208)      # the Warpwood Quarter, Zevrim's
+    c.rect(840, 520, 48, 80)        # passage north
+    c.rect(720, 312, 280, 208)      # the Conservatory, Hydrospawn's
+    c.rect(840, 248, 48, 64)        # passage north
+    c.rect(688, 40, 312, 208)       # the Shrine of Eldretharr, Lethtendris's and Alzzin's
+    c.rect(336, 680, 64, 48)        # passage west
+    c.rect(24, 600, 312, 208)       # the Capital Gardens, Tendris's
+    c.rect(152, 808, 48, 24)        # a hidden vault
+    c.rect(120, 832, 112, 88)
+    c.rect(152, 520, 48, 80)        # passage north
+    c.rect(24, 312, 280, 208)       # Immol'thar's prison
+    c.rect(152, 248, 48, 64)        # passage north
+    c.rect(24, 40, 312, 208)        # the Athenaeum, Tortheldrin's
+    c.rect(488, 520, 48, 80)        # passage north
+    c.rect(368, 312, 288, 208)      # Gordok Commons
+    c.rect(488, 248, 48, 64)        # passage north
+    c.rect(368, 40, 288, 208)       # the Gordok throne room
+    c.render()
+    c.exit(488, 1016, 'feralas', 'dm_exit')
+
+    for x in (424, 584):
+        c.torch(x, 836)
+    for x in (456, 552):
+        c.banner(x, 834)
+    for x, y in ((424, 640), (584, 640), (424, 760), (584, 760)):
+        c.slab(x, y)
+    c.rug(488, 640, 48, 160)
+    c.thorns(704, 700, 64, 16)
+    c.thorns(880, 760, 96, 16)
+    c.thorns(800, 620, 48, 16)
+    c.pool(784, 360, 160, 72)
+    for x in (736, 968):
+        c.torch(x, 316)
+    c.altar(912, 52, 64, 24)
+    c.thorns(704, 160, 72, 16)
+    c.thorns(920, 200, 64, 16)
+    for x in (720, 768):
+        c.candles(x, 48)
+    # The Capital Gardens: Tendris's warped grove, with two of the pylons that hold Immol'thar.
+    c.thorns(40, 700, 64, 16)
+    c.thorns(240, 760, 80, 16)
+    c.pylon(57, 72, 640)
+    c.pylon(58, 288, 640)
+    c.secret(152, 808, 48, 0)
+    m.chest(56, 176, 892, 49)
+    c.slab(136, 856)
+    c.slab(200, 856)
+    # The prison: Immol'thar paces in a circle of runes, held by the four pylons.
+    c.field(164, 432, 40)
+    c.pylon(59, 56, 360)
+    c.pylon(60, 272, 360)
+    for x in (40, 280):
+        c.candles(x, 476)
+    c.bookshelf(48, 40, 96)
+    c.bookshelf(216, 40, 96)
+    c.rug(160, 64, 32, 168)
+    c.desk(96, 140, 48, 24)
+    c.desk(208, 140, 48, 24)
+    for x in (384, 624):
+        c.torch(x, 316)
+    for x, y in ((392, 400), (600, 440)):
+        c.crate(x, y)
+    c.barrel(624, 400)
+    c.straw(400, 480)
+    c.rug(488, 80, 48, 160)
+    c.altar(480, 48, 64, 24)
+    for x in (392, 616):
+        c.rack(x, 44)
+    for x in (456, 552):
+        c.banner(x, 44)
+
+    m.npc('SHENDRALAR_ANCIENT', 424, 704)
+    m.spawn('WILDSPAWN_SATYR', 452, 900)
+    m.spawn('WILDSPAWN_SATYR', 572, 900)
+    m.spawn('WARPWOOD_CRUSHER', 560, 700)
+    m.spawn('WHIP_LASHER', 470, 800)
+    for x, y in ((740, 660), (960, 660), (760, 760), (940, 740)):
+        m.spawn('WILDSPAWN_FELSWORN' if x > 900 else 'WILDSPAWN_SATYR', x, y)
+    m.spawn('ZEVRIM_THORNHOOF', 860, 700)
+    for x, y in ((760, 470), (900, 470), (960, 380)):
+        m.spawn('HYDROLING', x, y)
+    m.spawn('HYDROSPAWN', 860, 470)
+    for x, y in ((740, 120), (960, 140), (800, 200)):
+        m.spawn('WHIP_LASHER' if x != 800 else 'WARPWOOD_CRUSHER', x, y)
+    m.spawn('LETHTENDRIS', 760, 90)
+    m.spawn('ALZZIN_THE_WILDSHAPER', 944, 110)
+    for x, y in ((80, 700), (280, 700), (120, 780), (240, 780)):
+        m.spawn('PETRIFIED_TREANT' if y < 750 else 'IRONBARK_PROTECTOR', x, y)
+    m.spawn('TENDRIS_WARPWOOD', 180, 690)
+    for x, y in ((60, 440), (270, 440), (100, 500), (230, 500)):
+        m.spawn('ARCANE_ABERRATION' if y < 470 else 'ELDRETH_SPECTRE', x, y)
+    for x, y in ((120, 400), (210, 400)):
+        m.spawn('EYE_OF_IMMOL_THAR', x, y)
+    for x, y in ((60, 120), (280, 120), (100, 200), (240, 200)):
+        m.spawn('HIGHBORNE_SUMMONER' if y < 150 else 'ELDRETH_SPECTRE', x, y)
+    m.spawn('PRINCE_TORTHELDRIN', 176, 100)
+    for x, y in ((400, 360), (620, 360), (430, 470), (600, 480)):
+        m.spawn('GORDOK_BRUTE' if x < 500 else 'GORDOK_MASTIFF', x, y)
+    m.spawn('GORDOK_MAGE_LORD', 512, 400)
+    m.spawn('GORDOK_BRUTE', 512, 280)
+    for x, y in ((400, 140), (620, 140)):
+        m.spawn('GORDOK_BRUTE', x, y)
+    m.spawn('CHO_RUSH_THE_OBSERVER', 440, 110)
+    m.spawn('KING_GORDOK', 512, 100)
+    m.point('event_boss', 164, 428)
+    m.point('prison', 164, 500)
+    m.point('gordok_throne', 512, 200)
+    m.area(124, 392, 80, 80, '', 'PRISON')
+    m.area(0, 0, 1024, 1024, 'Dire Maul')
+    m.area(400, 600, 224, 232, 'The Courtyard')
+    m.area(688, 600, 312, 208, 'Warpwood Quarter')
+    m.area(720, 312, 280, 208, 'The Conservatory')
+    m.area(688, 40, 312, 208, 'Shrine of Eldretharr')
+    m.area(24, 600, 312, 208, 'Capital Gardens')
+    m.area(24, 312, 280, 208, "Immol'thar's Prison")
+    m.area(24, 40, 312, 208, 'The Athenaeum')
+    m.area(368, 312, 288, 208, 'Gordok Commons')
+    m.area(368, 40, 288, 208, 'The Gordok Throne')
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
 GENERATORS = {
     'abbey': gen_abbey,
     'inn': gen_inn,
@@ -5203,6 +5876,10 @@ GENERATORS = {
     'razorfen_kraul': gen_razorfen_kraul,
     'razorfen_downs': gen_razorfen_downs,
     'zul_farrak': gen_zul_farrak,
+    'feralas': gen_feralas,
+    'desolace': gen_desolace,
+    'maraudon': gen_maraudon,
+    'dire_maul': gen_dire_maul,
 }
 
 
@@ -5216,7 +5893,7 @@ def main():
               'duskwood': 'from_elwynn', 'silverpine': 'flight', 'dun_morogh': 'from_ironforge',
               'wetlands': 'from_dun_morogh', 'darkshore': 'from_menethil', 'hillsbrad': 'from_wetlands',
               'tirisfal': 'flight', 'stranglethorn': 'from_duskwood', 'tanaris': 'from_booty_bay',
-              'thousand_needles': 'from_tanaris'}
+              'thousand_needles': 'from_tanaris', 'feralas': 'from_needles', 'desolace': 'from_feralas'}
     for name, m in maps.items():
         m.check_reachable(starts.get(name, 'entry'))
     write_minimaps(maps)
@@ -5226,9 +5903,9 @@ def main():
 # Interiors show the map their door leads to.
 MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'duskwood', 'silverpine', 'ironforge', 'dun_morogh',
             'wetlands', 'darkshore', 'hillsbrad', 'tirisfal', 'stranglethorn', 'tanaris', 'thousand_needles',
-            'echo_ridge', 'fargodeep', 'deadmines', 'stockade', 'shadowfang', 'blackfathom_deeps', 'gnomeregan',
-            'sm_graveyard', 'sm_library', 'sm_armory', 'sm_cathedral', 'razorfen_kraul', 'razorfen_downs',
-            'zul_farrak']
+            'feralas', 'desolace', 'echo_ridge', 'fargodeep', 'deadmines', 'stockade', 'shadowfang',
+            'blackfathom_deeps', 'gnomeregan', 'sm_graveyard', 'sm_library', 'sm_armory', 'sm_cathedral',
+            'razorfen_kraul', 'razorfen_downs', 'zul_farrak', 'maraudon', 'dire_maul']
 
 
 def write_minimaps(maps):

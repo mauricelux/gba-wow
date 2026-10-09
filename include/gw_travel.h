@@ -22,6 +22,8 @@ enum class flight_id : uint8_t
     ARGENT_WATCH,
     BOOTY_BAY,
     GADGETZAN,
+    FEATHERMOON,
+    NIJELS_POINT,
     COUNT
 };
 

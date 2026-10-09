@@ -87,6 +87,15 @@ namespace
           "Chief Ukorz Sandscalp lies dead on his throne, and the Sandfury turn on each other. "
           "Gadgetzan toasts you with real water. To the west, the forests of Feralas wait.",
           quest_id::CHIEF_UKORZ_SANDSCALP },
+        { "Desolace Heals",
+          "Princess Theradras is dead in Zaetar's Grave, and Celebras walks free. The first green "
+          "shoots break the dust of Desolace, and Nijel's Point opens its gates to the road.",
+          quest_id::CORRUPTION_OF_EARTH_AND_SEED },
+        { "The Shen'dralar Freed",
+          "Immol'thar and Prince Tortheldrin are dead, and the Highborne ghosts of Eldre'Thalas fade "
+          "into peace. Shandris Feathermoon raises a glass on the island. To the east, harder lands "
+          "wait.",
+          quest_id::THE_MADNESS_WITHIN },
     };
 
     constexpr int story_page_total = sizeof(story_pages) / sizeof(story_pages[0]);

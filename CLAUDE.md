@@ -111,3 +111,15 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
   numbers in saves keep meaning the same quests.
 - Desert maps: `cactus()` in `gen_world.py` won't plant on or next to a road, and props on a desert
   map (crates, ruins) must start on a multiple of 8 so no tile mixes two palette banks.
+- `Ruins(Temple)` in `gen_world.py` builds Maraudon and Dire Maul, with props for them: `poison`
+  (a slime pool in the water bank plus a `RADIATION` area; on `MARAUDON` the damage message reads
+  "The poison burns you"), `crystal`, `field` (a rune circle) and `pylon`, which is a brazier with a
+  pylon look (`fx_chest` frames 5 to 7). On `DIRE_MAUL`, `chests::pylons` says "The pylon goes dark".
+- A `PRISON` event area (Dire Maul) has no waves, only its boss. `combat::start_event(area, sealed)`
+  is called with `sealed = ! all_braziers_lit()`: a sealed prison only says its field holds.
+- `player::knock_back(from, distance)` pushes the hero away from a point, 2 pixels a step while the hero
+  fits (Theradras's boulders). King Gordok's death in `_boss_killed` removes every living ogre of
+  the map (the Gordok tribute).
+- M23 added the enemy families `SATYR`, `ELEMENTAL`, `PLANT`, `TAUREN` and `HIGHBORNE`, and the head
+  patches `satyr` and `tauren` in `gen_characters.py`. A creature taller than the default dead frame
+  needs its own dead pose (`OWN_DEAD`, like the lasher).

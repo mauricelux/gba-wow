@@ -186,6 +186,26 @@ TERRAIN_NEEDLES = [
     ('flower', (212, 204, 188)),
 ]
 
+# Feralas: a rainforest of deep blue-greens, dark loam roads, a deep sea; 'foam' is the beach sand.
+TERRAIN_FERALAS = [
+    ('shadow', (16, 40, 40)), ('grass_d', (28, 76, 56)), ('grass_m', (40, 104, 64)),
+    ('grass_l', (60, 132, 72)), ('grass_h', (104, 168, 96)),
+    ('dirt_d', (84, 60, 44)), ('dirt_m', (116, 88, 60)), ('dirt_l', (152, 124, 88)),
+    ('water_d', (24, 64, 104)), ('water_m', (36, 96, 136)), ('water_l', (88, 148, 184)),
+    ('foam', (220, 212, 176)), ('trunk_d', (56, 40, 36)), ('trunk_m', (96, 72, 56)),
+    ('flower', (200, 120, 216)),
+]
+
+# Desolace: a grey-brown waste of dust and dead grass, with murky green water.
+TERRAIN_DESOLACE = [
+    ('shadow', (64, 56, 52)), ('grass_d', (112, 100, 88)), ('grass_m', (136, 124, 108)),
+    ('grass_l', (160, 148, 128)), ('grass_h', (188, 176, 152)),
+    ('dirt_d', (92, 76, 60)), ('dirt_m', (116, 98, 78)), ('dirt_l', (140, 122, 98)),
+    ('water_d', (48, 72, 72)), ('water_m', (64, 96, 92)), ('water_l', (104, 132, 124)),
+    ('foam', (208, 204, 188)), ('trunk_d', (60, 48, 40)), ('trunk_m', (96, 72, 54)),
+    ('flower', (152, 112, 96)),
+]
+
 BUILDINGS = [
     ('outline', (32, 32, 48)), ('stone_d', (88, 88, 104)), ('stone_m', (128, 128, 144)),
     ('stone_l', (168, 168, 176)), ('stone_h', (208, 208, 200)),
@@ -326,6 +346,15 @@ OVERHEAD_LEAVES_DESERT = [
     ('roof_d', (96, 60, 44)), ('roof_m', (136, 88, 60)), ('roof_l', (176, 120, 80)),
     ('stone_d', (148, 104, 68)), ('stone_m', (188, 144, 100)), ('stone_l', (212, 176, 140)),
     ('gold', (232, 184, 64)), ('glass', (48, 48, 64)), ('roof_h', (204, 152, 104)),
+]
+
+# Feralas's giant trees: dark teal canopies; Feathermoon's roofs are night elf violet.
+OVERHEAD_LEAVES_FERALAS = [
+    ('outline', (10, 24, 24)), ('leaf_0', (16, 52, 48)), ('leaf_1', (24, 80, 60)),
+    ('leaf_2', (40, 112, 72)), ('leaf_3', (68, 144, 84)), ('leaf_4', (120, 184, 112)),
+    ('roof_d', (56, 40, 88)), ('roof_m', (84, 64, 128)), ('roof_l', (116, 96, 168)),
+    ('stone_d', (80, 80, 104)), ('stone_m', (116, 116, 140)), ('stone_l', (156, 156, 176)),
+    ('gold', (200, 184, 120)), ('glass', (32, 40, 72)), ('roof_h', (152, 136, 200)),
 ]
 
 OVERHEAD_ROOFS = [
@@ -898,6 +927,22 @@ ROCK_NEEDLES = [
     ('r_grass_l', (204, 148, 100)), ('r_grass_h', (224, 180, 128)),
     ('rock_0', (72, 32, 24)), ('rock_1', (116, 52, 36)), ('rock_2', (156, 76, 48)),
     ('rock_3', (188, 104, 64)), ('rock_4', (216, 140, 92)), ('rock_5', (236, 184, 136)),
+]
+
+# Feralas's mossy grey crags, with twins of TERRAIN_FERALAS's grass.
+ROCK_FERALAS = [
+    ('r_shadow', (16, 40, 48)), ('r_grass_d', (28, 76, 64)), ('r_grass_m', (40, 104, 72)),
+    ('r_grass_l', (60, 132, 80)), ('r_grass_h', (104, 168, 104)),
+    ('rock_0', (36, 44, 44)), ('rock_1', (60, 72, 68)), ('rock_2', (88, 100, 92)),
+    ('rock_3', (120, 132, 120)), ('rock_4', (156, 164, 148)), ('rock_5', (196, 200, 184)),
+]
+
+# Desolace's dusty brown cliffs, with twins of TERRAIN_DESOLACE's dead grass.
+ROCK_DESOLACE = [
+    ('r_shadow', (64, 52, 52)), ('r_grass_d', (112, 96, 96)), ('r_grass_m', (136, 120, 116)),
+    ('r_grass_l', (160, 144, 136)), ('r_grass_h', (188, 172, 152)),
+    ('rock_0', (52, 40, 36)), ('rock_1', (84, 68, 56)), ('rock_2', (112, 92, 76)),
+    ('rock_3', (144, 124, 104)), ('rock_4', (168, 150, 128)), ('rock_5', (200, 186, 164)),
 ]
 
 # Terrain colors as the rock bank draws them.

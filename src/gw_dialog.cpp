@@ -429,7 +429,8 @@ void dialog::_complete()
     if(_quest == quest_id::BAZIL_THREDD || _quest == quest_id::ARUGAL_MUST_DIE ||
        _quest == quest_id::THE_GRAND_BETRAYAL || _quest == quest_id::ARCANIST_DOAN ||
        _quest == quest_id::IN_THE_NAME_OF_THE_LIGHT || _quest == quest_id::BRING_THE_LIGHT ||
-       _quest == quest_id::CHIEF_UKORZ_SANDSCALP)
+       _quest == quest_id::CHIEF_UKORZ_SANDSCALP || _quest == quest_id::CORRUPTION_OF_EARTH_AND_SEED ||
+       _quest == quest_id::THE_MADNESS_WITHIN)
     {
         ending_requested = true;
     }

@@ -6,14 +6,18 @@
 #include "bn_sprite_items_minimap_blackfathom_deeps.h"
 #include "bn_sprite_items_minimap_darkshore.h"
 #include "bn_sprite_items_minimap_deadmines.h"
+#include "bn_sprite_items_minimap_desolace.h"
+#include "bn_sprite_items_minimap_dire_maul.h"
 #include "bn_sprite_items_minimap_dun_morogh.h"
 #include "bn_sprite_items_minimap_duskwood.h"
 #include "bn_sprite_items_minimap_echo_ridge.h"
 #include "bn_sprite_items_minimap_elwynn.h"
 #include "bn_sprite_items_minimap_fargodeep.h"
+#include "bn_sprite_items_minimap_feralas.h"
 #include "bn_sprite_items_minimap_gnomeregan.h"
 #include "bn_sprite_items_minimap_hillsbrad.h"
 #include "bn_sprite_items_minimap_ironforge.h"
+#include "bn_sprite_items_minimap_maraudon.h"
 #include "bn_sprite_items_minimap_razorfen_downs.h"
 #include "bn_sprite_items_minimap_razorfen_kraul.h"
 #include "bn_sprite_items_minimap_redridge.h"
@@ -68,6 +72,8 @@ constexpr minimap_def minimaps[] = {
     { map_id::STRANGLETHORN, bn::sprite_items::minimap_stranglethorn, 26, 8, 1536 },
     { map_id::TANARIS, bn::sprite_items::minimap_tanaris, 26, 8, 1536 },
     { map_id::THOUSAND_NEEDLES, bn::sprite_items::minimap_thousand_needles, 8, 8, 1024 },
+    { map_id::FERALAS, bn::sprite_items::minimap_feralas, 26, 8, 1536 },
+    { map_id::DESOLACE, bn::sprite_items::minimap_desolace, 22, 8, 1024 },
     { map_id::ECHO_RIDGE, bn::sprite_items::minimap_echo_ridge, 8, 8, 512 },
     { map_id::FARGODEEP, bn::sprite_items::minimap_fargodeep, 8, 26, 768 },
     { map_id::DEADMINES, bn::sprite_items::minimap_deadmines, 8, 36, 1024 },
@@ -82,6 +88,8 @@ constexpr minimap_def minimaps[] = {
     { map_id::RAZORFEN_KRAUL, bn::sprite_items::minimap_razorfen_kraul, 8, 22, 1024 },
     { map_id::RAZORFEN_DOWNS, bn::sprite_items::minimap_razorfen_downs, 8, 22, 1024 },
     { map_id::ZUL_FARRAK, bn::sprite_items::minimap_zul_farrak, 8, 8, 1024 },
+    { map_id::MARAUDON, bn::sprite_items::minimap_maraudon, 8, 8, 1024 },
+    { map_id::DIRE_MAUL, bn::sprite_items::minimap_dire_maul, 8, 8, 1024 },
 };
 
 constexpr int minimap_count = sizeof(minimaps) / sizeof(minimaps[0]);

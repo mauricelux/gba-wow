@@ -4,7 +4,9 @@
 
 #include "gw_character.h"
 #include "gw_map_darkshore.h"
+#include "gw_map_desolace.h"
 #include "gw_map_duskwood.h"
+#include "gw_map_feralas.h"
 #include "gw_map_hillsbrad.h"
 #include "gw_map_ironforge.h"
 #include "gw_map_redridge.h"
@@ -34,6 +36,8 @@ namespace
         { "Argent Watch", npc_id::GRYPHON_TIRISFAL, map_id::TIRISFAL, map_data::tirisfal::flight, 0, 44, 20 },
         { "Booty Bay", npc_id::GYLL, map_id::STRANGLETHORN, map_data::stranglethorn::flight, 0, 29, 108 },
         { "Gadgetzan", npc_id::BERA, map_id::TANARIS, map_data::tanaris::flight, 1, 62, 92 },
+        { "Feathermoon", npc_id::FYLDREN, map_id::FERALAS, map_data::feralas::flight, 1, 22, 68 },
+        { "Nijel's Point", npc_id::BARITANAS, map_id::DESOLACE, map_data::desolace::flight, 1, 38, 44 },
     };
 
     static_assert(sizeof(flights) / sizeof(flights[0]) == int(flight_id::COUNT));

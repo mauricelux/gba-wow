@@ -112,7 +112,12 @@ enum class enemy_family : uint8_t
     TROLL,
     PIRATE,
     QUILBOAR,
-    CENTAUR
+    CENTAUR,
+    SATYR,
+    ELEMENTAL,
+    PLANT,
+    TAUREN,
+    HIGHBORNE
 };
 
 enum class enemy_effect : uint8_t

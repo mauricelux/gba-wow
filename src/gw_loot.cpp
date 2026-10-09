@@ -386,6 +386,102 @@ namespace
         // 125 Chief Ukorz Sandscalp
         { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::TROLL_TUSK, 100, 1, 2 }, none }, true,
           { i::SANDSCALP_HELM, i::CHIEFTAINS_HEADDRESS, i::SANDSCALP_MASK } },
+        // 126 Hatecrest naga
+        { { { i::NAGA_SCALE, 40, 1, 1 }, { i::RUNECLOTH, 30, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 127 shore striders
+        { { { i::ELEMENTAL_EARTH, 35, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 128 Rage Scar yetis
+        { { { i::THICK_FUR, 45, 1, 1 }, { i::YETI_HORN, 25, 1, 1 }, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 129 Gordunni ogres
+        { { { i::OGRE_TOOTH, 40, 1, 1 }, { i::RUNECLOTH, 35, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 130 Grimtotem tauren
+        { { { i::RUNECLOTH, 35, 1, 2 }, { i::THICK_FUR, 20, 1, 1 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 131 wildkin
+        { { { i::WILDKIN_FEATHER, 50, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 132 the Jademir
+        { { { i::SPLINTERED_BARK, 40, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 133 Magram centaurs
+        { { { i::RUNECLOTH, 30, 1, 2 }, { i::THICK_FUR, 25, 1, 1 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 134 satyrs
+        { { { i::SATYR_HORN, 40, 1, 1 }, { i::FELCLOTH, 25, 1, 1 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 135 sludges
+        { { { i::GLOWING_SLUDGE, 45, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 136 lashers and treants
+        { { { i::SPLINTERED_BARK, 45, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 137 the Theradrim
+        { { { i::ELEMENTAL_EARTH, 45, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 138 diemetradons
+        { { { i::THICK_FUR, 40, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 139 the Highborne dead
+        { { { i::RUNECLOTH, 35, 1, 2 }, { i::GHOSTLY_ECTOPLASM, 30, 1, 1 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 140 Gordok ogres
+        { { { i::OGRE_TOOTH, 40, 1, 1 }, { i::RUNECLOTH, 35, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 141 hydrolings
+        { { { i::ELEMENTAL_EARTH, 20, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 142 Lord Shalzaru
+        { { { i::NAGA_SCALE, 100, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::SHALZARUS_LEGPLATES, i::NAGA_LORD_LEGGINGS, i::DREADSCALE_PANTS } },
+        // 143 Old Grizzlegut
+        { { { i::THICK_FUR, 100, 2, 3 }, none, none }, false,
+          { i::GRIZZLEGUT_GAUNTLETS, i::GRIZZLEGUT_GLOVES, i::GRIZZLEGUT_GRIPS } },
+        // 144 Noxxion
+        { { { i::GLOWING_SLUDGE, 100, 2, 3 }, none, none }, false,
+          { i::NOXIOUS_GAUNTLETS, i::TOXIC_WRAPS, i::SLUDGE_COVERED_GRIPS } },
+        // 145 Razorlash
+        { { { i::SPLINTERED_BARK, 100, 2, 3 }, none, none }, false,
+          { i::THORNSTRIDER_SABATONS, i::VINEWOVEN_SLIPPERS, i::RAZORLASH_BOOTS } },
+        // 146 Lord Vyletongue
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::SATYR_HORN, 100, 1, 2 }, none }, true,
+          { i::VYLETONGUES_BLADE, i::PUTRIDUS_STAFF, i::SATYRHORN_BOW } },
+        // 147 Celebras the Cursed
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::SPLINTERED_BARK, 100, 1, 2 }, none }, true,
+          { i::CELEBRAS_HELM, i::KEEPERS_COWL, i::GROVEWARDEN_MASK } },
+        // 148 Tinkerer Gizlock
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::GREASY_COG, 100, 1, 2 }, none }, true,
+          { i::GIZLOCKS_WRENCH, i::GIZLOCKS_STAFF, i::GIZLOCKS_HAND_CANNON } },
+        // 149 Landslide
+        { { { i::ELEMENTAL_EARTH, 100, 2, 3 }, none, none }, false,
+          { i::ROCKSLIDE_LEGPLATES, i::EARTHWEAVE_LEGGINGS, i::STONEHIDE_PANTS } },
+        // 150 Rotgrip
+        { { { i::CROCOLISK_SCALE, 100, 1, 2 }, none, none }, false,
+          { i::ROTGRIP_HAUBERK, i::FENWEAVE_ROBE, i::CROCSCALE_VEST } },
+        // 151 Princess Theradras
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::ELEMENTAL_EARTH, 100, 2, 3 }, none }, false,
+          { i::PRINCESSS_GREATAXE, i::STAFF_OF_THERADRAS, i::EARTHSONG_LONGBOW } },
+        // 152 Zevrim Thornhoof
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::SATYR_HORN, 100, 1, 2 }, none }, true,
+          { i::THORNHOOF_SABATONS, i::HELLFIRE_SLIPPERS, i::FELHIDE_BOOTS } },
+        // 153 Hydrospawn
+        { { { i::MAJOR_HEALING_POTION, 100, 1, 2 }, none, none }, false,
+          { i::HYDROSPAWN_GAUNTLETS, i::TIDAL_GLOVES, i::WATERLOGGED_GRIPS } },
+        // 154 Lethtendris
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::FELCLOTH, 100, 1, 2 }, none }, true,
+          { i::LETHTENDRISS_HELM, i::SHADOWWEAVE_COWL, i::WEBSPUN_MASK } },
+        // 155 Alzzin the Wildshaper
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::SATYR_HORN, 100, 1, 2 }, none }, true,
+          { i::WILDSHAPERS_LEGGUARDS, i::WILDWEAVE_LEGGINGS, i::WILDHIDE_PANTS } },
+        // 156 Tendris Warpwood
+        { { { i::SPLINTERED_BARK, 100, 2, 3 }, none, none }, false,
+          { i::WARPWOOD_HAUBERK, i::BARKWEAVE_ROBE, i::IRONBARK_VEST } },
+        // 157 Immol'thar
+        { { { i::MAJOR_HEALING_POTION, 100, 1, 2 }, none, none }, false,
+          { i::IMMOL_THARS_CLAW, i::DEMONIC_STAFF, i::FEL_LONGBOW } },
+        // 158 Prince Tortheldrin
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::TORTHELDRINS_BLADE, i::HIGHBORNE_STAFF, i::PRINCES_LONGBOW } },
+        // 159 Cho'Rush the Observer
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::OGRE_TOOTH, 100, 1, 2 }, none }, true,
+          { i::OBSERVERS_GAUNTLETS, i::CHO_RUSHS_GLOVES, i::OBSERVERS_GRIPS } },
+        // 160 King Gordok
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::OGRE_TOOTH, 100, 1, 2 }, none }, true,
+          { i::GORDOKS_GREATAXE, i::STAFF_OF_THE_OGRE_KING, i::GORDOKS_LONGBOW } },
     };
 
     // Uncommon items any enemy of a level band may drop.
@@ -407,6 +503,9 @@ namespace
                                    i::BULWARK_OF_THE_VALE };
     constexpr item_id band_9[] = { i::SANDSTORM_HELM, i::MIRAGE_ROBE, i::DUNESHADOW_LEGGINGS, i::SCORCHING_GREATSWORD,
                                    i::STAFF_OF_THE_DUNES, i::SIROCCO_LONGBOW, i::SANDSTONE_BULWARK };
+    constexpr item_id band_10[] = { i::THUNDERHEAD_HELM, i::MOONSHADOW_ROBE, i::WILDHEART_LEGGINGS,
+                                    i::TWILIGHT_GREATSWORD, i::STAFF_OF_THE_ANCIENTS, i::FERALAS_LONGBOW,
+                                    i::HIGHBORNE_BULWARK };
 
     constexpr int world_drop_chance = 3;
     constexpr int elite_world_drop_chance = 35;
@@ -467,7 +566,12 @@ namespace
             return pick(band_8);
         }
 
-        return pick(band_9);
+        if(level <= 45)
+        {
+            return pick(band_9);
+        }
+
+        return pick(band_10);
     }
 
     void add(enemy& item, item_id loot, int count)

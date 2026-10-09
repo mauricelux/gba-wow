@@ -29,7 +29,14 @@ namespace
     constexpr int sparkle_period = 128;
     constexpr int sparkle_frames = 24;
     constexpr int brazier_frame = 2;            // fx_chest: cold, then two frames of flame
+    constexpr int pylon_frame = 5;              // then a pylon's two glowing frames, then shut down
     constexpr int flame_period = 16;
+
+    // Dire Maul's braziers are the pylons that hold Immol'thar: the hero shuts them down instead.
+    [[nodiscard]] bool pylons()
+    {
+        return world::map().id == map_id::DIRE_MAUL;
+    }
 
     [[nodiscard]] item_id potion_for(int level)
     {
@@ -157,7 +164,7 @@ bool chests::open(int index, hud& hud_ref)
             }
         }
 
-        bn::string<32> text = "The brazier flares (";
+        bn::string<32> text = pylons() ? "The pylon goes dark (" : "The brazier flares (";
         text += bn::to_string<4>(lit);
         text += "/";
         text += bn::to_string<4>(total);
@@ -166,7 +173,7 @@ bool chests::open(int index, hud& hud_ref)
 
         if(lit == total)
         {
-            hud_ref.message("A sealed door grinds open", ui::color::GREEN);
+            hud_ref.message(pylons() ? "Immol'thar's field flickers" : "A sealed door grinds open", ui::color::GREEN);
         }
 
         item.sparkle.reset();
@@ -233,7 +240,8 @@ void chests::_update_sprite(chest& item, const bn::fixed_point& player_feet)
 
     if(item.level == 0)
     {
-        frame = brazier_frame + (opened ? 1 + (_frame + item.id * 5) / flame_period % 2 : 0);
+        int flicker = (_frame + item.id * 5) / flame_period % 2;
+        frame = pylons() ? pylon_frame + (opened ? 2 : flicker) : brazier_frame + (opened ? 1 + flicker : 0);
     }
 
     if(! item.sprite)

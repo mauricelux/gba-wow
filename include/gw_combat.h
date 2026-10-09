@@ -185,10 +185,11 @@ public:
 
     void on_map_change();
 
-    // A gong rung or a cage opened inside an event area (event_area_at): starts its dungeon event
-    // (gw_combat_events.cpp), or says it is over. Returns false when the area has no event here or
-    // enemies are fighting the hero.
-    bool start_event(area_id area);
+    // A gong rung, a cage opened or a prison entered inside an event area (event_area_at): starts its
+    // dungeon event (gw_combat_events.cpp), or says it is over. A prison stays shut while sealed (the
+    // map's braziers are not all lit). Returns false when the area has no event here or enemies are
+    // fighting the hero.
+    bool start_event(area_id area, bool sealed);
 
     // Recomputes stats after gear, level or buff changes.
     void refresh_stats();

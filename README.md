@@ -77,6 +77,11 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Pozzik's Mirage Raceway in Thousand Needles](docs/screenshots/m22_mirage_raceway.png)
 ![The third ring of the gong brings Tuten'kash](docs/screenshots/m22_tuten_kash.png)
 ![Sandfury trolls climb the pyramid of Zul'Farrak](docs/screenshots/m22_pyramid.png)
+![Feathermoon Stronghold on its island off Feralas](docs/screenshots/m23_feathermoon.png)
+![A poison pool in Maraudon's Foulspore Cavern](docs/screenshots/m23_poison.png)
+![Princess Theradras hurls boulders in Zaetar's Grave](docs/screenshots/m23_theradras.png)
+![Immol'thar breaks out of his prison in Dire Maul](docs/screenshots/m23_immolthar.png)
+![The Gordok bow to the hero who killed their king](docs/screenshots/m23_gordok.png)
 
 ## Status
 
@@ -86,29 +91,31 @@ subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Mark
 then walk freely from Northshire Abbey down to Goldshire, west to the city of Stormwind, south to
 Westfall, east to the Redridge Mountains and south to Duskwood, ride the tram to Ironforge and go on
 to the Wetlands, Darkshore, the Hillsbrad Foothills and the jungle of Stranglethorn Vale, sail from
-Booty Bay to Tanaris and Thousand Needles, take on 138 quests from Northshire to Gadgetzan, fight with auto-attack and your subclass's abilities, loot and equip about 770 items, buy and sell at vendors, carry as much
+Booty Bay to Tanaris and Thousand Needles, go on west to Feralas and north to Desolace, take on 158 quests from Northshire to Feathermoon, fight with auto-attack and your subclass's abilities, loot and equip about 920 items, buy and sell at vendors, carry as much
 as you like in bags sorted by type, quality, level or age, use 19 ability slots on three bars and 4
 item slots, buy new abilities and ranks from your class trainer, spend talent points from level 10,
 face the elites Princess, Hogger, Gath'Ilzogg, Mor'Ladim, Stitches, Balgaras, Nek'rosh, Gravis
-Slipknot, Bloodfang, King Bangalash, Fleet Master Firallon, Caliph Scorpidsting and Andre Firebeard, clear the kobolds out of Echo Ridge and
-Fargodeep mines, hunt for 46 hidden
+Slipknot, Bloodfang, King Bangalash, Fleet Master Firallon, Caliph Scorpidsting, Andre Firebeard, Lord Shalzaru, Old Grizzlegut and the Gordunni Warlord, clear the kobolds out of Echo Ridge and
+Fargodeep mines, hunt for 48 hidden
 treasure chests, fish in Lake Everstill, hearth home to an inn, ride from level 30, fly by gryphon
 between Stormwind, Sentinel Hill, Lakeshire, Darkshire, Silverpine Forest, Ironforge, Menethil Harbor,
-Southshore, the Argent Watch in Tirisfal, Booty Bay and Gadgetzan, take the Deeprun Tram and the boats to
-Auberdine and Tanaris, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
+Southshore, the Argent Watch in Tirisfal, Booty Bay, Gadgetzan, Feathermoon and Nijel's Point, take the Deeprun Tram and the boats to
+Auberdine, Tanaris and Feathermoon, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
 Edwin VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, keep the night
 off Darkshire, climb Shadowfang Keep to Archmage Arugal, light the braziers of Blackfathom Deeps for
 Aku'mai, take Gnomeregan back from Mekgineer Thermaplugg, clear all four wings of the Scarlet
 Monastery up to High Inquisitor Whitemane, break Razorfen Kraul, ring the gong of Razorfen Downs, storm the
-pyramid of Zul'Farrak up to Chief Ukorz Sandscalp, and save to the cartridge. Every zone has
+pyramid of Zul'Farrak up to Chief Ukorz Sandscalp, wade through the poison of Maraudon to Princess Theradras,
+break Immol'thar's prison in Dire Maul and take King Gordok's throne, and save to the cartridge. Every zone has
 its own music, and elite fights switch to a boss tune.
 
 Following the quests in order takes a hero to level 15 at the end of Westfall, about 19 after
 Redridge, 20 after the Deadmines, 21 in the Stockade, about 25 at the door of Shadowfang Keep, 26
 after Arugal, about 28 after the Wetlands, 30 after Thermaplugg, 33 after Hillsbrad, 35 after
 Arcanist Doan, about 37 halfway through Stranglethorn, 39 after King Bangalash, 40 after High
-Inquisitor Whitemane, about 41 after Razorfen Kraul, 43 after Amnennar the Coldbringer and 45 after
-Chief Ukorz Sandscalp, without grinding. The level cap is
+Inquisitor Whitemane, about 41 after Razorfen Kraul, 43 after Amnennar the Coldbringer, 45 after
+Chief Ukorz Sandscalp, about 47 after Feralas, 49 after Princess Theradras and 51 after King Gordok,
+without grinding. The level cap is
 60: the road there is planned in [docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12
 to M26).
 
@@ -137,7 +144,8 @@ to M26).
 | M20 Hillsbrad and Scarlet Monastery 1 | The Hillsbrad Foothills and Southshore (30 to 35), Tirisfal's Argent Watch, 18 quests, the Graveyard and the Library with six bosses | Done |
 | M21 Stranglethorn and Scarlet Monastery 2 | Stranglethorn Vale with the Rebel Camp, Nesingwary's Expedition and Booty Bay (35 to 40), 19 quests, the Armory and the Cathedral with four bosses | Done |
 | M22 Tanaris and the Razorfens | Kalimdor by boat from Booty Bay: Tanaris with Gadgetzan and Thousand Needles' Mirage Raceway (40 to 45), 20 quests, Razorfen Kraul, Razorfen Downs with its gong and Zul'Farrak with its gong and pyramid | Done |
-| M23 to M26 | Feralas to the Plaguelands, 8 new dungeons, Onyxia and the new ending | Planned |
+| M23 Feralas and Desolace | Feralas with Feathermoon Stronghold and Desolace with Nijel's Point (45 to 50), 20 quests, Maraudon with its poison pools and Princess Theradras, Dire Maul with Immol'thar's pylons and the Gordok tribute | Done |
+| M24 to M26 | The Burning Steppes to the Plaguelands, 6 new dungeons, Onyxia and the new ending | Planned |
 
 ## Controls
 
@@ -210,13 +218,15 @@ indoors gets you off. Gryphon masters (Dungar Longdrink in the Valley of Heroes,
 Hill, Ariena Stormfeather in Lakeshire, Felicia Maline in Darkshire, Gryphon Rider Hask at the scouts'
 camp in Silverpine, Gryth Thurden in Ironforge, Shellei Brondir in Menethil Harbor, Darla Harris in
 Southshore, Gyll in Booty Bay; on Kalimdor, the hippogryph master Caylais Moonfeather in Auberdine and
-Bera Stonehammer in Gadgetzan) remember you the first time you talk to them and
+Bera Stonehammer in Gadgetzan, Fyldren Moonfeather in Feathermoon and Baritanas Skyriver at Nijel's Point)
+remember you the first time you talk to them and
 fly you to any other one you have met, for a price that grows with the distance: the gryphon crosses
 the continent while the map scrolls under it. The Deeprun Tram leaves from the station house in
 Stormwind's Dwarven District. Its far end is Ironforge Station, whose stairs climb to Tinker Town in
 Ironforge. Boats work the same way: walk to the end of Menethil Harbor's pier to sail to Auberdine on
 Darkshore, and back from Auberdine's dock; Booty Bay's south pier sails to Steamwheedle Port on the
-coast of Tanaris, and back. Flights stay on their own continent.
+coast of Tanaris, and back; the pier on the Feralas coast sails to Feathermoon Stronghold, and Feathermoon's
+other pier to the Forgotten Coast. Flights stay on their own continent.
 
 Pets: a Beast Mastery hunter gets *Taming the Beast* from Einris Brightspear at level 10. Tame Beast
 (Utility bar) channels for six seconds on a beast of your level or lower, which fights back
@@ -377,6 +387,32 @@ Brassbolts wants. Opening the cage on the pyramid brings three waves of Sandfury
 up the stairs, then Nekrum Gutchewer and Shadowpriest Sezz'ziz; Chief Ukorz Sandscalp and Ruuzlu
 wait at the top of the city. Tran'rek takes the news, and the chapter ends with a new page for the
 desert.
+
+Feralas and Desolace: Pozzik at the raceway sends you west through the pass into Feralas, a forest of
+giant trees. A boat from the coast takes you to Feathermoon Stronghold on its island, where General
+Shandris Feathermoon, Latronicus Moonspear and the other sentinels want the Hatecrest naga (and
+their elite lord, Shalzaru) back in the sea, the Gordunni ogres and their elite warlord broken, the
+mad wildkin and the Grimtotem tauren stopped, and yeti hides for Pratt McGrubben (Old Grizzlegut, a
+rare elite yeti, roams the hills). Zorbin Fandazzle studies the shore striders, and Azj'Tordin by
+the gates of Dire Maul sends you inside. North of Feralas lies Desolace, a dead land where Captain
+Talendria holds Nijel's Point against the Magram centaurs and the satyrs, and Cavindra, Marandis and
+Willow point you to Maraudon.
+
+Maraudon: the cave in the south of Desolace is level 46 to 49. Its poison pools burn whoever wades
+in. Noxxion splits off spawn of slime, Lord Vyletongue calls a shadowstalker, Celebras the Cursed
+raises thorns around himself, Landslide breaks off a shardling, and Tinkerer Gizlock lobs bombs at
+where you stand. Princess Theradras waits in Zaetar's Grave at the bottom: her boulders land where
+you stood, and one that lands on you throws you back. A hidden cave in the Wicked Grotto holds a
+chest.
+
+Dire Maul: the ruined city in the north of Feralas is level 47 to 50. In the east wing, Zevrim
+Thornhoof guards the Warpwood Quarter, Hydrospawn splits in the Conservatory, and Lethtendris throws
+bolts of void and Alzzin the Wildshaper calls lashers out of the Felvine at the Shrine of Eldretharr.
+In the west wing, Tendris Warpwood wakes the grove in the Capital Gardens, and Immol'thar sits in a
+force field that holds until the four pylons in the gardens and the prison are shut down (press A
+beside each); then Prince Tortheldrin, who fed the demon, waits in the Athenaeum. In the north wing,
+kill King Gordok, and his adviser Cho'Rush joins in; the ogres left standing bow to their new king
+and leave. The falls of Princess Theradras and Prince Tortheldrin each end a chapter with a new page.
 
 Auto-attack keeps going after a kill if another enemy is on you, and turns to whoever is hitting you
 when your target is out of reach.
