@@ -24,6 +24,8 @@ enum class flight_id : uint8_t
     GADGETZAN,
     FEATHERMOON,
     NIJELS_POINT,
+    MORGANS_VIGIL,
+    SWAMP_OF_SORROWS,
     COUNT
 };
 

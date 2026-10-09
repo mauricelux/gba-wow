@@ -64,6 +64,9 @@ namespace
         case music_id::FERALAS:
             return bn::music_items::feralas;
 
+        case music_id::STEPPES:
+            return bn::music_items::steppes;
+
         default:
             return bn::nullopt;
         }

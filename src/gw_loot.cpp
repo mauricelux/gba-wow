@@ -482,6 +482,123 @@ namespace
         // 160 King Gordok
         { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::OGRE_TOOTH, 100, 1, 2 }, none }, true,
           { i::GORDOKS_GREATAXE, i::STAFF_OF_THE_OGRE_KING, i::GORDOKS_LONGBOW } },
+        // 161 Blackrock orcs
+        { { { i::RUNECLOTH, 35, 1, 2 }, { i::DARK_IRON_SCRAPS, 20, 1, 1 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 162 worgs
+        { { { i::THICK_FUR, 45, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 163 Firegut ogres
+        { { { i::OGRE_TOOTH, 40, 1, 1 }, { i::RUNECLOTH, 35, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 164 dragonkin
+        { { { i::BLACK_DRAGONSCALE, 40, 1, 1 }, { i::DREAM_DUST, 15, 1, 1 }, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 165 the Dark Iron
+        { { { i::DARK_IRON_SCRAPS, 40, 1, 1 }, { i::RUNECLOTH, 35, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 166 creatures of the lava
+        { { { i::SMOLDERING_COAL, 45, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 167 Stonevault troggs
+        { { { i::TROGG_STONE_TOOTH, 45, 1, 1 }, { i::RUNECLOTH, 20, 1, 1 }, none }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 168 swamp beasts
+        { { { i::CROCOLISK_SCALE, 35, 1, 1 }, { i::THICK_FUR, 25, 1, 1 }, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 169 the Atal'ai
+        { { { i::ATAL_AI_TOKEN, 40, 1, 1 }, { i::TROLL_TUSK, 25, 1, 1 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 170 Uldaman's stone keepers
+        { { { i::TITANIC_STONE_FRAGMENT, 40, 1, 1 }, { i::ELEMENTAL_EARTH, 25, 1, 1 }, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 171 oozes
+        { { { i::GLOWING_SLUDGE, 45, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 172 golems
+        { { { i::GREASY_COG, 45, 1, 1 }, { i::DARK_IRON_SCRAPS, 25, 1, 1 }, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 173 Gor'tesh
+        { { { i::DARK_IRON_SCRAPS, 100, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::GOR_TESHS_LEGPLATES, i::GOR_TESHS_LEGGINGS, i::GOR_TESHS_PANTS } },
+        // 174 Gorgon'och
+        { { { i::OGRE_TOOTH, 100, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::GORGON_OCHS_GAUNTLETS, i::GORGON_OCHS_GLOVES, i::GORGON_OCHS_GRIPS } },
+        // 175 War Reaver
+        { { { i::GREASY_COG, 100, 2, 3 }, none, none }, false,
+          { i::REAVER_GAUNTLETS, i::REAVER_GLOVES, i::REAVER_GRIPS } },
+        // 176 Overseer Maltorius
+        { { { i::DARK_IRON_SCRAPS, 100, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::MALTORIUS_SABATONS, i::MALTORIUS_SLIPPERS, i::MALTORIUS_BOOTS } },
+        // 177 Revelosh
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::TROGG_STONE_TOOTH, 100, 1, 2 }, none }, true,
+          { i::REVELOSH_GAUNTLETS, i::REVELOSH_GLOVES, i::REVELOSH_GRIPS } },
+        // 178 Grimlok
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::TROGG_STONE_TOOTH, 100, 1, 2 }, none }, true,
+          { i::GRIMLOK_SABATONS, i::GRIMLOK_SLIPPERS, i::GRIMLOK_BOOTS } },
+        // 179 Galgann Firehammer
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::DARK_IRON_SCRAPS, 100, 1, 2 }, none }, true,
+          { i::GALGANNS_FIREHAMMER, i::GALGANNS_STAFF, i::GALGANNS_RIFLE } },
+        // 180 the Ancient Stone Keeper
+        { { { i::TITANIC_STONE_FRAGMENT, 100, 2, 3 }, none, none }, false,
+          { i::ANCIENT_KEEPER_LEGPLATES, i::ANCIENT_KEEPER_LEGGINGS, i::ANCIENT_KEEPER_PANTS } },
+        // 181 Ironaya
+        { { { i::TITANIC_STONE_FRAGMENT, 100, 2, 3 }, none, none }, false,
+          { i::IRONAYAS_HAUBERK, i::IRONAYAS_ROBE, i::IRONAYAS_VEST } },
+        // 182 the Obsidian Sentinel
+        { { { i::TITANIC_STONE_FRAGMENT, 100, 2, 3 }, none, none }, false,
+          { i::OBSIDIAN_HELM, i::OBSIDIAN_COWL, i::OBSIDIAN_MASK } },
+        // 183 Archaedas
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::TITANIC_STONE_FRAGMENT, 100, 2, 3 }, none }, false,
+          { i::TITAN_GREATHAMMER, i::EARTHSHAPER_STAFF, i::STONEWAKER_LONGBOW } },
+        // 184 Atal'alarion
+        { { { i::TITANIC_STONE_FRAGMENT, 100, 2, 3 }, none, none }, false,
+          { i::ALARIONS_GAUNTLETS, i::ALARIONS_GLOVES, i::ALARIONS_GRIPS } },
+        // 185 Jammal'an the Prophet
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::ATAL_AI_TOKEN, 100, 1, 2 }, none }, true,
+          { i::JAMMAL_ANS_HELM, i::JAMMAL_ANS_COWL, i::JAMMAL_ANS_MASK } },
+        // 186 Ogom the Wretched
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::ATAL_AI_TOKEN, 100, 1, 2 }, none }, true,
+          { i::WRETCHED_SABATONS, i::WRETCHED_SLIPPERS, i::WRETCHED_BOOTS } },
+        // 187 Hazzas
+        { { { i::DREAM_DUST, 100, 2, 3 }, none, none }, false,
+          { i::HAZZAS_LEGPLATES, i::HAZZAS_LEGGINGS, i::HAZZAS_PANTS } },
+        // 188 Morphaz
+        { { { i::DREAM_DUST, 100, 2, 3 }, none, none }, false,
+          { i::MORPHAZ_HAUBERK, i::MORPHAZ_ROBE, i::MORPHAZ_VEST } },
+        // 189 Dreamscythe
+        { { { i::DREAM_DUST, 100, 2, 3 }, none, none }, false,
+          { i::DREAMSCYTHE_GREATAXE, i::DREAMSCYTHE_STAFF, i::DREAMSCYTHE_LONGBOW } },
+        // 190 Weaver
+        { { { i::DREAM_DUST, 100, 2, 3 }, none, none }, false,
+          { i::WEAVERS_GAUNTLETS, i::WEAVERS_GLOVES, i::WEAVERS_GRIPS } },
+        // 191 the Shade of Eranikus
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::DREAM_DUST, 100, 2, 3 }, none }, false,
+          { i::FANG_OF_ERANIKUS, i::STAFF_OF_ERANIKUS, i::BOW_OF_ERANIKUS } },
+        // 192 Lord Roccor
+        { { { i::SMOLDERING_COAL, 100, 2, 3 }, none, none }, false,
+          { i::ROCCORS_SABATONS, i::ROCCORS_SLIPPERS, i::ROCCORS_BOOTS } },
+        // 193 High Interrogator Gerstahn
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::DARK_IRON_SCRAPS, 100, 1, 2 }, none }, true,
+          { i::INTERROGATORS_GAUNTLETS, i::INTERROGATORS_GLOVES, i::INTERROGATORS_GRIPS } },
+        // 194 the Ring of Law's champions
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::RUNECLOTH, 100, 1, 2 }, none }, true,
+          { i::CHAMPIONS_LEGPLATES, i::CHAMPIONS_LEGGINGS, i::CHAMPIONS_PANTS } },
+        // 195 Golem Lord Argelmach
+        { { { i::GREASY_COG, 100, 2, 3 }, none, none }, false,
+          { i::ARGELMACHS_HAUBERK, i::ARGELMACHS_ROBE, i::ARGELMACHS_VEST } },
+        // 196 General Angerforge
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::DARK_IRON_SCRAPS, 100, 1, 2 }, none }, true,
+          { i::ANGERFORGES_AXE, i::FORGEMASTERS_STAFF, i::ANGERFORGES_RIFLE } },
+        // 197 Ambassador Flamelash
+        { { { i::SMOLDERING_COAL, 100, 2, 3 }, none, none }, false,
+          { i::FLAMELASH_HELM, i::FLAMELASH_COWL, i::FLAMELASH_MASK } },
+        // 198 Magmus
+        { { { i::SMOLDERING_COAL, 100, 2, 3 }, none, none }, false,
+          { i::MAGMUS_LEGPLATES, i::MAGMUS_LEGGINGS, i::MAGMUS_PANTS } },
+        // 199 Princess Moira Bronzebeard
+        { { { i::MAJOR_HEALING_POTION, 100, 1, 2 }, none, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 200 Emperor Dagran Thaurissan
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::DARK_IRON_SCRAPS, 100, 2, 3 }, none }, true,
+          { i::THAURISSANS_GREATHAMMER, i::STAFF_OF_THE_SHADOWFORGE, i::IMPERIAL_LONGBOW } },
     };
 
     // Uncommon items any enemy of a level band may drop.
@@ -506,6 +623,8 @@ namespace
     constexpr item_id band_10[] = { i::THUNDERHEAD_HELM, i::MOONSHADOW_ROBE, i::WILDHEART_LEGGINGS,
                                     i::TWILIGHT_GREATSWORD, i::STAFF_OF_THE_ANCIENTS, i::FERALAS_LONGBOW,
                                     i::HIGHBORNE_BULWARK };
+    constexpr item_id band_11[] = { i::VOLCANIC_HELM, i::FLAMEKISSED_ROBE, i::EMBERHIDE_LEGGINGS, i::BLAZING_GREATSWORD,
+                                    i::STAFF_OF_EMBERS, i::ASHWOOD_LONGBOW, i::OBSIDIAN_BULWARK };
 
     constexpr int world_drop_chance = 3;
     constexpr int elite_world_drop_chance = 35;
@@ -571,7 +690,12 @@ namespace
             return pick(band_9);
         }
 
-        return pick(band_10);
+        if(level <= 50)
+        {
+            return pick(band_10);
+        }
+
+        return pick(band_11);
     }
 
     void add(enemy& item, item_id loot, int count)

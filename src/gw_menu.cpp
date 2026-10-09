@@ -9,6 +9,8 @@
 #include "gw_hud.h"
 #include "gw_input.h"
 #include "gw_map_blackfathom_deeps.h"
+#include "gw_map_blackrock_depths.h"
+#include "gw_map_burning_steppes.h"
 #include "gw_map_darkshore.h"
 #include "gw_map_deadmines.h"
 #include "gw_map_deeprun_tram.h"
@@ -36,9 +38,12 @@
 #include "gw_map_stranglethorn.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
+#include "gw_map_sunken_temple.h"
+#include "gw_map_swamp_of_sorrows.h"
 #include "gw_map_tanaris.h"
 #include "gw_map_thousand_needles.h"
 #include "gw_map_tirisfal.h"
+#include "gw_map_uldaman.h"
 #include "gw_map_westfall.h"
 #include "gw_map_wetlands.h"
 #include "gw_map_zul_farrak.h"
@@ -133,6 +138,19 @@ namespace
         { "Dire Maul", map_id::DIRE_MAUL, map_data::dire_maul::entry },
         { "Immol'thar's Prison", map_id::DIRE_MAUL, map_data::dire_maul::prison },
         { "The Gordok Throne", map_id::DIRE_MAUL, map_data::dire_maul::gordok_throne },
+        { "Morgan's Vigil", map_id::BURNING_STEPPES, map_data::burning_steppes::vigil_respawn },
+        { "Thorium Point", map_id::BURNING_STEPPES, map_data::burning_steppes::thorium_respawn },
+        { "Hammertoe's Digsite", map_id::BURNING_STEPPES, map_data::burning_steppes::digsite_respawn },
+        { "Blackrock Mountain", map_id::BURNING_STEPPES, map_data::burning_steppes::brd_exit },
+        { "Swamp of Sorrows", map_id::SWAMP_OF_SORROWS, map_data::swamp_of_sorrows::camp_respawn },
+        { "Uldaman", map_id::ULDAMAN, map_data::uldaman::entry },
+        { "Archaedas's Altar", map_id::ULDAMAN, map_data::uldaman::khaz_mul },
+        { "Sunken Temple", map_id::SUNKEN_TEMPLE, map_data::sunken_temple::entry },
+        { "Temple Altar", map_id::SUNKEN_TEMPLE, map_data::sunken_temple::altar },
+        { "Blackrock Depths", map_id::BLACKROCK_DEPTHS, map_data::blackrock_depths::entry },
+        { "Ring of Law", map_id::BLACKROCK_DEPTHS, map_data::blackrock_depths::ring },
+        { "Grim Guzzler", map_id::BLACKROCK_DEPTHS, map_data::blackrock_depths::guzzler },
+        { "Imperial Seat", map_id::BLACKROCK_DEPTHS, map_data::blackrock_depths::imperial_seat },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);

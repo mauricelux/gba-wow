@@ -4,6 +4,10 @@
 #include "bn_regular_bg_items_map_abbey_overhead.h"
 #include "bn_regular_bg_items_map_blackfathom_deeps_ground.h"
 #include "bn_regular_bg_items_map_blackfathom_deeps_overhead.h"
+#include "bn_regular_bg_items_map_blackrock_depths_ground.h"
+#include "bn_regular_bg_items_map_blackrock_depths_overhead.h"
+#include "bn_regular_bg_items_map_burning_steppes_ground.h"
+#include "bn_regular_bg_items_map_burning_steppes_overhead.h"
 #include "bn_regular_bg_items_map_darkshore_ground.h"
 #include "bn_regular_bg_items_map_darkshore_overhead.h"
 #include "bn_regular_bg_items_map_deadmines_ground.h"
@@ -60,12 +64,18 @@
 #include "bn_regular_bg_items_map_stormwind_overhead.h"
 #include "bn_regular_bg_items_map_stranglethorn_ground.h"
 #include "bn_regular_bg_items_map_stranglethorn_overhead.h"
+#include "bn_regular_bg_items_map_sunken_temple_ground.h"
+#include "bn_regular_bg_items_map_sunken_temple_overhead.h"
+#include "bn_regular_bg_items_map_swamp_of_sorrows_ground.h"
+#include "bn_regular_bg_items_map_swamp_of_sorrows_overhead.h"
 #include "bn_regular_bg_items_map_tanaris_ground.h"
 #include "bn_regular_bg_items_map_tanaris_overhead.h"
 #include "bn_regular_bg_items_map_thousand_needles_ground.h"
 #include "bn_regular_bg_items_map_thousand_needles_overhead.h"
 #include "bn_regular_bg_items_map_tirisfal_ground.h"
 #include "bn_regular_bg_items_map_tirisfal_overhead.h"
+#include "bn_regular_bg_items_map_uldaman_ground.h"
+#include "bn_regular_bg_items_map_uldaman_overhead.h"
 #include "bn_regular_bg_items_map_westfall_ground.h"
 #include "bn_regular_bg_items_map_westfall_overhead.h"
 #include "bn_regular_bg_items_map_wetlands_ground.h"
@@ -75,6 +85,8 @@
 
 #include "gw_map_abbey.h"
 #include "gw_map_blackfathom_deeps.h"
+#include "gw_map_blackrock_depths.h"
+#include "gw_map_burning_steppes.h"
 #include "gw_map_darkshore.h"
 #include "gw_map_deadmines.h"
 #include "gw_map_deeprun_tram.h"
@@ -103,9 +115,12 @@
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_stranglethorn.h"
+#include "gw_map_sunken_temple.h"
+#include "gw_map_swamp_of_sorrows.h"
 #include "gw_map_tanaris.h"
 #include "gw_map_thousand_needles.h"
 #include "gw_map_tirisfal.h"
+#include "gw_map_uldaman.h"
 #include "gw_map_westfall.h"
 #include "gw_map_wetlands.h"
 #include "gw_map_zul_farrak.h"
@@ -165,6 +180,14 @@ namespace
                                                   map_data::desolace::maraudon_exit };
     constexpr point_def maraudon_graveyards[] = { map_data::maraudon::respawn };
     constexpr point_def dire_maul_graveyards[] = { map_data::dire_maul::respawn };
+    constexpr point_def burning_steppes_graveyards[] = { map_data::burning_steppes::vigil_respawn,
+                                                         map_data::burning_steppes::brd_respawn,
+                                                         map_data::burning_steppes::thorium_respawn,
+                                                         map_data::burning_steppes::digsite_respawn };
+    constexpr point_def swamp_of_sorrows_graveyards[] = { map_data::swamp_of_sorrows::camp_respawn };
+    constexpr point_def uldaman_graveyards[] = { map_data::uldaman::respawn };
+    constexpr point_def sunken_temple_graveyards[] = { map_data::sunken_temple::respawn };
+    constexpr point_def blackrock_depths_graveyards[] = { map_data::blackrock_depths::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
@@ -226,6 +249,11 @@ namespace
         GW_MAP_INFO(DESOLACE, desolace, false, false),
         GW_MAP_INFO(MARAUDON, maraudon, true, true),
         GW_MAP_INFO(DIRE_MAUL, dire_maul, true, true),
+        GW_MAP_INFO(BURNING_STEPPES, burning_steppes, false, false),
+        GW_MAP_INFO(SWAMP_OF_SORROWS, swamp_of_sorrows, false, false),
+        GW_MAP_INFO(ULDAMAN, uldaman, true, true),
+        GW_MAP_INFO(SUNKEN_TEMPLE, sunken_temple, true, true),
+        GW_MAP_INFO(BLACKROCK_DEPTHS, blackrock_depths, true, true),
     };
 
     [[nodiscard]] int count_chests()
@@ -292,6 +320,15 @@ const point_def& nearest_graveyard(const map_info& map, int x, int y)
     return *best;
 }
 
+namespace
+{
+    [[nodiscard]] bool is_event_area(area_id id)
+    {
+        return id == area_id::GONG || id == area_id::CAGE || id == area_id::PRISON || id == area_id::ALTAR ||
+               id == area_id::ARENA;
+    }
+}
+
 const area_def* area_at(const map_info& map, int x, int y)
 {
     const area_def* result = nullptr;
@@ -299,8 +336,7 @@ const area_def* area_at(const map_info& map, int x, int y)
 
     for(const area_def& area : map.areas)
     {
-        if(area.id == area_id::RADIATION || area.id == area_id::GONG || area.id == area_id::CAGE ||
-           area.id == area_id::PRISON)
+        if(area.id == area_id::RADIATION || is_event_area(area.id))
         {
             continue;
         }
@@ -324,8 +360,8 @@ area_id event_area_at(const map_info& map, int x, int y)
 {
     for(const area_def& area : map.areas)
     {
-        if((area.id == area_id::GONG || area.id == area_id::CAGE || area.id == area_id::PRISON) &&
-           x >= area.x && y >= area.y && x < area.x + area.width && y < area.y + area.height)
+        if(is_event_area(area.id) && x >= area.x && y >= area.y && x < area.x + area.width &&
+           y < area.y + area.height)
         {
             return area.id;
         }

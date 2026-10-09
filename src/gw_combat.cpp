@@ -30,6 +30,8 @@ namespace
     constexpr int saw_radius = 28;
     constexpr int flurry_radius = 40;
     constexpr int smoke_radius = 32;
+    constexpr int breath_radius = 30;
+    constexpr int breath_reach = 30;                 // how far in front of a dragon its breath lands
     constexpr int shadow_port_interval = 9 * seconds;
     constexpr int bane_guard_percent = 90;     // Morbent Fel without Sirra's bane
     constexpr int bomb_interval = 10 * seconds; // Thermaplugg sends a Walking Bomb
@@ -3505,6 +3507,32 @@ bool combat::_update_telegraph(enemy& boss, bool around_boss, int radius, const 
     return false;
 }
 
+bool combat::_update_breath(enemy& boss, const char* name, projectile_kind kind)
+{
+    // A dragon's breath lands in front of it, between it and the hero, and it holds still while it
+    // draws breath: the hero steps aside or behind it.
+    if(boss.telegraph_frames == 0 && boss.special_timer == 0)
+    {
+        bn::fixed dx = bn::clamp(_player.position().x() - boss.position.x(), bn::fixed(-256), bn::fixed(256));
+        bn::fixed dy = bn::clamp(_player.position().y() - boss.position.y(), bn::fixed(-256), bn::fixed(256));
+        bn::fixed length = bn::sqrt(dx * dx + dy * dy);
+
+        if(length < 1)
+        {
+            dx = -1;
+            length = 1;
+        }
+
+        boss.special_position = bn::fixed_point(boss.position.x() + dx * breath_reach / length,
+                                                boss.position.y() + dy * breath_reach / length);
+        boss.telegraph_frames = telegraph_windup;
+        _effects.circle(boss.special_position, breath_radius, telegraph_windup, circle_style::DANGER);
+        _texts.show(_head(boss.position, 44), name, floating_texts::style::DAMAGE_TAKEN);
+    }
+
+    return _update_telegraph(boss, true, breath_radius, name, kind);
+}
+
 bool combat::_update_wind_up(int index, bool in_melee, const char* name, const char* message)
 {
     // Phase 1 waits for the next heavy blow; phase 2 holds still for a moment, then hits for more
@@ -4491,6 +4519,316 @@ bool combat::boss_update(int index)
         _update_frenzy(boss, health_percent, 25, 2, "King Gordok");
         break;
 
+    // --- Uldaman -----------------------------------------------------------------------------------
+
+    case enemy_id::REVELOSH:
+        // Calls lightning down on where the hero stands.
+        _boss_greeting(boss, "Revelosh: Treasure is mine!");
+
+        if(health_percent <= 80 &&
+           _update_telegraph(boss, false, saw_radius, "Chain Lightning", projectile_kind::NATURE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::GRIMLOK:
+        _boss_greeting(boss, "Grimlok: Smash the stealers!");
+        _update_frenzy(boss, health_percent, 30, 2, "Grimlok");
+        break;
+
+    case enemy_id::GALGANN_FIREHAMMER:
+        // A ring of fire around himself from two thirds of his health.
+        _boss_greeting(boss, "Galgann: The relics are ours!");
+
+        if(health_percent <= 66 &&
+           _update_telegraph(boss, true, flurry_radius, "Fire Nova", projectile_kind::FIRE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::ANCIENT_STONE_KEEPER:
+        // Whips up a sand storm where the hero stands.
+        _boss_greeting(boss, "The stone keeper stirs!");
+
+        if(_update_telegraph(boss, false, smoke_radius, "Sand Storm", projectile_kind::NATURE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::IRONAYA:
+    {
+        // Stamps the ground around herself: standing in it throws the hero back.
+        _boss_greeting(boss, "Ironaya: None may enter!");
+
+        bool landing = boss.telegraph_frames == 1;
+
+        if(_update_telegraph(boss, true, flurry_radius, "Arcing Smash", projectile_kind::NATURE))
+        {
+            return true;
+        }
+
+        if(landing && distance_squared(_player.position(), boss.position) <= flurry_radius * flurry_radius)
+        {
+            _player.knock_back(boss.position, 48);
+            _hud.message("Ironaya throws you back!", ui::color::RED);
+        }
+
+        _update_frenzy(boss, health_percent, 25, 2, "Ironaya");
+        break;
+    }
+
+    case enemy_id::OBSIDIAN_SENTINEL:
+        // Sheds a shard of itself at three quarters, half and a quarter of its health.
+        _boss_greeting(boss, "The sentinel grinds to life!");
+
+        if((boss.phase == 1 && health_percent <= 75) || (boss.phase == 2 && health_percent <= 50) ||
+           (boss.phase == 3 && health_percent <= 25))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::OBSIDIAN_SHARD);
+            _summon_add(boss, enemy_id::OBSIDIAN_SHARD);
+            _hud.message("Shards break off the sentinel!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::ARCHAEDAS:
+        // Wakes more of his guardians at two thirds and one third of his health.
+        _boss_greeting(boss, "Archaedas: Who disturbs me?");
+
+        if((boss.phase == 1 && health_percent <= 66) || (boss.phase == 2 && health_percent <= 33))
+        {
+            ++boss.phase;
+            _summon_add(boss, boss.phase == 2 ? enemy_id::EARTHEN_GUARDIAN : enemy_id::VAULT_WARDER);
+            _hud.message("Archaedas wakes his guardians!", ui::color::RED);
+        }
+
+        if(boss.phase >= 2 && _update_telegraph(boss, true, flurry_radius, "Ground Tremor", projectile_kind::NATURE))
+        {
+            return true;
+        }
+        break;
+
+    // --- The Sunken Temple -------------------------------------------------------------------------
+
+    case enemy_id::ATAL_ALARION:
+        // Sweeps the floor around himself.
+        _boss_greeting(boss, "The altar's guardian wakes!");
+
+        if(_update_telegraph(boss, true, flurry_radius, "Sweeping Slam", projectile_kind::NATURE))
+        {
+            return true;
+        }
+
+        _update_frenzy(boss, health_percent, 25, 2, "Atal'alarion");
+        break;
+
+    case enemy_id::JAMMAL_AN_THE_PROPHET:
+        // Ogom fights at his side; flames rain on where the hero stands.
+        if(boss.phase == 0)
+        {
+            int ogom = _find_enemy(enemy_id::OGOM_THE_WRETCHED);
+
+            if(ogom >= 0 && _enemies.at(ogom).state == enemy_state::IDLE)
+            {
+                _enemies.aggro(ogom);
+            }
+        }
+
+        _boss_greeting(boss, "Jammal'an: Hakkar will rise!");
+
+        if(health_percent <= 80 &&
+           _update_telegraph(boss, false, ground_radius, "Flamestrike", projectile_kind::FIRE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::OGOM_THE_WRETCHED:
+        _boss_greeting(boss, "Ogom: The prophet commands!");
+        break;
+
+    case enemy_id::HAZZAS:
+        _boss_greeting(boss, "Hazzas: Into the Nightmare!");
+
+        if(_update_breath(boss, "Acid Breath", projectile_kind::NATURE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::MORPHAZ:
+        _boss_greeting(boss, "Morphaz: Sleep forever!");
+
+        if(_update_breath(boss, "Acid Breath", projectile_kind::NATURE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::DREAMSCYTHE:
+        _boss_greeting(boss, "Dreamscythe: You dare wake us?");
+
+        if(_update_breath(boss, "Acid Breath", projectile_kind::NATURE))
+        {
+            return true;
+        }
+
+        _update_frenzy(boss, health_percent, 30, 2, "Dreamscythe");
+        break;
+
+    case enemy_id::WEAVER:
+        _boss_greeting(boss, "Weaver: Your dreams are ours!");
+
+        if(_update_breath(boss, "Frost Breath", projectile_kind::FROST))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::SHADE_OF_ERANIKUS:
+        // Calls whelps out of the Nightmare at two thirds and one third of his health, and breathes
+        // on whatever stands in front of him.
+        _boss_greeting(boss, "Eranikus: Join the Nightmare!");
+
+        if((boss.phase == 1 && health_percent <= 66) || (boss.phase == 2 && health_percent <= 33))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::NIGHTMARE_WHELP);
+            _summon_add(boss, enemy_id::NIGHTMARE_WHELP);
+            _hud.message("Whelps pour out of the dream!", ui::color::RED);
+        }
+
+        if(_update_breath(boss, "Nightmare Breath", projectile_kind::SHADOW))
+        {
+            return true;
+        }
+        break;
+
+    // --- Blackrock Depths --------------------------------------------------------------------------
+
+    case enemy_id::LORD_ROCCOR:
+        // The floor bursts into flame where the hero stands.
+        _boss_greeting(boss, "Roccor: Burn, intruder!");
+
+        if(_update_telegraph(boss, false, saw_radius, "Ground Tremor", projectile_kind::FIRE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::HIGH_INTERROGATOR_GERSTAHN:
+        _boss_greeting(boss, "Gerstahn: Back in your cell!");
+        _update_frenzy(boss, health_percent, 30, 2, "Gerstahn");
+        break;
+
+    case enemy_id::GOROSH_THE_DERVISH:
+        _boss_greeting(boss, "Gorosh: Spin to win!");
+
+        if(_update_telegraph(boss, true, flurry_radius, "Whirlwind", projectile_kind::ARROW))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::GRIZZLE:
+        _boss_greeting(boss, "Grizzle roars into the ring!");
+        _update_frenzy(boss, health_percent, 40, 2, "Grizzle");
+        break;
+
+    case enemy_id::HEDRUM_THE_CREEPER:
+        _boss_greeting(boss, "Hedrum creeps into the ring!");
+
+        if(_update_telegraph(boss, false, saw_radius, "Poison Spit", projectile_kind::NATURE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::OK_THOR_THE_BREAKER:
+        _boss_greeting(boss, "Ok'thor: Me break you!");
+
+        if(_update_telegraph(boss, false, ground_radius, "Arcane Blast", projectile_kind::ARCANE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::GOLEM_LORD_ARGELMACH:
+        // Wakes a golem of his hall at two thirds and one third of his health.
+        _boss_greeting(boss, "Argelmach: Golems, crush them!");
+
+        if((boss.phase == 1 && health_percent <= 66) || (boss.phase == 2 && health_percent <= 33))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::RAGEREAVER_GOLEM);
+            _hud.message("Argelmach wakes a golem!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::GENERAL_ANGERFORGE:
+        // Calls his reservists at a third of his health.
+        _boss_greeting(boss, "Angerforge: To arms!");
+
+        if(boss.phase == 1 && health_percent <= 33)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::ANVILRAGE_RESERVIST);
+            _summon_add(boss, enemy_id::ANVILRAGE_RESERVIST);
+            _hud.message("Angerforge: Reservists, to me!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::AMBASSADOR_FLAMELASH:
+        // Burning spirits climb out of the lava at three quarters, half and a quarter of his health.
+        _boss_greeting(boss, "Flamelash: Ragnaros sees you!");
+
+        if((boss.phase == 1 && health_percent <= 75) || (boss.phase == 2 && health_percent <= 50) ||
+           (boss.phase == 3 && health_percent <= 25))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::BURNING_SPIRIT);
+            _summon_add(boss, enemy_id::BURNING_SPIRIT);
+            _hud.message("Burning spirits rise!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::MAGMUS:
+        // Fire bursts from the floor where the hero stands.
+        _boss_greeting(boss, "Magmus: None pass the gate!");
+
+        if(_update_telegraph(boss, false, smoke_radius, "Fiery Burst", projectile_kind::FIRE))
+        {
+            return true;
+        }
+
+        _update_frenzy(boss, health_percent, 25, 2, "Magmus");
+        break;
+
+    case enemy_id::EMPEROR_DAGRAN_THAURISSAN:
+        // Moira fights at his side and heals him; fire rains on where the hero stands.
+        if(boss.phase == 0)
+        {
+            int moira = _find_enemy(enemy_id::PRINCESS_MOIRA_BRONZEBEARD);
+
+            if(moira >= 0 && _enemies.at(moira).state == enemy_state::IDLE)
+            {
+                _enemies.aggro(moira);
+            }
+        }
+
+        _boss_greeting(boss, "Thaurissan: Kneel before me!");
+
+        if(_update_telegraph(boss, false, ground_radius, "Hand of Thaurissan", projectile_kind::FIRE))
+        {
+            return true;
+        }
+
+        _update_frenzy(boss, health_percent, 25, 2, "Thaurissan");
+        break;
+
     default:
         break;
     }
@@ -4530,6 +4868,20 @@ void combat::_boss_killed(const enemy& boss)
 
         _hud.message("The Gordok bow to their new king!", ui::color::GREEN);
         break;
+
+    case enemy_id::EMPEROR_DAGRAN_THAURISSAN:
+    {
+        // His spell breaks with him: Moira lowers her hands and leaves the fight.
+        int moira = _find_enemy(enemy_id::PRINCESS_MOIRA_BRONZEBEARD);
+
+        if(moira >= 0 && _enemies.at(moira).alive())
+        {
+            _effects.burst(_enemies.at(moira).position, projectile_kind::HOLY);
+            _enemies.remove(moira);
+            _hud.message("Moira: What have I done?", ui::color::GREEN);
+        }
+        break;
+    }
 
     case enemy_id::SCARLET_COMMANDER_MOGRAINE:
         // Whitemane stays at the altar, praying for him: the hero gets to catch a breath before her.

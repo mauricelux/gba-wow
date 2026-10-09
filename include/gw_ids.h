@@ -100,6 +100,11 @@ enum class map_id : uint16_t
     DESOLACE,
     MARAUDON,
     DIRE_MAUL,
+    BURNING_STEPPES,
+    SWAMP_OF_SORROWS,
+    ULDAMAN,
+    SUNKEN_TEMPLE,
+    BLACKROCK_DEPTHS,
     COUNT
 };
 
@@ -120,7 +125,8 @@ enum class music_id : uint8_t
     MONASTERY,
     STRANGLETHORN,
     TANARIS,
-    FERALAS
+    FERALAS,
+    STEPPES
 };
 
 enum class area_id : uint8_t
@@ -137,7 +143,10 @@ enum class area_id : uint8_t
     THE_STACKS,
     GONG,               // where A rings a gong that starts an event (combat::start_event); unnamed
     CAGE,               // the same for a cage whose lock is broken
-    PRISON              // the same for a prison whose force field falls once the map's braziers are lit
+    PRISON,             // the same for a prison whose force field falls once the map's braziers are lit
+    RUINS_OF_THAURISSAN,
+    ALTAR,              // the same for an altar: Archaedas's, or Atal'alarion's once the six statues burn
+    ARENA               // the same for the Ring of Law
 };
 
 enum class npc_id : uint16_t
@@ -317,6 +326,25 @@ enum class npc_id : uint16_t
     BARITANAS,
     CAVINDRA,
     SHENDRALAR_ANCIENT,
+    // The Burning Steppes, the Searing Gorge, the Swamp of Sorrows and Blackrock Depths
+    MAXWELL,
+    ORALIUS,
+    JALINDE,
+    RAGGED_JOHN,
+    VIGIL_INNKEEPER,
+    VIGIL_TRADER,
+    VIGIL_SMITH,
+    BORGUS,
+    KALARAN,
+    LOKHTOS,
+    RYEDOL,
+    THELDURIN,
+    BROHANN,
+    MARVON,
+    SWAMP_GRYPHON,
+    WINDSOR,
+    PLUGGER,
+    GUZZLER_PATRON,
     COUNT
 };
 
@@ -626,6 +654,81 @@ enum class enemy_id : uint16_t
     GORDOK_MASTIFF,
     CHO_RUSH_THE_OBSERVER,
     KING_GORDOK,
+    // The Burning Steppes
+    BLACKROCK_SOLDIER,
+    BLACKROCK_WARLOCK,
+    BLACKROCK_WORG,
+    GOR_TESH,
+    FIREGUT_BRUTE,
+    FIREGUT_OGRE_MAGE,
+    GORGONOCH,
+    BLACK_DRAGONSPAWN,
+    BLACK_BROODLING,
+    THAURISSAN_AGENT,
+    THAURISSAN_FIREWALKER,
+    WAR_REAVER,
+    // The Searing Gorge and the Badlands
+    DARK_IRON_SLAVER,
+    DARK_IRON_TASKMASTER,
+    OVERSEER_MALTORIUS,
+    SEARING_LAVA_SPIDER,
+    STONEVAULT_ROCKCHEWER,
+    SHADOWFORGE_SURVEYOR,
+    // The Swamp of Sorrows
+    SAWTOOTH_CROCOLISK,
+    SWAMP_JAGUAR,
+    ATAL_AI_EXILE,
+    // Uldaman
+    STONEVAULT_BRAWLER,
+    STONEVAULT_GEOMANCER,
+    SHADOWFORGE_DARKCASTER,
+    SHADOWFORGE_RELIC_HUNTER,
+    STONE_STEWARD,
+    EARTHEN_CUSTODIAN,
+    EARTHEN_GUARDIAN,
+    VAULT_WARDER,
+    OBSIDIAN_SHARD,
+    REVELOSH,
+    GRIMLOK,
+    GALGANN_FIREHAMMER,
+    ANCIENT_STONE_KEEPER,
+    IRONAYA,
+    OBSIDIAN_SENTINEL,
+    ARCHAEDAS,
+    // The Sunken Temple
+    ATAL_AI_WARRIOR,
+    ATAL_AI_WITCH_DOCTOR,
+    SATURATED_OOZE,
+    NIGHTMARE_WYRMKIN,
+    NIGHTMARE_WHELP,
+    ATAL_ALARION,
+    JAMMAL_AN_THE_PROPHET,
+    OGOM_THE_WRETCHED,
+    HAZZAS,
+    MORPHAZ,
+    DREAMSCYTHE,
+    WEAVER,
+    SHADE_OF_ERANIKUS,
+    // Blackrock Depths
+    ANVILRAGE_GUARDSMAN,
+    ANVILRAGE_WARDEN,
+    SHADOWFORGE_FLAME_KEEPER,
+    RAGEREAVER_GOLEM,
+    FIREGUARD,
+    ANVILRAGE_RESERVIST,
+    BURNING_SPIRIT,
+    LORD_ROCCOR,
+    HIGH_INTERROGATOR_GERSTAHN,
+    GOROSH_THE_DERVISH,
+    GRIZZLE,
+    HEDRUM_THE_CREEPER,
+    OK_THOR_THE_BREAKER,
+    GOLEM_LORD_ARGELMACH,
+    GENERAL_ANGERFORGE,
+    AMBASSADOR_FLAMELASH,
+    MAGMUS,
+    PRINCESS_MOIRA_BRONZEBEARD,
+    EMPEROR_DAGRAN_THAURISSAN,
     COUNT
 };
 

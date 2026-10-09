@@ -1,5 +1,6 @@
 #include "gw_homes.h"
 
+#include "gw_map_burning_steppes.h"
 #include "gw_map_darkshore.h"
 #include "gw_map_desolace.h"
 #include "gw_map_duskwood.h"
@@ -35,6 +36,7 @@ namespace
         { "Gadgetzan", map_id::TANARIS, map_data::tanaris::gadgetzan_respawn },
         { "Feathermoon", map_id::FERALAS, map_data::feralas::feathermoon_respawn },
         { "Nijel's Point", map_id::DESOLACE, map_data::desolace::nijels_respawn },
+        { "Morgan's Vigil", map_id::BURNING_STEPPES, map_data::burning_steppes::vigil_respawn },
     };
 
     static_assert(sizeof(homes) / sizeof(homes[0]) == int(home_id::COUNT));
@@ -88,6 +90,9 @@ home_id innkeeper_home(npc_id npc)
 
     case npc_id::LYSHAERYA:
         return home_id::NIJELS_POINT;
+
+    case npc_id::VIGIL_INNKEEPER:
+        return home_id::MORGANS_VIGIL;
 
     default:
         return home_id::COUNT;

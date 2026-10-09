@@ -832,6 +832,7 @@ HUMANOID_SHEETS = {
     'gnome_plain': Humanoid('gnome', 'armor', 'none'),
     'gnome_sword': Humanoid('gnome', 'armor', 'sword'),
     'dwarf_plain': Humanoid('dwarf', 'armor', 'none'),
+    'dwarf_staff': Humanoid('dwarf', 'robe', 'staff'),
     'fem_bow': Humanoid('long', 'armor', 'bow'),
     'troll_sword': Humanoid('troll', 'armor', 'sword'),
     'troll_staff': Humanoid('troll', 'robe', 'staff'),
@@ -2949,6 +2950,62 @@ def treant(step, pose):
     return c.done()
 
 
+def dragon(step, pose):
+    """A dragon (or a whelp, drawn smaller by its scale): four clawed legs under a long body, a horned head
+    on a curving neck, a tail sweeping behind and two wings beating over its back; it lunges with its jaws
+    open and fire in its throat."""
+    c = Canvas()
+    if pose == 'dead':
+        c.poly([(13, 22), (18, 14), (28, 16), (24, 23)], 'second_dark')                     # a wing spread flat
+        body = (c.ellipse_mask(17, 25, 8, 4) | tube(c, [(23, 25), (28, 27), (31, 26)], 2.5, 0.8) |
+                tube(c, [(11, 25), (7, 26), (4, 27)], 2.5, 2) | c.ellipse_mask(4, 26.5, 3.5, 2.5))
+        c.part(body, 'main', dark='dark', light='light')
+        c.part(body & (c.ys >= 27) & (c.xs > 9), 'second', edge=False)
+        for x in (12, 18):
+            c.line(x, 20, x + 2, 22, 'main', edge=True)                                 # legs in the air
+        c.line(5, 23, 8, 21, 'extra', edge=True)
+        c.line(2, 26, 4, 26, 'outline', edge=False)                                     # eye shut
+        return c.done()
+    s = STRIDE[step] // 2
+    flap = [0, 3, 6, 3][step]
+    attack = pose == 'attack'
+    lift = [(0, 0), (1, 0), (0, 0), (0, 1)][step]
+    for x, up in ((14 - s, lift[1]), (23 + s, lift[0])):                                   # far legs
+        c.rect(x, 24, x + 1, 28 - up, 'dark')
+        c.rect(x - 2, 29 - up, x + 1, 29 - up, 'dark')
+    c.poly([(19, 16), (22, 4 + flap // 2), (28, 2 + flap), (30, 11 + flap // 2), (25, 17)], 'second_dark')  # far wing
+    tail = tube(c, [(22, 21), (27, 22), (30, 19)], 2.8, 0.8)
+    body = c.ellipse_mask(17, 21, 7, 4.5)
+    hx, hy = (6, 15) if attack else (7, 9)
+    neck = tube(c, [(13, 18), (10, 14), (hx + 2, hy + 2)], 3, 2)
+    head = c.ellipse_mask(hx, hy, 3.5, 2.5) | c.rect_mask(hx - 6, hy - 1, hx - 1, hy + 1)
+    c.part(tail | body | neck | head, 'main', dark='dark', light='light')
+    c.part(body & (c.ys >= 24), 'second', edge=False)                                    # pale belly
+    ridges(c, range(14, 29, 3))
+    c.line(hx + 1, hy - 2, hx + 4, hy - 5, 'extra', edge=True)                              # horns
+    c.line(hx + 2, hy - 1, hx + 6, hy - 3, 'extra', edge=True)
+    if attack:
+        c.poly([(hx - 1, hy + 1), (hx - 6, hy + 3), (hx - 6, hy + 4.5), (hx + 1, hy + 2.5)], 'main',
+               dark='dark')
+        c.ellipse(hx - 4, hy + 2, 1.5, 1, 'flame', edge=False)
+        c.px(hx - 6, hy + 2, 'flame_dark')
+    else:
+        c.line(hx - 5, hy + 1, hx - 1, hy + 1, 'outline', edge=False)
+    c.px(hx, hy - 1, 'eye')
+    c.px(hx - 5, hy - 1, 'dark')
+    for x, up in ((11 + s, lift[0]), (20 - s, lift[1])):                                   # near legs
+        c.rect(x, 24, x + 2, 28 - up, 'main', dark='dark')
+        c.rect(x - 2, 29 - up, x + 2, 29 - up, 'main')
+        c.px(x - 2, 29 - up, 'tooth')
+    wing = c.poly_mask([(15, 18), (16, 6 + flap // 2), (20, 1 + flap), (26, 8 + flap), (24, 13 + flap // 2),
+                        (20, 18)])
+    c.part(wing, 'second', dark='second_dark')
+    for tip in ((24, 9 + flap), (22, 14 + flap // 2)):                                     # the wing's ribs
+        c.line(16, 7 + flap // 2, tip[0], tip[1], 'second_dark', edge=False)
+    c.line(16, 7 + flap // 2, 16, 17, 'main', edge=False)
+    return c.done()
+
+
 CREATURES = {
     'water_elemental': water_elemental,
     'wolf': wolf,
@@ -2987,6 +3044,7 @@ CREATURES = {
     'scorpid': scorpid,
     'lasher': lasher,
     'treant': treant,
+    'dragon': dragon,
 }
 
 
@@ -2996,7 +3054,7 @@ LYING_DEAD = {'worgen', 'worgen_caster', 'skeleton', 'skeleton_mage', 'yeti', 't
 # Creatures that draw their own dead frame (pose 'dead'): an ooze dies as a puddle, a robot as a wreck, a spirit
 # as a fading wisp, a gorilla sprawled on its belly, a centaur on its side and a scorpid on its back.
 OWN_DEAD = {'raptor', 'naga', 'naga_caster', 'hydra', 'trogg', 'ooze', 'robot', 'bomb', 'spirit', 'gorilla',
-            'centaur', 'scorpid', 'lasher'}
+            'centaur', 'scorpid', 'lasher', 'dragon'}
 
 
 def creature_sheet(draw, lying=False, own_dead=False):
@@ -3908,6 +3966,104 @@ HUMANOID_LOOKS = {
                                                          trim=(240, 224, 160), armor_light=(248, 224, 136))),
     'tinkerer_gizlock': ('goblin_sword', goblin_palette(armor=(120, 104, 88), tabard=(200, 120, 40),
                                                         trim=(200, 200, 208), leather=(80, 56, 40))),
+    # The Burning Steppes: Morgan's Vigil
+    'oralius': ('hum_sword', humanoid_palette(hair=(72, 48, 32), armor=(112, 96, 72), tabard=(48, 72, 128),
+                                              trim=(200, 176, 120), leather=(88, 64, 44))),
+    'jalinde_summerdrake': ('fem_robe', humanoid_palette(hair=(232, 200, 112), armor=(152, 48, 40),
+                                                         tabard=(72, 32, 32), trim=(232, 192, 72),
+                                                         armor_light=(200, 80, 64))),
+    'ragged_john': ('hum_plain', humanoid_palette(hair=(160, 152, 136), armor=(112, 100, 84), tabard=(84, 72, 60),
+                                                  trim=(152, 140, 120), lower_face=(160, 152, 136),
+                                                  leather=(80, 64, 48))),
+    'marshal_windsor': ('hum_plain', humanoid_palette(hair=(176, 168, 160), armor=(120, 120, 132), tabard=(56, 56, 72),
+                                                      trim=(160, 140, 96), lower_face=(176, 168, 160))),
+    # The Searing Gorge and the Badlands
+    'kalaran_windblade': ('dwarf_sword', dwarf_palette(hair=(176, 64, 40), armor=(96, 100, 112), tabard=(104, 72, 40),
+                                                       trim=(216, 160, 72))),
+    'lokhtos_darkbargainer': ('dwarf_plain', dwarf_palette(skin=SKIN_DARK_IRON, hair=(200, 196, 192),
+                                                           armor=(88, 72, 64), tabard=(152, 104, 48),
+                                                           trim=(232, 192, 72))),
+    'theldurin_the_lost': ('dwarf_sword', dwarf_palette(hair=(232, 228, 216), armor=(120, 104, 80),
+                                                        tabard=(72, 96, 136), trim=(200, 184, 120))),
+    'marvon_rivetseeker': ('goblin_plain', goblin_palette(armor=(104, 120, 72), tabard=(176, 136, 56),
+                                                          trim=(200, 200, 208))),
+    # Blackrock Depths' Grim Guzzler
+    'plugger_spazzring': ('dwarf_plain', dwarf_palette(skin=SKIN_DARK_IRON, hair=(184, 72, 32), armor=(136, 104, 72),
+                                                       tabard=(216, 200, 168), trim=(184, 136, 72))),
+    'guzzler_patron': ('dwarf_plain', dwarf_palette(skin=SKIN_DARK_IRON, hair=(64, 48, 40), armor=(96, 80, 64),
+                                                    tabard=(120, 64, 40), trim=(176, 136, 88))),
+    # The Burning Steppes: the Blackrock orcs and the Dark Iron dwarves
+    'blackrock_soldier': ('orc_sword', orc_palette(armor=(72, 72, 84), tabard=(176, 40, 32))),
+    'blackrock_warlock': ('orc_staff', orc_palette(armor=(104, 40, 120), tabard=(48, 28, 56), skin=(88, 128, 64))),
+    'gor_tesh': ('orc_sword', orc_palette(armor=(44, 40, 48), tabard=(200, 40, 32), skin=(120, 112, 72),
+                                          hair=(24, 20, 20))),
+    'thaurissan_agent': ('dwarf_sword', dwarf_palette(skin=SKIN_DARK_IRON, hair=(48, 40, 44), armor=(56, 52, 60),
+                                                      tabard=(176, 56, 32), trim=(200, 112, 40))),
+    'thaurissan_firewalker': ('dwarf_staff', dwarf_palette(skin=SKIN_DARK_IRON, hair=(200, 64, 32),
+                                                           armor=(160, 56, 32), tabard=(72, 36, 28),
+                                                           trim=(248, 176, 64))),
+    'dark_iron_slaver': ('dwarf_sword', dwarf_palette(skin=SKIN_DARK_IRON, hair=(32, 28, 36), armor=(96, 72, 56),
+                                                      tabard=(120, 36, 28), trim=(160, 160, 172))),
+    'dark_iron_taskmaster': ('dwarf_sword', dwarf_palette(skin=SKIN_DARK_IRON, hair=(88, 40, 32), armor=(84, 84, 96),
+                                                          tabard=(176, 104, 32), trim=(200, 200, 208))),
+    'overseer_maltorius': ('dwarf_sword', dwarf_palette(skin=(120, 120, 140), hair=(220, 216, 208), armor=(64, 56, 64),
+                                                        tabard=(200, 48, 32), trim=(232, 184, 64),
+                                                        armor_light=(112, 104, 116))),
+    'shadowforge_surveyor': ('dwarf_bow', dwarf_palette(skin=SKIN_DARK_IRON, hair=(56, 48, 48), armor=(112, 92, 68),
+                                                        tabard=(64, 60, 72), trim=(176, 176, 184))),
+    # Uldaman: the Shadowforge and the earthen
+    'shadowforge_darkcaster': ('dwarf_staff', dwarf_palette(skin=SKIN_DARK_IRON, hair=(40, 32, 40), armor=(80, 48, 96),
+                                                            tabard=(40, 32, 48), trim=(176, 120, 200))),
+    'shadowforge_relic_hunter': ('dwarf_sword', dwarf_palette(skin=SKIN_DARK_IRON, hair=(120, 64, 40),
+                                                              armor=(124, 100, 72), tabard=(72, 64, 80),
+                                                              trim=(208, 176, 104))),
+    'galgann_firehammer': ('dwarf_sword', dwarf_palette(skin=SKIN_DARK_IRON, hair=(232, 96, 40), armor=(136, 48, 32),
+                                                        tabard=(56, 44, 44), trim=(248, 184, 72),
+                                                        armor_light=(192, 88, 56))),
+    'earthen_custodian': ('dwarf_sword', dwarf_palette(skin=(168, 156, 136), hair=(120, 112, 100),
+                                                       armor=(136, 128, 112), tabard=(88, 120, 160),
+                                                       trim=(160, 208, 232), beard=(120, 112, 100))),
+    'earthen_guardian': ('dwarf_sword', dwarf_palette(skin=(148, 140, 128), hair=(100, 96, 88), armor=(116, 112, 100),
+                                                      tabard=(176, 152, 96), trim=(160, 208, 232),
+                                                      beard=(100, 96, 88))),
+    'archaedas': ('dwarf_staff', dwarf_palette(skin=(176, 168, 152), hair=(120, 168, 208), armor=(152, 144, 128),
+                                               tabard=(72, 104, 160), trim=(208, 232, 248), beard=(120, 168, 208),
+                                               armor_light=(196, 188, 172))),
+    # The Sunken Temple: the Atal'ai
+    'atal_ai_exile': ('troll_sword', troll_palette(skin=(96, 128, 112), hair=(48, 56, 48), armor=(104, 88, 64),
+                                                   tabard=(72, 64, 48), leather=(80, 64, 44))),
+    'atal_ai_warrior': ('troll_sword', troll_palette(skin=(80, 136, 120), hair=(200, 64, 48), armor=(136, 104, 56),
+                                                     tabard=(152, 48, 40), leather=(96, 64, 40))),
+    'atal_ai_witch_doctor': ('troll_staff', troll_palette(skin=(80, 136, 120), hair=(232, 224, 200), armor=(64, 112, 64),
+                                                          tabard=(160, 136, 56), armor_light=(104, 160, 96))),
+    'jammal_an_the_prophet': ('troll_staff', troll_palette(skin=(72, 120, 128), hair=(240, 232, 216), armor=(176, 48, 40),
+                                                           tabard=(232, 192, 72), armor_light=(216, 96, 72))),
+    'ogom_the_wretched': ('troll_staff', troll_palette(skin=(104, 112, 96), hair=(48, 40, 40), armor=(56, 48, 72),
+                                                       tabard=(96, 40, 56), armor_light=(96, 80, 120))),
+    # Blackrock Depths: the Dark Iron of Shadowforge City
+    'anvilrage_guardsman': ('dwarf_sword', dwarf_palette(skin=SKIN_DARK_IRON, hair=(40, 36, 40), armor=(104, 100, 112),
+                                                         tabard=(160, 40, 28), trim=(232, 168, 56))),
+    'anvilrage_warden': ('dwarf_sword', dwarf_palette(skin=SKIN_DARK_IRON, hair=(96, 44, 32), armor=(72, 68, 80),
+                                                      tabard=(96, 32, 28), trim=(176, 176, 188))),
+    'anvilrage_reservist': ('dwarf_sword', dwarf_palette(skin=SKIN_DARK_IRON, hair=(56, 44, 40), armor=(120, 92, 64),
+                                                         tabard=(136, 56, 32), trim=(176, 144, 96))),
+    'shadowforge_flame_keeper': ('dwarf_staff', dwarf_palette(skin=SKIN_DARK_IRON, hair=(232, 120, 40),
+                                                              armor=(184, 72, 32), tabard=(88, 40, 28),
+                                                              trim=(248, 208, 96))),
+    'high_interrogator_gerstahn': ('fem_robe', humanoid_palette(skin=SKIN_DARK_IRON, hair=(40, 32, 40),
+                                                                armor=(80, 32, 48), tabard=(40, 28, 36),
+                                                                trim=(200, 56, 48), armor_light=(128, 56, 80))),
+    'gorosh_the_dervish': ('orc_sword', orc_palette(armor=(152, 120, 72), tabard=(120, 32, 32), skin=(136, 120, 72),
+                                                    hair=(200, 196, 184))),
+    'general_angerforge': ('dwarf_sword', dwarf_palette(skin=SKIN_DARK_IRON, hair=(168, 48, 32), armor=(48, 44, 52),
+                                                        tabard=(200, 40, 28), trim=(248, 200, 72),
+                                                        armor_light=(96, 92, 104))),
+    'princess_moira_bronzebeard': ('fem_robe', humanoid_palette(skin=SKIN_DWARF, hair=(152, 72, 40),
+                                                                armor=(200, 160, 72), tabard=(136, 40, 40),
+                                                                trim=(248, 224, 144), armor_light=(232, 200, 112))),
+    'emperor_dagran_thaurissan': ('dwarf_sword', dwarf_palette(skin=(132, 132, 152), hair=(40, 32, 36),
+                                                               armor=(176, 72, 32), tabard=(40, 32, 36),
+                                                               trim=(248, 208, 88), armor_light=(224, 120, 56))),
 }
 
 CREATURE_LOOKS = {
@@ -4214,6 +4370,85 @@ CREATURE_LOOKS = {
                                                        extra=(216, 184, 72))),
     'king_gordok': ('ogre', creature_palette((192, 104, 72), (64, 44, 36), eye=(248, 216, 64),
                                              extra=(232, 192, 72), weapon=(200, 200, 216))),
+    # The Burning Steppes
+    'blackrock_worg': ('wolf', creature_palette((56, 48, 52), (120, 104, 100), eye=(248, 72, 40))),
+    'firegut_brute': ('ogre', creature_palette((168, 96, 72), (64, 40, 32), eye=(248, 200, 64), extra=(176, 56, 32),
+                                               weapon=(120, 84, 48))),
+    'firegut_ogre_mage': ('ogre', creature_palette((184, 112, 88), (88, 32, 32), eye=(255, 160, 64),
+                                                   extra=(232, 112, 40))),
+    'gorgonoch': ('ogre', creature_palette((200, 84, 56), (48, 32, 28), eye=(255, 232, 96), extra=(232, 184, 64),
+                                           weapon=(176, 176, 192))),
+    'black_dragonspawn': ('centaur', creature_palette((56, 48, 60), (88, 72, 84), eye=(248, 120, 40),
+                                                      extra=(176, 56, 40))),
+    'black_broodling': ('dragon', creature_palette((48, 44, 56), (160, 64, 48), eye=(248, 200, 64),
+                                                   extra=(200, 184, 160))),
+    'war_reaver': ('robot', creature_palette((96, 88, 92), (152, 56, 32), extra=(232, 144, 48), weapon=(176, 176, 188),
+                                             flame=(255, 200, 96), flame_dark=(232, 96, 24))),
+    'searing_lava_spider': ('spider', creature_palette((72, 40, 36), (240, 120, 40), eye=(255, 224, 96))),
+    'stonevault_rockchewer': ('trogg', creature_palette((128, 112, 104), (96, 84, 80), eye=(232, 72, 40),
+                                                        extra=(96, 64, 44), weapon=(176, 168, 152))),
+    # The Swamp of Sorrows
+    'sawtooth_crocolisk': ('crocolisk', creature_palette((64, 84, 52), (148, 140, 104), eye=(248, 200, 64),
+                                                         light=(96, 116, 72))),
+    'swamp_jaguar': ('cat', creature_palette((176, 136, 64), (232, 208, 160), eye=(200, 240, 64),
+                                             extra=(72, 52, 32))),
+    # Uldaman
+    'stonevault_brawler': ('trogg', creature_palette((112, 104, 100), (84, 80, 76), eye=(248, 120, 40),
+                                                     extra=(120, 72, 40), weapon=(200, 192, 176))),
+    'stonevault_geomancer': ('trogg', creature_palette((132, 120, 112), (104, 96, 136), eye=(160, 216, 248),
+                                                       extra=(96, 80, 136), weapon=(200, 192, 176))),
+    'revelosh': ('trogg', creature_palette((96, 88, 104), (120, 160, 200), eye=(200, 240, 255), extra=(72, 104, 160),
+                                           weapon=(216, 208, 192))),
+    'grimlok': ('trogg', creature_palette((152, 132, 112), (104, 72, 56), eye=(248, 216, 64), extra=(184, 56, 40),
+                                          weapon=(220, 212, 196))),
+    'stone_steward': ('water_elemental', creature_palette((150, 140, 124), (120, 168, 208), eye=(200, 240, 255),
+                                                          dark=(104, 96, 84), light=(190, 180, 160))),
+    'vault_warder': ('gorilla', creature_palette((136, 128, 112), (100, 92, 84), eye=(160, 216, 248),
+                                                 extra=(120, 168, 208))),
+    'obsidian_shard': ('water_elemental', creature_palette((48, 44, 60), (120, 104, 160), eye=(200, 160, 255),
+                                                           dark=(28, 26, 36), light=(84, 76, 100))),
+    'ancient_stone_keeper': ('water_elemental', creature_palette((132, 120, 100), (176, 152, 96), eye=(160, 216, 248),
+                                                                 dark=(92, 84, 72), light=(176, 164, 140))),
+    'ironaya': ('water_elemental', creature_palette((112, 108, 116), (184, 152, 96), eye=(248, 200, 64),
+                                                    dark=(76, 72, 80), light=(156, 152, 160))),
+    'obsidian_sentinel': ('water_elemental', creature_palette((40, 36, 52), (136, 104, 200), eye=(232, 200, 255),
+                                                              dark=(24, 22, 32), light=(76, 68, 96))),
+    # The Sunken Temple
+    'saturated_ooze': ('ooze', creature_palette((72, 120, 96), (152, 200, 152), eye=(248, 232, 96))),
+    'nightmare_wyrmkin': ('centaur', creature_palette((64, 112, 72), (104, 72, 120), eye=(232, 200, 255),
+                                                      extra=(120, 64, 152))),
+    'nightmare_whelp': ('dragon', creature_palette((72, 128, 80), (120, 72, 136), eye=(232, 200, 255),
+                                                   extra=(200, 184, 160))),
+    'atal_alarion': ('gorilla', creature_palette((120, 132, 112), (88, 96, 80), eye=(248, 72, 40),
+                                                 extra=(208, 176, 72))),
+    'hazzas': ('dragon', creature_palette((64, 120, 72), (152, 184, 96), eye=(248, 232, 96), extra=(216, 200, 160))),
+    'morphaz': ('dragon', creature_palette((80, 104, 64), (176, 160, 96), eye=(248, 120, 40), extra=(216, 200, 160))),
+    'dreamscythe': ('dragon', creature_palette((48, 136, 88), (120, 200, 136), eye=(248, 248, 160),
+                                               extra=(224, 216, 184))),
+    'weaver': ('dragon', creature_palette((56, 112, 104), (136, 104, 176), eye=(232, 200, 255),
+                                          extra=(224, 216, 184))),
+    'shade_of_eranikus': ('dragon', creature_palette((96, 152, 136), (176, 136, 216), eye=(240, 255, 255),
+                                                     extra=(232, 240, 240), dark=(64, 104, 96),
+                                                     light=(152, 208, 192))),
+    # Blackrock Depths
+    'ragereaver_golem': ('robot', creature_palette((88, 84, 92), (136, 72, 40), extra=(200, 120, 48),
+                                                   weapon=(168, 168, 180), flame=(255, 184, 72),
+                                                   flame_dark=(232, 88, 24))),
+    'golem_lord_argelmach': ('robot', creature_palette((120, 96, 72), (64, 60, 68), extra=(232, 184, 64),
+                                                       weapon=(200, 200, 212), flame=(255, 224, 120),
+                                                       flame_dark=(240, 120, 32))),
+    'fireguard': ('water_elemental', creature_palette((216, 80, 32), (248, 200, 72), eye=(255, 248, 200), dark=(152, 40, 24), light=(248, 152, 56))),
+    'burning_spirit': ('spirit', creature_palette((232, 112, 40), (255, 216, 96), eye=(255, 255, 200),
+                                                  dark=(176, 64, 24), light=(255, 176, 72))),
+    'lord_roccor': ('water_elemental', creature_palette((120, 64, 48), (248, 152, 56), eye=(255, 232, 128),
+                                                        dark=(80, 40, 32), light=(168, 96, 64))),
+    'magmus': ('gorilla', creature_palette((96, 72, 64), (248, 136, 40), eye=(255, 224, 96), extra=(255, 184, 72))),
+    'ambassador_flamelash': ('water_elemental', creature_palette((240, 120, 32), (255, 232, 120), eye=(255, 255, 224),
+                                                                 dark=(184, 56, 24), light=(255, 184, 72))),
+    'grizzle': ('bear', creature_palette((96, 80, 72), (152, 128, 112), eye=(248, 72, 40), light=(132, 116, 104))),
+    'hedrum_the_creeper': ('spider', creature_palette((64, 48, 80), (168, 120, 208), eye=(248, 216, 64))),
+    'ok_thor_the_breaker': ('ogre', creature_palette((136, 148, 104), (56, 48, 40), eye=(248, 200, 64),
+                                                     extra=(160, 120, 56), weapon=(176, 176, 188))),
 }
 
 

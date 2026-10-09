@@ -206,6 +206,27 @@ TERRAIN_DESOLACE = [
     ('flower', (152, 112, 96)),
 ]
 
+# The Burning Steppes and the Searing Gorge: grey ash for grass, charred red-brown roads, and lava in
+# the water roles ('foam' is its glowing crust).
+TERRAIN_STEPPES = [
+    ('shadow', (36, 28, 28)), ('grass_d', (68, 56, 52)), ('grass_m', (88, 74, 68)),
+    ('grass_l', (110, 94, 84)), ('grass_h', (136, 118, 104)),
+    ('dirt_d', (84, 48, 36)), ('dirt_m', (108, 64, 44)), ('dirt_l', (132, 84, 56)),
+    ('water_d', (148, 32, 16)), ('water_m', (216, 80, 24)), ('water_l', (248, 184, 64)),
+    ('foam', (248, 136, 40)), ('trunk_d', (40, 32, 28)), ('trunk_m', (72, 56, 48)),
+    ('flower', (200, 72, 40)),
+]
+
+# The Swamp of Sorrows: dark mossy green, black mud roads and still brown-green water.
+TERRAIN_SWAMP = [
+    ('shadow', (24, 36, 28)), ('grass_d', (44, 68, 40)), ('grass_m', (60, 88, 48)),
+    ('grass_l', (80, 108, 60)), ('grass_h', (112, 136, 80)),
+    ('dirt_d', (60, 48, 36)), ('dirt_m', (84, 68, 48)), ('dirt_l', (108, 92, 64)),
+    ('water_d', (32, 52, 44)), ('water_m', (44, 72, 60)), ('water_l', (88, 120, 96)),
+    ('foam', (168, 176, 144)), ('trunk_d', (48, 40, 32)), ('trunk_m', (76, 64, 52)),
+    ('flower', (168, 120, 176)),
+]
+
 BUILDINGS = [
     ('outline', (32, 32, 48)), ('stone_d', (88, 88, 104)), ('stone_m', (128, 128, 144)),
     ('stone_l', (168, 168, 176)), ('stone_h', (208, 208, 200)),
@@ -943,6 +964,22 @@ ROCK_DESOLACE = [
     ('r_grass_l', (160, 144, 136)), ('r_grass_h', (188, 172, 152)),
     ('rock_0', (52, 40, 36)), ('rock_1', (84, 68, 56)), ('rock_2', (112, 92, 76)),
     ('rock_3', (144, 124, 104)), ('rock_4', (168, 150, 128)), ('rock_5', (200, 186, 164)),
+]
+
+# Blackrock Mountain's black basalt, with twins of TERRAIN_STEPPES's ash.
+ROCK_STEPPES = [
+    ('r_shadow', (36, 28, 32)), ('r_grass_d', (68, 56, 56)), ('r_grass_m', (88, 74, 72)),
+    ('r_grass_l', (110, 94, 88)), ('r_grass_h', (136, 118, 112)),
+    ('rock_0', (20, 16, 20)), ('rock_1', (40, 34, 38)), ('rock_2', (60, 52, 56)),
+    ('rock_3', (84, 72, 72)), ('rock_4', (112, 96, 92)), ('rock_5', (152, 128, 112)),
+]
+
+# The Swamp of Sorrows' mossy black rock, with twins of TERRAIN_SWAMP's grass.
+ROCK_SWAMP = [
+    ('r_shadow', (24, 36, 32)), ('r_grass_d', (44, 68, 48)), ('r_grass_m', (60, 88, 56)),
+    ('r_grass_l', (80, 108, 64)), ('r_grass_h', (112, 136, 88)),
+    ('rock_0', (20, 24, 20)), ('rock_1', (48, 52, 44)), ('rock_2', (72, 76, 64)),
+    ('rock_3', (100, 104, 88)), ('rock_4', (132, 136, 116)), ('rock_5', (168, 172, 152)),
 ]
 
 # Terrain colors as the rock bank draws them.

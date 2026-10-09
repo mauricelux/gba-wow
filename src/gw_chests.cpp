@@ -38,6 +38,12 @@ namespace
         return world::map().id == map_id::DIRE_MAUL;
     }
 
+    // The Sunken Temple's braziers are its six statues, lit in order around the altar.
+    [[nodiscard]] bool statues()
+    {
+        return world::map().id == map_id::SUNKEN_TEMPLE;
+    }
+
     [[nodiscard]] item_id potion_for(int level)
     {
         return level <= 6 ? item_id::MINOR_HEALING_POTION :
@@ -150,6 +156,20 @@ bool chests::open(int index, hud& hud_ref)
 
     if(item.level == 0)
     {
+        if(statues())
+        {
+            // A statue wakes only after every one before it.
+            for(const chest& other : _chests)
+            {
+                if(other.level == 0 && other.id < item.id && ! chest_opened(other.id))
+                {
+                    hud_ref.message("The statue stays dark", ui::color::RED);
+                    hud_ref.message("Light the statues in order", ui::color::YELLOW);
+                    return true;
+                }
+            }
+        }
+
         set_chest_opened(item.id);
         play_sound(sound_id::SPELL);
         int lit = 0;
@@ -164,7 +184,8 @@ bool chests::open(int index, hud& hud_ref)
             }
         }
 
-        bn::string<32> text = pylons() ? "The pylon goes dark (" : "The brazier flares (";
+        bn::string<32> text = pylons() ? "The pylon goes dark (" : statues() ? "The statue glows (" :
+                                                                           "The brazier flares (";
         text += bn::to_string<4>(lit);
         text += "/";
         text += bn::to_string<4>(total);
@@ -173,7 +194,8 @@ bool chests::open(int index, hud& hud_ref)
 
         if(lit == total)
         {
-            hud_ref.message(pylons() ? "Immol'thar's field flickers" : "A sealed door grinds open", ui::color::GREEN);
+            hud_ref.message(pylons() ? "Immol'thar's field flickers" : statues() ? "The altar hums with power" :
+                                                                   "A sealed door grinds open", ui::color::GREEN);
         }
 
         item.sparkle.reset();

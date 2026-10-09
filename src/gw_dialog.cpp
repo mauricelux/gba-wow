@@ -430,7 +430,8 @@ void dialog::_complete()
        _quest == quest_id::THE_GRAND_BETRAYAL || _quest == quest_id::ARCANIST_DOAN ||
        _quest == quest_id::IN_THE_NAME_OF_THE_LIGHT || _quest == quest_id::BRING_THE_LIGHT ||
        _quest == quest_id::CHIEF_UKORZ_SANDSCALP || _quest == quest_id::CORRUPTION_OF_EARTH_AND_SEED ||
-       _quest == quest_id::THE_MADNESS_WITHIN)
+       _quest == quest_id::THE_MADNESS_WITHIN || _quest == quest_id::THE_DISCS_OF_NORGANNON ||
+       _quest == quest_id::THE_SHADE_OF_ERANIKUS || _quest == quest_id::THE_ROYAL_RESCUE)
     {
         ending_requested = true;
     }

@@ -138,6 +138,30 @@ namespace
         i::WILDWOOD_CAP, i::WILDWOOD_VEST, i::WILDWOOD_GLOVES, i::WILDWOOD_PANTS, i::WILDWOOD_BOOTS,
         i::MOONWEAVE_HOOD, i::MOONWEAVE_ROBE, i::MOONWEAVE_GLOVES, i::MOONWEAVE_PANTS, i::MOONWEAVE_BOOTS
     };
+
+    constexpr item_id vigil_goods[] = {
+        i::ROASTED_QUAIL, i::HOMEMADE_CHERRY_PIE, i::SPARKLING_DESERT_WATER, i::MOUNTAIN_SPRING_WATER,
+        i::MAJOR_HEALING_POTION, i::TELEPORTATION_RUNE
+    };
+
+    constexpr item_id vigil_smith[] = {
+        i::VIGIL_BLADE, i::VIGIL_HATCHET, i::VIGIL_WARHAMMER, i::VIGIL_STAFF, i::VIGIL_GREATSWORD, i::VIGIL_LONGBOW,
+        i::VIGIL_RIFLE, i::VIGIL_TOWER_SHIELD,
+        i::THORIUM_CHAIN_HELM, i::THORIUM_CHAIN_HAUBERK, i::THORIUM_CHAIN_GAUNTLETS, i::THORIUM_CHAIN_LEGGINGS,
+        i::THORIUM_CHAIN_BOOTS,
+        i::ASHWALKER_CAP, i::ASHWALKER_VEST, i::ASHWALKER_GLOVES, i::ASHWALKER_PANTS, i::ASHWALKER_BOOTS,
+        i::VIGILWEAVE_HOOD, i::VIGILWEAVE_ROBE, i::VIGILWEAVE_GLOVES, i::VIGILWEAVE_PANTS, i::VIGILWEAVE_BOOTS
+    };
+
+    // Lokhtos sells the Thorium Brotherhood's own work.
+    constexpr item_id thorium_brotherhood[] = {
+        i::DARK_IRON_REAVER, i::DARK_IRON_DESTROYER, i::DARK_IRON_LEGGINGS, i::FIERY_CHAIN_GAUNTLETS,
+        i::FLARECORE_GLOVES, i::MOLTEN_GRIPS
+    };
+
+    constexpr item_id grim_guzzler[] = {
+        i::DARK_IRON_ALE, i::HOMEMADE_CHERRY_PIE, i::MOUNTAIN_SPRING_WATER, i::MAJOR_HEALING_POTION
+    };
 }
 
 bn::span<const item_id> vendor_stock(int vendor)
@@ -204,6 +228,18 @@ bn::span<const item_id> vendor_stock(int vendor)
 
     case 20:
         return feathermoon_smith;
+
+    case 21:
+        return vigil_goods;
+
+    case 22:
+        return vigil_smith;
+
+    case 23:
+        return thorium_brotherhood;
+
+    case 24:
+        return grim_guzzler;
 
     default:
         return general_goods;

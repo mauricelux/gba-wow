@@ -629,7 +629,7 @@ are one bracket each so they can be played and tuned one at a time.
 | **M21 Stranglethorn and Scarlet Monastery 2** (35–40) ✓ | Booty Bay, Nesingwary, Armory, Cathedral | M20 |
 | **M22 Tanaris and the Razorfens** (40–45) ✓ | Kalimdor by boat, Gadgetzan, Razorfen Kraul, Razorfen Downs, Zul'Farrak | M21 |
 | **M23 Feralas** (45–50) ✓ | Feathermoon, Desolace and Nijel's Point, Maraudon, Dire Maul | M22 |
-| **M24 Burning Steppes** (50–55) | Morgan's Vigil, Uldaman, Sunken Temple, Blackrock Depths | M23 |
+| **M24 Burning Steppes** (50–55) ✓ | Morgan's Vigil, Uldaman, Sunken Temple, Blackrock Depths | M23 |
 | **M25 Plaguelands** (55–60) | Light's Hope, Blackrock Spire, Scholomance, Stratholme, all talent tiers and top ranks | M24 |
 | **M26 Onyxia and the ending** | Prestor unmasked in Stormwind Keep, Onyxia's three-phase fight, new ending, dungeon set bonuses, full balance pass 1 to 60 | M25 |
 

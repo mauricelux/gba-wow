@@ -612,6 +612,7 @@ def gen_redridge():
     # The pass west to Elwynn (Three Corners) and the Lakeridge Highway south to Duskwood.
     rock[41:47, 0:8] = 0
     rock[57:, 26:31] = 0
+    rock[0:9, 48:53] = 0                # the pass north into the Burning Steppes
     # Ridges between the valleys.
     wg.corners_along(m, 'rock', [(300, 40), (296, 170), (270, 250)], 2.2)
     wg.corners_along(m, 'rock', [(920, 40), (912, 150), (880, 210)], 2.0)
@@ -748,6 +749,8 @@ def gen_redridge():
 
     m.point('from_elwynn', 24, 704)
     m.warp(0, 672, 8, 64, 'elwynn', 'from_redridge')
+    m.point('from_steppes', 800, 32)
+    m.warp(776, 0, 48, 8, 'burning_steppes', 'from_redridge')
     m.area(0, 0, 1280, 1024, 'Redridge Mountains')
     m.music = 'REDRIDGE'
     m.save()
@@ -5843,6 +5846,596 @@ def gen_dire_maul():
     return m
 
 
+# ---------------------------------------------------------------------------------------------
+# The Burning Steppes and the Searing Gorge
+# ---------------------------------------------------------------------------------------------
+
+STEPPES_PROPS = ('rock', 'big_rock', 'stump', 'rock', 'log', 'big_rock')
+
+
+def gen_burning_steppes():
+    m = Map('burning_steppes', 1024, 1536,
+            Palette([wg.TERRAIN_STEPPES, wg.BUILDINGS, wg.FARM, wg.ROCK_STEPPES]),
+            Palette([wg.OVERHEAD_LEAVES_DUSK, wg.OVERHEAD_ROOFS_DUSK]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m, dead=True)
+
+    # --- black rock all around, Blackrock Mountain in the middle, a pass south into Redridge --------------
+    rock = wg.corners(m, 'rock')
+    rock[0:3, :] = 1
+    rock[0:5, 50:60] = 1                # the cliff Uldaman is cut into
+    rock[:, 0:3] = 1
+    rock[:, 62:] = 1
+    rock[94:, :] = 1
+    rock[94:, 48:53] = 0                # the pass south into Redridge
+    wg.corners_ellipse(m, 'rock', 456, 680, 296, 112)       # Blackrock Mountain
+    for cx, cy, rx, ry in ((496, 1072, 48, 36), (760, 560, 40, 30), (152, 560, 60, 40), (312, 1260, 36, 24),
+                           (968, 1184, 30, 24), (640, 120, 36, 28)):
+        wg.corners_ellipse(m, 'rock', cx, cy, rx, ry)
+    wg.paint_cliffs(m)
+
+    # --- lava: the Cauldron in the Searing Gorge, pools at the mountain's foot and on Flame Crest ---------
+    wg.corners_ellipse(m, 'water', 504, 264, 128, 80)                               # the Cauldron
+    for cx, cy, rx, ry in ((280, 840, 56, 24), (712, 836, 52, 22), (880, 980, 40, 28), (928, 1068, 28, 20),
+                           (176, 1456, 40, 20)):
+        wg.corners_ellipse(m, 'water', cx, cy, rx, ry)
+    wg.paint_water(m)
+
+    # --- roads ---------------------------------------------------------------------------------------
+    roads = [
+        [(800, 1536), (800, 1440), (816, 1320)],                                   # from Redridge
+        [(816, 1320), (872, 1180), (880, 1000), (872, 880), (880, 720), (872, 480), (880, 300),
+         (888, 160)],                                                            # north past the mountain
+        [(872, 880), (720, 900), (600, 880), (512, 840)],                           # to the Depths' gate
+        [(816, 1320), (640, 1260), (480, 1200), (300, 1140), (200, 1060)],         # the Stronghold
+        [(480, 1200), (360, 1320), (240, 1380)],                                    # the Ruins of Thaurissan
+        [(872, 480), (720, 432), (520, 400), (360, 380), (240, 300), (200, 220)],  # Thorium Point
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.1)
+    wg.paint_paths(m)
+
+    # --- Morgan's Vigil ---------------------------------------------------------------------------------
+    roofs = dict(roof_colors=('red_d', 'red_m', 'red_l'), roof_ridge='red_l', roof_outline='o2')
+    keep_house = wg.house(m, 840, 1264, 96, 96, style='stone', **roofs)
+    inn = wg.house(m, 728, 1376, 80, 80, style='stone', **roofs)
+    wg.cobbles(m, 728, 1336, 104, 32)
+    wg.cobbles(m, 936, 1408, 32, 32)
+    wg.anvil(m, 944, 1416)
+    wg.crates(m, 912, 1384)
+    m.npc('MAXWELL', keep_house[0], keep_house[1] + 4)
+    m.npc('ORALIUS', 776, 1352)
+    m.npc('JALINDE', 960, 1376)
+    m.npc('RAGGED_JOHN', 704, 1312)
+    m.npc('VIGIL_INNKEEPER', inn[0], inn[1] + 4)
+    m.npc('VIGIL_TRADER', 872, 1440)
+    m.npc('VIGIL_SMITH', 968, 1440)
+    m.npc('BORGUS', 952, 1336)
+    m.point('flight', 952, 1356)
+    m.point('vigil_respawn', 832, 1392)
+    m.area(688, 1256, 320, 240, "Morgan's Vigil")
+
+    # --- Flame Crest: the black dragonkin -------------------------------------------------------------
+    m.spawn_group('BLACK_DRAGONSPAWN', 800, 1020, 6, 70, seed=401)
+    m.spawn_group('BLACK_BROODLING', 940, 1000, 5, 50, seed=402)
+    m.area(704, 900, 304, 260, 'Flame Crest')
+
+    # --- Dreadmaul Rock: the Firegut ogres --------------------------------------------------------------
+    wg.camp(m, 408, 1128, 176, 80, tents=[(416, 1136), (536, 1136)], fire=(480, 1168))
+    m.spawn_group('FIREGUT_BRUTE', 440, 1000, 6, 70, seed=403)
+    m.spawn_group('FIREGUT_OGRE_MAGE', 560, 1160, 4, 40, seed=404)
+    m.spawn('GORGONOCH', 496, 1144)
+    m.area(376, 980, 260, 240, 'Dreadmaul Rock')
+
+    # --- Blackrock Stronghold: the orcs and Gor'tesh ------------------------------------------------------
+    wg.camp(m, 64, 904, 224, 160, tents=[(72, 912), (136, 912), (232, 912), (72, 1008)], fire=(176, 976))
+    wg.crates(m, 248, 1024)
+    m.spawn_group('BLACKROCK_SOLDIER', 200, 1100, 7, 90, seed=405)
+    m.spawn_group('BLACKROCK_WARLOCK', 120, 980, 4, 50, seed=406)
+    m.spawn_group('BLACKROCK_WORG', 320, 960, 4, 50, seed=407)
+    m.spawn('GOR_TESH', 176, 944)
+    m.area(48, 880, 320, 300, 'Blackrock Stronghold')
+
+    # --- the Ruins of Thaurissan: Dark Iron agents and the War Reaver ---------------------------------------
+    for rx, ry, seed in ((80, 1280, 61), (192, 1312, 62), (96, 1408, 63), (256, 1440, 64), (336, 1376, 65)):
+        ruin(m, rx, ry, 64, 32, seed=seed)
+    m.spawn_group('THAURISSAN_AGENT', 200, 1380, 5, 70, seed=408)
+    m.spawn_group('THAURISSAN_FIREWALKER', 300, 1340, 4, 50, seed=409)
+    m.spawn('WAR_REAVER', 400, 1300)
+    m.area(48, 1240, 400, 260, 'Ruins of Thaurissan', 'RUINS_OF_THAURISSAN')
+    # Behind the dead wood east of the ruins, a clearing no road leads to.
+    wg.forest(m, trees, 504, 1344, 136, 136, holes=[(536, 1400, 64, 56)], secrets=[(552, 1344, 32, 56)])
+    m.chest(61, 568, 1436, 52)
+
+    # --- Blackrock Mountain: the gate of the Depths --------------------------------------------------------
+    gate = mountain_gate(m, 448, 736, 128, 80, gate_w=48)
+    m.warp(gate[0] - 16, gate[1] - 12, 32, 8, 'blackrock_depths', 'entry')
+    m.point('brd_exit', gate[0], gate[1] + 20)
+    m.point('brd_respawn', gate[0] + 120, gate[1] + 56)
+    m.area(160, 560, 600, 300, 'Blackrock Mountain')
+
+    # --- the Searing Gorge: Thorium Point, the Cauldron and its slave pens -------------------------------------
+    wg.camp(m, 72, 120, 208, 128, tents=[(80, 128), (232, 128)], fire=(152, 176))
+    wg.crates(m, 104, 208)
+    wg.cobbles(m, 288, 200, 32, 32)
+    wg.anvil(m, 296, 208)
+    m.npc('KALARAN', 152, 224)
+    m.npc('LOKHTOS', 208, 232)
+    m.point('thorium_respawn', 176, 264)
+    m.area(56, 104, 240, 176, 'Thorium Point')
+    for fx in (344, 600):
+        wg.fence(m, fx, 360, 64)
+    m.spawn_group('DARK_IRON_SLAVER', 440, 380, 6, 60, seed=410)
+    m.spawn_group('DARK_IRON_TASKMASTER', 600, 360, 4, 50, seed=411)
+    m.spawn('OVERSEER_MALTORIUS', 664, 392)
+    m.spawn_group('SEARING_LAVA_SPIDER', 360, 140, 4, 50, seed=412)
+    m.spawn_group('SEARING_LAVA_SPIDER', 680, 200, 4, 50, seed=413)
+    m.area(320, 120, 400, 320, 'The Cauldron')
+    wg.forest(m, trees, 64, 296, 120, 160, holes=[(88, 336, 64, 64)], secrets=[(104, 400, 40, 56)])
+    m.chest(62, 120, 372, 51)
+    m.area(0, 0, 720, 520, 'Searing Gorge')
+
+    # --- the Badlands' edge: Hammertoe's Digsite and the gate of Uldaman --------------------------------------
+    dig_site(m, 744, 248, 112, 64)
+    dig_site(m, 904, 328, 80, 56)
+    wg.camp(m, 760, 168, 104, 64, tents=[(768, 176)], fire=(824, 200))
+    m.npc('RYEDOL', 816, 232)
+    m.npc('THELDURIN', 856, 216)
+    m.point('digsite_respawn', 840, 248)
+    gate = mountain_gate(m, 832, 40, 112, 80, gate_w=40)
+    m.warp(gate[0] - 16, gate[1] - 12, 32, 8, 'uldaman', 'entry')
+    m.point('uldaman_exit', gate[0], gate[1] + 20)
+    m.spawn_group('STONEVAULT_ROCKCHEWER', 800, 420, 6, 60, seed=414)
+    m.spawn_group('SHADOWFORGE_SURVEYOR', 944, 300, 4, 40, seed=415)
+    m.area(720, 0, 304, 520, 'Badlands')
+    m.area(728, 140, 280, 240, "Hammertoe's Digsite")
+
+    # --- the dead woods and the ash ------------------------------------------------------------------
+    rng = np.random.default_rng(91)
+    zones = [(688, 1256, 320, 240), (704, 900, 304, 260), (376, 980, 260, 240), (48, 880, 320, 300),
+             (48, 1240, 400, 260), (504, 1360, 136, 136), (56, 104, 240, 176), (320, 120, 400, 320),
+             (64, 296, 120, 160), (728, 140, 280, 240), (440, 720, 144, 200)]
+    zone_trees(m, trees, rng, 60, (60, 60, 900, 1420), zones)
+    wg.scatter_props(m, rng, 70, STEPPES_PROPS, (60, 60, 900, 1420), avoid=zones)
+
+    m.point('from_redridge', 800, 1512)
+    m.warp(776, 1528, 48, 8, 'redridge', 'from_steppes')
+    m.area(0, 520, 1024, 1016, 'Burning Steppes')
+    m.music = 'STEPPES'
+    m.save()
+    return m
+
+
+def sunken_stairs(m, x, y, w=64, h=48):
+    """The Temple of Atal'Hakkar's top, sunk in the pool: mossy stone blocks around a dark stairway down.
+    x, y, w, h are multiples of 8. Returns the stairway's bottom-center."""
+    g = m.ground
+    wg.bricks(m, g, x, y, w, h, 'stone_d', 'stone_m', 'stone_l')
+    g[y:y + 3, x:x + w] = m.g('stone_h')
+    g[y + h - 1, x:x + w] = m.g('outline')
+    g[y:y + h, x] = m.g('outline')
+    g[y:y + h, x + w - 1] = m.g('outline')
+    sx = x + w // 2 - 16
+    for row, sy in enumerate(range(y + h - 32, y + h, 4)):
+        g[sy:sy + 4, sx:sx + 32] = m.g('outline' if row < 3 else ('stone_d' if row % 2 else 'stone_m'))
+    g[y + h - 36:y + h - 32, sx - 4:sx + 36] = m.g('banner')
+    m.block(x, y, w, h)
+    m.unblock(sx, y + h - 24, 32, 24)
+    return (sx + 16, y + h)
+
+
+def gen_swamp_of_sorrows():
+    m = Map('swamp_of_sorrows', 768, 768,
+            Palette([wg.TERRAIN_SWAMP, wg.BUILDINGS, wg.FARM, wg.ROCK_SWAMP]),
+            Palette([wg.OVERHEAD_LEAVES_WETLANDS, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    border_rock(m, (4, 4, 3, 3), seed=9)
+    wg.paint_cliffs(m)
+
+    # --- the Pool of Tears, with the temple's top sunk in the middle --------------------------------------
+    wg.corners_ellipse(m, 'water', 448, 360, 176, 128)
+    wg.corners_ellipse(m, 'water', 200, 260, 64, 40)
+    water = wg.corners(m, 'water')
+    ys, xs = np.mgrid[0:water.shape[0], 0:water.shape[1]]
+    water[((xs - 448 / 16) / (64 / 16)) ** 2 + ((ys - 344 / 16) / (48 / 16)) ** 2 <= 1] = 0    # the island
+    wg.paint_water(m)
+    wg.corners_along(m, 'path', [(96, 640), (200, 600), (320, 560), (440, 540), (448, 512)], 1.1)
+    wg.corners_along(m, 'path', [(200, 600), (160, 480), (120, 360)], 1.1)
+    wg.paint_paths(m)
+    ns_bridge(m, 432, 384, 32, 112)
+    stairs = sunken_stairs(m, 416, 296)
+    m.warp(stairs[0] - 16, stairs[1] - 12, 32, 8, 'sunken_temple', 'entry')
+    m.point('temple_exit', stairs[0], stairs[1] + 20)
+    m.spawn_group('ATAL_AI_EXILE', 448, 540, 4, 50, seed=421)
+    m.spawn('ATAL_AI_EXILE', 400, 372)
+    m.spawn('ATAL_AI_EXILE', 496, 372)
+    m.area(256, 216, 384, 300, 'Pool of Tears')
+
+    # --- the Explorers' camp, with its gryphon ------------------------------------------------------------
+    wg.camp(m, 56, 576, 176, 112, tents=[(64, 584), (160, 584)], fire=(112, 632))
+    wg.crates(m, 200, 656)
+    m.npc('BROHANN', 104, 680)
+    m.npc('MARVON', 152, 672)
+    m.npc('SWAMP_GRYPHON', 216, 616)
+    m.point('flight', 216, 640)
+    m.point('camp_respawn', 144, 704)
+    m.area(40, 560, 220, 170, "Explorers' Camp")
+
+    # --- the swamp's beasts ----------------------------------------------------------------------------
+    m.spawn_group('SAWTOOTH_CROCOLISK', 600, 560, 5, 60, seed=422)
+    m.spawn_group('SAWTOOTH_CROCOLISK', 200, 340, 4, 50, seed=423)
+    m.spawn_group('SWAMP_JAGUAR', 640, 160, 4, 60, seed=424)
+    m.spawn_group('SWAMP_JAGUAR', 320, 120, 3, 50, seed=425)
+    m.area(0, 0, 768, 768, 'Swamp of Sorrows')
+
+    rng = np.random.default_rng(93)
+    zones = [(40, 560, 220, 170), (256, 216, 384, 300), (380, 480, 140, 100)]
+    zone_trees(m, trees, rng, 55, (48, 64, 672, 640), zones)
+    wg.scatter_props(m, rng, 40, ('fern', 'tall_grass', 'bush', 'log', 'fern'), (48, 64, 672, 640), avoid=zones)
+    m.music = 'WETLANDS'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Uldaman, the Sunken Temple and Blackrock Depths
+# ---------------------------------------------------------------------------------------------
+
+# Uldaman: titan halls of sandstone and grey slabs, with the keepers' blue light.
+ULDAMAN = [
+    ('outline', (20, 16, 14)), ('top_d', (52, 44, 36)), ('top_m', (76, 64, 52)),
+    ('wall_d', (104, 88, 68)), ('wall_m', (144, 124, 96)), ('wall_l', (184, 162, 128)),
+    ('floor_d', (92, 88, 84)), ('floor_m', (120, 116, 108)), ('floor_l', (150, 144, 132)),
+    ('iron_d', (40, 48, 64)), ('iron_l', (120, 168, 208)), ('straw', (208, 176, 96)),
+    ('wood', (96, 68, 44)), ('flame', (160, 216, 240)), ('red', (72, 104, 160)),
+]
+
+ULDAMAN_OVERHEAD = ULDAMAN[:6]
+
+# The Temple of Atal'Hakkar: mossy green stone under the swamp, troll red and gold, flooded halls.
+SUNKEN = [
+    ('outline', (14, 20, 16)), ('top_d', (28, 44, 32)), ('top_m', (44, 64, 44)),
+    ('wall_d', (60, 76, 56)), ('wall_m', (88, 108, 76)), ('wall_l', (120, 140, 100)),
+    ('floor_d', (64, 72, 60)), ('floor_m', (86, 96, 80)), ('floor_l', (110, 120, 100)),
+    ('iron_d', (36, 40, 44)), ('iron_l', (176, 184, 168)), ('straw', (208, 176, 72)),
+    ('wood', (88, 64, 40)), ('flame', (120, 232, 120)), ('red', (152, 48, 40)),
+]
+
+SUNKEN_OVERHEAD = SUNKEN[:6]
+
+SUNKEN_WATER = [
+    ('water_d', (20, 48, 44)), ('water_m', (32, 72, 64)), ('water_l', (80, 128, 112)),
+    ('lip', (108, 124, 92)), ('lip_o', (16, 24, 16)), ('lip_d', (64, 80, 56)),
+]
+
+# Blackrock Depths: the Dark Iron city, black stone and molten iron ('straw' is the lava's middle).
+DEPTHS = [
+    ('outline', (16, 12, 12)), ('top_d', (32, 26, 26)), ('top_m', (48, 40, 40)),
+    ('wall_d', (64, 52, 52)), ('wall_m', (92, 76, 72)), ('wall_l', (124, 104, 96)),
+    ('floor_d', (68, 60, 60)), ('floor_m', (90, 80, 78)), ('floor_l', (114, 102, 98)),
+    ('iron_d', (40, 40, 48)), ('iron_l', (150, 150, 164)), ('straw', (248, 140, 36)),
+    ('wood', (100, 66, 40)), ('flame', (252, 224, 112)), ('red', (184, 40, 20)),
+]
+
+DEPTHS_OVERHEAD = DEPTHS[:6]
+
+
+class Depths(Ruins):
+    """Ruins halls with Ironforge's forge props: lava, anvils, pillars and a throne."""
+    lava = Forge.lava
+    anvil = Forge.anvil
+    pillar = Forge.pillar
+    throne = Forge.throne
+
+
+def gen_uldaman():
+    c = Ruins('uldaman', 1024, 1024, ULDAMAN, ULDAMAN_OVERHEAD)
+    m = c.m
+    c.rect(448, 880, 128, 120)      # the dig's tunnel in
+    c.rect(488, 1000, 48, 24)       # the way out
+    c.rect(400, 640, 224, 240)      # the Hall of the Crumbling, Revelosh's
+    c.rect(352, 736, 48, 48)        # passage west
+    c.rect(48, 600, 304, 256)       # the trogg caves, Grimlok's
+    c.rect(624, 736, 48, 48)        # passage east
+    c.rect(672, 600, 304, 256)      # the Shadowforge dig, Galgann's
+    c.rect(904, 856, 48, 24)        # a hidden vault
+    c.rect(872, 880, 112, 88)
+    c.rect(488, 560, 48, 80)        # passage north
+    c.rect(352, 320, 320, 240)      # the Hall of the Keepers
+    c.rect(304, 424, 48, 48)        # passage west
+    c.rect(48, 320, 256, 224)       # Ironaya's chamber
+    c.rect(672, 424, 48, 48)        # passage east
+    c.rect(720, 320, 256, 224)      # the Obsidian Sentinel's hall
+    c.rect(488, 264, 48, 56)        # passage north
+    c.rect(304, 40, 416, 224)       # the Chamber of Khaz'mul, Archaedas's
+    c.render()
+    c.exit(488, 1016, 'burning_steppes', 'uldaman_exit')
+
+    for x in (464, 552):
+        c.crate(x, 900)
+    for x, y in ((424, 660), (584, 660), (424, 820), (584, 820)):
+        c.slab(x, y)
+    c.rug(488, 660, 48, 200)
+    for x, y in ((80, 640), (300, 700), (180, 800)):
+        c.bones(x, y)
+    c.straw(120, 760)
+    c.straw(260, 640)
+    for x, y in ((700, 640), (940, 640)):
+        c.crate(x, y)
+    c.barrel(720, 800)
+    c.rack(860, 604)
+    c.secret(904, 856, 48, 0)
+    m.chest(63, 928, 940, 51)
+    c.crate(888, 900)
+    for x in (384, 624):
+        c.torch(x, 324)
+    for x, y in ((392, 380), (616, 380), (392, 480), (616, 480)):
+        c.crystal(x, y)
+    c.altar(80, 340, 64, 24)
+    c.altar(208, 340, 64, 24)
+    for x, y in ((760, 360), (920, 360), (840, 500)):
+        c.crystal(x, y)
+    c.rug(488, 120, 48, 140)
+    c.altar(480, 56, 64, 24)
+    for x, y in ((344, 64), (664, 64), (344, 200), (664, 200)):
+        c.slab(x, y)
+    for x in (432, 576):
+        c.torch(x, 44)
+
+    m.spawn('STONEVAULT_BRAWLER', 476, 910)
+    m.spawn('STONEVAULT_GEOMANCER', 548, 910)
+    for x, y in ((440, 760), (590, 760), (460, 840)):
+        m.spawn('STONEVAULT_BRAWLER' if x != 590 else 'STONEVAULT_GEOMANCER', x, y)
+    m.spawn('REVELOSH', 512, 700)
+    for x, y in ((100, 700), (280, 660), (100, 820), (260, 800)):
+        m.spawn('STONEVAULT_BRAWLER' if y < 760 else 'STONEVAULT_GEOMANCER', x, y)
+    m.spawn('GRIMLOK', 190, 740)
+    for x, y in ((720, 680), (940, 700), (760, 820), (900, 800)):
+        m.spawn('SHADOWFORGE_DARKCASTER' if x > 800 else 'SHADOWFORGE_RELIC_HUNTER', x, y)
+    m.spawn('GALGANN_FIREHAMMER', 830, 720)
+    for x, y in ((400, 420), (620, 420), (450, 520), (580, 520)):
+        m.spawn('STONE_STEWARD' if y < 480 else 'EARTHEN_CUSTODIAN', x, y)
+    m.spawn('ANCIENT_STONE_KEEPER', 512, 420)
+    for x, y in ((80, 440), (270, 440)):
+        m.spawn('STONE_STEWARD', x, y)
+    m.spawn('IRONAYA', 176, 420)
+    for x, y in ((760, 440), (940, 440)):
+        m.spawn('EARTHEN_CUSTODIAN', x, y)
+    m.spawn('OBSIDIAN_SENTINEL', 848, 420)
+    m.point('wave_a', 360, 100)
+    m.point('wave_b', 664, 100)
+    m.point('wave_c', 360, 220)
+    m.point('wave_d', 664, 220)
+    m.point('event_boss', 512, 112)
+    m.point('khaz_mul', 512, 220)
+    m.area(472, 64, 80, 72, '', 'ALTAR')
+    m.area(0, 0, 1024, 1024, 'Uldaman')
+    m.area(400, 640, 224, 240, 'Hall of the Crumbling')
+    m.area(48, 600, 304, 256, 'The Trogg Caves')
+    m.area(672, 600, 304, 256, 'The Shadowforge Dig')
+    m.area(352, 320, 320, 240, 'Hall of the Keepers')
+    m.area(48, 320, 256, 224, "Ironaya's Chamber")
+    m.area(720, 320, 256, 224, 'Hall of the Sentinel')
+    m.area(304, 40, 416, 224, "Chamber of Khaz'mul")
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
+def gen_sunken_temple():
+    c = Ruins('sunken_temple', 1024, 1024, SUNKEN, SUNKEN_OVERHEAD, extra=(SUNKEN_WATER,))
+    m = c.m
+    c.rect(448, 880, 128, 120)      # the stairs down from the pool
+    c.rect(488, 1000, 48, 24)       # the way out
+    c.rect(488, 800, 48, 80)        # passage north
+    c.rect(304, 360, 416, 440)      # the Hall of Masks, with the six statues and the altar
+    c.rect(256, 560, 48, 48)        # passage west
+    c.rect(48, 440, 208, 280)       # the west halls, the Atal'ai
+    c.rect(720, 560, 48, 48)        # passage east
+    c.rect(768, 440, 208, 280)      # the east halls, flooded
+    c.rect(128, 320, 48, 120)       # passage north-west
+    c.rect(48, 40, 288, 280)        # the Prophet's chamber, Jammal'an's
+    c.rect(848, 320, 48, 120)       # passage north-east
+    c.rect(688, 40, 288, 280)       # the Dreaming Dragons' roost, Weaver's and Dreamscythe's
+    c.rect(488, 296, 48, 64)        # passage north
+    c.rect(384, 40, 256, 256)       # the Sanctum of the Fallen God, Eranikus's
+    c.render()
+    c.exit(488, 1016, 'swamp_of_sorrows', 'temple_exit')
+
+    for x in (464, 552):
+        c.idol(x, 884)
+    # The Hall of Masks: the altar in the middle, the six statues in a ring around it, lit in turn from
+    # the one by the door, clockwise.
+    c.rug(488, 640, 48, 160)
+    c.altar(480, 568, 64, 24)
+    for chest_id, (x, y) in zip(range(65, 71), ((400, 736), (336, 600), (400, 432), (624, 432), (688, 600),
+                                                (624, 736))):
+        c.pylon(chest_id, x, y)
+        c.idol(x - 24, y - 32)
+    c.pool(320, 376, 64, 48)
+    c.pool(640, 376, 64, 48)
+    for x in (72, 216):
+        c.torch(x, 444)
+    for x, y in ((80, 520), (200, 640)):
+        c.idol(x, y)
+    c.pool(800, 480, 144, 64)
+    c.pool(800, 600, 144, 64)
+    c.altar(160, 64, 64, 24)
+    for x, y in ((72, 120), (280, 120), (72, 240), (280, 240)):
+        c.idol(x, y)
+    c.pool(720, 200, 96, 64)
+    c.pool(848, 200, 96, 64)
+    for x in (712, 944):
+        c.torch(x, 44)
+    c.rug(488, 120, 48, 176)
+    c.altar(480, 56, 64, 24)
+    for x, y in ((408, 80), (600, 80)):
+        c.idol(x, y)
+
+    m.spawn('ATAL_AI_WARRIOR', 476, 910)
+    m.spawn('ATAL_AI_WITCH_DOCTOR', 548, 910)
+    for x, y in ((360, 520), (660, 520), (512, 760), (512, 420)):
+        m.spawn('ATAL_AI_WARRIOR' if y > 500 else 'ATAL_AI_WITCH_DOCTOR', x, y)
+    for x, y in ((80, 480), (220, 520), (100, 660), (220, 690)):
+        m.spawn('ATAL_AI_WARRIOR' if y < 600 else 'ATAL_AI_WITCH_DOCTOR', x, y)
+    m.spawn('HAZZAS', 150, 580)
+    for x, y in ((790, 460), (950, 460), (790, 700), (950, 700)):
+        m.spawn('SATURATED_OOZE' if y < 600 else 'NIGHTMARE_WYRMKIN', x, y)
+    m.spawn('MORPHAZ', 870, 580)
+    for x, y in ((80, 160), (300, 160), (120, 280)):
+        m.spawn('ATAL_AI_WITCH_DOCTOR' if x != 120 else 'ATAL_AI_WARRIOR', x, y)
+    m.spawn('OGOM_THE_WRETCHED', 150, 110)
+    m.spawn('JAMMAL_AN_THE_PROPHET', 220, 110)
+    for x, y in ((720, 120), (950, 120), (820, 290)):
+        m.spawn('NIGHTMARE_WYRMKIN', x, y)
+    m.spawn('DREAMSCYTHE', 780, 160)
+    m.spawn('WEAVER', 900, 160)
+    m.spawn('NIGHTMARE_WYRMKIN', 420, 220)
+    m.spawn('NIGHTMARE_WYRMKIN', 600, 220)
+    m.spawn('SHADE_OF_ERANIKUS', 512, 110)
+    m.point('event_boss', 512, 620)
+    m.point('altar', 512, 680)
+    m.area(472, 560, 80, 72, '', 'ALTAR')
+    m.area(0, 0, 1024, 1024, "Temple of Atal'Hakkar")
+    m.area(304, 360, 416, 440, 'Hall of Masks')
+    m.area(48, 440, 208, 280, 'The West Halls')
+    m.area(768, 440, 208, 280, 'The Flooded Halls')
+    m.area(48, 40, 288, 280, "The Prophet's Chamber")
+    m.area(688, 40, 288, 280, 'The Dreaming Roost')
+    m.area(384, 40, 256, 256, 'Sanctum of Eranikus')
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
+def gen_blackrock_depths():
+    c = Depths('blackrock_depths', 1024, 1024, DEPTHS, DEPTHS_OVERHEAD)
+    m = c.m
+    c.rect(416, 880, 192, 120)      # the gate court
+    c.rect(488, 1000, 48, 24)       # the way out
+    c.rect(400, 640, 224, 240)      # the Molten Span, Roccor's
+    c.rect(352, 736, 48, 48)        # passage west
+    c.rect(40, 600, 312, 248)       # the Detention Block, Gerstahn's
+    c.rect(624, 736, 56, 48)        # passage east
+    c.rect(680, 600, 312, 280)      # the Ring of Law
+    c.rect(488, 560, 48, 80)        # passage north
+    c.rect(336, 320, 352, 240)      # Shadowforge City, Angerforge's
+    c.rect(296, 408, 40, 48)        # passage west
+    c.rect(40, 320, 256, 224)       # the Manufactory, Argelmach's
+    c.rect(688, 408, 40, 48)        # passage east
+    c.rect(728, 320, 256, 224)      # the Grim Guzzler
+    c.rect(152, 264, 48, 56)        # passage north-west
+    c.rect(40, 40, 296, 224)        # the Summoners' Tomb, Flamelash's
+    c.rect(488, 264, 48, 56)        # passage north, Magmus's gate
+    c.rect(368, 40, 288, 224)       # the Imperial Seat
+    c.rect(840, 264, 48, 56)        # passage north-east
+    c.rect(688, 40, 296, 224)       # the Black Vault
+    c.render()
+    c.exit(488, 1016, 'burning_steppes', 'brd_exit')
+
+    for x in (440, 568):
+        c.torch(x, 884)
+    for x in (472, 536):
+        c.banner(x, 882)
+    # The Molten Span: a road between two lakes of molten iron.
+    for y in (664, 800):
+        c.lava(408, y, 72, 64)
+        c.lava(544, y, 72, 64)
+    # The Detention Block: cells along the north wall; Windsor waits in the last one, its door open.
+    for x in (56, 128, 200):
+        c.cage(x, 616, 56, 48)
+    c.chains(280, 610)
+    c.desk(120, 760, 48, 24)
+    c.straw(288, 680)
+    # The Ring of Law: an arena of sand inside a ring of stands.
+    c.ledge(696, 616, 280, 32)
+    for x in (712, 952):
+        c.pillar(x, 664)
+    for x in (712, 952):
+        c.pillar(x, 800)
+    for x in (456, 552):
+        c.banner(x, 324)
+    for x, y in ((360, 360), (640, 360), (360, 500), (640, 500)):
+        c.pillar(x, y)
+    c.anvil(420, 460)
+    c.anvil(580, 460)
+    c.rug(488, 340, 48, 220)
+    for x, y in ((60, 360), (240, 360), (80, 480), (220, 480)):
+        c.anvil(x, y)
+    c.lava(120, 420, 80, 48)
+    # The Grim Guzzler: tables, kegs and the bar.
+    c.desk(760, 360, 96, 24)
+    for x, y in ((760, 440), (880, 440), (820, 500)):
+        c.table(x, y, 48, 20)
+    for x in (900, 924, 948):
+        c.barrel(x, 340)
+    c.lava(64, 72, 64, 48)
+    c.lava(248, 72, 64, 48)
+    for x, y in ((80, 180), (260, 180)):
+        c.altar(x - 24, y, 64, 24)
+    c.rug(488, 112, 48, 150)
+    c.throne(488, 52)
+    for x in (392, 616):
+        c.pillar(x, 80)
+    c.lava(392, 180, 48, 48)
+    c.lava(584, 180, 48, 48)
+    for x, y in ((720, 80), (760, 80), (940, 80)):
+        c.crate(x, y)
+    c.rack(860, 44)
+    m.chest(64, 936, 140, 54)
+
+    m.spawn('ANVILRAGE_GUARDSMAN', 456, 910)
+    m.spawn('ANVILRAGE_GUARDSMAN', 568, 910)
+    m.spawn('LORD_ROCCOR', 512, 720)
+    m.spawn('FIREGUARD', 512, 800)
+    for x, y in ((80, 720), (300, 720), (200, 820)):
+        m.spawn('ANVILRAGE_WARDEN', x, y)
+    m.spawn('HIGH_INTERROGATOR_GERSTAHN', 190, 700)
+    m.npc('WINDSOR', 228, 680)
+    for x, y in ((380, 400), (640, 400), (420, 520), (600, 520)):
+        m.spawn('ANVILRAGE_GUARDSMAN' if y < 450 else 'SHADOWFORGE_FLAME_KEEPER', x, y)
+    m.spawn('GENERAL_ANGERFORGE', 512, 380)
+    for x, y in ((80, 420), (250, 420), (160, 500)):
+        m.spawn('RAGEREAVER_GOLEM', x, y)
+    m.spawn('GOLEM_LORD_ARGELMACH', 160, 380)
+    m.npc('PLUGGER', 800, 392)
+    m.npc('GUZZLER_PATRON', 904, 488)
+    for x, y in ((120, 140), (240, 140)):
+        m.spawn('FIREGUARD', x, y)
+    m.spawn('AMBASSADOR_FLAMELASH', 176, 110)
+    m.spawn('MAGMUS', 512, 290)
+    m.spawn('ANVILRAGE_WARDEN', 420, 140)
+    m.spawn('ANVILRAGE_WARDEN', 600, 140)
+    m.spawn('PRINCESS_MOIRA_BRONZEBEARD', 560, 120)
+    m.spawn('EMPEROR_DAGRAN_THAURISSAN', 512, 112)
+    for x, y in ((740, 120), (900, 180)):
+        m.spawn('SHADOWFORGE_FLAME_KEEPER', x, y)
+    m.point('wave_a', 720, 720)
+    m.point('wave_b', 960, 720)
+    m.point('wave_c', 720, 840)
+    m.point('wave_d', 960, 840)
+    m.point('event_boss', 836, 700)
+    m.point('ring', 836, 860)
+    m.point('guzzler', 840, 520)
+    m.point('imperial_seat', 512, 240)
+    m.area(776, 680, 128, 120, '', 'ARENA')
+    m.area(0, 0, 1024, 1024, 'Blackrock Depths')
+    m.area(400, 640, 224, 240, 'The Molten Span')
+    m.area(40, 600, 312, 248, 'Detention Block')
+    m.area(680, 600, 312, 280, 'The Ring of Law')
+    m.area(336, 320, 352, 240, 'Shadowforge City')
+    m.area(40, 320, 256, 224, 'The Manufactory')
+    m.area(728, 320, 256, 224, 'The Grim Guzzler')
+    m.area(40, 40, 296, 224, "Summoners' Tomb")
+    m.area(368, 40, 288, 224, 'The Imperial Seat')
+    m.area(688, 40, 296, 224, 'The Black Vault')
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
 GENERATORS = {
     'abbey': gen_abbey,
     'inn': gen_inn,
@@ -5880,6 +6473,11 @@ GENERATORS = {
     'desolace': gen_desolace,
     'maraudon': gen_maraudon,
     'dire_maul': gen_dire_maul,
+    'burning_steppes': gen_burning_steppes,
+    'swamp_of_sorrows': gen_swamp_of_sorrows,
+    'uldaman': gen_uldaman,
+    'sunken_temple': gen_sunken_temple,
+    'blackrock_depths': gen_blackrock_depths,
 }
 
 
@@ -5893,7 +6491,8 @@ def main():
               'duskwood': 'from_elwynn', 'silverpine': 'flight', 'dun_morogh': 'from_ironforge',
               'wetlands': 'from_dun_morogh', 'darkshore': 'from_menethil', 'hillsbrad': 'from_wetlands',
               'tirisfal': 'flight', 'stranglethorn': 'from_duskwood', 'tanaris': 'from_booty_bay',
-              'thousand_needles': 'from_tanaris', 'feralas': 'from_needles', 'desolace': 'from_feralas'}
+              'thousand_needles': 'from_tanaris', 'feralas': 'from_needles', 'desolace': 'from_feralas',
+              'burning_steppes': 'from_redridge', 'swamp_of_sorrows': 'flight'}
     for name, m in maps.items():
         m.check_reachable(starts.get(name, 'entry'))
     write_minimaps(maps)
@@ -5903,9 +6502,10 @@ def main():
 # Interiors show the map their door leads to.
 MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'duskwood', 'silverpine', 'ironforge', 'dun_morogh',
             'wetlands', 'darkshore', 'hillsbrad', 'tirisfal', 'stranglethorn', 'tanaris', 'thousand_needles',
-            'feralas', 'desolace', 'echo_ridge', 'fargodeep', 'deadmines', 'stockade', 'shadowfang',
-            'blackfathom_deeps', 'gnomeregan', 'sm_graveyard', 'sm_library', 'sm_armory', 'sm_cathedral',
-            'razorfen_kraul', 'razorfen_downs', 'zul_farrak', 'maraudon', 'dire_maul']
+            'feralas', 'desolace', 'burning_steppes', 'swamp_of_sorrows', 'echo_ridge', 'fargodeep', 'deadmines',
+            'stockade', 'shadowfang', 'blackfathom_deeps', 'gnomeregan', 'sm_graveyard', 'sm_library', 'sm_armory',
+            'sm_cathedral', 'razorfen_kraul', 'razorfen_downs', 'zul_farrak', 'maraudon', 'dire_maul', 'uldaman',
+            'sunken_temple', 'blackrock_depths']
 
 
 def write_minimaps(maps):

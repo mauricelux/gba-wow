@@ -3,6 +3,7 @@
 #include "bn_math.h"
 
 #include "gw_character.h"
+#include "gw_map_burning_steppes.h"
 #include "gw_map_darkshore.h"
 #include "gw_map_desolace.h"
 #include "gw_map_duskwood.h"
@@ -13,6 +14,7 @@
 #include "gw_map_silverpine.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_stranglethorn.h"
+#include "gw_map_swamp_of_sorrows.h"
 #include "gw_map_tanaris.h"
 #include "gw_map_tirisfal.h"
 #include "gw_map_westfall.h"
@@ -38,6 +40,9 @@ namespace
         { "Gadgetzan", npc_id::BERA, map_id::TANARIS, map_data::tanaris::flight, 1, 62, 92 },
         { "Feathermoon", npc_id::FYLDREN, map_id::FERALAS, map_data::feralas::flight, 1, 22, 68 },
         { "Nijel's Point", npc_id::BARITANAS, map_id::DESOLACE, map_data::desolace::flight, 1, 38, 44 },
+        { "Morgan's Vigil", npc_id::BORGUS, map_id::BURNING_STEPPES, map_data::burning_steppes::flight, 0, 56, 80 },
+        { "Swamp of Sorrows", npc_id::SWAMP_GRYPHON, map_id::SWAMP_OF_SORROWS, map_data::swamp_of_sorrows::flight,
+          0, 62, 99 },
     };
 
     static_assert(sizeof(flights) / sizeof(flights[0]) == int(flight_id::COUNT));

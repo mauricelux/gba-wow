@@ -82,6 +82,11 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Princess Theradras hurls boulders in Zaetar's Grave](docs/screenshots/m23_theradras.png)
 ![Immol'thar breaks out of his prison in Dire Maul](docs/screenshots/m23_immolthar.png)
 ![The Gordok bow to the hero who killed their king](docs/screenshots/m23_gordok.png)
+![Morgan's Vigil under Blackrock Mountain in the Burning Steppes](docs/screenshots/m24_vigil.png)
+![Uldaman's altar wakes the vault's guardians before Archaedas](docs/screenshots/m24_altar.png)
+![The Sunken Temple's statues light only in order](docs/screenshots/m24_statues.png)
+![The Ring of Law in Blackrock Depths](docs/screenshots/m24_ring.png)
+![Princess Moira comes free of Emperor Thaurissan's spell](docs/screenshots/m24_moira.png)
 
 ## Status
 
@@ -91,22 +96,24 @@ subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Mark
 then walk freely from Northshire Abbey down to Goldshire, west to the city of Stormwind, south to
 Westfall, east to the Redridge Mountains and south to Duskwood, ride the tram to Ironforge and go on
 to the Wetlands, Darkshore, the Hillsbrad Foothills and the jungle of Stranglethorn Vale, sail from
-Booty Bay to Tanaris and Thousand Needles, go on west to Feralas and north to Desolace, take on 158 quests from Northshire to Feathermoon, fight with auto-attack and your subclass's abilities, loot and equip about 920 items, buy and sell at vendors, carry as much
+Booty Bay to Tanaris and Thousand Needles, go on west to Feralas and north to Desolace, cross back to the Burning Steppes, the Searing Gorge, the Badlands and the Swamp of Sorrows, take on 184 quests from Northshire to Morgan's Vigil, fight with auto-attack and your subclass's abilities, loot and equip about 1,110 items, buy and sell at vendors, carry as much
 as you like in bags sorted by type, quality, level or age, use 19 ability slots on three bars and 4
 item slots, buy new abilities and ranks from your class trainer, spend talent points from level 10,
 face the elites Princess, Hogger, Gath'Ilzogg, Mor'Ladim, Stitches, Balgaras, Nek'rosh, Gravis
-Slipknot, Bloodfang, King Bangalash, Fleet Master Firallon, Caliph Scorpidsting, Andre Firebeard, Lord Shalzaru, Old Grizzlegut and the Gordunni Warlord, clear the kobolds out of Echo Ridge and
-Fargodeep mines, hunt for 48 hidden
+Slipknot, Bloodfang, King Bangalash, Fleet Master Firallon, Caliph Scorpidsting, Andre Firebeard, Lord Shalzaru, Old Grizzlegut, the Gordunni Warlord, Overseer Maltorius, Gor'tesh, Gorgon'och and the War Reaver, clear the kobolds out of Echo Ridge and
+Fargodeep mines, hunt for 55 hidden
 treasure chests, fish in Lake Everstill, hearth home to an inn, ride from level 30, fly by gryphon
 between Stormwind, Sentinel Hill, Lakeshire, Darkshire, Silverpine Forest, Ironforge, Menethil Harbor,
-Southshore, the Argent Watch in Tirisfal, Booty Bay, Gadgetzan, Feathermoon and Nijel's Point, take the Deeprun Tram and the boats to
+Southshore, the Argent Watch in Tirisfal, Booty Bay, Gadgetzan, Feathermoon, Nijel's Point, Morgan's Vigil and the Swamp of Sorrows, take the Deeprun Tram and the boats to
 Auberdine, Tanaris and Feathermoon, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
 Edwin VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, keep the night
 off Darkshire, climb Shadowfang Keep to Archmage Arugal, light the braziers of Blackfathom Deeps for
 Aku'mai, take Gnomeregan back from Mekgineer Thermaplugg, clear all four wings of the Scarlet
 Monastery up to High Inquisitor Whitemane, break Razorfen Kraul, ring the gong of Razorfen Downs, storm the
 pyramid of Zul'Farrak up to Chief Ukorz Sandscalp, wade through the poison of Maraudon to Princess Theradras,
-break Immol'thar's prison in Dire Maul and take King Gordok's throne, and save to the cartridge. Every zone has
+break Immol'thar's prison in Dire Maul and take King Gordok's throne, wake Archaedas in Uldaman, light the
+Sunken Temple's statues in order down to the Shade of Eranikus, fight in Blackrock Depths' Ring of Law and
+free Princess Moira from Emperor Thaurissan, and save to the cartridge. Every zone has
 its own music, and elite fights switch to a boss tune.
 
 Following the quests in order takes a hero to level 15 at the end of Westfall, about 19 after
@@ -114,7 +121,9 @@ Redridge, 20 after the Deadmines, 21 in the Stockade, about 25 at the door of Sh
 after Arugal, about 28 after the Wetlands, 30 after Thermaplugg, 33 after Hillsbrad, 35 after
 Arcanist Doan, about 37 halfway through Stranglethorn, 39 after King Bangalash, 40 after High
 Inquisitor Whitemane, about 41 after Razorfen Kraul, 43 after Amnennar the Coldbringer, 45 after
-Chief Ukorz Sandscalp, about 47 after Feralas, 49 after Princess Theradras and 51 after King Gordok,
+Chief Ukorz Sandscalp, about 47 after Feralas, 49 after Princess Theradras, 51 after King Gordok,
+about 52 after Archaedas, 53 after the Burning Steppes, 54 after the Shade of Eranikus and 55 after
+Emperor Thaurissan,
 without grinding. The level cap is
 60: the road there is planned in [docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12
 to M26).
@@ -145,7 +154,8 @@ to M26).
 | M21 Stranglethorn and Scarlet Monastery 2 | Stranglethorn Vale with the Rebel Camp, Nesingwary's Expedition and Booty Bay (35 to 40), 19 quests, the Armory and the Cathedral with four bosses | Done |
 | M22 Tanaris and the Razorfens | Kalimdor by boat from Booty Bay: Tanaris with Gadgetzan and Thousand Needles' Mirage Raceway (40 to 45), 20 quests, Razorfen Kraul, Razorfen Downs with its gong and Zul'Farrak with its gong and pyramid | Done |
 | M23 Feralas and Desolace | Feralas with Feathermoon Stronghold and Desolace with Nijel's Point (45 to 50), 20 quests, Maraudon with its poison pools and Princess Theradras, Dire Maul with Immol'thar's pylons and the Gordok tribute | Done |
-| M24 to M26 | The Burning Steppes to the Plaguelands, 6 new dungeons, Onyxia and the new ending | Planned |
+| M24 Burning Steppes | The Burning Steppes with Morgan's Vigil, the Searing Gorge with Thorium Point, the Badlands and the Swamp of Sorrows (50 to 55), 26 quests, Uldaman with Archaedas's altar, the Sunken Temple with its six statues and Blackrock Depths with the Ring of Law and the Imperial Seat | Done |
+| M25 and M26 | The Plaguelands, Blackrock Spire, Scholomance, Stratholme, Onyxia and the new ending | Planned |
 
 ## Controls
 
@@ -218,7 +228,8 @@ indoors gets you off. Gryphon masters (Dungar Longdrink in the Valley of Heroes,
 Hill, Ariena Stormfeather in Lakeshire, Felicia Maline in Darkshire, Gryphon Rider Hask at the scouts'
 camp in Silverpine, Gryth Thurden in Ironforge, Shellei Brondir in Menethil Harbor, Darla Harris in
 Southshore, Gyll in Booty Bay; on Kalimdor, the hippogryph master Caylais Moonfeather in Auberdine and
-Bera Stonehammer in Gadgetzan, Fyldren Moonfeather in Feathermoon and Baritanas Skyriver at Nijel's Point)
+Bera Stonehammer in Gadgetzan, Fyldren Moonfeather in Feathermoon and Baritanas Skyriver at Nijel's Point; back east, Borgus Steelhand at
+Morgan's Vigil and Thaena Lightwing in the Swamp of Sorrows)
 remember you the first time you talk to them and
 fly you to any other one you have met, for a price that grows with the distance: the gryphon crosses
 the continent while the map scrolls under it. The Deeprun Tram leaves from the station house in
@@ -226,7 +237,8 @@ Stormwind's Dwarven District. Its far end is Ironforge Station, whose stairs cli
 Ironforge. Boats work the same way: walk to the end of Menethil Harbor's pier to sail to Auberdine on
 Darkshore, and back from Auberdine's dock; Booty Bay's south pier sails to Steamwheedle Port on the
 coast of Tanaris, and back; the pier on the Feralas coast sails to Feathermoon Stronghold, and Feathermoon's
-other pier to the Forgotten Coast. Flights stay on their own continent.
+other pier to the Forgotten Coast. A pass in the north of the Redridge Mountains climbs into the Burning
+Steppes. Flights stay on their own continent.
 
 Pets: a Beast Mastery hunter gets *Taming the Beast* from Einris Brightspear at level 10. Tame Beast
 (Utility bar) channels for six seconds on a beast of your level or lower, which fights back
@@ -413,6 +425,39 @@ force field that holds until the four pylons in the gardens and the prison are s
 beside each); then Prince Tortheldrin, who fed the demon, waits in the Athenaeum. In the north wing,
 kill King Gordok, and his adviser Cho'Rush joins in; the ogres left standing bow to their new king
 and leave. The falls of Princess Theradras and Prince Tortheldrin each end a chapter with a new page.
+
+The Burning Steppes: Shandris sends you back east, through the pass north of Lakeshire into the ash
+and lava under Blackrock Mountain. At Morgan's Vigil, Marshal Maxwell wants the Blackrock orcs and
+their elite Brute Lord, Gor'tesh, broken and the Dark Iron's relics taken from the Ruins of
+Thaurissan; Oralius sends you against the Firegut ogres and Gorgon'och on Dreadmaul Rock, Jalinde
+Summerdrake against the black dragonkin of the Flame Crest, and Ragged John tells tall tales. The
+War Reaver, a rare elite, walks the ruins. North of the mountain, the Searing Gorge holds Thorium
+Point, where Kalaran Windblade wants the Cauldron's slavers and Overseer Maltorius dead and Lokhtos
+Darkbargainer sells the Thorium Brotherhood's gear; the Badlands' dig site in the north-east holds
+Prospector Ryedol and Theldurin the Lost. The Steppes' pools are lava: nothing bites there. Jalinde
+marks the Swamp of Sorrows on your flight map for Brohann Caskbelly and Marvon Rivetseeker.
+
+Uldaman: the titan vault under the Badlands is level 49 to 52. Revelosh calls lightning, Grimlok
+rages, Galgann Firehammer rings himself with fire, the Ancient Stone Keeper raises sand storms,
+Ironaya's smash throws you back and the Obsidian Sentinel sheds shards as it cracks. Touch the
+altar in the Chamber of Khaz'mul to wake the vault's guardians in two waves, then Archaedas, who
+wakes more of them as he weakens. His fall ends the chapter with a new page.
+
+The Sunken Temple: stairs on the island in the Pool of Tears lead down to it, level 52 to 54. Its
+six statues around the altar light only in order, clockwise from the door; then the altar wakes
+Atal'alarion. Jammal'an the Prophet fights with Ogom the Wretched at his side, and the four green
+dragons of the Nightmare (Hazzas, Morphaz, Dreamscythe and Weaver) breathe on whoever stands in
+front of them, as does the Shade of Eranikus, who also calls whelps out of the dream. His fall ends
+a chapter with a new page.
+
+Blackrock Depths: the gate in Blackrock Mountain's south side opens on the Dark Iron's city, level
+52 to 55. Lord Roccor guards the entrance, and Marshal Windsor waits in the Detention Block behind
+High Interrogator Gerstahn. In the Ring of Law, start a fight and two waves of guards come in, then
+one of four champions picked by the crowd. Golem Lord Argelmach wakes his golems, General
+Angerforge calls his reservists, Ambassador Flamelash calls burning spirits out of the lava and
+Magmus guards the gate of the Imperial Seat. Plugger Spazzring keeps the Grim Guzzler's bar.
+Emperor Dagran Thaurissan fights with Princess Moira Bronzebeard healing him; when he dies, his
+spell on her breaks. The Royal Rescue ends the chapter with a new page.
 
 Auto-attack keeps going after a kill if another enemy is on you, and turns to whoever is hitting you
 when your target is out of reach.

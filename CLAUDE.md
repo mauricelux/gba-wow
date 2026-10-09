@@ -123,3 +123,19 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
 - M23 added the enemy families `SATYR`, `ELEMENTAL`, `PLANT`, `TAUREN` and `HIGHBORNE`, and the head
   patches `satyr` and `tauren` in `gen_characters.py`. A creature taller than the default dead frame
   needs its own dead pose (`OWN_DEAD`, like the lasher).
+- `Depths(Ruins)` in `gen_world.py` builds Blackrock Depths with Ironforge's forge props; its lava
+  is solid. The Burning Steppes' terrain (`TERRAIN_STEPPES`) puts lava in the water roles, so
+  `game::_interact` refuses to fish on `BURNING_STEPPES`. Redridge has a pass in its north edge
+  (`from_steppes`).
+- Event areas: `is_event_area` in `gw_maps.cpp` lists `GONG`, `CAGE`, `PRISON`, `ALTAR` and `ARENA`.
+  An `event_def` with a `sealed_message` holds while the map's braziers are not all lit (Dire Maul's
+  prison, the Sunken Temple's altar); `champion = true` (the Ring of Law) replaces `bosses[0]` with
+  one of `champions` picked at random. At most 8 events (`_events_done` is a byte).
+- The Sunken Temple's braziers are its six statues (chests 65 to 70): `chests::open` lights one only
+  when every brazier with a lower id is lit (`statues()`).
+- `combat::_update_breath(boss, name, kind)` is a dragon's breath: a telegraph `breath_reach` pixels
+  in front of the boss, toward the hero, while it holds still. Emperor Thaurissan's death removes
+  Princess Moira (she yields). Jammal'an pulls Ogom like King Gordok pulls Cho'Rush.
+- M24 added the enemy families `DRAGONKIN` and `TITAN`, the `dragon` creature drawer (wings on the
+  back, its own dead pose) and the `dwarf_staff` sheet. Quest kill objectives take an optional second
+  enemy (`kill(..., enemy2)`), like `collect`.

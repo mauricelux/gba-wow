@@ -680,6 +680,29 @@ def song_feralas():
     return s
 
 
+def song_steppes():
+    """The Burning Steppes: ash and fire under Blackrock Mountain, a grim march in C minor over war drums."""
+    s = Song('steppes', 7)
+    drums = 'k...k.s.k...k.s.|k.k.k.s.k...s.s.'
+    a = arrange(['Cm', 'Ab', 'Cm', 'Bb'],
+                'C5 - - - - - G4 - C5 - D5 - Eb5 - - - '
+                'Eb5 - - - D5 - C5 - Ab4 - - - - - - - '
+                'G5 - - - F5 - Eb5 - D5 - Eb5 - C5 - - - '
+                'D5 - - - Bb4 - - - F5 - - - - - - - ',
+                lead='organ', lead_volume=38, harmony='pad', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=20, bass='eighths', drums=drums)
+    b = arrange(['Fm', 'Cm', 'Ab', 'G'],
+                'F5 - - - Ab5 - - - C6 - - - Bb5 - Ab5 - '
+                'G5 - - - - - Eb5 - C5 - - - - - - - '
+                'Ab5 - - - G5 - F5 - Eb5 - - - C5 - - - '
+                'B4 - - - D5 - - - G5 - - - - - - - ',
+                lead='lead', lead_volume=34, harmony='arp', harmony_sample='organ', harmony_volume=16,
+                bass='root_fifth', drums=drums)
+    s.add(a)
+    s.add(b)
+    return s
+
+
 def song_dungeon():
     s = Song('dungeon', 10)
     drums = 'k...............|k.......k.......'
@@ -786,7 +809,7 @@ def main():
     for song in (song_title(), song_elwynn(), song_town(), song_westfall(), song_dungeon(), song_boss(),
                  song_redridge(), song_duskwood(), song_ironforge(), song_wetlands(), song_hillsbrad(),
                  song_monastery(), song_stranglethorn(), song_tanaris(),
-                 song_feralas()):
+                 song_feralas(), song_steppes()):
         write_mod(song)
         print(f'{song.name}.mod: {len(song.patterns)} patterns, {len(song.order)} in order')
     write_sounds()

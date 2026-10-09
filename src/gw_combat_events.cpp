@@ -5,8 +5,11 @@
 #include "gw_audio.h"
 #include "gw_enemies.h"
 #include "gw_hud.h"
+#include "gw_map_blackrock_depths.h"
 #include "gw_map_dire_maul.h"
 #include "gw_map_razorfen_downs.h"
+#include "gw_map_sunken_temple.h"
+#include "gw_map_uldaman.h"
 #include "gw_map_zul_farrak.h"
 #include "gw_player.h"
 #include "gw_types.h"
@@ -16,13 +19,15 @@
 namespace gw
 {
 
-// Dungeon events the player starts with A: a gong rung, a cage opened or a prison's field broken,
-// inside an area_id::GONG, CAGE or PRISON area (event_area_at). A prison's field holds until every
-// pylon (brazier) of the map is shut down; then it has no waves, only its boss. An event sends waves of enemies at the hero from its spots, then its
-// bosses. A gong sends one wave per ring, so the hero can eat between them; the cage sends its waves
-// one after another, with a breather in between. An event lives only while the map is loaded: dying
-// or running off ends it, and the hero can try again; once its bosses are dead it stays done until
-// the map is loaded again, like any dungeon boss.
+// Dungeon events the player starts with A: a gong rung, a cage opened, a prison's field broken, an
+// altar woken or a fight in the ring called, inside an area_id::GONG, CAGE, PRISON, ALTAR or ARENA
+// area (event_area_at). A sealed event (a prison, the Sunken Temple's altar) holds until every brazier
+// of the map is lit (or pylon shut down). An event sends waves of enemies at the hero from its spots,
+// then its bosses; the Ring of Law sends one champion picked at random. A gong sends one wave per ring,
+// so the hero can eat between them; the cage sends its waves one after another, with a breather in
+// between. An event lives only while the map is loaded: dying or running off ends it, and the hero can
+// try again; once its bosses are dead it stays done until the map is loaded again, like any dungeon
+// boss.
 
 namespace
 {
@@ -48,16 +53,31 @@ namespace
         int pause;                  // frames between a beaten wave and the next; 0: the next waits for a ring
         point_def boss_spot;
         enemy_id bosses[2];
+        const char* sealed_message = nullptr;   // while the map's braziers are not all lit
+        const char* sealed_hint = nullptr;
+        bool champion = false;                  // bosses[0] is one of the champions, picked at random
     };
 
+    namespace brd = map_data::blackrock_depths;
     namespace dm = map_data::dire_maul;
     namespace rfd = map_data::razorfen_downs;
+    namespace st = map_data::sunken_temple;
+    namespace ul = map_data::uldaman;
     namespace zf = map_data::zul_farrak;
 
     constexpr enemy_id fiend = enemy_id::TOMB_FIEND;
     constexpr enemy_id slave = enemy_id::SANDFURY_SLAVE;
     constexpr enemy_id drudge = enemy_id::SANDFURY_DRUDGE;
+    constexpr enemy_id guardian = enemy_id::EARTHEN_GUARDIAN;
+    constexpr enemy_id warder = enemy_id::VAULT_WARDER;
+    constexpr enemy_id guardsman = enemy_id::ANVILRAGE_GUARDSMAN;
+    constexpr enemy_id warden = enemy_id::ANVILRAGE_WARDEN;
     constexpr enemy_id none = enemy_id::NONE;
+
+    // The Ring of Law's champions.
+    constexpr enemy_id champions[] = {
+        enemy_id::GOROSH_THE_DERVISH, enemy_id::GRIZZLE, enemy_id::HEDRUM_THE_CREEPER, enemy_id::OK_THOR_THE_BREAKER
+    };
 
     constexpr event_def events[] = {
         // Razorfen Downs: each ring of the gong calls tomb fiends out of their holes; the third calls
@@ -81,11 +101,45 @@ namespace
         // Dire Maul: with the four pylons shut down, Immol'thar's field falls and the demon comes out.
         { map_id::DIRE_MAUL, area_id::PRISON, "The force field falls!", "", "", "Immol'thar is free!",
           "The prison is empty.", { dm::event_boss }, 1, {}, 0, 0, dm::event_boss,
-          { enemy_id::IMMOL_THAR, none } },
+          { enemy_id::IMMOL_THAR, none }, "The force field holds", "Shut down the four pylons" },
+        // Uldaman: touching the altar wakes the vault's guardians, then Archaedas himself.
+        { map_id::ULDAMAN, area_id::ALTAR, "The vault's guardians wake!", "More guardians wake!", "",
+          "Archaedas wakes!", "The altar is still.",
+          { ul::wave_a, ul::wave_b, ul::wave_c, ul::wave_d }, 4,
+          { { guardian, guardian, none }, { warder, guardian, warder }, {} }, 2, 12 * seconds,
+          ul::event_boss, { enemy_id::ARCHAEDAS, none } },
+        // The Sunken Temple: with the six statues lit in order, the altar wakes Atal'alarion.
+        { map_id::SUNKEN_TEMPLE, area_id::ALTAR, "The altar flares!", "", "", "Atal'alarion rises!",
+          "The altar is still.", { st::event_boss }, 1, {}, 0, 0, st::event_boss,
+          { enemy_id::ATAL_ALARION, none }, "The altar is cold", "Light the six statues in order" },
+        // Blackrock Depths: the Ring of Law sends the guards in, then a champion of the crowd's choice.
+        { map_id::BLACKROCK_DEPTHS, area_id::ARENA, "The crowd roars for blood!", "The gates open again!", "",
+          "A champion enters the ring!", "The ring is empty.",
+          { brd::wave_a, brd::wave_b, brd::wave_c, brd::wave_d }, 4,
+          { { guardsman, warden, none }, { warden, guardsman, warden }, {} }, 2, 12 * seconds,
+          brd::event_boss, { enemy_id::GOROSH_THE_DERVISH, none }, nullptr, nullptr, true },
     };
 
     constexpr int event_count = sizeof(events) / sizeof(events[0]);
     static_assert(event_count <= 8, "combat::_events_done has a bit per event");
+
+    [[nodiscard]] bool event_boss(const event_def& event, enemy_id id)
+    {
+        if(event.champion)
+        {
+            for(enemy_id other : champions)
+            {
+                if(other == id)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return id != enemy_id::NONE && (id == event.bosses[0] || id == event.bosses[1]);
+    }
 
     [[nodiscard]] bool event_enemy(const event_def& event, enemy_id id)
     {
@@ -129,10 +183,10 @@ bool combat::start_event(area_id area, bool sealed)
             return true;
         }
 
-        if(area == area_id::PRISON && sealed)
+        if(event.sealed_message && sealed)
         {
-            _hud.message("The force field holds", ui::color::RED);
-            _hud.message("Shut down the four pylons", ui::color::YELLOW);
+            _hud.message(event.sealed_message, ui::color::RED);
+            _hud.message(event.sealed_hint, ui::color::YELLOW);
             return true;
         }
 
@@ -192,7 +246,7 @@ void combat::_update_event()
         if(item.summoned && item.alive())
         {
             waves_alive |= event_enemy(event, item.id);
-            bosses_alive |= item.id == event.bosses[0] || item.id == event.bosses[1];
+            bosses_alive |= event_boss(event, item.id);
         }
     }
 
@@ -257,10 +311,17 @@ void combat::_update_event()
     {
         for(int slot = 0; slot < 2; ++slot)
         {
-            if(event.bosses[slot] != enemy_id::NONE)
+            enemy_id boss = event.bosses[slot];
+
+            if(event.champion && slot == 0)
+            {
+                boss = champions[random_range(0, int(sizeof(champions) / sizeof(champions[0])) - 1)];
+            }
+
+            if(boss != enemy_id::NONE)
             {
                 bn::fixed_point position(event.boss_spot.x + slot * 28, event.boss_spot.y);
-                _enemies.summon(event.bosses[slot], position);
+                _enemies.summon(boss, position);
                 _effects.burst(position, projectile_kind::SHADOW);
             }
         }
@@ -280,7 +341,7 @@ void combat::_event_boss_killed(const enemy& boss)
 
     const event_def& event = events[_event];
 
-    if(boss.id != event.bosses[0] && boss.id != event.bosses[1])
+    if(! event_boss(event, boss.id))
     {
         return;
     }
@@ -289,7 +350,7 @@ void combat::_event_boss_killed(const enemy& boss)
     {
         const enemy& item = _enemies.at(index);
 
-        if(item.summoned && item.alive() && (item.id == event.bosses[0] || item.id == event.bosses[1]))
+        if(item.summoned && item.alive() && event_boss(event, item.id))
         {
             return;
         }

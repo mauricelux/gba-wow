@@ -399,7 +399,7 @@ void game::_interact()
         return;
     }
 
-    // A gong, a cage or a prison starts a dungeon event.
+    // A gong, a cage, a prison, an altar or the ring starts a dungeon event.
     area_id event = event_area_at(world::map(), _player.position().x().floor_integer(),
                                   _player.position().y().floor_integer());
 
@@ -412,6 +412,13 @@ void game::_interact()
 
     if(! _combat.in_combat() && _water_ahead(spot))
     {
+        // The Steppes' pools are lava.
+        if(world::map().id == map_id::BURNING_STEPPES)
+        {
+            _hud.message("Nothing lives in the lava", ui::color::WHITE);
+            return;
+        }
+
         if(_combat.start_fishing())
         {
             _effects.burst(spot, projectile_kind::FROST);

@@ -37,6 +37,10 @@ namespace
     constexpr uint8_t gadgetzan_smith = 18;
     constexpr uint8_t feathermoon_goods = 19;
     constexpr uint8_t feathermoon_smith = 20;
+    constexpr uint8_t vigil_goods = 21;
+    constexpr uint8_t vigil_smith = 22;
+    constexpr uint8_t thorium_brotherhood = 23;
+    constexpr uint8_t grim_guzzler = 24;
 
     constexpr npc_info npcs[] = {
         { "", "", l::PEASANT, 0, c::WARRIOR, 0, "" },
@@ -377,6 +381,46 @@ namespace
         // Dire Maul
         { "Shen'dralar Ancient", "", l::SHENDRALAR_ANCIENT, 0, c::WARRIOR, 0,
           "We fed a demon to keep our magic. Now it will eat us all." },
+        // The Burning Steppes
+        { "Marshal Maxwell", "", l::MARSHAL, 0, c::WARRIOR, 0,
+          "Blackrock Mountain looms over us. Orcs, ogres and worse come down every day." },
+        { "Oralius", "", l::ORALIUS, 0, c::WARRIOR, 0,
+          "The Firegut ogres of Dreadmaul Rock burn everything they can reach." },
+        { "Jalinde Summerdrake", "", l::JALINDE_SUMMERDRAKE, 0, c::WARRIOR, 0,
+          "Black dragons nest on the Flame Crest. Their master sleeps under the mountain." },
+        { "Ragged John", "", l::RAGGED_JOHN, 0, c::WARRIOR, 0,
+          "Sit down, friend! Did I ever tell you how I beat a black dragon at drinking?" },
+        { "Innkeeper Brianna", "Innkeeper", l::INNKEEPER, innkeeper, c::WARRIOR, vigil_goods,
+          "Ash in the beer, ash in the bread. You get used to it." },
+        { "Mallory Dunwood", "Trade Goods", l::MERCHANT, vendor, c::WARRIOR, vigil_goods,
+          "Supplies come over the pass from Lakeshire. When the orcs let them." },
+        { "Haldor Ashforge", "Blacksmith", l::SMITH, vendor, c::WARRIOR, vigil_smith,
+          "Thorium steel, forged in the heat of the Steppes. It won't melt on you." },
+        { "Borgus Steelhand", "Gryphon Master", l::GRYPHON_MASTER, flight_master, c::WARRIOR, 0,
+          "My gryphons hate the smoke. Fly high and fast." },
+        // The Searing Gorge and the Badlands
+        { "Kalaran Windblade", "", l::KALARAN_WINDBLADE, 0, c::WARRIOR, 0,
+          "The Dark Iron work slaves to death in the Cauldron. I mean to stop it." },
+        { "Lokhtos Darkbargainer", "The Thorium Brotherhood", l::LOKHTOS_DARKBARGAINER, vendor, c::WARRIOR,
+          thorium_brotherhood, "The Brotherhood broke with the emperor. We sell to friends." },
+        { "Prospector Ryedol", "Explorers' League", l::EXPLORER, 0, c::WARRIOR, 0,
+          "Uldaman! A titan vault under the Badlands, and troggs in it." },
+        { "Theldurin the Lost", "", l::THELDURIN_THE_LOST, 0, c::WARRIOR, 0,
+          "I lost my brother Agmond in Uldaman. I won't lose the vault as well." },
+        // The Swamp of Sorrows
+        { "Brohann Caskbelly", "Explorers' League", l::PROSPECTOR_WHELGAR, 0, c::WARRIOR, 0,
+          "The Atal'ai sank a temple in the Pool of Tears. They pray in it still." },
+        { "Marvon Rivetseeker", "", l::MARVON_RIVETSEEKER, 0, c::WARRIOR, 0,
+          "The temple's statues hold a pattern. Light them in the right order, I say." },
+        { "Thaena Lightwing", "Gryphon Master", l::GRYPHON_MASTER_F, flight_master, c::WARRIOR, 0,
+          "The swamp eats gryphons. Fly straight over it." },
+        // Blackrock Depths
+        { "Marshal Windsor", "", l::MARSHAL_WINDSOR, 0, c::WARRIOR, 0,
+          "They took us at the mountain's gate. Get me out of this cell!" },
+        { "Plugger Spazzring", "The Grim Guzzler", l::PLUGGER_SPAZZRING, vendor, c::WARRIOR, grim_guzzler,
+          "Drink up, or get out. No fighting in my bar." },
+        { "Grim Patron", "", l::GUZZLER_PATRON, 0, c::WARRIOR, 0,
+          "Thunderbrew's in the cellar. Don't tell Plugger." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

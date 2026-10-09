@@ -96,6 +96,20 @@ namespace
           "into peace. Shandris Feathermoon raises a glass on the island. To the east, harder lands "
           "wait.",
           quest_id::THE_MADNESS_WITHIN },
+        { "The Discs of Norgannon",
+          "Archaedas falls silent, and Prospector Ryedol reads the titans' own record of the world. "
+          "The Explorers' League will be decades studying the discs. The dwarves, it seems, were made "
+          "of stone.",
+          quest_id::THE_DISCS_OF_NORGANNON },
+        { "The Dream Quiets",
+          "The Shade of Eranikus is at rest, and the green dragons over the Swamp of Sorrows sleep "
+          "without nightmares. Down in the temple, the Atal'ai pray to a god who no longer answers.",
+          quest_id::THE_SHADE_OF_ERANIKUS },
+        { "The Royal Rescue",
+          "Emperor Thaurissan is dead and Princess Moira walks free of his spell. Ironforge rings its "
+          "bells, Morgan's Vigil cheers, and high above, the black dragons on Blackrock's peak take note "
+          "of your name. To the north, the Plaguelands wait.",
+          quest_id::THE_ROYAL_RESCUE },
     };
 
     constexpr int story_page_total = sizeof(story_pages) / sizeof(story_pages[0]);

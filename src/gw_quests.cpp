@@ -33,9 +33,9 @@ namespace
 
     constexpr objective_def none = { o::NONE, 0, e::NONE, e::NONE, 0, area_id::NONE, "" };
 
-    [[nodiscard]] constexpr objective_def kill(e enemy, int count, const char* name)
+    [[nodiscard]] constexpr objective_def kill(e enemy, int count, const char* name, e enemy2 = e::NONE)
     {
-        return { o::KILL, uint8_t(count), enemy, e::NONE, 100, area_id::NONE, name };
+        return { o::KILL, uint8_t(count), enemy, enemy2, 100, area_id::NONE, name };
     }
 
     [[nodiscard]] constexpr objective_def collect(e enemy, int count, int chance, const char* name,
@@ -1938,6 +1938,311 @@ namespace
           n::MARANDIS, n::MARANDIS, 49, 46, qid::NIJELS_POINT,
           { kill(e::PRINCESS_THERADRAS, 1, "Princess Theradras slain"), none, none }, xp(49, 150), money(49),
           { i::ZAETARS_LEGGUARDS, i::SEEDWEAVE_LEGGINGS, i::EARTHWARDEN_PANTS } },
+
+        // --- The Burning Steppes -----------------------------------------------------------------------
+        { "Morgan's Vigil",
+          "The Alliance holds a camp on the far side of Redridge's northern pass: Morgan's Vigil, in "
+          "the Burning Steppes, under Blackrock Mountain. Marshal Maxwell leads it.\n\n"
+          "Fly back east, cross Lakeshire and take the pass north of it.",
+          "Take the pass north of Redridge into the Burning Steppes. Speak with Marshal Maxwell at Morgan's Vigil.",
+          "",
+          "Shandris sent you all the way from Feralas? Then she thinks you can handle the mountain.",
+          n::SHANDRIS, n::MAXWELL, 50, 48, qid::FEATHERMOON_STRONGHOLD,
+          { none, none, none }, xp(50, 25), money(50),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Blackrock Stronghold",
+          "The Blackrock orcs hold the stronghold west of the mountain. Soldiers and warlocks march "
+          "out of it to burn our patrols.\n\n"
+          "Hit them before they hit us again.",
+          "Kill 8 Blackrock Soldiers and 6 Blackrock Warlocks at Blackrock Stronghold.",
+          "The orcs still march.",
+          "That will keep the Blackrock busy. Good work.",
+          n::MAXWELL, n::MAXWELL, 51, 49, qid::MORGANS_VIGIL,
+          { kill(e::BLACKROCK_SOLDIER, 8, "Blackrock Soldier slain"),
+            kill(e::BLACKROCK_WARLOCK, 6, "Blackrock Warlock slain"), none }, xp(51, 40), money(51),
+          { i::BLACKROCK_GAUNTLETS, i::FLAMEWEAVE_GLOVES, i::ASHEN_GRIPS } },
+
+        { "Gor'tesh the Brute Lord",
+          "The orcs of the stronghold answer to Gor'tesh, the Brute Lord. He stays behind his walls "
+          "with his worgs and sends the others to die.\n\n"
+          "Go in and kill him.",
+          "Kill Gor'tesh the Brute Lord at Blackrock Stronghold.",
+          "Gor'tesh still lives.",
+          "The Brute Lord is dead! The stronghold will tear itself apart. Choose your reward.",
+          n::MAXWELL, n::MAXWELL, 52, 50, qid::BLACKROCK_STRONGHOLD,
+          { kill(e::GOR_TESH, 1, "Gor'tesh slain"), none, none }, xp(52, 60), money(52),
+          { i::GOR_TESHS_CLEAVER, i::BRUTE_LORDS_STAFF, i::STRONGHOLD_LONGBOW } },
+
+        { "Thaurissan Relics",
+          "The Ruins of Thaurissan lie south-west of here: the old city the Dark Iron dwarves burned "
+          "when they called up the Firelord. Their agents dig there for relics of it.\n\n"
+          "Take the relics before the Dark Iron do.",
+          "Bring 8 Thaurissan Relics from the Dark Iron in the Ruins of Thaurissan to Marshal Maxwell.",
+          "The Dark Iron still dig.",
+          "Eight of them. These won't fuel any more fire magic. Thank you.",
+          n::MAXWELL, n::MAXWELL, 51, 49, qid::MORGANS_VIGIL,
+          { collect(e::THAURISSAN_AGENT, 8, 50, "Thaurissan Relic", e::THAURISSAN_FIREWALKER), none, none },
+          xp(51, 40), money(51),
+          { i::RELICWARDEN_SABATONS, i::CINDERWEAVE_SLIPPERS, i::RUINWALKER_BOOTS } },
+
+        { "Extinguish the Firegut",
+          "The Firegut ogres of Dreadmaul Rock, in the middle of the Steppes, burn every farm they "
+          "find. Brutes up front and ogre mages behind.\n\n"
+          "Put out their fires.",
+          "Kill 8 Firegut Brutes and 5 Firegut Ogre Mages at Dreadmaul Rock.",
+          "The Firegut still burn the land.",
+          "Fewer fires on the horizon. Well done.",
+          n::ORALIUS, n::ORALIUS, 51, 49, qid::MORGANS_VIGIL,
+          { kill(e::FIREGUT_BRUTE, 8, "Firegut Brute slain"),
+            kill(e::FIREGUT_OGRE_MAGE, 5, "Firegut Ogre Mage slain"), none }, xp(51, 40), money(51),
+          { i::FIREGUT_LEGGUARDS, i::FIREGUT_LEGGINGS, i::FIREGUT_PANTS } },
+
+        { "Gorgon'och",
+          "The Firegut follow a shaman called Gorgon'och. He sits on top of Dreadmaul Rock and throws "
+          "fire at anything that climbs it.\n\n"
+          "Climb it anyway.",
+          "Kill Gorgon'och on Dreadmaul Rock.",
+          "Gorgon'och still burns.",
+          "The Firegut's chief is dead. Their fire is out. Take this.",
+          n::ORALIUS, n::ORALIUS, 52, 50, qid::EXTINGUISH_THE_FIREGUT,
+          { kill(e::GORGONOCH, 1, "Gorgon'och slain"), none, none }, xp(52, 60), money(52),
+          { i::DREADMAUL_HAUBERK, i::DREADMAUL_ROBE, i::DREADMAUL_VEST } },
+
+        { "Dragonkin Menace",
+          "Black dragonspawn and broodlings nest on the Flame Crest, north-east of here. They serve "
+          "Nefarian, the black dragon who rules the mountain's peak.\n\n"
+          "Thin their numbers before they grow.",
+          "Kill 8 Black Dragonspawn and 6 Black Broodlings on the Flame Crest.",
+          "The dragonkin still gather.",
+          "That will slow them down. The dragon on the peak will feel it.",
+          n::JALINDE, n::JALINDE, 52, 50, qid::MORGANS_VIGIL,
+          { kill(e::BLACK_DRAGONSPAWN, 8, "Black Dragonspawn slain"),
+            kill(e::BLACK_BROODLING, 6, "Black Broodling slain"), none }, xp(52, 40), money(52),
+          { i::DRAKEFIRE_HELM, i::DRAKEFIRE_HOOD, i::DRAKEHIDE_CAP } },
+
+        { "Ragged John's Neverending Tale",
+          "Did I tell you about Thaurissan? Before the fire, it was the greatest city of the Dark Iron. "
+          "Then they called the Firelord and the whole thing burned.\n\n"
+          "Go and see the ruins for yourself, south-west of here. Then come back and tell me I lie!",
+          "Find the Ruins of Thaurissan in the south-west of the Burning Steppes, then return to Ragged John.",
+          "Seen it yet?",
+          "Ha! Told you so. Here, take this. I won it off a dwarf. Or a dragon. Can't remember.",
+          n::RAGGED_JOHN, n::RAGGED_JOHN, 52, 50, qid::MORGANS_VIGIL,
+          { explore(area_id::RUINS_OF_THAURISSAN, "Ruins of Thaurissan found"), none, none }, xp(52, 40),
+          money(52), { i::RAGGED_CUDGEL, i::STORYTELLERS_STAFF, i::VAGABONDS_RIFLE } },
+
+        // --- The Searing Gorge ---------------------------------------------------------------------------
+        { "The Slave Pens",
+          "North of the mountain lies the Searing Gorge, and in it the Cauldron: a pit where the Dark "
+          "Iron work slaves to death in their mines.\n\n"
+          "Kill their slavers and their taskmasters.",
+          "Kill 8 Dark Iron Slavers and 6 Dark Iron Taskmasters in the Cauldron.",
+          "The whips still crack in the Cauldron.",
+          "The slaves ran for the hills. Thank you, friend.",
+          n::KALARAN, n::KALARAN, 50, 48, qid::NONE,
+          { kill(e::DARK_IRON_SLAVER, 8, "Dark Iron Slaver slain"),
+            kill(e::DARK_IRON_TASKMASTER, 6, "Taskmaster slain"), none }, xp(50, 40), money(50),
+          { i::SLAVEDRIVER_GAUNTLETS, i::CAULDRON_GLOVES, i::SEARING_GRIPS } },
+
+        { "Overseer Maltorius",
+          "Overseer Maltorius runs the Cauldron. He stands by the lava and laughs while the slaves "
+          "fall in.\n\n"
+          "Push him in instead. Or just kill him.",
+          "Kill Overseer Maltorius in the Cauldron.",
+          "Maltorius still laughs.",
+          "The overseer is dead and the pens stand open. The Brotherhood will hear of this.",
+          n::KALARAN, n::KALARAN, 51, 49, qid::THE_SLAVE_PENS,
+          { kill(e::OVERSEER_MALTORIUS, 1, "Overseer Maltorius slain"), none, none }, xp(51, 60), money(51),
+          { i::OVERSEERS_LEGPLATES, i::OVERSEERS_LEGGINGS, i::OVERSEERS_PANTS } },
+
+        { "Fiery Menace!",
+          "Spiders live in the Gorge's lava: searing lava spiders, with fire in their bite. They "
+          "creep into our camp at night.\n\n"
+          "Kill eight of them.",
+          "Kill 8 Searing Lava Spiders in the Searing Gorge.",
+          "The spiders still crawl.",
+          "No more fire in my bedroll. Thanks.",
+          n::KALARAN, n::KALARAN, 50, 48, qid::NONE,
+          { kill(e::SEARING_LAVA_SPIDER, 8, "Searing Lava Spider slain"), none, none }, xp(50, 40), money(50),
+          { i::LAVAWALKER_SABATONS, i::EMBERSPUN_SLIPPERS, i::LAVASTRIDER_BOOTS } },
+
+        // --- The Badlands and Uldaman ------------------------------------------------------------------
+        { "Uldaman Reborn",
+          "Our dig at Hammertoe's camp is overrun. Stonevault troggs dig up from below, and Dark Iron "
+          "surveyors come to steal what we found.\n\n"
+          "Clear them off the dig.",
+          "Kill 8 Stonevault Rockchewers and 5 Shadowforge Surveyors in the Badlands.",
+          "The dig is still overrun.",
+          "The dig is ours again. Now the vault itself.",
+          n::RYEDOL, n::RYEDOL, 50, 48, qid::NONE,
+          { kill(e::STONEVAULT_ROCKCHEWER, 8, "Rockchewer slain"),
+            kill(e::SHADOWFORGE_SURVEYOR, 5, "Surveyor slain"), none }, xp(50, 40), money(50),
+          { i::DIGSITE_HAUBERK, i::EXCAVATORS_ROBE, i::TROGGHIDE_VEST } },
+
+        { "Power in Uldaman",
+          "Inside Uldaman, the Dark Iron dig for the titans' power. Galgann Firehammer leads them, "
+          "and an obsidian sentinel guards the deep halls.\n\n"
+          "Stop Galgann, and break the sentinel.",
+          "Kill Galgann Firehammer and the Obsidian Sentinel in Uldaman.",
+          "The Dark Iron still dig in the vault.",
+          "Galgann dead and the sentinel broken! Now the way to the vault is open.",
+          n::RYEDOL, n::RYEDOL, 51, 49, qid::ULDAMAN_REBORN,
+          { kill(e::GALGANN_FIREHAMMER, 1, "Galgann Firehammer slain"),
+            kill(e::OBSIDIAN_SENTINEL, 1, "Obsidian Sentinel slain"), none }, xp(51, 60), money(51),
+          { i::POWERSTONE_SABATONS, i::POWERSTONE_SLIPPERS, i::POWERSTONE_BOOTS } },
+
+        { "The Discs of Norgannon",
+          "In the deepest hall of Uldaman lie the Discs of Norgannon: the titans' own record of the "
+          "world. Archaedas, the stone watcher, guards them.\n\n"
+          "Wake him at the altar and end him. His guardians will wake with him.",
+          "Wake Archaedas at the altar in Uldaman's deepest hall and kill him.",
+          "Archaedas still guards the discs.",
+          "The discs! The story of the world, written by the titans themselves. You've made history.",
+          n::RYEDOL, n::RYEDOL, 52, 50, qid::POWER_IN_ULDAMAN,
+          { kill(e::ARCHAEDAS, 1, "Archaedas slain"), none, none }, xp(52, 75), money(52),
+          { i::BREASTPLATE_OF_NORGANNON, i::ROBE_OF_NORGANNON, i::VEST_OF_NORGANNON } },
+
+        { "The Stone Keepers",
+          "Uldaman's keepers are stone that walks. The Ancient Stone Keeper guards the west hall, and "
+          "Ironaya, a giant of iron, the east.\n\n"
+          "Bring them both down.",
+          "Kill the Ancient Stone Keeper and Ironaya in Uldaman.",
+          "The keepers still walk.",
+          "Both of them? Then the vault is truly open. Thank you.",
+          n::THELDURIN, n::THELDURIN, 51, 49, qid::NONE,
+          { kill(e::ANCIENT_STONE_KEEPER, 1, "Ancient Stone Keeper slain"),
+            kill(e::IRONAYA, 1, "Ironaya slain"), none }, xp(51, 60), money(51),
+          { i::STONEWARD_GAUNTLETS, i::STONEWARD_GLOVES, i::STONEWARD_GRIPS } },
+
+        { "Agmond's Fate",
+          "My brother Agmond went into Uldaman and never came out. The troggs got him, I know it. "
+          "Revelosh and Grimlok lead them.\n\n"
+          "Make them pay.",
+          "Kill Revelosh and Grimlok in Uldaman.",
+          "His killers still live.",
+          "It's done, then. Rest well, brother.",
+          n::THELDURIN, n::THELDURIN, 50, 48, qid::NONE,
+          { kill(e::REVELOSH, 1, "Revelosh slain"), kill(e::GRIMLOK, 1, "Grimlok slain"), none }, xp(50, 60),
+          money(50), { i::AGMONDS_LEGGUARDS, i::EXPLORERS_LEGGINGS, i::TROGGSLAYER_PANTS } },
+
+        // --- The Swamp of Sorrows and the Sunken Temple -----------------------------------------------
+        { "The Sunken Temple",
+          "The green dragons sleep in the Swamp of Sorrows, south of here, over a drowned temple. "
+          "Something there stirs their dreams. Brohann Caskbelly of the Explorers' League camps by it.\n\n"
+          "Fly to the swamp. I have marked it on your map.",
+          "Fly to the Swamp of Sorrows and speak with Brohann Caskbelly.",
+          "",
+          "Jalinde sent you? Good. That temple is no place to go alone.",
+          n::JALINDE, n::BROHANN, 52, 50, qid::MORGANS_VIGIL,
+          { none, none, none }, xp(52, 25), money(52),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Sawtooth Snappers",
+          "The crocolisks of the swamp have teeth like saws, and the jaguars hunt anything that "
+          "steps off the path.\n\n"
+          "Clear the way to the temple.",
+          "Kill 8 Sawtooth Crocolisks and 5 Swamp Jaguars in the Swamp of Sorrows.",
+          "The swamp still bites.",
+          "The path is clearer. Mind your boots in there.",
+          n::MARVON, n::MARVON, 52, 50, qid::THE_SUNKEN_TEMPLE,
+          { kill(e::SAWTOOTH_CROCOLISK, 8, "Sawtooth Crocolisk slain"),
+            kill(e::SWAMP_JAGUAR, 5, "Swamp Jaguar slain"), none }, xp(52, 40), money(52),
+          { i::SWAMPSCALE_HAUBERK, i::BOGWEAVE_ROBE, i::SNAPPERHIDE_VEST } },
+
+        { "Into the Temple of Atal'Hakkar",
+          "The Atal'ai trolls sank their temple to hide their god, Hakkar. They still pray in it, "
+          "warriors and witch doctors.\n\n"
+          "Go down the stairs on the island and break their worship.",
+          "Kill 10 Atal'ai Warriors or Witch Doctors in the Sunken Temple.",
+          "The Atal'ai still pray.",
+          "Their prayers are broken. But something worse stirs below.",
+          n::BROHANN, n::BROHANN, 53, 51, qid::THE_SUNKEN_TEMPLE,
+          { kill(e::ATAL_AI_WARRIOR, 10, "Atal'ai slain", e::ATAL_AI_WITCH_DOCTOR), none, none }, xp(53, 40),
+          money(53),
+          { i::ATAL_AI_SABATONS, i::HAKKARI_SLIPPERS, i::BLOODLOA_BOOTS } },
+
+        { "The Prophet and the Guardian",
+          "Six statues stand around the temple's altar. Light them in the right order and the altar "
+          "wakes its guardian, Atal'alarion. Their prophet, Jammal'an, hides deeper in.\n\n"
+          "Wake the guardian and kill him, then the prophet.",
+          "Light the six statues in order, wake Atal'alarion and kill him, then kill Jammal'an the Prophet.",
+          "The temple's secrets still sleep.",
+          "The guardian and the prophet both! Hakkar won't come through this temple now.",
+          n::MARVON, n::MARVON, 53, 51, qid::SAWTOOTH_SNAPPERS,
+          { kill(e::ATAL_ALARION, 1, "Atal'alarion slain"),
+            kill(e::JAMMAL_AN_THE_PROPHET, 1, "Jammal'an slain"), none }, xp(53, 60), money(53),
+          { i::PROPHETS_LEGPLATES, i::PROPHETS_LEGGINGS, i::PROPHETS_PANTS } },
+
+        { "The Shade of Eranikus",
+          "Deep in the temple, a green dragon was trapped in the Nightmare: Eranikus, or what is left "
+          "of him. His shade poisons the dreams of the whole swamp.\n\n"
+          "Put him to rest. Keep out of his breath.",
+          "Kill the Shade of Eranikus in the depths of the Sunken Temple.",
+          "The shade still haunts the dream.",
+          "The swamp sleeps quietly for the first time in years. Thank you.",
+          n::BROHANN, n::BROHANN, 54, 52, qid::INTO_THE_TEMPLE_OF_ATAL_HAKKAR,
+          { kill(e::SHADE_OF_ERANIKUS, 1, "Shade of Eranikus slain"), none, none }, xp(54, 75), money(54),
+          { i::DREAMWALKERS_HAUBERK, i::DREAMWALKERS_ROBE, i::DREAMWALKERS_VEST } },
+
+        // --- Blackrock Depths ----------------------------------------------------------------------------
+        { "Marshal Windsor",
+          "Marshal Windsor led a party into Blackrock Mountain weeks ago. None came back. If he lives, "
+          "he's in the Dark Iron's prison, deep in the mountain.\n\n"
+          "The gate is in the mountain's south side. Find him.",
+          "Find Marshal Windsor in the Detention Block of Blackrock Depths.",
+          "",
+          "You came for me? Maxwell never forgets a man. Listen closely.",
+          n::MAXWELL, n::WINDSOR, 53, 51, qid::MORGANS_VIGIL,
+          { none, none, none }, xp(53, 25), money(53),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Jail Break!",
+          "Gerstahn, the high interrogator, holds the keys to the cells. Lord Roccor, a lord of fire, "
+          "guards the way out.\n\n"
+          "Kill them both and I can walk out of here. Then tell Maxwell I'm coming home.",
+          "Kill High Interrogator Gerstahn and Lord Roccor in Blackrock Depths, then return to Marshal Maxwell.",
+          "Is Windsor free?",
+          "Windsor is out! And he brought word of the emperor's plans. Take this, hero.",
+          n::WINDSOR, n::MAXWELL, 54, 52, qid::MARSHAL_WINDSOR,
+          { kill(e::HIGH_INTERROGATOR_GERSTAHN, 1, "Gerstahn slain"),
+            kill(e::LORD_ROCCOR, 1, "Lord Roccor slain"), none }, xp(54, 60), money(54),
+          { i::JAILBREAKER_GAUNTLETS, i::WARDENS_GLOVES, i::LOCKPICKERS_GRIPS } },
+
+        { "The Dark Iron Army",
+          "Windsor says the Dark Iron build an army in the mountain. General Angerforge drills the "
+          "soldiers; Golem Lord Argelmach builds the golems.\n\n"
+          "Kill them both before the army marches.",
+          "Kill General Angerforge and Golem Lord Argelmach in Blackrock Depths.",
+          "The army still drills.",
+          "No general and no golems. The Dark Iron won't march this year.",
+          n::MAXWELL, n::MAXWELL, 54, 52, qid::JAIL_BREAK,
+          { kill(e::GENERAL_ANGERFORGE, 1, "General Angerforge slain"),
+            kill(e::GOLEM_LORD_ARGELMACH, 1, "Argelmach slain"), none }, xp(54, 60), money(54),
+          { i::ANGERFORGE_HELM, i::ANGERFORGE_COWL, i::ANGERFORGE_MASK } },
+
+        { "Disharmony of Fire",
+          "Ragnaros's servants walk in the depths: Ambassador Flamelash, who calls burning spirits, "
+          "and Magmus, who guards the emperor's gate.\n\n"
+          "The Brotherhood wants them both put out.",
+          "Kill Ambassador Flamelash and Magmus in Blackrock Depths.",
+          "The fire still burns below.",
+          "The Firelord's servants, gone? The Brotherhood will remember your name.",
+          n::LOKHTOS, n::LOKHTOS, 54, 52, qid::NONE,
+          { kill(e::AMBASSADOR_FLAMELASH, 1, "Flamelash slain"), kill(e::MAGMUS, 1, "Magmus slain"), none },
+          xp(54, 60), money(54),
+          { i::EMBERFORGED_SABATONS, i::FLAMEWOVEN_SLIPPERS, i::CINDERHIDE_BOOTS } },
+
+        { "The Royal Rescue",
+          "Windsor brought terrible news: Princess Moira Bronzebeard, King Magni's daughter, is in the "
+          "mountain. Emperor Dagran Thaurissan took her, and they say she has fallen under his spell.\n\n"
+          "Find the Imperial Seat at the heart of the depths and kill the emperor. That will break it.",
+          "Kill Emperor Dagran Thaurissan at the Imperial Seat in Blackrock Depths.",
+          "Is the princess free?",
+          "The emperor is dead and Moira is free. All of Ironforge owes you, hero.",
+          n::MAXWELL, n::MAXWELL, 55, 52, qid::JAIL_BREAK,
+          { kill(e::EMPEROR_DAGRAN_THAURISSAN, 1, "Emperor Thaurissan slain"), none, none }, xp(55, 100),
+          money(55), { i::BRONZEBEARD_LEGPLATES, i::BRONZEBEARD_LEGGINGS, i::BRONZEBEARD_PANTS } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));
@@ -2073,6 +2378,12 @@ void accept_quest(quest_id quest)
     if(quest == quest_id::DOWN_THE_SCARLET_PATH)
     {
         (void) discover_flight(flight_id::ARGENT_WATCH);
+    }
+
+    // The swamp lies past Deadwind Pass: The Sunken Temple marks the explorers' camp the same way.
+    if(quest == quest_id::THE_SUNKEN_TEMPLE)
+    {
+        (void) discover_flight(flight_id::SWAMP_OF_SORROWS);
     }
 
     (void) complete_if_done(quest);

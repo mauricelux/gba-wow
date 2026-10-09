@@ -117,7 +117,9 @@ enum class enemy_family : uint8_t
     ELEMENTAL,
     PLANT,
     TAUREN,
-    HIGHBORNE
+    HIGHBORNE,
+    DRAGONKIN,
+    TITAN
 };
 
 enum class enemy_effect : uint8_t
