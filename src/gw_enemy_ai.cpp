@@ -213,6 +213,13 @@ bool combat::_enemy_can_use(int index, int slot, int player_distance_squared) co
     int range = def.range;
     bool in_reach = player_distance_squared <= range * range;
 
+    // Fighting the pet, it only looks after itself and its friends.
+    if(item.on_pet && (def.effect == enemy_effect::HIT || def.effect == enemy_effect::CHARGE ||
+                       def.effect == enemy_effect::BLINK))
+    {
+        return false;
+    }
+
     switch(def.effect)
     {
 

@@ -18,6 +18,7 @@
 #include "gw_maps.h"
 #include "gw_menu.h"
 #include "gw_npcs.h"
+#include "gw_pet.h"
 #include "gw_player.h"
 #include "gw_zone_banner.h"
 
@@ -47,6 +48,7 @@ private:
     npcs _npcs;
     chests _chests;
     hud _hud;
+    pet _pet;
     combat _combat;
     dialog _dialog;
     menu _menu;

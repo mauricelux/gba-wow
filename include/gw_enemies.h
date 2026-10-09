@@ -94,6 +94,10 @@ struct enemy
     bool summoned = false;      // added during a fight, removed when it ends
     // Table abilities (gw_enemy_abilities): casting, charging, fleeing and its own buffs
     enemy_ability_state ai;
+    // Who it fights: the player, or the pet once the pet worries it more.
+    bool on_pet = false;
+    int player_threat = 0;
+    int pet_threat = 0;
     // Loot, rolled on death
     loot_slot loot[4];
     int loot_money = 0;
@@ -165,7 +169,8 @@ public:
 
     void load(const map_info& map);
 
-    void update(const bn::fixed_point& player_feet, bool player_alive);
+    // pet_feet is nullptr while no pet is out.
+    void update(const bn::fixed_point& player_feet, bool player_alive, const bn::fixed_point* pet_feet);
 
     [[nodiscard]] int count() const
     {
@@ -195,6 +200,9 @@ public:
 
     // Applies damage to the enemy. Returns true if it died.
     bool damage(int index, int amount);
+
+    // Takes the enemy off the map without a corpse (tamed); it respawns as if it had died.
+    void remove(int index);
 
     // Holds the enemy for frames; damage breaks it. Bosses can't be held. Returns false if immune.
     bool incapacitate(int index, incapacitate_kind kind, int frames);
@@ -242,7 +250,9 @@ private:
     int _frame = 0;
 
     void _spawn(enemy& item);
-    void _update_enemy(int index, const bn::fixed_point& player_feet, bool player_alive);
+    void _update_enemy(int index, const bn::fixed_point& player_feet, bool player_alive,
+                       const bn::fixed_point* pet_feet);
+    void _pick_victim(int index, const bn::fixed_point* pet_feet);
     void _update_sprite(enemy& item, const bn::fixed_point& player_feet);
     void _update_status(enemy& item);
     void _update_cast_bar(enemy& item, const bn::fixed_point& screen);

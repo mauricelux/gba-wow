@@ -759,7 +759,29 @@ def watcher(step, pose):
     return c.done()
 
 
+def water_elemental(step, pose):
+    """A Water Elemental: a body of churning water with heavy arms, standing on its own wave."""
+    c = Canvas()
+    bob = [0, 1, 2, 1][step]
+    attack = pose == 'attack'
+    c.ellipse(15.5, 26, 9 + (step % 2), 2.5, 'dark', light='main')                    # wave
+    c.poly([(10, 26), (12, 14 + bob), (20, 14 + bob), (22, 26)], 'main', dark='dark', light='light')
+    c.line(12, 23, 15, 19 + bob, 'second', edge=False)                                # swirls
+    c.line(17, 24, 20, 20 + bob, 'second', edge=False)
+    c.ellipse(15.5, 13 + bob, 7, 5, 'main', dark='dark', light='light')               # chest
+    lift = 4 if attack else 0
+    for x in (6, 25):
+        c.ellipse(x, 15 + bob - lift, 3, 4, 'main', dark='dark', light='light')     # arms
+        c.px(x, 12 + bob - lift, 'second')
+    c.ellipse(15.5, 6 + bob, 4, 3.5, 'main', dark='dark', light='light')              # head
+    c.line(13, 3 + bob, 18, 3 + bob, 'second', edge=False)                            # foam crest
+    c.px(14, 6 + bob, 'eye')
+    c.px(17, 6 + bob, 'eye')
+    return c.done()
+
+
 CREATURES = {
+    'water_elemental': water_elemental,
     'wolf': wolf,
     'boar': boar,
     'spider': spider,
@@ -1108,6 +1130,8 @@ CREATURE_LOOKS = {
                                                    extra=(200, 176, 72), weapon=(160, 160, 168))),
     'sneed': ('goblin', creature_palette((88, 152, 64), (152, 48, 40), eye=(24, 24, 24),
                                          extra=(232, 184, 64), weapon=(184, 184, 192))),
+    'water_elemental': ('water_elemental', creature_palette((64, 136, 216), (216, 240, 248),
+                                                            eye=(240, 252, 255), light=(136, 200, 248))),
 }
 
 

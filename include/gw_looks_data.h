@@ -21,6 +21,7 @@
 #include "bn_sprite_items_char_murloc.h"
 #include "bn_sprite_items_char_spider.h"
 #include "bn_sprite_items_char_watcher.h"
+#include "bn_sprite_items_char_water_elemental.h"
 #include "bn_sprite_items_char_wolf.h"
 
 #include "gw_looks.h"
@@ -85,6 +86,7 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_watcher, palettes::harvest_watcher, true },
     { bn::sprite_items::char_goblin, palettes::goblin_engineer, true },
     { bn::sprite_items::char_goblin, palettes::sneed, true },
+    { bn::sprite_items::char_water_elemental, palettes::water_elemental, true },
 };
 
 static_assert(sizeof(look_table) / sizeof(look_table[0]) == int(look_id::COUNT));

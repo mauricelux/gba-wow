@@ -18,7 +18,8 @@ enum class objective_type : uint8_t
     KILL,       // kill count enemies
     COLLECT,    // enemies drop the quest item with chance percent (kept with the quest, not in bags)
     EXPLORE,    // walk into the area
-    TREASURE    // open count treasure chests (chests opened before count too)
+    TREASURE,   // open count treasure chests (chests opened before count too)
+    TAME        // tame count beasts
 };
 
 struct objective_def
@@ -50,6 +51,7 @@ struct quest_def
     int16_t xp;
     int16_t money;              // copper
     item_id rewards[quest_rewards];   // the player picks one
+    subclass_id subclass = subclass_id::NONE;   // only offered to this subclass
 };
 
 [[nodiscard]] const quest_def& get_quest(quest_id quest);
@@ -102,6 +104,8 @@ bool quests_on_kill(enemy_id enemy, hud& hud_ref);
 bool quests_on_explore(const map_info& map, int x, int y, hud& hud_ref);
 
 bool quests_on_chest(hud& hud_ref);
+
+bool quests_on_tame(hud& hud_ref);
 
 }
 

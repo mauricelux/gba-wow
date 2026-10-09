@@ -6,7 +6,8 @@ Usage: check_save.py SAVE [key=value ...]
   Keys: version, race, class, level, xp, money, map, minutes (played), rested and subclass (version 4;
   'None' before subclasses were chosen), sort (of the Bags page), bag_rows (rows in use), combat, utility
   and buffs (abilities on each bar; a save from before the Utility and Buffs bars has only combat),
-  item_bar (Items bar slots set to an item) and flights (flight paths discovered).
+  item_bar (Items bar slots set to an item), flights (flight paths discovered), pet (the tamed beast's
+  enemy_id, 0 for none) and pet_health.
 
 Version 4 saves are two slots of chunks (see src/gw_save.cpp); versions 2 and 3 are one struct at the
 start of SRAM.
@@ -77,6 +78,10 @@ def read_v4(sram):
         elif tag == 12 and character:   # TRAVEL: a bit per flight path discovered
             flights, = struct.unpack_from('<I', payload, position)
             character['flights'] = bin(flights).count('1')
+        elif tag == 13 and character:   # PET: species (an enemy_id, 0 for none), health and flags
+            species, health, flags = struct.unpack_from('<HhB', payload, position)
+            character['pet'] = species
+            character['pet_health'] = health
         position += length
     return character
 

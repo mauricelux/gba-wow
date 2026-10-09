@@ -56,6 +56,7 @@ namespace
         { "Warden's Hall", map_id::STOCKADE, { 680, 88 } },
         { "Stormwind Gryphons", map_id::STORMWIND, map_data::stormwind::flight },
         { "Sentinel Gryphons", map_id::WESTFALL, map_data::westfall::flight },
+        { "Dwarven District", map_id::STORMWIND, { 930, 240 } },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);

@@ -172,6 +172,9 @@ namespace gw::palettes
     constexpr bn::color sneed_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(6, 11, 4), bn::color(11, 19, 8), bn::color(14, 24, 10), bn::color(13, 4, 3), bn::color(19, 6, 5), bn::color(3, 3, 3), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(29, 23, 8), bn::color(17, 13, 4), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(13, 13, 14), bn::color(23, 23, 24) };
     constexpr bn::sprite_palette_item sneed(sneed_colors, bn::bpp_mode::BPP_4);
 
+    constexpr bn::color water_elemental_colors[] = { bn::color(31, 0, 31), bn::color(3, 2, 3), bn::color(4, 10, 16), bn::color(8, 17, 27), bn::color(17, 25, 31), bn::color(18, 21, 21), bn::color(27, 30, 31), bn::color(30, 31, 31), bn::color(21, 20, 18), bn::color(30, 29, 27), bn::color(15, 10, 6), bn::color(9, 6, 3), bn::color(31, 28, 12), bn::color(29, 16, 5), bn::color(9, 9, 9), bn::color(15, 15, 16) };
+    constexpr bn::sprite_palette_item water_elemental(water_elemental_colors, bn::bpp_mode::BPP_4);
+
 }
 
 #endif

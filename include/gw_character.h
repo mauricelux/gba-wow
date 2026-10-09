@@ -56,6 +56,20 @@ struct quest_progress
     uint8_t counts[quest_objectives] = {};
 };
 
+// A hunter's tamed beast, kept between sessions.
+namespace pet_flag
+{
+    constexpr uint8_t DISMISSED = 1;    // sent away with Call Pet
+    constexpr uint8_t PASSIVE = 2;      // follows but doesn't fight
+}
+
+struct pet_data
+{
+    enemy_id species = enemy_id::NONE;  // NONE: no pet
+    int16_t health = 0;                 // 0: dead, until Revive Pet
+    uint8_t flags = 0;                  // pet_flag
+};
+
 // Everything about the player that is saved. The save file stores it field by field (gw_save.cpp), so
 // arrays can grow without breaking old saves.
 struct character_data
@@ -88,6 +102,7 @@ struct character_data
     uint32_t last_rest = 0;         // play_frames at the last rest at an inn
     bag_sort sort = bag_sort::TYPE;
     uint32_t flights = 0;           // bit per flight_id discovered
+    pet_data pet;
 };
 
 // One-off story events. Saves store them by value: only append.

@@ -9,7 +9,9 @@
 #include "gw_floating_text.h"
 #include "gw_homes.h"
 #include "gw_hud.h"
+#include "gw_pet.h"
 #include "gw_player.h"
+#include "gw_quests.h"
 #include "gw_talents.h"
 #include "gw_world.h"
 
@@ -181,6 +183,11 @@ void combat::refresh_stats()
     if(active(buff_id::BESTIAL_WRATH))
     {
         bonus.haste_percent += value(buff_id::BESTIAL_WRATH);
+    }
+
+    if(active(buff_id::ASPECT_OF_THE_BEAST))
+    {
+        bonus.damage_percent += value(buff_id::ASPECT_OF_THE_BEAST);
     }
 
     if(active(buff_id::ARCANE_INTELLECT))
@@ -365,6 +372,11 @@ const char* combat::_unusable_reason(ability_id ability) const
         {
             return "Can't mount indoors";
         }
+    }
+
+    if(const char* reason = _pet_reason(ability))
+    {
+        return reason;
     }
 
     if(ability == ability_id::TELEPORT_STORMWIND && item_count(item_id::TELEPORTATION_RUNE) == 0)
@@ -897,9 +909,11 @@ bool combat::_use_ability(ability_id ability)
 
         const enemy& target_enemy = _enemies.at(target);
 
-        if(def.range && ! world::line_clear(_player.position().x().integer(), _player.position().y().integer() - 8,
+        // Sight runs a little above the feet, like the enemies' own: from the head, a table the player
+        // stands in front of would hide everything.
+        if(def.range && ! world::line_clear(_player.position().x().integer(), _player.position().y().integer() - 4,
                                             target_enemy.position.x().integer(),
-                                            target_enemy.position.y().integer() - 8))
+                                            target_enemy.position.y().integer() - 4))
         {
             _hud.message("Target not in line of sight", ui::color::RED);
             return false;
@@ -911,11 +925,21 @@ bool combat::_use_ability(ability_id ability)
             return false;
         }
 
+        if(ability == ability_id::TAME_BEAST)
+        {
+            if(const char* reason = _tame_reason(target_enemy))
+            {
+                _hud.message(reason, ui::color::RED);
+                return false;
+            }
+        }
+
         _player.face(target_enemy.position);
 
-        // Using an attack on an enemy also starts auto-attacking it, unless it is meant to hold it.
+        // Using an attack on an enemy also starts auto-attacking it, unless it is meant to hold or tame
+        // it.
         if(ability != ability_id::POLYMORPH && ability != ability_id::SCATTER_SHOT &&
-           ability != ability_id::WYVERN_STING)
+           ability != ability_id::WYVERN_STING && ability != ability_id::TAME_BEAST)
         {
             _auto_attack = true;
         }
@@ -948,6 +972,14 @@ bool combat::_use_ability(ability_id ability)
         {
             _spend(cost);
             _cooldowns[int(ability)] = _cooldown_frames(ability);
+
+            // The beast fights back while the hunter tames it.
+            if(ability == ability_id::TAME_BEAST)
+            {
+                _tame_target = target;
+                _enemies.aggro(target);
+                _texts.show(_head(_enemies.at(target).position, 30), "Taming...", floating_texts::style::INFO);
+            }
 
             if(ability == ability_id::BLIZZARD || ability == ability_id::VOLLEY)
             {
@@ -991,6 +1023,14 @@ void combat::_finish_cast()
     if(def.flags & ability_flag::CHANNELED)
     {
         _update_channel();
+
+        if(ability == ability_id::TAME_BEAST && _tame_target >= 0 && _tame_target < _enemies.count() &&
+           _enemies.at(_tame_target).alive())
+        {
+            _tame(_tame_target);
+        }
+
+        _tame_target = -1;
         return;
     }
 
@@ -1127,11 +1167,15 @@ bool combat::damage_enemy(int index, int amount, bool crit, bool periodic, schoo
         amount += amount * target.scorch_stacks * 3 / 100;
     }
 
-    amount = bn::max(1, amount * _stats.damage_percent / 100);
+    // The pet's bites don't use the player's damage bonuses.
+    if(! _pet_hit)
+    {
+        amount = bn::max(1, amount * _stats.damage_percent / 100);
+    }
 
     if(crit && ! periodic)
     {
-        amount = amount * _stats.crit_percent / 100;
+        amount = _pet_hit ? amount * 2 : amount * _stats.crit_percent / 100;
     }
 
     // Its own defenses: Shield Wall and the like take a share off, Mana Shield soaks the rest.
@@ -1169,7 +1213,7 @@ bool combat::damage_enemy(int index, int amount, bool crit, bool periodic, schoo
     _texts.show_number(_head(target.position, height), amount,
                        crit ? floating_texts::style::CRIT : floating_texts::style::DAMAGE_DEALT);
 
-    if(_target < 0)
+    if(_target < 0 && ! _pet_hit)
     {
         _target = index;
     }
@@ -1179,7 +1223,22 @@ bool combat::damage_enemy(int index, int amount, bool crit, bool periodic, schoo
         _polymorph_target = -1;
     }
 
-    return _enemies.damage(index, amount);
+    if(_enemies.damage(index, amount))
+    {
+        return true;
+    }
+
+    // Threat: the pet's bites count double, so it holds what it fights.
+    if(_pet_hit)
+    {
+        target.pet_threat += amount * 2 + 10;
+    }
+    else
+    {
+        target.player_threat += amount;
+    }
+
+    return false;
 }
 
 void combat::_weapon_strike(int index, ability_id ability, int bonus, bool can_miss)
@@ -1364,8 +1423,8 @@ void combat::_update_auto_attack()
     {
         const enemy& target = _enemies.at(_target);
 
-        if(world::line_clear(_player.position().x().integer(), _player.position().y().integer() - 8,
-                             target.position.x().integer(), target.position.y().integer() - 8))
+        if(world::line_clear(_player.position().x().integer(), _player.position().y().integer() - 4,
+                             target.position.x().integer(), target.position.y().integer() - 4))
         {
             _player.face(target.position);
             _ranged_shot(_target);
@@ -1458,6 +1517,12 @@ void combat::_apply_hit(const projectile_hit& hit)
             damage *= 3;
         }
         break;
+
+    case ability_id::WATER_ELEMENTAL:
+        target.slow_frames = 4 * seconds;
+        target.slow_percent = 40;
+        pet_hits(hit.target, damage, hit.crit);
+        return;
 
     case ability_id::SERPENT_STING:
     {
@@ -2338,6 +2403,43 @@ void combat::_apply_ability(ability_id ability, int target_index)
         _set_aspect(buff_id::ASPECT_OF_THE_BEAST, ability);
         break;
 
+    case ability_id::CALL_PET:
+    {
+        const char* reason = nullptr;
+
+        if(! _pet->call(&reason))
+        {
+            _hud.message(reason, ui::color::RED);
+        }
+        break;
+    }
+
+    case ability_id::REVIVE_PET:
+        _pet->revive(ability_value(ability));
+        _texts.show(_head(_pet->position(), _pet->height()), "Revived", floating_texts::style::HEAL);
+        break;
+
+    case ability_id::MEND_PET:
+        _pet->mend(ability_value(ability));
+        _texts.show(_head(_pet->position(), _pet->height()), def.name, floating_texts::style::HEAL);
+        break;
+
+    case ability_id::KILL_COMMAND:
+    case ability_id::INTIMIDATION:
+        _pet->command(ability, target_index, ability_value(ability));
+        break;
+
+    case ability_id::PET_PASSIVE:
+        _hud.message(_pet->toggle_passive() ? "Your pet stays passive" : "Your pet will fight",
+                     ui::color::YELLOW);
+        break;
+
+    case ability_id::WATER_ELEMENTAL:
+        _pet->summon_elemental(def.duration);
+        _set_buff(buff_id::WATER_ELEMENTAL, def.duration, 0);
+        _effects.burst(_head(_pet->position(), 12), projectile_kind::FROST);
+        break;
+
     case ability_id::MOUNT:
         _set_buff(buff_id::MOUNTED, permanent_buff, ability_value(ability));
         _player.mount(data.race);
@@ -2623,28 +2725,31 @@ ability_id combat::missing_buff() const
     struct reminder
     {
         ability_id ability;
-        buff_id buffs[3];   // any of them will do
+        buff_id buffs[4];   // any of them will do
     };
 
     // Each mage knows one armor, each hunter can pick any aspect.
+    using b = buff_id;
     constexpr reminder reminders[] = {
-        { ability_id::BATTLE_SHOUT, { buff_id::BATTLE_SHOUT, buff_id::BATTLE_SHOUT, buff_id::BATTLE_SHOUT } },
-        { ability_id::ARCANE_INTELLECT, { buff_id::ARCANE_INTELLECT, buff_id::ARCANE_INTELLECT,
-                                          buff_id::ARCANE_INTELLECT } },
-        { ability_id::MOLTEN_ARMOR, { buff_id::MOLTEN_ARMOR, buff_id::MAGE_ARMOR, buff_id::FROST_ARMOR } },
-        { ability_id::MAGE_ARMOR, { buff_id::MOLTEN_ARMOR, buff_id::MAGE_ARMOR, buff_id::FROST_ARMOR } },
-        { ability_id::FROST_ARMOR, { buff_id::MOLTEN_ARMOR, buff_id::MAGE_ARMOR, buff_id::FROST_ARMOR } },
-        { ability_id::TRUESHOT_AURA, { buff_id::TRUESHOT_AURA, buff_id::TRUESHOT_AURA, buff_id::TRUESHOT_AURA } },
-        { ability_id::ASPECT_OF_THE_HAWK, { buff_id::ASPECT_OF_THE_HAWK, buff_id::ASPECT_OF_THE_MONKEY,
-                                            buff_id::ASPECT_OF_THE_CHEETAH } },
-        { ability_id::ASPECT_OF_THE_MONKEY, { buff_id::ASPECT_OF_THE_HAWK, buff_id::ASPECT_OF_THE_MONKEY,
-                                              buff_id::ASPECT_OF_THE_CHEETAH } },
+        { ability_id::BATTLE_SHOUT, { b::BATTLE_SHOUT, b::BATTLE_SHOUT, b::BATTLE_SHOUT, b::BATTLE_SHOUT } },
+        { ability_id::ARCANE_INTELLECT, { b::ARCANE_INTELLECT, b::ARCANE_INTELLECT, b::ARCANE_INTELLECT,
+                                          b::ARCANE_INTELLECT } },
+        { ability_id::MOLTEN_ARMOR, { b::MOLTEN_ARMOR, b::MAGE_ARMOR, b::FROST_ARMOR, b::FROST_ARMOR } },
+        { ability_id::MAGE_ARMOR, { b::MOLTEN_ARMOR, b::MAGE_ARMOR, b::FROST_ARMOR, b::FROST_ARMOR } },
+        { ability_id::FROST_ARMOR, { b::MOLTEN_ARMOR, b::MAGE_ARMOR, b::FROST_ARMOR, b::FROST_ARMOR } },
+        { ability_id::TRUESHOT_AURA, { b::TRUESHOT_AURA, b::TRUESHOT_AURA, b::TRUESHOT_AURA, b::TRUESHOT_AURA } },
+        { ability_id::ASPECT_OF_THE_BEAST, { b::ASPECT_OF_THE_HAWK, b::ASPECT_OF_THE_MONKEY, b::ASPECT_OF_THE_CHEETAH,
+                                             b::ASPECT_OF_THE_BEAST } },
+        { ability_id::ASPECT_OF_THE_HAWK, { b::ASPECT_OF_THE_HAWK, b::ASPECT_OF_THE_MONKEY, b::ASPECT_OF_THE_CHEETAH,
+                                            b::ASPECT_OF_THE_BEAST } },
+        { ability_id::ASPECT_OF_THE_MONKEY, { b::ASPECT_OF_THE_HAWK, b::ASPECT_OF_THE_MONKEY,
+                                              b::ASPECT_OF_THE_CHEETAH, b::ASPECT_OF_THE_BEAST } },
     };
 
     for(const reminder& item : reminders)
     {
         if(knows_ability(item.ability) && ! _buffs[int(item.buffs[0])] && ! _buffs[int(item.buffs[1])] &&
-           ! _buffs[int(item.buffs[2])])
+           ! _buffs[int(item.buffs[2])] && ! _buffs[int(item.buffs[3])])
         {
             return item.ability;
         }
@@ -2872,6 +2977,173 @@ bool combat::enemy_attacks(int index, int percent)
     return true;
 }
 
+bool combat::enemy_attacks_pet(int index)
+{
+    enemy& attacker = _enemies.at(index);
+
+    if(! _pet || ! _pet->active())
+    {
+        return false;
+    }
+
+    _combat_frames = 0;
+    bn::fixed_point head = _head(_pet->position(), _pet->height());
+
+    if(random_chance(8))
+    {
+        _texts.show(head, "Dodge", floating_texts::style::INFO);
+        return false;
+    }
+
+    int swing = _enemy_swing(attacker);
+    int damage = random_range(swing * 3 / 4, swing * 5 / 4);
+
+    if(attacker.weaken_frames > 0)
+    {
+        damage = damage * (100 - bn::min(attacker.weaken_percent, 75)) / 100;
+    }
+
+    if(attacker.disarm_frames > 0)
+    {
+        damage /= 2;
+    }
+
+    // A thick hide takes a share off.
+    damage = bn::max(1, damage * 85 / 100);
+    _texts.show_number(head, damage, floating_texts::style::DAMAGE_TAKEN);
+
+    if(_pet->damage(damage) && ! _pet->elemental())
+    {
+        _end_buff(buff_id::WATER_ELEMENTAL);
+    }
+
+    return true;
+}
+
+bool combat::pet_hits(int index, int damage, bool crit)
+{
+    enemy& target = _enemies.at(index);
+
+    if(damage <= 0)
+    {
+        _texts.show(_head(target.position, 24), "Miss", floating_texts::style::INFO);
+        _enemies.aggro(index);
+        target.pet_threat += 10;
+        return false;
+    }
+
+    // Aspect of the Beast: the pet hits harder too.
+    if(_buffs[int(buff_id::ASPECT_OF_THE_BEAST)])
+    {
+        damage += damage * _buff_values[int(buff_id::ASPECT_OF_THE_BEAST)] / 100;
+    }
+
+    _pet_hit = true;
+    bool died = damage_enemy(index, damage, crit);
+    _pet_hit = false;
+    return died;
+}
+
+void combat::pet_casts(int index, int damage, bool crit)
+{
+    projectile_hit hit = { index, damage, crit, ability_id::WATER_ELEMENTAL };
+    _effects.launch(_head(_pet->position(), 16), projectile_kind::FROST, hit);
+}
+
+void combat::pet_freeze(const bn::fixed_point& center, int radius)
+{
+    _effects.circle(center, radius, 30, circle_style::FROST);
+
+    for(int index = 0, limit = _enemies.count(); index < limit; ++index)
+    {
+        enemy& item = _enemies.at(index);
+
+        if(item.alive() && item.state != enemy_state::EVADE && ! item.boss() &&
+           distance_squared(item.position, center) <= radius * radius)
+        {
+            item.root_frames = 4 * seconds;
+            _texts.show(_head(item.position, 30), "Frozen", floating_texts::style::INFO);
+        }
+    }
+}
+
+const char* combat::_pet_reason(ability_id ability) const
+{
+    switch(ability)
+    {
+
+    case ability_id::CALL_PET:
+    case ability_id::PET_PASSIVE:
+        if(! _pet->tamed())
+        {
+            return "You have no pet";
+        }
+
+        return ability == ability_id::CALL_PET && _pet->dead() ? "Your pet is dead" : nullptr;
+
+    case ability_id::REVIVE_PET:
+        if(! _pet->tamed())
+        {
+            return "You have no pet";
+        }
+
+        return _pet->dead() ? nullptr : "Your pet is alive";
+
+    case ability_id::MEND_PET:
+    case ability_id::KILL_COMMAND:
+    case ability_id::INTIMIDATION:
+        if(_pet->dead())
+        {
+            return "Your pet is dead";
+        }
+
+        return _pet->active() && ! _pet->elemental() ? nullptr : "Your pet is not here";
+
+    default:
+        return nullptr;
+    }
+}
+
+const char* combat::_tame_reason(const enemy& target) const
+{
+    if(target.def->family != enemy_family::BEAST)
+    {
+        return "Only beasts can be tamed";
+    }
+
+    if(target.elite())
+    {
+        return "Too strong to tame";
+    }
+
+    if(target.level > character().level)
+    {
+        return "Too high level to tame";
+    }
+
+    return nullptr;
+}
+
+void combat::_tame(int index)
+{
+    enemy& beast = _enemies.at(index);
+    enemy_id species = beast.id;
+    _effects.burst(_head(beast.position, 10), projectile_kind::NATURE);
+    _enemies.remove(index);
+
+    if(_target == index)
+    {
+        clear_target();
+    }
+
+    _pet->tame(species);
+
+    if(quests_on_tame(_hud) && on_quest_progress)
+    {
+        on_quest_progress(callback_context);
+    }
+}
+
 void combat::damage_player(int amount, const bn::fixed_point& from, school damage_school)
 {
     if(_dead)
@@ -3007,6 +3279,11 @@ void combat::_die()
     dismount();
     refresh_stats();
     _enemies.reset_combat();
+
+    if(_pet)
+    {
+        _pet->end_elemental();
+    }
 }
 
 void combat::revive()

@@ -64,6 +64,7 @@ enum class look_id : uint8_t
     HARVEST_WATCHER,
     GOBLIN_ENGINEER,
     SNEED,
+    WATER_ELEMENTAL,
     COUNT
 };
 

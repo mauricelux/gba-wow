@@ -87,6 +87,31 @@ jobs:
             wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
             hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:A:2 wait:90 \
             hold:A:2 wait:80 shot:screenshots/17_enemy_cast.ppm wait:60 shot:screenshots/18_enemy_cast_hit.ppm
+          # The hunter meets Thor at Sentinel Hill, then flies there from Stormwind (Dungar charges for the
+          # flight) and looks at the continent map.
+          MGBA_SAVE=old.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:A:2 wait:90 hold:A:2 wait:30 shot:screenshots/19_flight_discovered.ppm \
+            hold:B:2 wait:10 hold:S:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 hold:A:2 wait:30 shot:screenshots/20_flight_master.ppm \
+            hold:A:2 wait:200 shot:screenshots/21_flight.ppm wait:600 shot:screenshots/22_landed.ppm \
+            hold:S:2 wait:6 hold:l:2 wait:10 hold:B:2 wait:10 shot:screenshots/23_continent_map.ppm \
+            hold:r:2 wait:6 hold:A:2 wait:10 hold:B:2 wait:10
+          python3 tools/headless/check_save.py old.sav flights=2 money=99885
+          # A Beast Mastery hunter on Taming the Beast tames a young wolf east of Northshire Abbey, which
+          # then follows them and bites what they shoot. The pet is saved.
+          python3 -c "d = open('tools/headless/saves/v4_dwarf_beast_hunter_12.sav', 'rb').read(); open('pet.sav', 'wb').write(d + b'\xff' * (32768 - len(d)))"
+          MGBA_SAVE=pet.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:A:2 wait:90 hold:R:120 hold:D:50 hold:l:10 hold:lB:3 hold:l:4 wait:200 \
+            shot:screenshots/24_taming.ppm wait:360 shot:screenshots/25_pet.ppm \
+            hold:R:6 hold:RA:2 hold:R:4 wait:50 shot:screenshots/26_pet_fights.ppm \
+            hold:S:2 wait:10 hold:A:2 wait:10 hold:S:2 wait:10
+          python3 tools/headless/check_save.py pet.sav subclass="Beast Mastery" pet=1
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm
 

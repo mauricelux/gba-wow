@@ -375,6 +375,36 @@ def castbars():
     return [castbar(step, shielded) for shielded in (False, True) for step in range(CASTBAR_STEPS + 1)]
 
 
+# --- pet health bar (32x8): a paw, then 17 fills, then a gray one for a dead pet ----------------------
+
+PB = {'out': 1, 'bg': 2, 'fill': 3, 'light': 4, 'gray': 5, 'paw': 6, 'paw_d': 7}
+PETBAR_PALETTE = [(255, 0, 255), (16, 12, 16), (40, 48, 40), (64, 168, 64), (152, 224, 120), (120, 120, 128),
+                  (200, 168, 120), (136, 104, 64)] + [(0, 0, 0)] * 8
+PETBAR_STEPS = 16
+
+
+def petbar(step, dead):
+    img = np.zeros((8, 32), dtype=np.uint8)
+    # The paw: four toes over a pad.
+    for row, text in enumerate(('..X.X..', 'X.X.X.X', 'X.....X', '..XXX..', '.XXXXX.', '.XXXXX.', '..YYY..')):
+        for x, ch in enumerate(text):
+            if ch != '.':
+                img[row, x] = PB['paw' if ch == 'X' else 'paw_d']
+    img[1:7, 8:32] = PB['out']
+    img[2:6, 9:31] = PB['bg']
+    width = round(22 * step / PETBAR_STEPS)
+    if dead:
+        img[2:6, 9:31] = PB['gray']
+    elif width:
+        img[2:6, 9:9 + width] = PB['fill']
+        img[2, 9:9 + width] = PB['light']
+    return img
+
+
+def petbars():
+    return [petbar(step, False) for step in range(PETBAR_STEPS + 1)] + [petbar(0, True)]
+
+
 # --- area circle (64x64): telegraphed boss attacks and frost nova -------------------------------------
 
 def circle():
@@ -910,6 +940,7 @@ def main():
     write('markers', markers(), MARKER_PALETTE, 16)
     write('circle', circle(), CIRCLE_PALETTE, 64)
     write('castbar', castbars(), CASTBAR_PALETTE, 8)
+    write('petbar', petbars(), PETBAR_PALETTE, 8)
     write('chest', [chest(False), chest(True)], CHEST_PALETTE, 16)
     write('map_marks', map_marks(), MARKER_PALETTE, 8)
     icon_map = icons()

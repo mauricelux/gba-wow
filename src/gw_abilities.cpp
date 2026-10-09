@@ -300,7 +300,7 @@ namespace
 
         // mage: the Frost capstone
         { "Water Elemental", "A water elemental fights for you for 45 seconds, casting Frostbolt.", c::MAGE,
-          FROST, i::WATER_ELEMENTAL, TALENT, 160, 180 * seconds, 0, 0, 20, 3, v::DAMAGE, 45 * seconds, a::SELF,
+          FROST, i::WATER_ELEMENTAL, TALENT, 90, 180 * seconds, 0, 0, 20, 3, v::DAMAGE, 45 * seconds, a::SELF,
           s::FROST, p::FROST, { 40 } },
     };
 

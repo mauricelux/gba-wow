@@ -57,6 +57,7 @@ game::game() :
     _enemies(_camera),
     _npcs(_camera),
     _chests(_camera),
+    _pet(_camera, _player, _enemies, _texts, _hud),
     _combat(_player, _enemies, _texts, _effects, _hud),
     _dialog(_combat, _hud, _npcs),
     _menu(_combat, _hud, _npcs),
@@ -65,8 +66,11 @@ game::game() :
     // The UI layer goes first so it owns the first palette banks and tile block.
     ui::init();
     _enemies.set_combat(_combat);
+    _combat.set_pet(_pet);
+    _pet.set_combat(_combat);
     _combat.on_kill = _on_kill;
     _combat.on_level_up = _on_level_up;
+    _combat.on_quest_progress = _on_level_up;
     _combat.callback_context = this;
 
     bool loaded = character().play_frames > 0;
@@ -124,10 +128,11 @@ void game::update()
     int speed = _combat.speed_percent();
     const bn::fixed_point* fear = speed > 0 ? _combat.fear_source() : nullptr;
     _player.update(input && ! abilities_held && speed > 0, ! _combat.in_combat(), speed, fear);
-    _enemies.update(_player.position(), ! dead);
+    _enemies.update(_player.position(), ! dead, _pet.active() ? &_pet.position() : nullptr);
     _npcs.update(_player.position());
     _chests.update(_player.position());
     _combat.update(input);
+    _pet.update(! _combat.dead());
 
     if(_combat.teleport_map != map_id::NONE)
     {
@@ -321,7 +326,7 @@ void game::_on_kill(void* context, int index)
 
 void game::_on_level_up(void* context)
 {
-    // New quests and new ranks at the trainer.
+    // New quests, new ranks at the trainer and quests to turn in.
     static_cast<game*>(context)->_npcs.refresh_markers();
 }
 
@@ -474,6 +479,7 @@ void game::_load_map(map_id map, const bn::fixed_point& position)
     _npcs.load(info);
     _chests.load(info);
     _player.set_position(position);
+    _pet.place();
     _save_position();
     _follow_camera();
     _area = nullptr;

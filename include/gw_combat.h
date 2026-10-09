@@ -14,6 +14,7 @@ namespace gw
 {
 
 class player;
+class pet;
 class enemies;
 class floating_texts;
 class hud;
@@ -50,6 +51,16 @@ class combat
 
 public:
     combat(player& player_ref, enemies& enemies_ref, floating_texts& texts, effects& fx, hud& hud_ref);
+
+    void set_pet(pet& pet_ref)
+    {
+        _pet = &pet_ref;
+    }
+
+    [[nodiscard]] const pet* companion() const
+    {
+        return _pet;
+    }
 
     // Reads targeting, bar and item input (unless disabled) and advances timers.
     void update(bool input_enabled);
@@ -103,6 +114,18 @@ public:
 
     // Called by enemies. percent scales the hit (special attacks). Returns true if it landed.
     bool enemy_attacks(int index, int percent = 100);
+
+    // An enemy fighting the pet swings at it. Returns true if it landed.
+    bool enemy_attacks_pet(int index);
+
+    // The pet bites (damage 0 misses). Returns true if the enemy died.
+    bool pet_hits(int index, int damage, bool crit);
+
+    // The Water Elemental casts Frostbolt at the enemy.
+    void pet_casts(int index, int damage, bool crit);
+
+    // The Water Elemental's Freeze: roots the enemies around center.
+    void pet_freeze(const bn::fixed_point& center, int radius);
     void enemy_killed(int index);
 
     // Special abilities of elites and bosses, every frame while they fight. Returns true when the
@@ -185,10 +208,12 @@ public:
     // Called when an enemy dies with the killer being the player. Set by the game (quests, loot).
     void (*on_kill)(void* context, int index) = nullptr;
     void (*on_level_up)(void* context) = nullptr;
+    void (*on_quest_progress)(void* context) = nullptr;    // taming a beast
     void* callback_context = nullptr;
 
 private:
     player& _player;
+    pet* _pet = nullptr;
     enemies& _enemies;
     floating_texts& _texts;
     effects& _effects;
@@ -221,6 +246,8 @@ private:
     int _feign_frames = 0;                   // lying still after Feign Death
     int _polymorph_target = -1;
     int _combustion_crits = 0;
+    int _tame_target = -1;                   // the beast Tame Beast channels on
+    bool _pet_hit = false;                   // damage_enemy: the pet deals it
     bn::vector<projectile_hit, 8> _arrived;
     bn::vector<ground_zone, 4> _zones;
 
@@ -281,6 +308,9 @@ private:
     void _set_aspect(buff_id aspect, ability_id ability);
     void _conjure(ability_id ability);
     void _counter_hit(int index);
+    [[nodiscard]] const char* _pet_reason(ability_id ability) const;
+    [[nodiscard]] const char* _tame_reason(const enemy& target) const;
+    void _tame(int index);
 
     // Enemy abilities (gw_enemy_ai.cpp)
     [[nodiscard]] bool _enemy_can_use(int index, int slot, int distance_squared) const;

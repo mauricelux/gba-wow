@@ -16,7 +16,7 @@ namespace gw
 class combat;
 class enemies;
 
-// The heads-up display on the UI layer: player and target frames, experience bar, cast bar,
+// The heads-up display on the UI layer: player, pet and target frames, experience bar, cast bar,
 // error and loot messages, buffs, a reminder of missing long buffs, and the bar whose button is held
 // (R, L, L and R, or Select), its icons around a small cross like the buttons that use them.
 class hud
@@ -75,6 +75,8 @@ private:
     bn::vector<bn::sprite_ptr, 8> _buff_icons;
     bn::vector<bn::sprite_ptr, 6> _debuff_icons;
     bn::optional<bn::sprite_ptr> _reminder;
+    bn::optional<bn::sprite_ptr> _pet_bar;
+    int _pet_frame = -1;
     bn::optional<bn::sprite_affine_mat_ptr> _small;
 
     void _draw_player();
@@ -86,6 +88,7 @@ private:
     void _update_bar(const combat& combat_ref);
     void _update_reminder(const combat& combat_ref);
     void _update_buffs(const combat& combat_ref);
+    void _update_pet(const combat& combat_ref);
 };
 
 }

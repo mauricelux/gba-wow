@@ -53,6 +53,11 @@ namespace
         return { o::TREASURE, uint8_t(count), e::NONE, e::NONE, 0, area_id::NONE, name };
     }
 
+    [[nodiscard]] constexpr objective_def tame(int count, const char* name)
+    {
+        return { o::TAME, uint8_t(count), e::NONE, e::NONE, 0, area_id::NONE, name };
+    }
+
     constexpr quest_def quests[] = {
         { "", "", "", "", "", n::NONE, n::NONE, 0, 0, qid::NONE, { none, none, none }, 0, 0,
           { i::NONE, i::NONE, i::NONE } },
@@ -395,6 +400,19 @@ namespace
           n::THELWATER, n::BOLVAR, 21, 18, qid::THE_UNSENT_LETTER,
           { collect(e::BAZIL_THREDD, 1, 100, "Head of Bazil Thredd"), none, none }, xp(21, 200), money(25),
           { i::LIONHEART_BLADE, i::STAFF_OF_THE_LION, i::LIONHEART_LONGBOW } },
+
+        // --- Beast Mastery ----------------------------------------------------------------------------
+
+        { "Taming the Beast",
+          "Every Beast Master walks with a companion, and it's time you found yours.\n\n"
+          "I'll teach you Tame Beast. Find a wild beast no stronger than you, a wolf, a spider or a boar, "
+          "and hold still while it tests you. Win it over and come back to me.",
+          "Tame a beast with Tame Beast, then return to Einris Brightspear.",
+          "No companion yet? Wolves and spiders roam the forest outside the city.",
+          "A fine companion! Now learn to call it to your side, to send it away and to bring it back "
+          "when it falls.",
+          n::EINRIS, n::EINRIS, 10, 10, qid::NONE, { tame(1, "Beast tamed"), none, none }, xp(10), 0,
+          { i::NONE, i::NONE, i::NONE }, subclass_id::BEAST_MASTERY },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));
@@ -456,7 +474,8 @@ bool quest_available(quest_id quest)
 
     const quest_def& def = get_quest(quest);
 
-    if(quest_state(quest).status != quest_status::NOT_STARTED || character().level < def.min_level)
+    if(quest_state(quest).status != quest_status::NOT_STARTED || character().level < def.min_level ||
+       (def.subclass != subclass_id::NONE && def.subclass != character().subclass))
     {
         return false;
     }
@@ -513,6 +532,12 @@ void accept_quest(quest_id quest)
         }
     }
 
+    // Taming the Beast teaches what it asks for.
+    if(quest == quest_id::TAMING_THE_BEAST)
+    {
+        learn_ability(ability_id::TAME_BEAST);
+    }
+
     (void) complete_if_done(quest);
 }
 
@@ -538,6 +563,15 @@ bool turn_in_quest(quest_id quest, int reward_index)
 
     character().money += def.money;
     quest_state(quest).status = quest_status::TURNED_IN;
+
+    // The pet's own abilities.
+    if(quest == quest_id::TAMING_THE_BEAST)
+    {
+        learn_ability(ability_id::CALL_PET);
+        learn_ability(ability_id::REVIVE_PET);
+        learn_ability(ability_id::PET_PASSIVE);
+    }
+
     return true;
 }
 
@@ -751,6 +785,44 @@ bool quests_on_explore(const map_info& map, int x, int y, hud& hud_ref)
             {
                 completed_message(hud_ref, quest);
             }
+        }
+    }
+
+    return changed;
+}
+
+bool quests_on_tame(hud& hud_ref)
+{
+    bool changed = false;
+
+    for(int index = 1; index < int(quest_id::COUNT); ++index)
+    {
+        quest_id quest = quest_id(index);
+        quest_progress& progress = quest_state(quest);
+
+        if(progress.status != quest_status::ACTIVE)
+        {
+            continue;
+        }
+
+        const quest_def& def = get_quest(quest);
+
+        for(int objective_index = 0; objective_index < quest_objectives; ++objective_index)
+        {
+            const objective_def& objective = def.objectives[objective_index];
+            uint8_t& count = progress.counts[objective_index];
+
+            if(objective.type == objective_type::TAME && count < objective.count)
+            {
+                ++count;
+                progress_message(hud_ref, objective, count);
+                changed = true;
+            }
+        }
+
+        if(complete_if_done(quest))
+        {
+            completed_message(hud_ref, quest);
         }
     }
 

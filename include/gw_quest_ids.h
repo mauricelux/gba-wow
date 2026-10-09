@@ -46,6 +46,8 @@ enum class quest_id : uint16_t
     THE_UNSENT_LETTER,
     THE_STOCKADE_RIOTS,
     BAZIL_THREDD,
+    // Beast Mastery
+    TAMING_THE_BEAST,
     COUNT
 };
 

@@ -4,10 +4,12 @@
 #include "bn_math.h"
 
 #include "bn_sprite_items_fx_icons.h"
+#include "bn_sprite_items_fx_petbar.h"
 
 #include "gw_combat.h"
 #include "gw_enemies.h"
 #include "gw_icons.h"
+#include "gw_pet.h"
 
 namespace gw
 {
@@ -19,6 +21,14 @@ namespace
     constexpr int target_cast_row = 2;  // what the target casts, under its frame
     constexpr int cast_row = 13;
     constexpr int xp_row = 19;
+
+    // The pet's health: a 32x8 sprite under the player's bars, 17 fills and a gray one when dead. The
+    // buff reminder and the buffs move over to make room for it.
+    constexpr int pet_bar_x = -120 + 16;
+    constexpr int pet_bar_y = -80 + 20;
+    constexpr int pet_row_width = 34;
+    constexpr int pet_bar_steps = 16;
+    constexpr int pet_bar_dead = pet_bar_steps + 1;
 
     constexpr char slot_labels[action_slots] = { 'A', 'B', 'L', '^', '>', 'v', '<' };
 
@@ -136,6 +146,8 @@ void hud::set_visible(bool visible)
         _buff_icons.clear();
         _debuff_icons.clear();
         _reminder.reset();
+        _pet_bar.reset();
+        _pet_frame = -1;
         _bar_shown = 0;
     }
 }
@@ -208,8 +220,52 @@ void hud::update(const combat& combat_ref, const enemies& enemies_ref)
 
     ++_frame;
     _update_bar(combat_ref);
+    _update_pet(combat_ref);
     _update_reminder(combat_ref);
     _update_buffs(combat_ref);
+}
+
+void hud::_update_pet(const combat& combat_ref)
+{
+    const pet* companion = combat_ref.companion();
+    int frame = -1;
+
+    if(companion && companion->dead())
+    {
+        frame = pet_bar_dead;
+    }
+    else if(companion && companion->active())
+    {
+        int max = companion->max_health();
+        frame = (companion->health() * pet_bar_steps + max - 1) / max;
+    }
+
+    if(frame == _pet_frame)
+    {
+        return;
+    }
+
+    if((frame < 0) != (_pet_frame < 0))
+    {
+        _reminder_ability = -1;
+        _buff_mask = ~uint64_t(0);
+    }
+
+    _pet_frame = frame;
+
+    if(frame < 0)
+    {
+        _pet_bar.reset();
+    }
+    else if(_pet_bar)
+    {
+        _pet_bar->set_tiles(bn::sprite_items::fx_petbar.tiles_item(), frame);
+    }
+    else
+    {
+        _pet_bar = bn::sprite_items::fx_petbar.create_sprite(pet_bar_x, pet_bar_y, frame);
+        _pet_bar->set_bg_priority(0);
+    }
 }
 
 void hud::_draw_player()
@@ -510,7 +566,8 @@ void hud::_update_reminder(const combat& combat_ref)
                 _small = bn::sprite_affine_mat_ptr::create(attributes);
             }
 
-            _reminder = bn::sprite_items::fx_icons.create_sprite(-120 + 4, -80 + 20, int(get_ability(missing).icon));
+            _reminder = bn::sprite_items::fx_icons.create_sprite(-120 + 4 + (_pet_frame >= 0 ? pet_row_width : 0),
+                                                                 -80 + 20, int(get_ability(missing).icon));
             _reminder->set_bg_priority(0);
             _reminder->set_affine_mat(*_small);
         }
@@ -553,6 +610,7 @@ void hud::_update_buffs(const combat& combat_ref)
     // Buffs in a row beside the reminder, debuffs in a row under them.
     int buff_x = _reminder ? 1 : 0;
     int debuff_x = 0;
+    int row_x = _pet_frame >= 0 ? pet_row_width : 0;
 
     for(int index = 0; index < int(buff_id::COUNT); ++index)
     {
@@ -571,7 +629,8 @@ void hud::_update_buffs(const combat& combat_ref)
         }
 
         int& x = debuff ? debuff_x : buff_x;
-        bn::sprite_ptr icon = bn::sprite_items::fx_icons.create_sprite(-120 + 4 + x * 10, debuff ? -52 : -60,
+        int icon_x = -120 + 4 + x * 10 + (debuff ? 0 : row_x);
+        bn::sprite_ptr icon = bn::sprite_items::fx_icons.create_sprite(icon_x, debuff ? -52 : -60,
                                                                        int(buff_icons[index]));
         icon.set_bg_priority(0);
         icon.set_affine_mat(*_small);

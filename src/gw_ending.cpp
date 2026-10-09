@@ -94,20 +94,29 @@ void ending::_draw()
     line += class_name(data.player_class);
     ui::text(2, 4, line, ui::color::WHITE, true);
 
+    // Out of the quests this subclass can do.
     int turned_in = 0;
+    int total = 0;
 
     for(int index = 1; index < int(quest_id::COUNT); ++index)
     {
-        if(quest_state(quest_id(index)).status == quest_status::TURNED_IN)
+        subclass_id only = get_quest(quest_id(index)).subclass;
+
+        if(only == subclass_id::NONE || only == data.subclass)
         {
-            ++turned_in;
+            ++total;
+
+            if(quest_state(quest_id(index)).status == quest_status::TURNED_IN)
+            {
+                ++turned_in;
+            }
         }
     }
 
     line = "Quests done ";
     line += bn::to_string<4>(turned_in);
     line += " of ";
-    line += bn::to_string<4>(int(quest_id::COUNT) - 1);
+    line += bn::to_string<4>(total);
     ui::text(2, 6, line, ui::color::WHITE, true);
 
     int minutes = int(data.play_frames / 3600);

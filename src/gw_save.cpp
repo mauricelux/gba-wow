@@ -50,7 +50,8 @@ namespace
         CHESTS,
         TALENT_TREE,    // the subclass's tree
         ITEM_BAR,
-        TRAVEL          // flight paths
+        TRAVEL,         // flight paths
+        PET
     };
 
     BN_DATA_EWRAM_BSS uint8_t payload[max_payload];
@@ -278,6 +279,12 @@ namespace
         out.put32(data.flights);
         out.end();
 
+        out.begin(chunk::PET);
+        out.put16(int(data.pet.species));
+        out.put16(data.pet.health);
+        out.put8(data.pet.flags);
+        out.end();
+
         out.begin(chunk::TALENT_TREE);
 
         for(uint8_t rank : data.talents)
@@ -415,6 +422,15 @@ namespace
         case chunk::TRAVEL:
             data.flights = in.get32();
             break;
+
+        case chunk::PET:
+        {
+            int species = in.get16();
+            data.pet.species = species < int(enemy_id::COUNT) ? enemy_id(species) : enemy_id::NONE;
+            data.pet.health = in.get16_signed();
+            data.pet.flags = uint8_t(in.get8());
+            break;
+        }
 
         case chunk::TALENTS:
         {

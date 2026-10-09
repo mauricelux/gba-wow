@@ -129,6 +129,9 @@ void enemies::_spawn(enemy& item)
     item.special_timer = 0;
     item.telegraph_frames = 0;
     item.ai = enemy_ability_state();
+    item.on_pet = false;
+    item.player_threat = 0;
+    item.pet_threat = 0;
     item.loot_money = 0;
 
     for(loot_slot& slot : item.loot)
@@ -137,14 +140,14 @@ void enemies::_spawn(enemy& item)
     }
 }
 
-void enemies::update(const bn::fixed_point& player_feet, bool player_alive)
+void enemies::update(const bn::fixed_point& player_feet, bool player_alive, const bn::fixed_point* pet_feet)
 {
     ++_frame;
 
     for(int index = 0, limit = _enemies.size(); index < limit; ++index)
     {
         enemy& item = _enemies[index];
-        _update_enemy(index, player_feet, player_alive);
+        _update_enemy(index, player_feet, player_alive, pet_feet);
         _update_sprite(item, player_feet);
     }
 
@@ -274,7 +277,39 @@ bool enemies::move_towards(enemy& item, const bn::fixed_point& target, bn::fixed
     return false;
 }
 
-void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool player_alive)
+void enemies::_pick_victim(int index, const bn::fixed_point* pet_feet)
+{
+    // Whoever worries it more, by a margin so it doesn't turn back and forth.
+    enemy& item = _enemies[index];
+    bool on_pet = item.on_pet;
+
+    if(! pet_feet)
+    {
+        on_pet = false;
+        item.pet_threat = 0;
+    }
+    else if(on_pet)
+    {
+        on_pet = item.player_threat * 10 <= item.pet_threat * 11;
+    }
+    else
+    {
+        on_pet = item.pet_threat * 10 > item.player_threat * 11;
+    }
+
+    if(on_pet != item.on_pet)
+    {
+        item.on_pet = on_pet;
+
+        if(item.casting())
+        {
+            _combat->stop_enemy_cast(index, false);
+        }
+    }
+}
+
+void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool player_alive,
+                            const bn::fixed_point* pet_feet)
 {
     enemy& item = _enemies[index];
 
@@ -475,28 +510,34 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
             --item.root_frames;
         }
 
+        _pick_victim(index, pet_feet);
+
         // Casting, charging and running for help come first, then the scripted moves of elites.
         if(_combat->enemy_ai_update(index) || (item.elite() && _combat->boss_update(index)))
         {
             break;
         }
 
-        int reach = _reach(item, player_feet);
-        bool in_range = player_distance_squared <= (reach + 2) * (reach + 2);
+        // On the pet, it walks up to it and swings, casters too.
+        const bn::fixed_point& victim = item.on_pet ? *pet_feet : player_feet;
+        int victim_distance_squared = item.on_pet ? distance_squared(item.position, victim) :
+                                                    player_distance_squared;
+        int reach = item.on_pet ? melee_range - 8 : _reach(item, player_feet);
+        bool in_range = victim_distance_squared <= (reach + 2) * (reach + 2);
 
         if(! in_range && ! rooted)
         {
-            move_towards(item, player_feet, _speed(item, true), reach);
+            move_towards(item, victim, _speed(item, true), reach);
         }
         else
         {
             item.moving = false;
-            item.direction = facing_towards(item.position, player_feet);
+            item.direction = facing_towards(item.position, victim);
         }
 
         // Swings wait while the player is asleep or polymorphed, so they don't wake them.
-        if(player_distance_squared <= melee_range * melee_range && item.attack_timer <= 0 &&
-           ! _combat->player_incapacitated())
+        if(victim_distance_squared <= melee_range * melee_range && item.attack_timer <= 0 &&
+           (item.on_pet || ! _combat->player_incapacitated()))
         {
             item.attack_timer = item.swing_frames();
 
@@ -505,7 +546,14 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
                 item.sprite->play_attack();
             }
 
-            _combat->enemy_attacks(index);
+            if(item.on_pet)
+            {
+                _combat->enemy_attacks_pet(index);
+            }
+            else
+            {
+                _combat->enemy_attacks(index);
+            }
         }
         break;
     }
@@ -526,6 +574,9 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
         item.scorch_frames = 0;
         item.scorch_stacks = 0;
         item.ai = enemy_ability_state();
+        item.on_pet = false;
+        item.player_threat = 0;
+        item.pet_threat = 0;
 
         if(move_towards(item, item.spawn, 2, 2) || item.stuck_frames > 90)
         {
@@ -835,6 +886,9 @@ void enemies::_start_fight(enemy& item, int first_swing)
     item.attack_timer = first_swing;
     item.wandering = false;
     item.ai = enemy_ability_state();
+    item.on_pet = false;
+    item.player_threat = 1;
+    item.pet_threat = 0;
 
     // Abilities can come within the first second.
     for(int16_t& cooldown : item.ai.cooldowns)
@@ -880,6 +934,17 @@ bool enemies::damage(int index, int amount)
     }
 
     return false;
+}
+
+void enemies::remove(int index)
+{
+    enemy& item = _enemies[index];
+    _combat->stop_enemy_cast(index, false);
+    item.health = 0;
+    item.state = enemy_state::GONE;
+    item.state_timer = item.def->respawn_seconds * seconds;
+    item.moving = false;
+    item.on_pet = false;
 }
 
 bool enemies::incapacitate(int index, incapacitate_kind kind, int frames)
