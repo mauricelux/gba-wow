@@ -268,6 +268,40 @@ namespace
         // 84 Arcanist Doan
         { { { i::SUPERIOR_HEALING_POTION, 100, 2, 3 }, none, none }, true,
           { i::HYPNOTIC_BLADE, i::ILLUSIONARY_ROD, i::SCARLET_LONGBOW } },
+        // 85 tigers, panthers and gorillas
+        { { { i::THICK_FUR, 50, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 86 raptors
+        { { { i::RAPTOR_CLAW, 50, 1, 1 }, { i::THICK_FUR, 20, 1, 1 }, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 87 Bloodscalp trolls
+        { { { i::TROLL_TUSK, 40, 1, 1 }, { i::MAGEWEAVE_CLOTH, 35, 1, 2 }, { i::SUPERIOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 88 Bloodsail pirates
+        { { { i::MAGEWEAVE_CLOTH, 40, 1, 2 }, { i::MORNING_GLORY_DEW, 8, 1, 1 }, { i::SUPERIOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 89 the Scarlet Crusade in the Armory and the Cathedral
+        { { { i::SCARLET_INSIGNIA, 40, 1, 1 }, { i::MAGEWEAVE_CLOTH, 35, 1, 2 }, { i::SUPERIOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 90 King Bangalash
+        { { { i::THICK_FUR, 100, 2, 3 }, none, none }, false,
+          { i::SABERTOOTH_GAUNTLETS, i::SILVERSTRIPE_GLOVES, i::BANGALASHS_GRIPS } },
+        // 91 Fleet Master Firallon
+        { { { i::MAGEWEAVE_CLOTH, 100, 2, 3 }, { i::SUPERIOR_HEALING_POTION, 60, 1, 2 }, none }, true,
+          { i::CAPTAINS_SABATONS, i::SEAFARERS_SLIPPERS, i::FIRALLONS_BOOTS } },
+        // 92 Mogh the Undying
+        { { { i::TROLL_TUSK, 100, 1, 2 }, { i::MAGEWEAVE_CLOTH, 100, 1, 2 }, none }, true,
+          { i::MOGHS_LEGPLATES, i::LEGGINGS_OF_THE_UNDYING, i::VOODOO_BREECHES } },
+        // 93 Herod
+        { { { i::SUPERIOR_HEALING_POTION, 60, 1, 2 }, { i::SCARLET_INSIGNIA, 100, 1, 2 }, none }, true,
+          { i::HERODS_BREASTPLATE, i::CHAMPIONS_ROBE, i::BLOODWHIRL_TUNIC } },
+        // 94 High Inquisitor Fairbanks
+        { { { i::SUPERIOR_HEALING_POTION, 60, 1, 2 }, { i::SCARLET_INSIGNIA, 100, 1, 2 }, none }, true,
+          { i::INQUISITORS_HELM, i::HOOD_OF_PENANCE, i::MASK_OF_ATONEMENT } },
+        // 95 Scarlet Commander Mograine
+        { { { i::SUPERIOR_HEALING_POTION, 60, 1, 2 }, { i::SCARLET_INSIGNIA, 100, 1, 2 }, none }, true,
+          { i::MOGRAINES_MIGHT, i::STAFF_OF_THE_COMMANDER, i::CRUSADERS_LONGBOW } },
+        // 96 High Inquisitor Whitemane
+        { { { i::SUPERIOR_HEALING_POTION, 100, 2, 3 }, none, none }, true,
+          { i::GAUNTLETS_OF_DIVINITY, i::WHITEMANES_GLOVES, i::GRIPS_OF_RESURRECTION } },
     };
 
     // Uncommon items any enemy of a level band may drop.
@@ -284,6 +318,9 @@ namespace
                                    i::SAGES_STAFF, i::HAWKEYE_BOW, i::BULWARK_SHIELD };
     constexpr item_id band_7[] = { i::ALTERAC_CHAIN_HELM, i::SILKWEAVE_ROBE, i::STALKERS_LEGGINGS,
                                    i::BATTLEFORGE_GREATSWORD, i::IVORY_STAFF, i::IRONBARK_LONGBOW, i::BASTION_SHIELD };
+    constexpr item_id band_8[] = { i::EMBERFORGED_HELM, i::STARSILK_ROBE, i::JUNGLESTALKER_LEGGINGS,
+                                   i::CRESCENT_GREATSWORD, i::SERPENTWOOD_STAFF, i::THORNROOT_LONGBOW,
+                                   i::BULWARK_OF_THE_VALE };
 
     constexpr int world_drop_chance = 3;
     constexpr int elite_world_drop_chance = 35;
@@ -334,7 +371,12 @@ namespace
             return pick(band_6);
         }
 
-        return pick(band_7);
+        if(level <= 35)
+        {
+            return pick(band_7);
+        }
+
+        return pick(band_8);
     }
 
     void add(enemy& item, item_id loot, int count)

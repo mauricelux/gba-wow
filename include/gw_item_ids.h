@@ -572,7 +572,115 @@
     X(HOUNDMASTERS_BOOTS, armor("Houndmaster's Boots", R, LEATHER, FEET, 34, 0, 10, 5, 0, 0)) \
     X(HYPNOTIC_BLADE, weapon("Hypnotic Blade", R, SWORD, 35, 26, 9, 2, 6, 0, 0)) \
     X(ILLUSIONARY_ROD, weapon("Illusionary Rod", R, STAFF, 35, 32, 0, 0, 6, 14, 8)) \
-    X(SCARLET_LONGBOW, weapon("Scarlet Longbow", R, BOW, 35, 28, 0, 12, 6, 0, 0))
+    X(SCARLET_LONGBOW, weapon("Scarlet Longbow", R, BOW, 35, 28, 0, 12, 6, 0, 0)) \
+    /* World drops, levels 36 to 40 */ \
+    X(EMBERFORGED_HELM, armor("Emberforged Helm", U, MAIL, HEAD, 37, 7, 0, 6, 0, 0)) \
+    X(STARSILK_ROBE, armor("Starsilk Robe", U, CLOTH, CHEST, 38, 0, 0, 5, 10, 6)) \
+    X(JUNGLESTALKER_LEGGINGS, armor("Junglestalker Leggings", U, LEATHER, LEGS, 38, 0, 10, 5, 0, 0)) \
+    X(CRESCENT_GREATSWORD, weapon("Crescent Greatsword", U, TWO_HANDED, 38, 36, 11, 0, 7, 0, 0)) \
+    X(SERPENTWOOD_STAFF, weapon("Serpentwood Staff", U, STAFF, 38, 32, 0, 0, 5, 11, 6)) \
+    X(THORNROOT_LONGBOW, weapon("Thornroot Longbow", U, BOW, 38, 28, 0, 10, 5, 0, 0)) \
+    X(BULWARK_OF_THE_VALE, shield("Bulwark of the Vale", U, 37, 4, 0, 7, 0, 0)) \
+    /* Stranglethorn: what its people and creatures carry */ \
+    X(TROLL_TUSK, junk("Troll Tusk", 80, 20)) \
+    X(RAPTOR_CLAW, junk("Raptor Claw", 70, 20)) \
+    /* Booty Bay's smith */ \
+    X(JUNGLE_CUTLASS, weapon("Jungle Cutlass", C, SWORD, 35, 26)) \
+    X(GOBLIN_CHOPPER, weapon("Goblin Chopper", C, AXE, 35, 25)) \
+    X(SPIKED_CUDGEL, weapon("Spiked Cudgel", C, MACE, 35, 27)) \
+    X(JUNGLE_STAFF, weapon("Jungle Staff", C, STAFF, 35, 31)) \
+    X(GOBLIN_GREATSWORD, weapon("Goblin Greatsword", C, TWO_HANDED, 35, 35)) \
+    X(JUNGLE_LONGBOW, weapon("Jungle Longbow", C, BOW, 35, 28)) \
+    X(GOBLIN_RIFLE, weapon("Goblin Rifle", C, GUN, 35, 29)) \
+    X(BOOTY_BAY_BUCKLER, shield("Booty Bay Buckler", C, 35)) \
+    X(MITHRIL_CHAIN_HELM, armor("Mithril Chain Helm", C, MAIL, HEAD, 35)) \
+    X(MITHRIL_CHAIN_HAUBERK, armor("Mithril Chain Hauberk", C, MAIL, CHEST, 35)) \
+    X(MITHRIL_CHAIN_GAUNTLETS, armor("Mithril Chain Gauntlets", C, MAIL, HANDS, 35)) \
+    X(MITHRIL_CHAIN_LEGGINGS, armor("Mithril Chain Leggings", C, MAIL, LEGS, 35)) \
+    X(MITHRIL_CHAIN_BOOTS, armor("Mithril Chain Boots", C, MAIL, FEET, 35)) \
+    X(BARBARIC_LEATHER_CAP, armor("Barbaric Leather Cap", C, LEATHER, HEAD, 35)) \
+    X(BARBARIC_LEATHER_VEST, armor("Barbaric Leather Vest", C, LEATHER, CHEST, 35)) \
+    X(BARBARIC_LEATHER_GLOVES, armor("Barbaric Leather Gloves", C, LEATHER, HANDS, 35)) \
+    X(BARBARIC_LEATHER_PANTS, armor("Barbaric Leather Pants", C, LEATHER, LEGS, 35)) \
+    X(BARBARIC_LEATHER_BOOTS, armor("Barbaric Leather Boots", C, LEATHER, FEET, 35)) \
+    X(SHADOWEAVE_HOOD, armor("Shadoweave Hood", C, CLOTH, HEAD, 35)) \
+    X(SHADOWEAVE_ROBE, armor("Shadoweave Robe", C, CLOTH, CHEST, 35)) \
+    X(SHADOWEAVE_GLOVES, armor("Shadoweave Gloves", C, CLOTH, HANDS, 35)) \
+    X(SHADOWEAVE_PANTS, armor("Shadoweave Pants", C, CLOTH, LEGS, 35)) \
+    X(SHADOWEAVE_BOOTS, armor("Shadoweave Boots", C, CLOTH, FEET, 35)) \
+    /* Stranglethorn Vale: quest rewards */ \
+    X(REBEL_BROADSWORD, weapon("Rebel Broadsword", U, SWORD, 35, 26, 7, 1, 5, 0, 0)) \
+    X(ZUL_KUNDA_STAFF, weapon("Zul'Kunda Staff", U, STAFF, 35, 32, 0, 0, 5, 10, 5)) \
+    X(REBEL_LONGBOW, weapon("Rebel Longbow", U, BOW, 35, 28, 0, 9, 5, 0, 0)) \
+    X(TIGERSTRIPE_SABATONS, armor("Tigerstripe Sabatons", U, MAIL, FEET, 35, 6, 0, 5, 0, 0)) \
+    X(JUNGLE_SANDALS, armor("Jungle Sandals", U, CLOTH, FEET, 35, 0, 0, 4, 8, 4)) \
+    X(TIGERHIDE_BOOTS, armor("Tigerhide Boots", U, LEATHER, FEET, 35, 0, 7, 5, 0, 0)) \
+    X(HEADHUNTERS_GAUNTLETS, armor("Headhunter's Gauntlets", U, MAIL, HANDS, 36, 7, 0, 5, 0, 0)) \
+    X(VOODOO_WRAPS, armor("Voodoo Wraps", U, CLOTH, HANDS, 36, 0, 0, 4, 8, 5)) \
+    X(HEADHUNTERS_GRIPS, armor("Headhunter's Grips", U, LEATHER, HANDS, 36, 0, 8, 5, 0, 0)) \
+    X(PANTHER_HELM, armor("Panther Helm", U, MAIL, HEAD, 36, 7, 0, 5, 0, 0)) \
+    X(SHADOWMAW_COWL, armor("Shadowmaw Cowl", U, CLOTH, HEAD, 36, 0, 0, 4, 8, 5)) \
+    X(PANTHERHIDE_CAP, armor("Pantherhide Cap", U, LEATHER, HEAD, 36, 0, 8, 5, 0, 0)) \
+    X(RAPTORSCALE_LEGGUARDS, armor("Raptorscale Legguards", U, MAIL, LEGS, 37, 8, 0, 6, 0, 0)) \
+    X(JUNGLE_LEGGINGS, armor("Jungle Leggings", U, CLOTH, LEGS, 37, 0, 0, 5, 9, 5)) \
+    X(RAPTORHIDE_PANTS, armor("Raptorhide Pants", U, LEATHER, LEGS, 37, 0, 9, 6, 0, 0)) \
+    X(BOARDING_HAUBERK, armor("Boarding Hauberk", R, MAIL, CHEST, 37, 11, 0, 8, 0, 0)) \
+    X(BUCCANEERS_ROBE, armor("Buccaneer's Robe", R, CLOTH, CHEST, 37, 0, 0, 7, 13, 7)) \
+    X(CORSAIRS_VEST, armor("Corsair's Vest", R, LEATHER, CHEST, 37, 0, 12, 8, 0, 0)) \
+    X(BARNILS_HUNTING_BLADE, weapon("Barnil's Hunting Blade", R, SWORD, 37, 26, 9, 2, 6, 0, 0)) \
+    X(STONEPOTS_WALKING_STICK, weapon("Stonepot's Walking Stick", R, STAFF, 37, 32, 0, 0, 6, 14, 8)) \
+    X(NESINGWARY_4000, weapon("Nesingwary 4000", R, GUN, 37, 29, 0, 13, 6, 0, 0)) \
+    X(LASHTAIL_HELM, armor("Lashtail Helm", U, MAIL, HEAD, 38, 8, 0, 5, 0, 0)) \
+    X(RAPTOR_HUNTERS_HOOD, armor("Raptor Hunter's Hood", U, CLOTH, HEAD, 38, 0, 0, 5, 9, 5)) \
+    X(LASHTAIL_CAP, armor("Lashtail Cap", U, LEATHER, HEAD, 38, 0, 9, 5, 0, 0)) \
+    X(SILVERBACK_HAUBERK, armor("Silverback Hauberk", U, MAIL, CHEST, 38, 9, 0, 6, 0, 0)) \
+    X(MISTVALE_ROBE, armor("Mistvale Robe", U, CLOTH, CHEST, 38, 0, 0, 5, 10, 6)) \
+    X(GORILLAHIDE_VEST, armor("Gorillahide Vest", U, LEATHER, CHEST, 38, 0, 10, 6, 0, 0)) \
+    X(DECKHANDS_LEGGUARDS, armor("Deckhand's Legguards", U, MAIL, LEGS, 38, 9, 0, 6, 0, 0)) \
+    X(SAILCLOTH_TROUSERS, armor("Sailcloth Trousers", U, CLOTH, LEGS, 38, 0, 0, 5, 10, 5)) \
+    X(SEADOG_BREECHES, armor("Seadog Breeches", U, LEATHER, LEGS, 38, 0, 10, 6, 0, 0)) \
+    X(FIRALLONS_CUTLASS, weapon("Firallon's Cutlass", R, SWORD, 39, 26, 10, 2, 6, 0, 0)) \
+    X(FLEET_MASTERS_STAFF, weapon("Fleet Master's Staff", R, STAFF, 39, 32, 0, 0, 6, 15, 8)) \
+    X(BLOODSAIL_BLUNDERBUSS, weapon("Bloodsail Blunderbuss", R, GUN, 39, 29, 0, 14, 6, 0, 0)) \
+    X(BIG_GAME_HUNTERS_HELM, armor("Big Game Hunter's Helm", R, MAIL, HEAD, 39, 10, 0, 7, 0, 0)) \
+    X(SAFARI_HAT, armor("Safari Hat", R, CLOTH, HEAD, 39, 0, 0, 6, 12, 7)) \
+    X(TIGERSKULL_CAP, armor("Tigerskull Cap", R, LEATHER, HEAD, 39, 0, 12, 7, 0, 0)) \
+    /* The Scarlet Monastery's Armory and Cathedral: quest rewards */ \
+    X(ARMORY_SABATONS, armor("Armory Sabatons", U, MAIL, FEET, 37, 7, 0, 5, 0, 0)) \
+    X(ARMORERS_SLIPPERS, armor("Armorer's Slippers", U, CLOTH, FEET, 37, 0, 0, 4, 9, 5)) \
+    X(SQUIRES_BOOTS, armor("Squire's Boots", U, LEATHER, FEET, 37, 0, 9, 5, 0, 0)) \
+    X(BLADE_OF_THE_ARMORY, weapon("Blade of the Armory", R, TWO_HANDED, 38, 36, 14, 0, 9, 0, 0)) \
+    X(STAFF_OF_THE_CHAMPION, weapon("Staff of the Champion", R, STAFF, 38, 32, 0, 0, 6, 14, 8)) \
+    X(ARMORY_LONGBOW, weapon("Armory Longbow", R, BOW, 38, 28, 0, 13, 6, 0, 0)) \
+    X(CATHEDRAL_SABATONS, armor("Cathedral Sabatons", R, MAIL, FEET, 39, 9, 0, 7, 0, 0)) \
+    X(ABBOTS_SLIPPERS, armor("Abbot's Slippers", R, CLOTH, FEET, 39, 0, 0, 5, 11, 6)) \
+    X(CRIMSON_BOOTS, armor("Crimson Boots", R, LEATHER, FEET, 39, 0, 11, 6, 0, 0)) \
+    X(SWORD_OF_OMEN, weapon("Sword of Omen", E, TWO_HANDED, 40, 36, 17, 0, 12, 0, 0)) \
+    X(STAFF_OF_LORICA, weapon("Staff of Lorica", E, STAFF, 40, 32, 0, 0, 9, 19, 10)) \
+    X(BOW_OF_ABSOLUTION, weapon("Bow of Absolution", E, BOW, 40, 28, 0, 16, 8, 0, 0)) \
+    /* Stranglethorn's elites and rare */ \
+    X(SABERTOOTH_GAUNTLETS, armor("Sabertooth Gauntlets", R, MAIL, HANDS, 39, 9, 0, 6, 0, 0)) \
+    X(SILVERSTRIPE_GLOVES, armor("Silverstripe Gloves", R, CLOTH, HANDS, 39, 0, 0, 5, 11, 6)) \
+    X(BANGALASHS_GRIPS, armor("Bangalash's Grips", R, LEATHER, HANDS, 39, 0, 11, 6, 0, 0)) \
+    X(CAPTAINS_SABATONS, armor("Captain's Sabatons", R, MAIL, FEET, 39, 9, 0, 6, 0, 0)) \
+    X(SEAFARERS_SLIPPERS, armor("Seafarer's Slippers", R, CLOTH, FEET, 39, 0, 0, 5, 11, 6)) \
+    X(FIRALLONS_BOOTS, armor("Firallon's Boots", R, LEATHER, FEET, 39, 0, 11, 6, 0, 0)) \
+    X(MOGHS_LEGPLATES, armor("Mogh's Legplates", R, MAIL, LEGS, 38, 10, 0, 7, 0, 0)) \
+    X(LEGGINGS_OF_THE_UNDYING, armor("Leggings of the Undying", R, CLOTH, LEGS, 38, 0, 0, 6, 12, 7)) \
+    X(VOODOO_BREECHES, armor("Voodoo Breeches", R, LEATHER, LEGS, 38, 0, 12, 7, 0, 0)) \
+    /* The Scarlet Monastery's Armory and Cathedral: boss drops */ \
+    X(HERODS_BREASTPLATE, armor("Herod's Breastplate", R, MAIL, CHEST, 38, 11, 0, 8, 0, 0)) \
+    X(CHAMPIONS_ROBE, armor("Champion's Robe", R, CLOTH, CHEST, 38, 0, 0, 7, 13, 7)) \
+    X(BLOODWHIRL_TUNIC, armor("Bloodwhirl Tunic", R, LEATHER, CHEST, 38, 0, 12, 8, 0, 0)) \
+    X(INQUISITORS_HELM, armor("Inquisitor's Helm", R, MAIL, HEAD, 39, 10, 0, 7, 0, 0)) \
+    X(HOOD_OF_PENANCE, armor("Hood of Penance", R, CLOTH, HEAD, 39, 0, 0, 6, 12, 7)) \
+    X(MASK_OF_ATONEMENT, armor("Mask of Atonement", R, LEATHER, HEAD, 39, 0, 12, 7, 0, 0)) \
+    X(MOGRAINES_MIGHT, weapon("Mograine's Might", R, TWO_HANDED, 40, 36, 15, 0, 10, 0, 0)) \
+    X(STAFF_OF_THE_COMMANDER, weapon("Staff of the Commander", R, STAFF, 40, 32, 0, 0, 7, 16, 9)) \
+    X(CRUSADERS_LONGBOW, weapon("Crusader's Longbow", R, BOW, 40, 28, 0, 14, 7, 0, 0)) \
+    X(GAUNTLETS_OF_DIVINITY, armor("Gauntlets of Divinity", R, MAIL, HANDS, 40, 10, 0, 7, 0, 0)) \
+    X(WHITEMANES_GLOVES, armor("Whitemane's Gloves", R, CLOTH, HANDS, 40, 0, 0, 6, 12, 7)) \
+    X(GRIPS_OF_RESURRECTION, armor("Grips of Resurrection", R, LEATHER, HANDS, 40, 0, 12, 7, 0, 0))
 
 namespace gw
 {

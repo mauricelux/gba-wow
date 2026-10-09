@@ -71,6 +71,14 @@ namespace
           "Arcanist Doan is dead among his books, and the Graveyard sleeps at last. The Argent Dawn "
           "watches the monastery doors. Beyond them, the Armory and the Cathedral wait.",
           quest_id::ARCANIST_DOAN },
+        { "The Jungle Tamed",
+          "King Bangalash's head hangs over Hemet Nesingwary's tent, and the Bloodsail fleet has lost "
+          "its master. Baron Revilgaz lifts a glass to you from his balcony over Booty Bay.",
+          quest_id::BIG_GAME_HUNTER },
+        { "The Crusade Falls",
+          "Mograine and Whitemane lie dead before the altar, and the Scarlet Monastery is silent. "
+          "Across the sea, the deserts of Tanaris and the Razorfen thorns of Kalimdor wait.",
+          quest_id::IN_THE_NAME_OF_THE_LIGHT },
     };
 
     constexpr int story_page_total = sizeof(story_pages) / sizeof(story_pages[0]);

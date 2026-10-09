@@ -68,6 +68,10 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Flying from Southshore to the Argent Watch in Tirisfal](docs/screenshots/m20_argent_watch_flight.png)
 ![Scarlet torturers in the Graveyard of the Scarlet Monastery](docs/screenshots/m20_torture_chamber.png)
 ![Arcanist Doan builds a Detonation](docs/screenshots/m20_doan.png)
+![Hemet Nesingwary's camp in Stranglethorn Vale](docs/screenshots/m21_nesingwary.png)
+![Goblins on the docks of Booty Bay](docs/screenshots/m21_booty_bay.png)
+![Herod winds up a Whirlwind in the Armory](docs/screenshots/m21_herod.png)
+![Whitemane raises Mograine and casts Deep Sleep](docs/screenshots/m21_whitemane.png)
 
 ## Status
 
@@ -76,25 +80,27 @@ Human Warrior or Mage, a Dwarf Warrior or Hunter, or a Night Elf Warrior or Hunt
 subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Marksmanship or Survival),
 then walk freely from Northshire Abbey down to Goldshire, west to the city of Stormwind, south to
 Westfall, east to the Redridge Mountains and south to Duskwood, ride the tram to Ironforge and go on
-to the Wetlands, Darkshore and the Hillsbrad Foothills, take on 99 quests from Northshire to the Scarlet
-Monastery, fight with auto-attack and your subclass's abilities, loot and equip about 520 items, buy and sell at vendors, carry as much
+to the Wetlands, Darkshore, the Hillsbrad Foothills and the jungle of Stranglethorn Vale, take on 118
+quests from Northshire to Booty Bay, fight with auto-attack and your subclass's abilities, loot and equip about 620 items, buy and sell at vendors, carry as much
 as you like in bags sorted by type, quality, level or age, use 19 ability slots on three bars and 4
 item slots, buy new abilities and ranks from your class trainer, spend talent points from level 10,
 face the elites Princess, Hogger, Gath'Ilzogg, Mor'Ladim, Stitches, Balgaras, Nek'rosh, Gravis
-Slipknot and Bloodfang, clear the kobolds out of Echo Ridge and Fargodeep mines, hunt for 36 hidden
+Slipknot, Bloodfang, King Bangalash and Fleet Master Firallon, clear the kobolds out of Echo Ridge and
+Fargodeep mines, hunt for 40 hidden
 treasure chests, fish in Lake Everstill, hearth home to an inn, ride from level 30, fly by gryphon
 between Stormwind, Sentinel Hill, Lakeshire, Darkshire, Silverpine Forest, Ironforge, Menethil Harbor,
-Southshore and the Argent Watch in Tirisfal, take the Deeprun Tram and the boat to Auberdine, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
+Southshore, the Argent Watch in Tirisfal and Booty Bay, take the Deeprun Tram and the boat to Auberdine, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
 Edwin VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, keep the night
 off Darkshire, climb Shadowfang Keep to Archmage Arugal, light the braziers of Blackfathom Deeps for
-Aku'mai, take Gnomeregan back from Mekgineer Thermaplugg, clear the Graveyard and the Library of the
-Scarlet Monastery up to Arcanist Doan, and save to the cartridge. Every zone has
+Aku'mai, take Gnomeregan back from Mekgineer Thermaplugg, clear all four wings of the Scarlet
+Monastery up to High Inquisitor Whitemane, and save to the cartridge. Every zone has
 its own music, and elite fights switch to a boss tune.
 
 Following the quests in order takes a hero to level 15 at the end of Westfall, about 19 after
 Redridge, 20 after the Deadmines, 21 in the Stockade, about 25 at the door of Shadowfang Keep, 26
-after Arugal, about 28 after the Wetlands, 30 after Thermaplugg, 33 after Hillsbrad and 35 after
-Arcanist Doan, without grinding. The level cap is
+after Arugal, about 28 after the Wetlands, 30 after Thermaplugg, 33 after Hillsbrad, 35 after
+Arcanist Doan, about 37 halfway through Stranglethorn, 39 after King Bangalash and 40 after High
+Inquisitor Whitemane, without grinding. The level cap is
 60: the road there is planned in [docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12
 to M26).
 
@@ -121,7 +127,8 @@ to M26).
 | M18 Duskwood | Duskwood at night and Darkshire (20 to 25), 17 quests, Stitches walking to town, Silverpine Forest and Shadowfang Keep with six bosses | Done |
 | M19 Ironforge and the Wetlands | Ironforge, Dun Morogh, the Wetlands and Darkshore (25 to 30), 22 quests, Blackfathom Deeps with its braziers, Gnomeregan with radiation and Walking Bombs | Done |
 | M20 Hillsbrad and Scarlet Monastery 1 | The Hillsbrad Foothills and Southshore (30 to 35), Tirisfal's Argent Watch, 18 quests, the Graveyard and the Library with six bosses | Done |
-| M21 to M26 | Stranglethorn to the Plaguelands, 13 new dungeons, Onyxia and the new ending | Planned |
+| M21 Stranglethorn and Scarlet Monastery 2 | Stranglethorn Vale with the Rebel Camp, Nesingwary's Expedition and Booty Bay (35 to 40), 19 quests, the Armory and the Cathedral with four bosses | Done |
+| M22 to M26 | Tanaris to the Plaguelands, 11 new dungeons, Onyxia and the new ending | Planned |
 
 ## Controls
 
@@ -315,6 +322,21 @@ Spike circles where you stand) haunt the halls, and Ironspine walks the ossuary.
 on the Library: Houndmaster Loksey looses another hound and frenzies, and Arcanist Doan hides in an
 Arcane Bubble at half health while he builds a Detonation; run out of its circle. Loremaster Dibbs in
 Southshore wants a book from the Library's stacks, and Doan's fall ends the chapter with a new page.
+
+Stranglethorn Vale: from level 33, Magistrate Maleb's *South to Stranglethorn* sends you down the old
+road from Sven's camp in Duskwood to Lieutenant Doren's Rebel Camp, at war with the Bloodscalp trolls
+of Zul'Kunda (and Mogh the Undying, a rare troll who raises skeletons). Hemet Nesingwary's hunters
+want tigers, panthers and raptors, then the head of the elite white tiger King Bangalash, who calls a
+panther at half health; Barnil Stonepot wants the lost pages of Hemet's book. Booty Bay, a goblin port
+with an inn, a smith with level 35 gear and Gyll's gryphons, sends you after the Bloodsail pirates and
+their elite Fleet Master Firallon.
+
+Scarlet Monastery 2: Argent Scout Nathan's next quests open the last two wings. In the Armory, Herod
+winds up a Whirlwind (step out of the circle) and frenzies, and his trainees rush in when he falls. In
+the Cathedral, High Inquisitor Fairbanks waits in the Chamber of Atonement, and Scarlet Commander
+Mograine guards the altar. Whitemane prays there after he falls; strike her and at half health she
+raises him and puts you to sleep with Deep Sleep. Raleigh the Devout in Southshore takes the news, and
+the chapter ends with new pages for the jungle and the Crusade.
 
 Auto-attack keeps going after a kill if another enemy is on you, and turns to whoever is hitting you
 when your target is out of reach.

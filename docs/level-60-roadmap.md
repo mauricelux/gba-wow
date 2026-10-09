@@ -67,7 +67,7 @@ endgame. Each zone is one streamed outdoor map, about the size of Westfall (1024
 | 5 | 20–25 | Duskwood ✓ | Darkshire ✓ | Worgen, Stitches, Morbent Fel, the Night Watch | **Shadowfang Keep** ✓ |
 | 6 | 25–30 | Wetlands ✓ | Menethil Harbor ✓, **Ironforge** ✓ | Dark Iron dwarves, Dragonmaw orcs, Grim Batol | **Blackfathom Deeps** ✓, **Gnomeregan** ✓ |
 | 7 | 30–35 | Hillsbrad Foothills ✓ | Southshore ✓ | Syndicate, Forsaken, Alterac ogres | **SM Graveyard** ✓, **SM Library** ✓ |
-| 8 | 35–40 | Stranglethorn Vale | Rebel Camp, Booty Bay | The tiger and raptor hunts, Bloodsail pirates, trolls | **SM Armory**, **SM Cathedral** |
+| 8 | 35–40 | Stranglethorn Vale ✓ | Rebel Camp ✓, Booty Bay ✓ | The tiger and raptor hunts, Bloodsail pirates, trolls | **SM Armory** ✓, **SM Cathedral** ✓ |
 | 9 | 40–45 | Tanaris and Thousand Needles | Gadgetzan | Wastewander bandits, Sandfury trolls, the quilboar | **Razorfen Kraul**, **Razorfen Downs**, **Zul'Farrak** |
 | 10 | 45–50 | Feralas | Feathermoon Stronghold | Gordok ogres, the Grimtotem, the Emerald Dream portal | **Maraudon**, **Dire Maul** |
 | 11 | 50–55 | Burning Steppes, with Searing Gorge and the Badlands edge | Morgan's Vigil, Thorium Point | The Dark Iron empire and the Blackrock clan | **Uldaman**, **Sunken Temple**, **Blackrock Depths** |
@@ -152,6 +152,8 @@ flight master to `src/gw_travel.cpp` and its zone to the continent pictures in `
 M19 opened the station's stairs to Tinker Town and put the first boat on Menethil's pier (to
 Auberdine, on Kalimdor's continent picture, with its own hippogryph master). M20 added Southshore's
 gryphons and the Argent Watch in Tirisfal, which a quest marks on the map like the Scouts' Camp.
+M21 opened the old road south out of Duskwood into Stranglethorn and gave Booty Bay a gryphon
+master; Booty Bay's boat to Kalimdor comes with Tanaris in M22.
 
 ---
 
@@ -171,8 +173,8 @@ telegraph their big attacks (red circles, cast bars) so a solo player can dodge 
 | 5 | Gnomeregan ✓ | 26–30 | Dun Morogh (from Ironforge) | Grubbis, Viscous Fallout, Electrocutioner 6000, Crowd Pummeler 9-60, **Mekgineer Thermaplugg** | Radiation pools hurt over time; Thermaplugg's bomb bots must be dodged or killed (the wall buttons are left out for now) |
 | 6 | Scarlet Monastery: Graveyard ✓ | 30–33 | Tirisfal (from Southshore) | Interrogator Vishas, Azshir the Sleepless, Bloodmage Thalnos, **Ironspine** | Short wing; Thalnos casts Flame Spike circles |
 | 7 | Scarlet Monastery: Library ✓ | 33–35 | Tirisfal | Houndmaster Loksey, **Arcanist Doan** | Doan's Detonation: get out of range or it hits hard; Loksey's hounds |
-| 8 | Scarlet Monastery: Armory | 35–37 | Tirisfal | **Herod** | Whirlwind charge-up, then a wave of trainees when he falls |
-| 9 | Scarlet Monastery: Cathedral | 37–40 | Tirisfal | High Inquisitor Fairbanks, Scarlet Commander Mograine, **High Inquisitor Whitemane** | Whitemane resurrects Mograine and the fight goes on; Deep Sleep puts the hero to sleep |
+| 8 | Scarlet Monastery: Armory ✓ | 35–37 | Tirisfal | **Herod** | Whirlwind charge-up, then a wave of trainees when he falls |
+| 9 | Scarlet Monastery: Cathedral ✓ | 37–40 | Tirisfal | High Inquisitor Fairbanks, Scarlet Commander Mograine, **High Inquisitor Whitemane** | Whitemane resurrects Mograine and the fight goes on; Deep Sleep puts the hero to sleep |
 | 10 | Razorfen Kraul | 40–41 | Southern Barrens edge | Aggem Thorncurse, Death Speaker Jargba, Overlord Ramtusk, Agathelos the Raging, **Charlga Razorflank** | Thorn walls shrink the paths; Charlga heals her guards |
 | 11 | Razorfen Downs | 41–43 | Thousand Needles | Tuten'kash, Mordresh Fire Eye, Glutton, **Amnennar the Coldbringer** | The gong event summons spider waves before Tuten'kash; Amnennar's Frost Nova and spectral adds |
 | 12 | Zul'Farrak | 43–45 | Tanaris | Antu'sul, Theka the Martyr, Witch Doctor Zum'rah, Gahz'rilla, Nekrum and Sezz'ziz, **Chief Ukorz Sandscalp** | The pyramid event: waves of trolls climb the stairs; Gahz'rilla is summoned by ringing the gong at her pool |
@@ -622,7 +624,7 @@ are one bracket each so they can be played and tuned one at a time.
 | **M18 Duskwood and Shadowfang Keep** (20–25) ✓ | Night palette, Darkshire, Stitches, Silverpine entrance, SFK. Optional new gear slots (left out for now) | M17 |
 | **M19 Wetlands, Ironforge, BFD, Gnomeregan** (25–30) ✓ | Second capital, two dungeons; Dun Morogh and Darkshore as the ways in | M18 |
 | **M20 Hillsbrad and Scarlet Monastery 1** (30–35) ✓ | Southshore, Graveyard, Library, mount | M19 |
-| **M21 Stranglethorn and Scarlet Monastery 2** (35–40) | Booty Bay, Nesingwary, Armory, Cathedral | M20 |
+| **M21 Stranglethorn and Scarlet Monastery 2** (35–40) ✓ | Booty Bay, Nesingwary, Armory, Cathedral | M20 |
 | **M22 Tanaris and the Razorfens** (40–45) | Kalimdor by boat, Gadgetzan, Razorfen Kraul, Razorfen Downs, Zul'Farrak | M21 |
 | **M23 Feralas** (45–50) | Feathermoon, Maraudon, Dire Maul | M22 |
 | **M24 Burning Steppes** (50–55) | Morgan's Vigil, Uldaman, Sunken Temple, Blackrock Depths | M23 |

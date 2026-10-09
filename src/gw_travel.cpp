@@ -10,6 +10,7 @@
 #include "gw_map_redridge.h"
 #include "gw_map_silverpine.h"
 #include "gw_map_stormwind.h"
+#include "gw_map_stranglethorn.h"
 #include "gw_map_tirisfal.h"
 #include "gw_map_westfall.h"
 #include "gw_map_wetlands.h"
@@ -30,6 +31,7 @@ namespace
         { "Auberdine", npc_id::CAYLAIS, map_id::DARKSHORE, map_data::darkshore::flight, 1, 40, 30 },
         { "Southshore", npc_id::DARLA, map_id::HILLSBRAD, map_data::hillsbrad::flight, 0, 56, 47 },
         { "Argent Watch", npc_id::GRYPHON_TIRISFAL, map_id::TIRISFAL, map_data::tirisfal::flight, 0, 44, 20 },
+        { "Booty Bay", npc_id::GYLL, map_id::STRANGLETHORN, map_data::stranglethorn::flight, 0, 29, 108 },
     };
 
     static_assert(sizeof(flights) / sizeof(flights[0]) == int(flight_id::COUNT));

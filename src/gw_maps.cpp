@@ -38,6 +38,12 @@
 #include "bn_regular_bg_items_map_sm_graveyard_overhead.h"
 #include "bn_regular_bg_items_map_sm_library_ground.h"
 #include "bn_regular_bg_items_map_sm_library_overhead.h"
+#include "bn_regular_bg_items_map_sm_armory_ground.h"
+#include "bn_regular_bg_items_map_sm_armory_overhead.h"
+#include "bn_regular_bg_items_map_sm_cathedral_ground.h"
+#include "bn_regular_bg_items_map_sm_cathedral_overhead.h"
+#include "bn_regular_bg_items_map_stranglethorn_ground.h"
+#include "bn_regular_bg_items_map_stranglethorn_overhead.h"
 #include "bn_regular_bg_items_map_stockade_ground.h"
 #include "bn_regular_bg_items_map_stockade_overhead.h"
 #include "bn_regular_bg_items_map_stormwind_ground.h"
@@ -68,6 +74,9 @@
 #include "gw_map_silverpine.h"
 #include "gw_map_sm_graveyard.h"
 #include "gw_map_sm_library.h"
+#include "gw_map_sm_armory.h"
+#include "gw_map_sm_cathedral.h"
+#include "gw_map_stranglethorn.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_tirisfal.h"
@@ -112,6 +121,10 @@ namespace
     constexpr point_def tirisfal_graveyards[] = { map_data::tirisfal::tirisfal_respawn };
     constexpr point_def sm_graveyard_graveyards[] = { map_data::sm_graveyard::respawn };
     constexpr point_def sm_library_graveyards[] = { map_data::sm_library::respawn };
+    constexpr point_def stranglethorn_graveyards[] = { map_data::stranglethorn::rebel_camp_respawn,
+                                                        map_data::stranglethorn::booty_bay_respawn };
+    constexpr point_def sm_armory_graveyards[] = { map_data::sm_armory::respawn };
+    constexpr point_def sm_cathedral_graveyards[] = { map_data::sm_cathedral::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
@@ -161,6 +174,9 @@ namespace
         GW_MAP_INFO(TIRISFAL, tirisfal, false, false),
         GW_MAP_INFO(SM_GRAVEYARD, sm_graveyard, true, true),
         GW_MAP_INFO(SM_LIBRARY, sm_library, true, true),
+        GW_MAP_INFO(STRANGLETHORN, stranglethorn, false, false),
+        GW_MAP_INFO(SM_ARMORY, sm_armory, true, true),
+        GW_MAP_INFO(SM_CATHEDRAL, sm_cathedral, true, true),
     };
 
     [[nodiscard]] int count_chests()

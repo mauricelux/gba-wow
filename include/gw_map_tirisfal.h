@@ -148,12 +148,16 @@ namespace gw::map_data::tirisfal
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x80,0x1f,
     };
 
+    constexpr point_def armory_exit = { 304, 244 };
+    constexpr point_def cathedral_exit = { 560, 244 };
     constexpr point_def flight = { 488, 468 };
     constexpr point_def graveyard_exit = { 200, 244 };
     constexpr point_def library_exit = { 432, 244 };
     constexpr point_def tirisfal_respawn = { 400, 476 };
 
     constexpr warp_def warps[] = {
+        { 292, 216, 24, 8, map_id::SM_ARMORY, 512, 480 },
+        { 548, 216, 24, 8, map_id::SM_CATHEDRAL, 512, 480 },
         { 420, 216, 24, 8, map_id::SM_LIBRARY, 512, 480 },
         { 188, 216, 24, 8, map_id::SM_GRAVEYARD, 512, 480 },
     };

@@ -73,7 +73,7 @@ EASTERN_KINGDOMS = [
     ('Swamp of Sorrows', 'swamp', [(54, 96), (62, 94), (70, 96), (72, 102), (58, 104), (50, 102)], (50, 55),
      'NONE'),
     ('Stranglethorn Vale', 'jungle', [(22, 104), (32, 102), (50, 102), (44, 108), (30, 110), (24, 108)],
-     (35, 40), 'NONE'),
+     (35, 40), 'STRANGLETHORN'),
 ]
 
 KALIMDOR = [

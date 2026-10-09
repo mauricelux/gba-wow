@@ -86,5 +86,13 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
   visit puts "New flight path discovered!" on the gossip's last line, so keep theirs to two lines.
 - A flight path no road leads to is marked when a quest is accepted (`accept_quest`): Into Shadowfang
   marks the Scouts' Camp and Down the Scarlet Path the Argent Watch in Tirisfal.
-- `look_id` is a `uint8_t`, and M20 uses 215 looks. `gen_characters.py` lists every humanoid look
-  before the creatures, so new humanoid looks shift the creature ids (looks are not saved).
+- `look_id` is a `uint16_t` (M21 went past 255 looks; it uses 257). `gen_characters.py` lists every
+  humanoid look before the creatures, so new humanoid looks shift the creature ids (looks are not
+  saved).
+- `enemies::revive` brings a dead or living enemy back at a share of its health (Whitemane raises
+  Mograine). A revived enemy has `revived` set: killing it again gives no loot, XP or quest credit.
+  `combat::_boss_killed` runs when a boss dies, before tap checks: Herod's trainees rush in from the
+  Armory's patrol points, and Whitemane mourns Mograine but stays passive until struck.
+- Adding a road through a generated forest changes the RNG stream and so every later tree. Duskwood's
+  south road keeps the old stream: trees on the road still draw their numbers but are not placed
+  ("ghost" trees), and the road is painted after the loop.

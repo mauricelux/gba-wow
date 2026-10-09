@@ -25,6 +25,9 @@
 #include "gw_map_silverpine.h"
 #include "gw_map_sm_graveyard.h"
 #include "gw_map_sm_library.h"
+#include "gw_map_sm_armory.h"
+#include "gw_map_sm_cathedral.h"
+#include "gw_map_stranglethorn.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_tirisfal.h"
@@ -95,6 +98,12 @@ namespace
         { "SM Graveyard", map_id::SM_GRAVEYARD, map_data::sm_graveyard::entry },
         { "SM Library", map_id::SM_LIBRARY, map_data::sm_library::entry },
         { "The Athenaeum", map_id::SM_LIBRARY, { 512, 140 } },
+        { "Rebel Camp", map_id::STRANGLETHORN, map_data::stranglethorn::rebel_camp_respawn },
+        { "Booty Bay", map_id::STRANGLETHORN, map_data::stranglethorn::booty_bay_respawn },
+        { "SM Armory", map_id::SM_ARMORY, map_data::sm_armory::entry },
+        { "Hall of Champions", map_id::SM_ARMORY, { 512, 140 } },
+        { "SM Cathedral", map_id::SM_CATHEDRAL, map_data::sm_cathedral::entry },
+        { "The Crimson Cathedral", map_id::SM_CATHEDRAL, { 512, 160 } },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);

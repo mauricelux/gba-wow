@@ -3360,7 +3360,10 @@ void combat::enemy_killed(int index)
         }
     }
 
-    if(! item.tapped)
+    _boss_killed(item);
+
+    // A revived enemy gave its experience the first time it died.
+    if(! item.tapped || item.revived)
     {
         return;
     }
@@ -4073,11 +4076,119 @@ bool combat::boss_update(int index)
         }
         break;
 
+    // --- Stranglethorn Vale ------------------------------------------------------------------------
+
+    case enemy_id::KING_BANGALASH:
+        // A panther comes out of the jungle at his call.
+        _boss_greeting(boss, "King Bangalash roars!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::SHADOWMAW_PANTHER);
+            _hud.message("A panther answers the call!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::FLEET_MASTER_FIRALLON:
+        _boss_greeting(boss, "Firallon: Repel boarders!");
+        _update_frenzy(boss, health_percent, 30, 2, "Firallon");
+        break;
+
+    // --- Scarlet Monastery: Armory -----------------------------------------------------------------
+
+    case enemy_id::HEROD:
+        // Whirlwind comes from his ability table: a long wind-up, then a spin. Out of the circle!
+        _boss_greeting(boss, "Herod: Ah, I've been waiting!");
+        _update_frenzy(boss, health_percent, 20, 2, "Herod");
+        break;
+
+    // --- Scarlet Monastery: Cathedral --------------------------------------------------------------
+
+    case enemy_id::HIGH_INQUISITOR_FAIRBANKS:
+        _boss_greeting(boss, "Fairbanks: Leave this place!");
+        _update_frenzy(boss, health_percent, 25, 2, "Fairbanks");
+        break;
+
+    case enemy_id::SCARLET_COMMANDER_MOGRAINE:
+        _boss_greeting(boss, "Mograine: Burn, infidel!");
+        break;
+
+    case enemy_id::HIGH_INQUISITOR_WHITEMANE:
+        // At half health Deep Sleep (from her table) puts the hero to sleep, and she raises Mograine
+        // where he fell, or calls him if he still stands by the altar.
+        _boss_greeting(boss, "Whitemane: You will pay!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            int mograine = _find_enemy(enemy_id::SCARLET_COMMANDER_MOGRAINE);
+
+            if(mograine >= 0 && _enemies.revive(mograine, 40))
+            {
+                _effects.burst(_enemies.at(mograine).position, projectile_kind::HOLY);
+                _texts.show(_head(_enemies.at(mograine).position, 44), "Resurrection",
+                            floating_texts::style::DAMAGE_TAKEN);
+                _hud.message("Whitemane: Arise, my champion!", ui::color::RED);
+            }
+            else if(mograine >= 0)
+            {
+                _enemies.aggro(mograine);
+            }
+        }
+        break;
+
     default:
         break;
     }
 
     return false;
+}
+
+void combat::_boss_killed(const enemy& boss)
+{
+    switch(boss.id)
+    {
+
+    case enemy_id::HEROD:
+        // The trainees he drilled run in from the training grounds to avenge him.
+        for(const point_def& door : world::map().patrol)
+        {
+            _enemies.summon(enemy_id::SCARLET_TRAINEE, bn::fixed_point(door.x, door.y));
+        }
+
+        _hud.message("The trainees rush in!", ui::color::RED);
+        break;
+
+    case enemy_id::SCARLET_COMMANDER_MOGRAINE:
+        // Whitemane stays at the altar, praying for him: the hero gets to catch a breath before her.
+        if(! boss.revived)
+        {
+            int whitemane = _find_enemy(enemy_id::HIGH_INQUISITOR_WHITEMANE);
+
+            if(whitemane >= 0 && _enemies.at(whitemane).state == enemy_state::IDLE)
+            {
+                _hud.message("Whitemane: Mograine, no!", ui::color::RED);
+            }
+        }
+        break;
+
+    default:
+        break;
+    }
+}
+
+int combat::_find_enemy(enemy_id id) const
+{
+    for(int index = 0, limit = _enemies.count(); index < limit; ++index)
+    {
+        if(_enemies.at(index).id == id)
+        {
+            return index;
+        }
+    }
+
+    return -1;
 }
 
 void combat::_launch_bomb()

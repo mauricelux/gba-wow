@@ -156,6 +156,16 @@ TERRAIN_TIRISFAL = [
     ('flower', (168, 120, 152)),
 ]
 
+# Stranglethorn: deep jungle greens, red-brown earth and a turquoise sea; 'foam' doubles as beach sand.
+TERRAIN_STRANGLETHORN = [
+    ('shadow', (16, 48, 32)), ('grass_d', (32, 88, 40)), ('grass_m', (48, 120, 48)),
+    ('grass_l', (72, 152, 56)), ('grass_h', (120, 188, 80)),
+    ('dirt_d', (112, 64, 40)), ('dirt_m', (152, 96, 56)), ('dirt_l', (188, 136, 88)),
+    ('water_d', (24, 96, 128)), ('water_m', (40, 136, 160)), ('water_l', (96, 188, 200)),
+    ('foam', (232, 220, 176)), ('trunk_d', (72, 48, 32)), ('trunk_m', (116, 84, 52)),
+    ('flower', (232, 72, 104)),
+]
+
 BUILDINGS = [
     ('outline', (32, 32, 48)), ('stone_d', (88, 88, 104)), ('stone_m', (128, 128, 144)),
     ('stone_l', (168, 168, 176)), ('stone_h', (208, 208, 200)),
@@ -183,6 +193,16 @@ BUILDINGS_SCARLET = [
     ('glass_l', (240, 176, 96)), ('banner_d', (112, 16, 24)), ('banner', (176, 32, 40)),
     ('gold', (232, 184, 64)), ('cobble_d', (100, 96, 92)), ('cobble_l', (168, 160, 148)),
     ('plaster', (224, 216, 200)),
+]
+
+# Stranglethorn's buildings: Booty Bay's weathered timber and the mossy sandstone of the troll ruins.
+BUILDINGS_JUNGLE = [
+    ('outline', (28, 32, 28)), ('stone_d', (104, 104, 80)), ('stone_m', (144, 140, 104)),
+    ('stone_l', (180, 172, 128)), ('stone_h', (212, 204, 160)),
+    ('wood_d', (96, 60, 36)), ('wood_l', (152, 104, 60)), ('glass_d', (40, 56, 72)),
+    ('glass_l', (240, 208, 104)), ('banner_d', (120, 32, 32)), ('banner', (184, 52, 44)),
+    ('gold', (232, 184, 64)), ('cobble_d', (116, 100, 80)), ('cobble_l', (184, 168, 136)),
+    ('plaster', (224, 208, 168)),
 ]
 
 FARM = [
@@ -258,6 +278,15 @@ OVERHEAD_LEAVES_TIRISFAL = [
     ('roof_d', (72, 28, 32)), ('roof_m', (112, 48, 52)), ('roof_l', (140, 60, 60)),
     ('stone_d', (112, 104, 104)), ('stone_m', (152, 144, 136)), ('stone_l', (192, 184, 168)),
     ('gold', (232, 184, 64)), ('glass', (56, 32, 48)), ('roof_h', (176, 88, 80)),
+]
+
+# Stranglethorn's canopy: bright, saturated jungle leaves.
+OVERHEAD_LEAVES_JUNGLE = [
+    ('outline', (12, 36, 24)), ('leaf_0', (20, 68, 36)), ('leaf_1', (32, 100, 44)),
+    ('leaf_2', (52, 136, 52)), ('leaf_3', (84, 168, 64)), ('leaf_4', (140, 204, 88)),
+    ('roof_d', (48, 56, 96)), ('roof_m', (72, 88, 136)), ('roof_l', (104, 128, 176)),
+    ('stone_d', (104, 104, 80)), ('stone_m', (144, 140, 104)), ('stone_l', (180, 172, 128)),
+    ('gold', (232, 184, 64)), ('glass', (40, 56, 72)), ('roof_h', (144, 168, 208)),
 ]
 
 OVERHEAD_ROOFS = [
@@ -808,6 +837,14 @@ ROCK_TIRISFAL = [
     ('rock_3', (132, 128, 128)), ('rock_4', (164, 160, 156)), ('rock_5', (200, 196, 188)),
 ]
 
+# Stranglethorn's mossy grey-green crags, with twins of TERRAIN_STRANGLETHORN's grass.
+ROCK_STRANGLETHORN = [
+    ('r_shadow', (16, 48, 40)), ('r_grass_d', (32, 88, 48)), ('r_grass_m', (48, 120, 56)),
+    ('r_grass_l', (72, 152, 64)), ('r_grass_h', (120, 188, 88)),
+    ('rock_0', (36, 44, 40)), ('rock_1', (64, 76, 64)), ('rock_2', (92, 108, 88)),
+    ('rock_3', (124, 140, 112)), ('rock_4', (160, 172, 140)), ('rock_5', (200, 208, 176)),
+]
+
 # Terrain colors as the rock bank draws them.
 ROCK_TWINS = {'shadow': 'r_shadow', 'grass_d': 'r_grass_d', 'grass_m': 'r_grass_m', 'grass_l': 'r_grass_l',
               'grass_h': 'r_grass_h', 'flower': 'r_grass_h', 'foam': 'r_grass_h', 'dirt_d': 'rock_1',
@@ -1016,6 +1053,31 @@ def make_pine(op, seed, palette=LEAVES, height=38):
     return color_canopy(op, inside, shade, palette, local, height, TREE_W)
 
 
+def make_palm(op, seed, palette=LEAVES, height=CANOPY_H):
+    """A palm crown: long fronds fanning out from the top of the trunk and drooping at the tips."""
+    local = np.random.default_rng(seed)
+    inside = np.zeros((height, TREE_W), dtype=bool)
+    shade = np.zeros((height, TREE_W))
+    crown_x, crown_y = 16, 12
+    angles = [-2.9, -2.35, -1.85, -1.3, -0.8, -0.25, 0.25 + local.uniform(-0.1, 0.1)]
+    for index, angle in enumerate(angles):
+        length = local.uniform(11, 15)
+        for step in range(int(length * 2)):
+            t = step / 2
+            px = crown_x + np.cos(angle) * t
+            py = crown_y + np.sin(angle) * t + 0.035 * t * t * (1 + abs(np.cos(angle)))
+            half = 1.6 * (1 - t / length) + 0.6
+            for dy in np.arange(-half, half + 0.01, 0.5):
+                x, y = int(round(px)), int(round(py + dy))
+                if 0 <= x < TREE_W and 0 <= y < height:
+                    inside[y, x] = True
+                    shade[y, x] = 0.95 - 0.5 * (t / length) - (0.25 if dy > 0 else 0) - 0.1 * (index % 2)
+    for y, x in ((crown_y, crown_x), (crown_y + 1, crown_x), (crown_y, crown_x - 1), (crown_y + 1, crown_x + 1)):
+        inside[y, x] = True
+        shade[y, x] = 0.2
+    return color_canopy(op, inside, np.clip(shade, 0, 1), palette, local, height, TREE_W)
+
+
 def make_trunk(m, height=24, width=8, bark='trunk_m', edge='trunk_d', marks='trunk_d', mark_every=5):
     """A trunk centered in the 32 px tree with a shadow at its foot."""
     trunk = np.zeros((height, TREE_W), dtype=np.uint8)
@@ -1059,6 +1121,8 @@ class Trees:
             'autumn': [(make_canopy(op, s, AUTUMN_LEAVES), 0, oak_trunk, 24) for s in (41, 42)],
         }
         if not dead:
+            palm_trunk = make_trunk(m, height=34, width=4, mark_every=3)
+            self.kinds['palm'] = [(make_palm(op, s, leaves), 0, palm_trunk, 14) for s in (61, 62)]
             self.kinds['birch'] = [(make_canopy(op, s, birch, main=(16, 13, 11), spread=((9, 23), (6, 18), (5, 7))),
                                     0, birch_trunk, 24) for s in (51, 52)]
         self.forest_mix = ('oak', 'pine') if not dead else ('oak', 'small')

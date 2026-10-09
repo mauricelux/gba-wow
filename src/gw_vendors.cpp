@@ -87,6 +87,21 @@ namespace
         i::GREATER_HEALING_POTION, i::SUPERIOR_HEALING_POTION, i::TELEPORTATION_RUNE
     };
 
+    constexpr item_id jungle_goods[] = {
+        i::WILD_HOG_SHANK, i::GOLDENBARK_APPLE, i::MOONBERRY_JUICE, i::MORNING_GLORY_DEW,
+        i::GREATER_HEALING_POTION, i::SUPERIOR_HEALING_POTION, i::TELEPORTATION_RUNE
+    };
+
+    constexpr item_id booty_bay_smith[] = {
+        i::JUNGLE_CUTLASS, i::GOBLIN_CHOPPER, i::SPIKED_CUDGEL, i::JUNGLE_STAFF, i::GOBLIN_GREATSWORD,
+        i::JUNGLE_LONGBOW, i::GOBLIN_RIFLE, i::BOOTY_BAY_BUCKLER,
+        i::MITHRIL_CHAIN_HELM, i::MITHRIL_CHAIN_HAUBERK, i::MITHRIL_CHAIN_GAUNTLETS, i::MITHRIL_CHAIN_LEGGINGS,
+        i::MITHRIL_CHAIN_BOOTS,
+        i::BARBARIC_LEATHER_CAP, i::BARBARIC_LEATHER_VEST, i::BARBARIC_LEATHER_GLOVES, i::BARBARIC_LEATHER_PANTS,
+        i::BARBARIC_LEATHER_BOOTS,
+        i::SHADOWEAVE_HOOD, i::SHADOWEAVE_ROBE, i::SHADOWEAVE_GLOVES, i::SHADOWEAVE_PANTS, i::SHADOWEAVE_BOOTS
+    };
+
     constexpr item_id southshore_smith[] = {
         i::HARDENED_BROADSWORD, i::SOUTHSHORE_WAR_AXE, i::HEAVY_FLANGED_MACE, i::IRONBOUND_STAFF, i::HEAVY_CLAYMORE,
         i::HILLSBRAD_LONGBOW, i::HEAVY_BLUNDERBUSS, i::HEATER_SHIELD,
@@ -144,6 +159,12 @@ bn::span<const item_id> vendor_stock(int vendor)
 
     case 14:
         return southshore_smith;
+
+    case 15:
+        return jungle_goods;
+
+    case 16:
+        return booty_bay_smith;
 
     default:
         return general_goods;

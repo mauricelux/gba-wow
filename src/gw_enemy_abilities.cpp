@@ -127,6 +127,13 @@ namespace
           0, 1, none },
         { "Poison Cloud", e::HIT, t::AT_PLAYER, b::POISONED, s::NATURE, p::NONE, CAST, 80, 36, 15, 12, 15, 60, 30,
           0, 1, none },
+
+        // Herod spins in place after a long wind-up: nothing stops it, so step out of the circle.
+        { "Whirlwind", e::HIT, t::AROUND_SELF, b::COUNT, s::PHYSICAL, p::NONE, 0, 40, 44, 20, 14, 0, 170, 0, 0, 1,
+          none },
+        // High Inquisitor Whitemane, from half health: everyone near her falls asleep.
+        { "Deep Sleep", e::HIT, t::AROUND_SELF, b::ASLEEP, s::HOLY, p::NONE, SPELL | ONCE, 64, 72, 15, 0, 4, 0, 0,
+          50, 1, none },
     };
 
     static_assert(sizeof(abilities) / sizeof(abilities[0]) == enemy_ability_count, "an entry per enemy ability");

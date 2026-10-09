@@ -20,6 +20,7 @@ enum class flight_id : uint8_t
     AUBERDINE,
     SOUTHSHORE,
     ARGENT_WATCH,
+    BOOTY_BAY,
     COUNT
 };
 

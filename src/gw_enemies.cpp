@@ -139,6 +139,7 @@ void enemies::_spawn(enemy& item)
     item.phase = 0;
     item.special_timer = 0;
     item.telegraph_frames = 0;
+    item.revived = false;
     item.ai = enemy_ability_state();
     item.on_pet = false;
     item.player_threat = 0;
@@ -1064,7 +1065,7 @@ void enemies::_die(int index)
     item.sting_damage = 0;
     item.fear_frames = 0;
 
-    if(item.tapped)
+    if(item.tapped && ! item.revived)
     {
         roll_loot(item);
     }
@@ -1106,6 +1107,40 @@ int enemies::summon(enemy_id id, const bn::fixed_point& position)
     _spawn(item);
     aggro(slot);
     return slot;
+}
+
+bool enemies::revive(int index, int percent)
+{
+    enemy& item = _enemies[index];
+
+    if(item.alive())
+    {
+        return false;
+    }
+
+    bn::fixed_point position = item.state == enemy_state::DEAD ? item.position : item.origin;
+    loot_slot loot[4];
+    int money = item.loot_money;
+
+    for(int slot = 0; slot < 4; ++slot)
+    {
+        loot[slot] = item.loot[slot];
+    }
+
+    _spawn(item);
+
+    for(int slot = 0; slot < 4; ++slot)
+    {
+        item.loot[slot] = loot[slot];
+    }
+
+    item.loot_money = money;
+    item.position = position;
+    item.health = bn::max(1, item.max_health * percent / 100);
+    item.revived = true;
+    item.phase = 1;     // past its greeting: a boss says its line once
+    aggro(index);
+    return true;
 }
 
 bool enemies::any_in_combat() const

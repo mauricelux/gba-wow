@@ -20,6 +20,7 @@ enum class home_id : uint8_t
     MENETHIL,
     AUBERDINE,
     SOUTHSHORE,
+    BOOTY_BAY,
     COUNT
 };
 

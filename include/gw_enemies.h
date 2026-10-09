@@ -94,6 +94,7 @@ struct enemy
     int telegraph_frames = 0;   // a marked area goes off when this reaches zero
     bn::fixed_point special_position;
     bool summoned = false;      // added during a fight, removed when it ends
+    bool revived = false;       // raised from its corpse: no more loot or experience
     // Table abilities (gw_enemy_abilities): casting, charging, fleeing and its own buffs
     enemy_ability_state ai;
     // Who it fights: the player, or the pet once the pet worries it more.
@@ -219,6 +220,10 @@ public:
 
     // Adds an enemy during a fight (boss adds). Returns its index or -1.
     int summon(enemy_id id, const bn::fixed_point& position);
+
+    // Raises a dead enemy where it fell with percent of its health, fighting (High Inquisitor
+    // Whitemane's Resurrection). What it still carries stays on it. Returns false if it is alive.
+    bool revive(int index, int percent);
 
     // Whether an enemy could stand with its feet at the position.
     [[nodiscard]] static bool fits(bn::fixed x, bn::fixed y);

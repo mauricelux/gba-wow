@@ -31,6 +31,8 @@ namespace
     constexpr uint8_t menethil = 12;
     constexpr uint8_t southshore = 13;
     constexpr uint8_t southshore_smith = 14;
+    constexpr uint8_t jungle_goods = 15;
+    constexpr uint8_t booty_bay_smith = 16;
 
     constexpr npc_info npcs[] = {
         { "", "", l::PEASANT, 0, c::WARRIOR, 0, "" },
@@ -267,6 +269,37 @@ namespace
           "The Scarlet Crusade guard their monastery like a fortress. Zeal gone sour." },
         { "Gryphon Rider Talan", "Gryphon Master", l::GRYPHON_MASTER, flight_master, c::WARRIOR, 0,
           "Argent Watch is no town, but my gryphons will carry you south to Southshore." },
+        // Stranglethorn Vale
+        { "Lieutenant Doren", "", l::LIEUTENANT_DOREN, 0, c::WARRIOR, 0,
+          "Stormwind forgot us out here. The jungle didn't, and neither did the trolls." },
+        { "Corporal Bluth", "Camp Trader", l::CORPORAL_BLUTH, vendor, c::WARRIOR, jungle_goods,
+          "Supplies are thin out here, but what I have is yours. For a price." },
+        { "Rebel Soldier", "", l::REBEL_SOLDIER, 0, c::WARRIOR, 0,
+          "Keep your blade close. The Bloodscalps collect heads." },
+        { "Hemet Nesingwary", "", l::HEMET_NESINGWARY, 0, c::WARRIOR, 0,
+          "The finest hunting in the world, right here in this jungle. Mind the tigers." },
+        { "Ajeck Rouack", "", l::AJECK_ROUACK, 0, c::WARRIOR, 0,
+          "Tigers first. Then we can talk about the real game." },
+        { "Sir S. J. Erlgadin", "", l::SIR_S_J_ERLGADIN, 0, c::WARRIOR, 0,
+          "A gentleman hunts with patience. The panthers test it sorely." },
+        { "Barnil Stonepot", "", l::BARNIL_STONEPOT, 0, c::WARRIOR, 0,
+          "Hemet's book is the finest ever written. If only I had every page." },
+        { "Baron Revilgaz", "", l::BARON_REVILGAZ, 0, c::WARRIOR, 0,
+          "Booty Bay is neutral, friend. Neutral, and very profitable." },
+        { "Fleet Master Seahorn", "", l::FLEET_MASTER_SEAHORN, 0, c::WARRIOR, 0,
+          "The Bloodsail want my port. They'll get my cannons first." },
+        { "Kebok", "", l::KEBOK, 0, c::WARRIOR, 0,
+          "Got a job for you. Pays good. Don't ask who it's for." },
+        { "Innkeeper Skindle", "Innkeeper", l::INNKEEPER_SKINDLE, innkeeper, c::WARRIOR, jungle_goods,
+          "Rooms by the sea, rum by the barrel. Coin up front." },
+        { "Gyll", "Gryphon Master", l::GYLL, flight_master, c::WARRIOR, 0,
+          "My gryphons fly north to Darkshire and beyond." },
+        { "Booty Bay Bruiser", "", l::BOOTY_BAY_BRUISER, 0, c::WARRIOR, 0,
+          "No fighting in the bay. Take it outside the tunnel, pal." },
+        { "Drizzlik", "General Goods", l::BOOTY_BAY_VENDOR, vendor, c::WARRIOR, jungle_goods,
+          "Fruit, rum and bandages. All the jungle asks of you." },
+        { "Brikk Keencraft", "Blacksmith", l::BOOTY_BAY_SMITH, vendor, c::WARRIOR, booty_bay_smith,
+          "Goblin steel, the sharpest in the south. Guaranteed. Mostly." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

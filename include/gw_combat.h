@@ -300,6 +300,8 @@ private:
     void _shadow_port(int index);
     void _launch_bomb();
     void _boss_greeting(enemy& boss, const char* message);
+    void _boss_killed(const enemy& boss);
+    [[nodiscard]] int _find_enemy(enemy_id id) const;
     void _gain_rage(int damage, bool dealt);
     void _spend(int cost);
     [[nodiscard]] int _power() const;

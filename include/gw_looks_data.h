@@ -22,6 +22,9 @@
 #include "bn_sprite_items_char_gnome_plain.h"
 #include "bn_sprite_items_char_gnome_sword.h"
 #include "bn_sprite_items_char_goblin.h"
+#include "bn_sprite_items_char_goblin_plain.h"
+#include "bn_sprite_items_char_goblin_sword.h"
+#include "bn_sprite_items_char_gorilla.h"
 #include "bn_sprite_items_char_hum_plain.h"
 #include "bn_sprite_items_char_hum_robe.h"
 #include "bn_sprite_items_char_hum_staff.h"
@@ -42,7 +45,10 @@
 #include "bn_sprite_items_char_skeleton_mage.h"
 #include "bn_sprite_items_char_spider.h"
 #include "bn_sprite_items_char_spirit.h"
+#include "bn_sprite_items_char_tiger.h"
 #include "bn_sprite_items_char_trogg.h"
+#include "bn_sprite_items_char_troll_staff.h"
+#include "bn_sprite_items_char_troll_sword.h"
 #include "bn_sprite_items_char_turtle.h"
 #include "bn_sprite_items_char_watcher.h"
 #include "bn_sprite_items_char_water_elemental.h"
@@ -188,6 +194,41 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_hum_staff, palettes::arcanist_doan, false },
     { bn::sprite_items::char_hum_robe, palettes::southshore_innkeeper, false },
     { bn::sprite_items::char_elf_bow, palettes::argent_scout, false },
+    { bn::sprite_items::char_hum_sword, palettes::lieutenant_doren, false },
+    { bn::sprite_items::char_hum_sword, palettes::rebel_soldier, false },
+    { bn::sprite_items::char_hum_plain, palettes::corporal_bluth, false },
+    { bn::sprite_items::char_dwarf_bow, palettes::hemet_nesingwary, false },
+    { bn::sprite_items::char_dwarf_bow, palettes::ajeck_rouack, false },
+    { bn::sprite_items::char_hum_sword, palettes::sir_s_j_erlgadin, false },
+    { bn::sprite_items::char_dwarf_plain, palettes::barnil_stonepot, false },
+    { bn::sprite_items::char_goblin_plain, palettes::baron_revilgaz, false },
+    { bn::sprite_items::char_goblin_sword, palettes::fleet_master_seahorn, false },
+    { bn::sprite_items::char_goblin_plain, palettes::kebok, false },
+    { bn::sprite_items::char_goblin_plain, palettes::innkeeper_skindle, false },
+    { bn::sprite_items::char_goblin_plain, palettes::gyll, false },
+    { bn::sprite_items::char_goblin_sword, palettes::booty_bay_bruiser, false },
+    { bn::sprite_items::char_goblin_plain, palettes::booty_bay_vendor, false },
+    { bn::sprite_items::char_goblin_plain, palettes::booty_bay_smith, false },
+    { bn::sprite_items::char_troll_sword, palettes::bloodscalp_warrior, false },
+    { bn::sprite_items::char_troll_staff, palettes::bloodscalp_shaman, false },
+    { bn::sprite_items::char_troll_sword, palettes::bloodscalp_headhunter, false },
+    { bn::sprite_items::char_troll_staff, palettes::mogh_the_undying, false },
+    { bn::sprite_items::char_hum_sword, palettes::bloodsail_swashbuckler, false },
+    { bn::sprite_items::char_hum_staff, palettes::bloodsail_mage, false },
+    { bn::sprite_items::char_hum_sword, palettes::bloodsail_sea_dog, false },
+    { bn::sprite_items::char_hum_sword, palettes::fleet_master_firallon, false },
+    { bn::sprite_items::char_hum_sword, palettes::scarlet_soldier, false },
+    { bn::sprite_items::char_hum_sword, palettes::scarlet_myrmidon, false },
+    { bn::sprite_items::char_hum_sword, palettes::scarlet_defender, false },
+    { bn::sprite_items::char_hum_plain, palettes::scarlet_trainee, false },
+    { bn::sprite_items::char_hum_sword, palettes::herod, false },
+    { bn::sprite_items::char_hum_sword, palettes::scarlet_champion, false },
+    { bn::sprite_items::char_hum_robe, palettes::scarlet_abbot, false },
+    { bn::sprite_items::char_hum_staff, palettes::scarlet_wizard, false },
+    { bn::sprite_items::char_hum_sword, palettes::scarlet_centurion, false },
+    { bn::sprite_items::char_hum_robe, palettes::high_inquisitor_fairbanks, false },
+    { bn::sprite_items::char_hum_sword, palettes::scarlet_commander_mograine, false },
+    { bn::sprite_items::char_fem_robe, palettes::high_inquisitor_whitemane, false },
     { bn::sprite_items::char_wolf, palettes::young_wolf, true },
     { bn::sprite_items::char_wolf, palettes::timber_wolf, true },
     { bn::sprite_items::char_boar, palettes::boar, true },
@@ -273,6 +314,13 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_spirit, palettes::azshir_the_sleepless, true },
     { bn::sprite_items::char_skeleton, palettes::ironspine, true },
     { bn::sprite_items::char_wolf, palettes::scarlet_tracking_hound, true },
+    { bn::sprite_items::char_tiger, palettes::stranglethorn_tiger, true },
+    { bn::sprite_items::char_cat, palettes::shadowmaw_panther, true },
+    { bn::sprite_items::char_tiger, palettes::king_bangalash, true },
+    { bn::sprite_items::char_raptor, palettes::stranglethorn_raptor, true },
+    { bn::sprite_items::char_raptor, palettes::lashtail_raptor, true },
+    { bn::sprite_items::char_gorilla, palettes::elder_mistvale_gorilla, true },
+    { bn::sprite_items::char_gorilla, palettes::mistvale_gorilla, true },
 };
 
 static_assert(sizeof(look_table) / sizeof(look_table[0]) == int(look_id::COUNT));

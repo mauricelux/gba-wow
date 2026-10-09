@@ -55,6 +55,9 @@ namespace
         case music_id::MONASTERY:
             return bn::music_items::monastery;
 
+        case music_id::STRANGLETHORN:
+            return bn::music_items::stranglethorn;
+
         default:
             return bn::nullopt;
         }

@@ -611,6 +611,29 @@ def song_monastery():
     return s
 
 
+def song_stranglethorn():
+    """Stranglethorn Vale: jungle drums under a marimba-like bell tune in D minor pentatonic."""
+    s = Song('stranglethorn', 7)
+    drums = 'k..t..t.k.t.t...|k..t..t.k.t.t.h.'
+    a = arrange(['Dm', 'C', 'Dm', 'Am'],
+                'D5 - F5 - A5 - - - G5 - F5 - D5 - - - '
+                'C5 - E5 - G5 - - - A5 - G5 - E5 - - - '
+                'D5 - F5 - A5 - C6 - D6 - - - C6 - A5 - '
+                'A5 - - - G5 - E5 - C5 - - - - - - - ',
+                lead='bell', lead_volume=44, harmony='arp_up_down', harmony_sample='soft', harmony_volume=18,
+                bass='root_fifth', drums=drums)
+    b = arrange(['Gm', 'Dm', 'F', 'A'],
+                'G5 - - - A#5 - - - D6 - C6 - A#5 - G5 - '
+                'F5 - - - A5 - - - D5 - - - - - - - '
+                'F5 - A5 - C6 - - - A5 - G5 - F5 - - - '
+                'E5 - - - - - C#5 - A4 - - - - - - - ',
+                lead='bell', lead_volume=44, harmony='pad', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=20, bass='roots', drums=drums)
+    s.add(a)
+    s.add(b)
+    return s
+
+
 def song_dungeon():
     s = Song('dungeon', 10)
     drums = 'k...............|k.......k.......'
@@ -716,7 +739,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     for song in (song_title(), song_elwynn(), song_town(), song_westfall(), song_dungeon(), song_boss(),
                  song_redridge(), song_duskwood(), song_ironforge(), song_wetlands(), song_hillsbrad(),
-                 song_monastery()):
+                 song_monastery(), song_stranglethorn()):
         write_mod(song)
         print(f'{song.name}.mod: {len(song.patterns)} patterns, {len(song.order)} in order')
     write_sounds()

@@ -1260,6 +1260,226 @@ namespace
           { kill(e::HOUNDMASTER_LOKSEY, 1, "Houndmaster Loksey slain"),
             kill(e::ARCANIST_DOAN, 1, "Arcanist Doan slain"), none }, xp(35, 150), money(35),
           { i::BLADE_OF_THE_DEVOUT, i::STAFF_OF_THE_SILVER_HAND, i::BOW_OF_THE_ARGENT_WATCH } },
+
+        // --- Stranglethorn Vale ---------------------------------------------------------------------
+
+        { "South to Stranglethorn",
+          "Word came from the jungles of Stranglethorn. A band of Stormwind soldiers holds a camp there "
+          "under Lieutenant Doren, cut off from home and fighting trolls on every side.\n\n"
+          "Fly to Darkshire and take the old road south from Sven's camp. Doren needs every sword.",
+          "Travel south from Duskwood to the Rebel Camp in Stranglethorn Vale and speak with Lieutenant Doren.",
+          "",
+          "Stormwind sent someone? I'd stopped hoping. Welcome to the jungle, friend. You'll hate it.",
+          n::MALEB, n::DOREN, 35, 33, qid::NONE, { none, none, none }, xp(35, 25), money(35),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Welcome to the Jungle",
+          "There's a hunter camped east of here, Hemet Nesingwary. Mad as a hatter, but he knows the "
+          "jungle better than anyone alive, and his friends shoot straight.\n\n"
+          "Go and introduce yourself. He'll put you to work.",
+          "Follow the road east to Nesingwary's Expedition and speak with Hemet Nesingwary.",
+          "",
+          "A new hunter! Splendid. Stranglethorn has the finest game in the world, and none of it wants "
+          "to be caught.",
+          n::DOREN, n::HEMET, 35, 33, qid::THE_ROAD_TO_STRANGLETHORN, { none, none, none }, xp(35, 25), money(35),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Trollbane",
+          "The Bloodscalp trolls hold the ruins of Zul'Kunda to the west. They raid our patrols, take "
+          "heads and hang them in the trees.\n\n"
+          "Break them. Their warriors first, and the shamans who keep them on their feet.",
+          "Kill 8 Bloodscalp Warriors and 4 Bloodscalp Shamans at Zul'Kunda.",
+          "The Bloodscalps still raid us.",
+          "That will make them think twice. Take a weapon from our stores. You've earned it.",
+          n::DOREN, n::DOREN, 35, 33, qid::THE_ROAD_TO_STRANGLETHORN,
+          { kill(e::BLOODSCALP_WARRIOR, 8, "Bloodscalp Warrior slain"),
+            kill(e::BLOODSCALP_SHAMAN, 4, "Bloodscalp Shaman slain"), none }, xp(35, 100), money(35),
+          { i::REBEL_BROADSWORD, i::ZUL_KUNDA_STAFF, i::REBEL_LONGBOW } },
+
+        { "Tiger Mastery",
+          "Every hunter in this camp started the same way: with the tigers of Lake Nazferiti. Fast, "
+          "proud and very hungry.\n\n"
+          "Show me you can hunt them, and Hemet will take you seriously.",
+          "Kill 10 Stranglethorn Tigers around Lake Nazferiti.",
+          "The tigers still prowl the lake.",
+          "Not bad at all. Hemet will want to hear of this. Here, these boots kept me alive for years.",
+          n::AJECK, n::AJECK, 35, 33, qid::WELCOME_TO_THE_JUNGLE,
+          { kill(e::STRANGLETHORN_TIGER, 10, "Tiger slain"), none, none }, xp(35, 75), money(35),
+          { i::TIGERSTRIPE_SABATONS, i::JUNGLE_SANDALS, i::TIGERHIDE_BOOTS } },
+
+        { "Bloodscalp Headhunters",
+          "The Bloodscalp headhunters are the worst of them. They throw axes from the trees and drag "
+          "the wounded away.\n\n"
+          "They lurk south of Zul'Kunda. Hunt them before they hunt us.",
+          "Kill 6 Bloodscalp Headhunters south of Zul'Kunda.",
+          "The headhunters still stalk the trees.",
+          "My men can walk the western trail again. Thank you, friend.",
+          n::DOREN, n::DOREN, 36, 34, qid::TROLLBANE,
+          { kill(e::BLOODSCALP_HEADHUNTER, 6, "Headhunter slain"), none, none }, xp(36, 75), money(36),
+          { i::HEADHUNTERS_GAUNTLETS, i::VOODOO_WRAPS, i::HEADHUNTERS_GRIPS } },
+
+        { "Panther Mastery",
+          "The Shadowmaw panthers live in the thicket west of the road. Black as night, quick as "
+          "thought. A gentleman's quarry.\n\n"
+          "Bring down eight of them, and I shall be impressed.",
+          "Kill 8 Shadowmaw Panthers in the Shadowmaw Thicket.",
+          "Patience. The panthers will come to you.",
+          "Splendid shooting. A gentleman always rewards good sport.",
+          n::ERLGADIN, n::ERLGADIN, 36, 34, qid::WELCOME_TO_THE_JUNGLE,
+          { kill(e::SHADOWMAW_PANTHER, 8, "Shadowmaw Panther slain"), none, none }, xp(36, 75), money(36),
+          { i::PANTHER_HELM, i::SHADOWMAW_COWL, i::PANTHERHIDE_CAP } },
+
+        { "Passage to Booty Bay",
+          "Booty Bay sits at the southern tip of the jungle, a goblin port open to anyone with coin. "
+          "Baron Revilgaz runs it, and he has a pirate problem.\n\n"
+          "Follow the road south through the tunnel. Tell him Doren sent you.",
+          "Follow the road south to Booty Bay and speak with Baron Revilgaz.",
+          "",
+          "Doren's friend, eh? Good. Friends of Stormwind are friends of business.",
+          n::DOREN, n::REVILGAZ, 36, 34, qid::THE_ROAD_TO_STRANGLETHORN, { none, none, none }, xp(36, 25),
+          money(36), { i::NONE, i::NONE, i::NONE } },
+
+        { "Raptor Mastery",
+          "Now for the real hunting. The raptors of the Ruins of Jubuwal run in packs, and they are "
+          "smarter than any tiger.\n\n"
+          "Kill ten, and you will understand why I came to this jungle.",
+          "Kill 10 Stranglethorn Raptors at the Ruins of Jubuwal.",
+          "The raptors still run free.",
+          "Ha! You've the makings of a true hunter. Wear these with pride.",
+          n::HEMET, n::HEMET, 37, 35, qid::TIGER_MASTERY,
+          { kill(e::STRANGLETHORN_RAPTOR, 10, "Raptor slain"), none, none }, xp(37, 100), money(37),
+          { i::RAPTORSCALE_LEGGUARDS, i::JUNGLE_LEGGINGS, i::RAPTORHIDE_PANTS } },
+
+        { "Bloodsail Buccaneers",
+          "The Bloodsail pirates have a compound on the Wild Shore, west of here. They raid my ships, "
+          "and my ships are my profit.\n\n"
+          "Sink their swashbucklers and their mages. Booty Bay pays well for good news.",
+          "Kill 8 Bloodsail Swashbucklers and 4 Bloodsail Mages at the Bloodsail Compound.",
+          "The Bloodsail still raid my ships.",
+          "Good news is good business. Take your pick from my private stores.",
+          n::REVILGAZ, n::REVILGAZ, 37, 35, qid::PASSAGE_TO_BOOTY_BAY,
+          { kill(e::BLOODSAIL_SWASHBUCKLER, 8, "Swashbuckler slain"),
+            kill(e::BLOODSAIL_MAGE, 4, "Bloodsail Mage slain"), none }, xp(37, 100), money(37),
+          { i::BOARDING_HAUBERK, i::BUCCANEERS_ROBE, i::CORSAIRS_VEST } },
+
+        { "The Green Hills",
+          "Hemet wrote a book about his hunts here, The Green Hills of Stranglethorn. A storm scattered "
+          "my copy all over the jungle.\n\n"
+          "Trolls and pirates pick up anything shiny, even pages. Bring them back to me, please.",
+          "Bring 8 Green Hills Pages from Bloodscalp Warriors and Bloodsail Swashbucklers to Barnil Stonepot.",
+          "Still missing pages, I'm afraid.",
+          "The whole book again! Hemet will be so pleased. Take something from our camp, with my thanks.",
+          n::BARNIL, n::BARNIL, 37, 35, qid::WELCOME_TO_THE_JUNGLE,
+          { collect(e::BLOODSCALP_WARRIOR, 8, 40, "Green Hills Page", e::BLOODSAIL_SWASHBUCKLER), none, none },
+          xp(37, 100), money(37), { i::BARNILS_HUNTING_BLADE, i::STONEPOTS_WALKING_STICK, i::NESINGWARY_4000 } },
+
+        { "Raptor Mastery II",
+          "The lashtail raptors near the Crystalvein Mine are bigger, meaner and faster than any "
+          "you've met.\n\n"
+          "Eight of them, and I'll tell you about the king of this jungle.",
+          "Kill 8 Lashtail Raptors around the Crystalvein Mine.",
+          "The lashtails are a challenge, eh?",
+          "Magnificent! Now you are ready for the real prize.",
+          n::HEMET, n::HEMET, 38, 36, qid::RAPTOR_MASTERY,
+          { kill(e::LASHTAIL_RAPTOR, 8, "Lashtail Raptor slain"), none, none }, xp(38, 100), money(38),
+          { i::LASHTAIL_HELM, i::RAPTOR_HUNTERS_HOOD, i::LASHTAIL_CAP } },
+
+        { "Gorilla Fangs",
+          "Got a buyer for gorilla fangs. Don't ask what for. The big apes of Mistvale Valley have the "
+          "best ones.\n\n"
+          "Bring me eight. I pay in coin, and in something shiny.",
+          "Bring 8 Gorilla Fangs from the gorillas of Mistvale Valley to Kebok in Booty Bay.",
+          "No fangs, no coin.",
+          "Beautiful. My buyer will be very happy. Here's your cut.",
+          n::KEBOK, n::KEBOK, 38, 36, qid::PASSAGE_TO_BOOTY_BAY,
+          { collect(e::MISTVALE_GORILLA, 8, 50, "Gorilla Fang", e::ELDER_MISTVALE_GORILLA), none, none },
+          xp(38, 100), money(38), { i::SILVERBACK_HAUBERK, i::MISTVALE_ROBE, i::GORILLAHIDE_VEST } },
+
+        { "The Bloodsail Sea Dogs",
+          "The baron's buccaneers were only the start. The Bloodsail's sea dogs crew their ships and "
+          "guard the shore below the compound.\n\n"
+          "No crew, no ships. Thin them out.",
+          "Kill 6 Bloodsail Sea Dogs on the Wild Shore.",
+          "Their ships still have crews.",
+          "Without a crew, the Bloodsail can't sail. That's the kind of work I like.",
+          n::SEAHORN, n::SEAHORN, 38, 36, qid::BLOODSAIL_BUCCANEERS,
+          { kill(e::BLOODSAIL_SEA_DOG, 6, "Bloodsail Sea Dog slain"), none, none }, xp(38, 100), money(38),
+          { i::DECKHANDS_LEGGUARDS, i::SAILCLOTH_TROUSERS, i::SEADOG_BREECHES } },
+
+        { "Fleet Master Firallon",
+          "Firallon commands the Bloodsail fleet from their compound. Cut off the head, and the body "
+          "drifts.\n\n"
+          "He's no common pirate. Bring friends if you have them, and don't come back without his hat.",
+          "Kill Fleet Master Firallon at the Bloodsail Compound.",
+          "Firallon still commands the fleet.",
+          "Firallon's hat! The bay is safe for honest smugglers again. Choose your reward.",
+          n::SEAHORN, n::SEAHORN, 39, 37, qid::THE_BLOODSAIL_SEA_DOGS,
+          { kill(e::FLEET_MASTER_FIRALLON, 1, "Fleet Master Firallon slain"), none, none }, xp(39, 150),
+          money(39), { i::FIRALLONS_CUTLASS, i::FLEET_MASTERS_STAFF, i::BLOODSAIL_BLUNDERBUSS } },
+
+        { "Big Game Hunter",
+          "There is one beast I have never caught: King Bangalash, the great white tiger of the Kal'ai "
+          "Ruins. He has killed better hunters than me.\n\n"
+          "Bring me his head, and your name goes in my next book.",
+          "Bring the Head of King Bangalash from the Kal'ai Ruins to Hemet Nesingwary.",
+          "Bangalash still rules the ruins.",
+          "The head of Bangalash! Forty years I hunted him. You, my friend, are the finest hunter I "
+          "have ever met.",
+          n::HEMET, n::HEMET, 39, 37, qid::RAPTOR_MASTERY_II,
+          { collect(e::KING_BANGALASH, 1, 100, "Head of Bangalash"), none, none }, xp(39, 150), money(39),
+          { i::BIG_GAME_HUNTERS_HELM, i::SAFARI_HAT, i::TIGERSKULL_CAP } },
+
+        // --- The Scarlet Monastery's Armory and Cathedral --------------------------------------------
+
+        { "Arms of the Crusade",
+          "With Doan dead, the way to the Armory lies open, in the monastery's west wing. The "
+          "Crusade arms its zealots there.\n\n"
+          "Break its myrmidons and defenders, and the Crusade will have fewer swords to raise.",
+          "Kill 4 Scarlet Myrmidons and 4 Scarlet Defenders in the Scarlet Monastery Armory.",
+          "The Armory still arms the Crusade.",
+          "Fewer blades for the Crusade. The Dawn thanks you.",
+          n::ARGENT_SCOUT, n::ARGENT_SCOUT, 37, 35, qid::DOWN_THE_SCARLET_PATH,
+          { kill(e::SCARLET_MYRMIDON, 4, "Scarlet Myrmidon slain"),
+            kill(e::SCARLET_DEFENDER, 4, "Scarlet Defender slain"), none }, xp(37, 75), money(37),
+          { i::ARMORY_SABATONS, i::ARMORERS_SLIPPERS, i::SQUIRES_BOOTS } },
+
+        { "Herod's Fall",
+          "The Armory's champion is Herod, a brute who whirls his axe through anyone close enough. "
+          "His trainees worship him.\n\n"
+          "Kill him. When he spins, get out of the way.",
+          "Kill Herod in the Hall of Champions of the Scarlet Monastery Armory.",
+          "Herod still trains the Crusade's blades.",
+          "Herod is dead? Then the Crusade has lost its sword arm. Only the Cathedral remains.",
+          n::ARGENT_SCOUT, n::ARGENT_SCOUT, 38, 36, qid::DOWN_THE_SCARLET_PATH,
+          { kill(e::HEROD, 1, "Herod slain"), none, none }, xp(38, 150), money(38),
+          { i::BLADE_OF_THE_ARMORY, i::STAFF_OF_THE_CHAMPION, i::ARMORY_LONGBOW } },
+
+        { "The Crimson Cathedral",
+          "The Cathedral is the heart of the Crusade, in the monastery's east wing. Its champions and "
+          "abbots guard the way to the altar.\n\n"
+          "Cut a path through them. The Dawn will follow.",
+          "Kill 4 Scarlet Champions and 3 Scarlet Abbots in the Scarlet Monastery Cathedral.",
+          "The Cathedral's guard still stands.",
+          "The way to the altar is open. Now only its masters remain.",
+          n::ARGENT_SCOUT, n::ARGENT_SCOUT, 39, 37, qid::HERODS_FALL,
+          { kill(e::SCARLET_CHAMPION, 4, "Scarlet Champion slain"), kill(e::SCARLET_ABBOT, 3, "Scarlet Abbot slain"),
+            none }, xp(39, 100), money(39), { i::CATHEDRAL_SABATONS, i::ABBOTS_SLIPPERS, i::CRIMSON_BOOTS } },
+
+        { "In the Name of Light",
+          "Three lead the Crusade from the Cathedral. Scarlet Commander Mograine, its sword. High "
+          "Inquisitor Whitemane, who they say can raise the dead. And Fairbanks, the inquisitor they "
+          "hide away.\n\n"
+          "End them all, then bring word to Raleigh in Southshore.",
+          "Kill High Inquisitor Fairbanks, Scarlet Commander Mograine and High Inquisitor Whitemane, then "
+          "speak with Raleigh the Devout in Southshore.",
+          "The Crusade's masters still live.",
+          "Mograine, Whitemane and Fairbanks, all fallen. The Light has a new champion, and it is you. "
+          "Take this, with the blessing of the Silver Hand.",
+          n::ARGENT_SCOUT, n::RALEIGH, 40, 37, qid::HERODS_FALL,
+          { kill(e::HIGH_INQUISITOR_FAIRBANKS, 1, "Fairbanks slain"),
+            kill(e::SCARLET_COMMANDER_MOGRAINE, 1, "Mograine slain"),
+            kill(e::HIGH_INQUISITOR_WHITEMANE, 1, "Whitemane slain") }, xp(40, 150), money(40),
+          { i::SWORD_OF_OMEN, i::STAFF_OF_LORICA, i::BOW_OF_ABSOLUTION } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));

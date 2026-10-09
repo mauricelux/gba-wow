@@ -204,6 +204,114 @@ HEAD_PATCHES = {
             '...obBbBo.......',
         ])),
     },
+    # A jungle troll: a tall mohawk standing up from a bald head, long ears sticking out sideways and up, a deep
+    # brow and a long jaw (the lower face) with two tusks (the trim color) curving up from it, over the shared body.
+    'troll': {
+        'front': dict(enumerate([
+            '.......H',
+            '......hH',
+            '......hH',
+            '......hH',
+            '....ooSh',
+            'S..ossSS',
+            'SSSSSoSS',
+            '..soSSSs',
+            '...gSSss',
+            '..oogooo',
+            'oALLAomm',
+            'oAAAaoom',
+        ])),
+        'back': dict(enumerate([
+            '.......H',
+            '......hH',
+            '......hH',
+            '.....ohH',
+            '...ooSSH',
+            'S..oSSSH',
+            'sSSSSSSh',
+            '..ssSSSh',
+            '....osSS',
+            '.ooAAoss',
+        ])),
+        'side': dict(enumerate([
+            '......H.H.......',
+            '.....hHhHH......',
+            '.....hHHHHh.....',
+            '....ohHHHHho....',
+            '...ooShhhhSo....',
+            '..oSSSSSSSSSo.SS',
+            '.ossoSSSSSSSSSs.',
+            'oSSSSSSSSSSso...',
+            '.ogSsSSSSSSo....',
+            '.gmmmoAooogo....',
+        ])),
+    },
+    # A goblin keeps the gnome's short body under a big bald head with long pointed ears sticking out sideways
+    # (three columns past the body on each side: 'margin'), a long hooked nose and a wide grin. The grin's teeth
+    # are the lower face.
+    'goblin': {
+        'margin': 3,
+        'front': dict(enumerate([
+            '........ooo',
+            '......ooSSS',
+            '.....oSSSSS',
+            'S...oSSSSSS',
+            'SSS.oShhSSs',
+            '.SSSSSSoSoS',
+            '..sssSSSSoS',
+            '....oSSSSoS',
+            '.....oooooS',
+            '.....ommmms',
+            '......ossss',
+            '.....ooAAoo',
+            '....oALLAob',
+            '....oAAaobB',
+            '....oaaobBg',
+            '....oSsollg',
+            '.....oobBBB',
+            '......obBbB',
+        ])),
+        'back': dict(enumerate([
+            '........ooo',
+            '......ooSSS',
+            '.....oSSSSS',
+            'S...oSSSSSS',
+            'SSS.oSSSSSS',
+            '.SSSSSSSSSS',
+            '..sssSSSSSS',
+            '....oSSSSSS',
+            '.....osSSSS',
+            '.....ossSSS',
+            '......ossss',
+            '.....ooAAoo',
+            '....oALLAgg',
+            '....oAAagBB',
+            '....oaagBgB',
+            '....oSsogBB',
+            '.....ooodgB',
+            '......obodd',
+        ])),
+        'side': dict(enumerate([
+            '......oooo......',
+            '....ooSSSSoo....',
+            '...oSSSSSSSSo...',
+            '..oSSSSSSSSSSo..',
+            '..oShhSSSSSSSo.S',
+            '.oSSoSSSSSSoSSSs',
+            'ooSSSSSSSSSSss..',
+            'SSSSsSSSSSSo....',
+            'Ssooo.SSSSso....',
+            '.o.ommmSSso.....',
+            '....ossssoo.....',
+            '...ooAAooo......',
+            '..oALLAobBo.....',
+            '..oAAAAobBo.....',
+            '..oaAaaobgo.....',
+            '...oSsolldo.....',
+            '...obBBBoo......',
+            '...obBbBo.......',
+        ])),
+    },
 }
 
 # The gnome's cast pose: the arms raised out to the sides, below the ears.
@@ -216,6 +324,31 @@ GNOME_CAST = {
     14: '...oobBg',
     15: '...ollll',
 }
+
+# The goblin's: the same raised arms, three columns further in under its wider rows.
+GOBLIN_CAST = {
+    7: '..oSoSSSSoS',
+    8: '..oSAoooooS',
+    9: '..oAAommmms',
+    10: '...oAAossss',
+    11: '....oAAAAoo',
+    12: '.....oALAob',
+    13: '......oaobB',
+    14: '......oobBg',
+    15: '......ollll',
+}
+
+# Heads that hold the shorter sword.
+SHORT_HEADS = ('gnome', 'goblin')
+CAST_POSES = {'gnome': GNOME_CAST, 'goblin': GOBLIN_CAST}
+# Where the raised hand of a cast pose holds a sword: columns right of the body's left edge, rows below the top.
+CAST_HANDS = {'gnome': (1, 9), 'goblin': (0, 7)}
+
+
+def widen(rows, margin):
+    """Front or back half rows with margin more columns on the outside, for heads wider than the body."""
+    return ['.' * margin + row for row in rows]
+
 
 LEGS_ARMOR = [
     '...oaAAo',
@@ -390,14 +523,16 @@ class Humanoid:
         self.head = head
         self.body = body
         self.weapon = weapon
-        self.leg_extra = {'dwarf': -3, 'elf': 1, 'gnome': -5}.get(head, 0)
+        self.leg_extra = {'dwarf': -3, 'elf': 1, 'gnome': -5, 'troll': 1, 'goblin': -5}.get(head, 0)
         patches = HEAD_PATCHES[head]
-        self.front = to_array(mirror(patched(FRONT, patches.get('front', {}))), HKEYS)
-        self.sword = SWORD_SHORT if head == 'gnome' else SWORD
+        self.margin = patches.get('margin', 0)          # the front and back views are this much wider each side
+        front = patched(widen(FRONT, self.margin), patches.get('front', {}))
+        self.front = to_array(mirror(front), HKEYS)
+        self.sword = SWORD_SHORT if head in SHORT_HEADS else SWORD
         self.cast_top = None
-        if head == 'gnome':
-            self.cast_top = to_array(mirror(patched(patched(FRONT, patches['front']), GNOME_CAST)), HKEYS)
-        self.back = to_array(mirror(patched(BACK, patches.get('back', {}))), HKEYS)
+        if head in CAST_POSES:
+            self.cast_top = to_array(mirror(patched(front, CAST_POSES[head])), HKEYS)
+        self.back = to_array(mirror(patched(widen(BACK, self.margin), patches.get('back', {}))), HKEYS)
         self.side = to_array(patched(SIDE, patches.get('side', {})), HKEYS)
         self.ox = 8
 
@@ -471,7 +606,7 @@ class Humanoid:
         top_part = top.copy()
         if pose == 'cast':
             top_part = self._raise_arms(top_part) if self.cast_top is None else self.cast_top.copy()
-        blit(frame, top_part, self.ox + lunge, top_y + bob)
+        blit(frame, top_part, self.ox + lunge - (self.margin if view != 'side' else 0), top_y + bob)
 
         if pose == 'walk' and view == 'side':
             self._held_weapon(frame, view, hand_x, off_hand_x, hand_y)
@@ -533,8 +668,9 @@ class Humanoid:
         if self.weapon == 'staff':
             place(frame, stamp(STAFF), STAFF_GRIP, self.ox + 1, top_y + 5)
         elif self.weapon == 'sword' and self.cast_top is not None:
-            part = stamp(self.sword)[::-1, :]           # the grip in the raised hand (row 9, column 1)
-            blit(frame, part, self.ox - 1, top_y + 9 - (part.shape[0] - 3))
+            part = stamp(self.sword)[::-1, :]           # the grip in the raised hand
+            hand_x, hand_y = CAST_HANDS[self.head]
+            blit(frame, part, self.ox + hand_x - 2, top_y + hand_y - (part.shape[0] - 3))
         elif self.weapon == 'sword':
             part = stamp(SWORD)[::-1, :]
             blit(frame, part, self.ox - 1, top_y - 6)
@@ -581,6 +717,10 @@ HUMANOID_SHEETS = {
     'gnome_sword': Humanoid('gnome', 'armor', 'sword'),
     'dwarf_plain': Humanoid('dwarf', 'armor', 'none'),
     'fem_bow': Humanoid('long', 'armor', 'bow'),
+    'troll_sword': Humanoid('troll', 'armor', 'sword'),
+    'troll_staff': Humanoid('troll', 'robe', 'staff'),
+    'goblin_plain': Humanoid('goblin', 'armor', 'none'),
+    'goblin_sword': Humanoid('goblin', 'armor', 'sword'),
 }
 
 # --- creatures --------------------------------------------------------------------------------------
@@ -2070,10 +2210,13 @@ def bear(step, pose):
     return c.done()
 
 
-def cat(step, pose):
-    """A big cat (a mountain lion; panthers and tigers recolor it): a long, low body on slender legs, a small
-    head with round ears, a pale belly and muzzle (second) and a long tail hanging in a curve with a dark
-    tip. It pounces with the body stretched out, forepaws thrown ahead and claws bared."""
+def cat(step, pose, stripes=False):
+    """A big cat (a mountain lion; panthers recolor it): a long, low body on slender legs, a small head with round
+    ears, a pale belly and muzzle (second) and a long tail hanging in a curve with a dark tip. It pounces with the
+    body stretched out, forepaws thrown ahead and claws bared. A tiger (stripes) has dark stripes (extra) across
+    its back, flanks, head and tail."""
+    if stripes:
+        return tiger_stripes(cat(step, pose), step, pose)
     c = Canvas()
     if pose == 'attack':
         c.line(22, 22, 27, 25, 'dark', width=2)                                      # far hind leg pushing off
@@ -2128,6 +2271,30 @@ def cat(step, pose):
     c.px(hx - 1, hy + 2, 'second_dark')                                               # chin
     c.px(hx, hy - 1, 'eye')
     return c.done()
+
+
+def tiger_stripes(img, step, pose):
+    """Paint stripes (extra) on a drawn cat: short bands down from its back over the fur (main, light and dark,
+    never the pale belly), rings on the tail and a mark on the brow."""
+    c = Canvas()
+    c.img = img.copy()
+    fur = (C['main'], C['light'])
+    if pose == 'attack':
+        bands = [((24, 16), (23, 19)), ((21, 15), (20, 18)), ((18, 14), (17, 17)), ((15, 13), (14, 16)),
+                 ((12, 12), (12, 14)), ((27, 16), (27, 17)), ((29, 14), (30, 15))]
+        brow = [(6, 9), (7, 9)]
+    else:
+        b = 1 if step in (1, 3) else 0
+        bands = [((23, 15 + b), (22, 18 + b)), ((20, 15 + b), (19, 18 + b)), ((17, 15 + b), (16, 18 + b)),
+                 ((14, 15 + b), (13, 17 + b)), ((28, 20 + b), (29, 20 + b)), ((28, 23), (30, 23))]
+        brow = [(6, 13 + b), (7, 13 + b)]
+    for (x0, y0), (x1, y1) in bands:
+        band = c.line_mask(x0, y0, x1, y1)
+        c.img[band & np.isin(c.img, fur)] = C['extra']
+    for x, y in brow:
+        if c.img[y, x] in fur:
+            c.px(x, y, 'extra')
+    return c.img
 
 
 def shaggy(c, mask, phase=0, sides=False):
@@ -2194,6 +2361,158 @@ def yeti(step, pose):
     arm = shaggy(c, tube(c, [(14, 11 + b), (12, 17 + b), (10 + d, 22 + b)], 2.8, 2.2), phase=1)
     c.part(arm, 'main', dark='dark', light='light')                                   # near arm
     c.ellipse(9.5 + d, 23.5 + b, 2.2, 2, 'second', dark='second_dark')                # fist
+    return c.done()
+
+
+GORILLA_HEAD = [
+    '...llm..',
+    '..lmmmml',
+    '.lmmmmmd',
+    'ddddmmmd',
+    'SeSSmmmd',
+    'SSSSSmmd',
+    'oSSSSmd.',
+    '.ssSmmd.',
+    '..ssdd..',
+]
+GORILLA_ROAR = [
+    '...llm..',
+    '..lmmmml',
+    '.lmmmmmd',
+    'ddddmmmd',
+    'SeSSmmmd',
+    'SSSSSmmd',
+    'ooooSmd.',
+    'TToSSmd.',
+    '.ooSmmd.',
+    'TSSsdd..',
+    '.ss.....',
+]
+GORILLA_BODY = [
+    '....llllll...........',
+    '..llllllllll.........',
+    '.lllmmmmmmmlll.......',
+    'llmmmmmmmmmmmmll.....',
+    'lmmmmmmmmmmmmmmmll...',
+    'mmmmmmmmmmmmmmmmmmml.',
+    'mmmmmmmmmmmmmmmmmmmmd',
+    'mmmmmmmmmmmmmmmmmmmmd',
+    'SSmmmmmmmmmmmmmmmmmmd',
+    'SSSmmmmmmmmmmmmmmmmmd',
+    'sSSmmmmmmmmmmmmmmmmdd',
+    '.sSSmmmmmmmmmmmmmmdd.',
+    '..ssdddmmmmmmmmmddd..',
+    '.......ddddddddd.....',
+]
+GORILLA_BODY_UPRIGHT = [
+    '...llllll.....',
+    '.llllllllll...',
+    'lllmmmmmmmll..',
+    'lmmmmmmmmmmml.',
+    'mmmmmmmmmmmmmd',
+    'SSSmmmmmmmmmmd',
+    'SSSSmmmmmmmmmd',
+    'SSSSmmmmmmmmmd',
+    'SSSSmmmmmmmmmd',
+    'sSSSmmmmmmmmmd',
+    '.ssmmmmmmmmmd.',
+    '..mmmmmmmmmmd.',
+    '..dmmmmmmmmdd.',
+    '...dddddddd...',
+]
+GORILLA_ARM = [
+    '.lmmmd.',
+    'lmmmmmd',
+    'mmmmmmd',
+    'mmmmmmd',
+    'mmmmmmd',
+    '.mmmmmd',
+    '.mmmmd.',
+    '.lmmmd.',
+    '.mmmmd.',
+    '.mmmmd.',
+    '.mmmmd.',
+    'lmmmmd.',
+    'mmmmmd.',
+    'mmmmmd.',
+    'mmmmdd.',
+    'SSSSs..',
+    'SSSSs..',
+    'ssss...',
+]
+GORILLA_ARM_RAISED = [
+    '.SSS...',
+    'SSSSs..',
+    'sSSSs..',
+    'lmmmd..',
+    'lmmmmd.',
+    '.lmmmd.',
+    '.lmmmmd',
+    '..mmmmd',
+    '..lmmmd',
+    '..mmmmd',
+    '..mmmmd',
+    '.mmmmmd',
+]
+GORILLA_LEG = [
+    'lmmmmd',
+    'mmmmmd',
+    'mmmmd.',
+    '.mmmd.',
+    '.mmmd.',
+    '.mmmd.',
+    'smmmdd',
+    'SSSSSs',
+]
+GORILLA_DEAD = [
+    '.....llllllll...........',
+    '...lllllllllllll........',
+    '..lmmmmmmmmmmmmmlll.....',
+    '.lmmmmmmmmmmmmmmmmmll...',
+    'lmmmmmmmmmmmmmmmmmmmmld.',
+    'mmmmmmmmmmmmmmmmmmmmmmmd',
+    'mmmmmmmmmmmmmmmmmmddmmmd',
+    'dddddddddddddddddd.ddddd',
+]
+GORILLA_ARM_FLUNG = [
+    '....lllllll.',
+    'SSSSmmmmmmmd',
+    'SSSsmmmmmddd',
+    'sss.dddd....',
+]
+
+
+def gorilla(step, pose):
+    """A gorilla: huge shoulders and long, thick arms over short legs, walking on its knuckles with the back
+    sloping down from the shoulders and a small head with a heavy brow carried low in front; the chest, face,
+    knuckles and soles are bare (second), the back a lighter saddle (light). It rears up on its legs with both
+    fists raised over its head to smash down, roaring, and dies sprawled on its belly."""
+    c = Canvas()
+    if pose == 'dead':
+        c.sticker(GORILLA_DEAD, 7, 21)
+        c.sticker(['SSs', 'sSS'], 29, 26)                                                  # a sole turned up
+        c.sticker(GORILLA_ARM_FLUNG, 0, 25)
+        c.sticker([row.replace('e', 'S') for row in GORILLA_HEAD], 4, 20)                 # head on the arm
+        c.line(4, 24, 5, 24, 'outline', edge=False)                                       # eye shut
+        return c.done()
+    if pose == 'attack':
+        c.sticker(GORILLA_LEG, 21, 21, far=True)
+        c.sticker(GORILLA_ARM_RAISED, 18, 1, far=True)                                    # both fists raised
+        c.sticker(GORILLA_BODY_UPRIGHT, 12, 9)
+        c.sticker(GORILLA_LEG, 15, 21, edge=2)
+        c.sticker(GORILLA_ARM_RAISED, 12, 2, edge=False)
+        c.sticker(GORILLA_ROAR, 5, 8)
+        for x, y in ((9, 2), (7, 5), (27, 2), (28, 5)):
+            c.px(x, y, 'light')                                                           # fury
+        return c.done()
+    d = STRIDE[step]
+    b = 1 if step in (1, 3) else 0
+    c.sticker(GORILLA_LEG, 23, 21, leg_stride(-d // 2, 8, 2), far=True)                 # far leg
+    c.sticker(GORILLA_ARM[b:], 14, 11 + b, sway(d, 18 - b), far=True)                   # far arm
+    c.sticker(GORILLA_BODY, 8, 6 + b)
+    c.sticker(GORILLA_LEG, 19, 21, leg_stride(d // 2, 8, 2), edge=2)                     # near leg
+    c.sticker(GORILLA_ARM[b:], 9, 11 + b, sway(-d, 18 - b), edge=3)                     # near arm
+    c.sticker(GORILLA_HEAD, 3, 9 + b)
     return c.done()
 
 
@@ -2303,6 +2622,8 @@ CREATURES = {
     'cat': cat,
     'yeti': yeti,
     'spirit': spirit,
+    'gorilla': gorilla,
+    'tiger': lambda step, pose: cat(step, pose, stripes=True),         # the cat's own sheet stays unstriped
 }
 
 
@@ -2310,8 +2631,8 @@ CREATURES = {
 LYING_DEAD = {'worgen', 'worgen_caster', 'skeleton', 'skeleton_mage', 'yeti'}
 
 # Creatures that draw their own dead frame (pose 'dead'): an ooze dies as a puddle, a robot as a wreck, a spirit
-# as a fading wisp.
-OWN_DEAD = {'raptor', 'naga', 'naga_caster', 'hydra', 'trogg', 'ooze', 'robot', 'bomb', 'spirit'}
+# as a fading wisp, a gorilla sprawled on its belly.
+OWN_DEAD = {'raptor', 'naga', 'naga_caster', 'hydra', 'trogg', 'ooze', 'robot', 'bomb', 'spirit', 'gorilla'}
 
 
 def creature_sheet(draw, lying=False, own_dead=False):
@@ -2520,6 +2841,9 @@ TUSK = (232, 224, 200)
 SKIN_GNOME = (240, 184, 152)
 SKIN_DARK_IRON = (140, 140, 160)
 SKIN_FORSAKEN = (136, 152, 128)
+SKIN_TROLL = (88, 140, 168)
+SKIN_GOBLIN = (120, 176, 72)
+GOBLIN_TEETH = (240, 232, 200)
 
 
 def orc_palette(armor, tabard, hair=(40, 32, 32), leather=(96, 64, 40), skin=SKIN_ORC, trim=TUSK):
@@ -2538,6 +2862,19 @@ def gnome_palette(hair, armor, tabard, trim=(232, 184, 64), skin=SKIN_GNOME, bea
     to the skin, so only old gnomes have one."""
     return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=trim,
                             lower_face=beard or (skin[0], skin[1], min(255, skin[2] + 8)), **kw)
+
+
+def troll_palette(hair, armor, tabard, trim=TUSK, skin=SKIN_TROLL, **kw):
+    """A troll: the mohawk is the hair, the tusks the trim and the long jaw the lower face, a shade off the skin."""
+    return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=trim,
+                            lower_face=(max(0, skin[0] - 12), max(0, skin[1] - 12), max(0, skin[2] - 4)), **kw)
+
+
+def goblin_palette(armor, tabard, trim=(232, 184, 64), skin=SKIN_GOBLIN, teeth=GOBLIN_TEETH, hair=None, **kw):
+    """A goblin: bald, so the hair only shows as the brows (a darker skin unless it is given), and the grin's
+    teeth are the lower face."""
+    hair = hair or (int(skin[0] * 0.55), int(skin[1] * 0.55), int(skin[2] * 0.5))
+    return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=trim, lower_face=teeth, **kw)
 
 
 # Looks used by the player (race_class) and by NPCs and humanoid enemies. Each is a sheet + palette.
@@ -2884,6 +3221,101 @@ HUMANOID_LOOKS = {
     'argent_scout': ('elf_bow', humanoid_palette(skin=SKIN_ELF, hair=(208, 212, 228), armor=(176, 180, 196),
                                                  tabard=(104, 56, 144), trim=(232, 232, 240),
                                                  armor_light=(220, 224, 236))),
+    # Stranglethorn: the Rebel Camp and Nesingwary's Expedition
+    'lieutenant_doren': ('hum_sword', humanoid_palette(hair=(56, 40, 32), armor=(84, 104, 64), tabard=(112, 80, 48),
+                                                       trim=(224, 184, 72), lower_face=(76, 56, 44),
+                                                       leather=(96, 68, 44), armor_light=(124, 144, 96))),
+    'rebel_soldier': ('hum_sword', humanoid_palette(hair=(120, 84, 48), armor=(96, 112, 68), tabard=(124, 92, 56),
+                                                    trim=(168, 144, 104), leather=(104, 72, 44))),
+    'corporal_bluth': ('hum_plain', humanoid_palette(hair=(200, 104, 40), armor=(132, 96, 60), tabard=(80, 112, 64),
+                                                     trim=(192, 168, 112), leather=(96, 68, 44))),
+    'hemet_nesingwary': ('dwarf_bow', dwarf_palette(hair=(236, 236, 232), beard=(212, 212, 208),
+                                                    armor=(184, 160, 112), tabard=(48, 88, 48), trim=(216, 192, 128),
+                                                    hair_dark=(168, 168, 168), leather=(120, 88, 56))),
+    'ajeck_rouack': ('dwarf_bow', dwarf_palette(hair=(36, 32, 36), beard=(52, 44, 44), armor=(128, 88, 52),
+                                                tabard=(160, 40, 36), trim=(200, 168, 104), hair_dark=(20, 18, 22),
+                                                leather=(96, 64, 40))),
+    'sir_s_j_erlgadin': ('hum_sword', humanoid_palette(hair=(168, 168, 172), armor=(184, 164, 116),
+                                                       tabard=(160, 36, 40), trim=(224, 200, 136),
+                                                       lower_face=(188, 188, 192), leather=(112, 80, 52))),
+    'barnil_stonepot': ('dwarf_plain', dwarf_palette(hair=(128, 80, 44), beard=(108, 64, 36),
+                                                     armor=(184, 152, 104), tabard=(56, 88, 152),
+                                                     trim=(208, 184, 120), leather=(104, 72, 44))),
+    # Booty Bay's goblins
+    'baron_revilgaz': ('goblin_plain', goblin_palette(armor=(112, 56, 144), tabard=(80, 36, 104), trim=(240, 200, 72),
+                                                      armor_light=(160, 104, 192))),
+    'fleet_master_seahorn': ('goblin_sword', goblin_palette(armor=(48, 60, 120), tabard=(32, 40, 84),
+                                                            trim=(232, 192, 72), armor_light=(88, 104, 168))),
+    'kebok': ('goblin_plain', goblin_palette(armor=(112, 80, 52), tabard=(124, 36, 40), trim=(184, 160, 112),
+                                             leather=(88, 60, 40))),
+    'innkeeper_skindle': ('goblin_plain', goblin_palette(armor=(48, 104, 96), tabard=(232, 228, 216),
+                                                         trim=(184, 152, 96), armor_light=(88, 148, 136))),
+    'gyll': ('goblin_plain', goblin_palette(armor=(128, 92, 56), tabard=(96, 160, 216), trim=(216, 184, 104),
+                                            leather=(96, 64, 40))),
+    'booty_bay_bruiser': ('goblin_sword', goblin_palette(armor=(168, 40, 36), tabard=(40, 36, 40), trim=(200, 196, 200),
+                                                         armor_light=(216, 80, 64), leather=(56, 44, 40))),
+    'booty_bay_vendor': ('goblin_plain', goblin_palette(armor=(216, 128, 48), tabard=(120, 80, 48),
+                                                        trim=(240, 216, 120), leather=(104, 68, 40))),
+    'booty_bay_smith': ('goblin_plain', goblin_palette(armor=(84, 84, 92), tabard=(120, 84, 52), trim=(176, 176, 184),
+                                                       leather=(96, 64, 40), armor_light=(128, 128, 140))),
+    # Stranglethorn's enemies: the Bloodscalp trolls and the Bloodsail Buccaneers
+    'bloodscalp_warrior': ('troll_sword', troll_palette(hair=(200, 40, 32), armor=(136, 96, 60), tabard=(160, 36, 32),
+                                                        trim=(236, 228, 204), armor_light=(220, 208, 180),
+                                                        leather=(96, 64, 40))),
+    'bloodscalp_shaman': ('troll_staff', troll_palette(hair=(208, 44, 36), armor=(168, 40, 36), tabard=(220, 208, 180),
+                                                       trim=(236, 228, 204), armor_light=(208, 80, 64))),
+    'bloodscalp_headhunter': ('troll_sword', troll_palette(hair=(232, 96, 40), armor=(88, 64, 48), tabard=(56, 44, 40),
+                                                           trim=(224, 216, 188), armor_light=(200, 188, 160),
+                                                           leather=(120, 84, 52))),
+    'mogh_the_undying': ('troll_staff', troll_palette(skin=(136, 156, 136), hair=(236, 236, 232), armor=(96, 52, 120),
+                                                      tabard=(36, 28, 40), trim=(208, 200, 176),
+                                                      armor_light=(140, 92, 168))),
+    'bloodsail_swashbuckler': ('hum_sword', humanoid_palette(skin=SKIN_TAN, hair=(184, 36, 32), armor=(224, 220, 208),
+                                                             tabard=(176, 32, 32), trim=(40, 36, 40),
+                                                             hair_dark=(120, 24, 24), leather=(80, 56, 40))),
+    'bloodsail_mage': ('hum_staff', humanoid_palette(hair=(176, 32, 32), armor=(112, 28, 32), tabard=(40, 32, 36),
+                                                     trim=(208, 176, 96), hair_dark=(112, 20, 24),
+                                                     armor_light=(160, 56, 56))),
+    'bloodsail_sea_dog': ('hum_sword', humanoid_palette(skin=SKIN_TAN, hair=(128, 28, 28), armor=(228, 228, 220),
+                                                        tabard=(40, 52, 104), trim=(176, 36, 36),
+                                                        leather=(88, 64, 44))),
+    'fleet_master_firallon': ('hum_sword', humanoid_palette(hair=(28, 24, 28), armor=(152, 24, 36), tabard=(56, 44, 52),
+                                                            trim=(232, 192, 72), lower_face=(44, 36, 36),
+                                                            hair_dark=(16, 14, 18), armor_light=(200, 56, 64),
+                                                            leather=(72, 52, 40))),
+    # The Scarlet Monastery: the Armory
+    'scarlet_soldier': ('hum_sword', humanoid_palette(hair=(120, 84, 52), armor=(168, 164, 168), tabard=(176, 32, 32),
+                                                      trim=(224, 220, 208), leather=(104, 76, 52))),
+    'scarlet_myrmidon': ('hum_sword', humanoid_palette(hair=(88, 60, 40), armor=(168, 36, 36), tabard=(228, 224, 212),
+                                                       trim=(176, 32, 32), armor_light=(216, 80, 72),
+                                                       leather=(112, 80, 52))),
+    'scarlet_defender': ('hum_sword', humanoid_palette(hair=(152, 112, 64), armor=(208, 212, 224), tabard=(176, 32, 32),
+                                                       trim=(232, 228, 216), armor_light=(244, 244, 248))),
+    'scarlet_trainee': ('hum_plain', humanoid_palette(hair=(168, 120, 72), armor=(224, 220, 208), tabard=(184, 40, 40),
+                                                      trim=(232, 228, 216), leather=(128, 92, 60))),
+    'herod': ('hum_sword', humanoid_palette(hair=(40, 32, 32), armor=(136, 20, 28), tabard=(48, 40, 44),
+                                            trim=(232, 192, 72), lower_face=(56, 44, 40), hair_dark=(24, 20, 22),
+                                            armor_light=(192, 48, 52), leather=(76, 56, 44))),
+    # The Scarlet Monastery: the Cathedral
+    'scarlet_champion': ('hum_sword', humanoid_palette(hair=(176, 132, 80), armor=(228, 228, 220), tabard=(176, 32, 32),
+                                                       trim=(232, 192, 72), armor_light=(248, 248, 240))),
+    'scarlet_abbot': ('hum_robe', humanoid_palette(hair=(176, 176, 176), armor=(176, 32, 32), tabard=(232, 228, 220),
+                                                   trim=(232, 192, 72), armor_light=(216, 72, 64))),
+    'scarlet_wizard': ('hum_staff', humanoid_palette(hair=(140, 96, 56), armor=(220, 216, 204), tabard=(168, 28, 36),
+                                                     trim=(240, 236, 228), armor_light=(244, 244, 236))),
+    'scarlet_centurion': ('hum_sword', humanoid_palette(hair=(64, 48, 40), armor=(120, 28, 32), tabard=(36, 32, 36),
+                                                        trim=(184, 40, 44), armor_light=(168, 56, 56),
+                                                        leather=(56, 44, 40))),
+    'high_inquisitor_fairbanks': ('hum_robe', humanoid_palette(skin=(208, 196, 184), hair=(232, 232, 228),
+                                                               armor=(152, 92, 96), tabard=(116, 72, 76),
+                                                               trim=(216, 184, 96), armor_light=(184, 136, 136))),
+    'scarlet_commander_mograine': ('hum_sword', humanoid_palette(hair=(232, 204, 112), armor=(208, 212, 228),
+                                                                 tabard=(184, 32, 36), trim=(240, 200, 72),
+                                                                 armor_light=(248, 248, 255),
+                                                                 hair_dark=(176, 140, 64))),
+    'high_inquisitor_whitemane': ('fem_robe', humanoid_palette(hair=(240, 240, 236), armor=(232, 228, 220),
+                                                               tabard=(176, 32, 36), trim=(232, 192, 72),
+                                                               armor_light=(248, 248, 244), hair_dark=(184, 184, 192))),
 }
 
 CREATURE_LOOKS = {
@@ -3057,6 +3489,21 @@ CREATURE_LOOKS = {
     'ironspine': ('skeleton', creature_palette((200, 208, 128), (152, 160, 96), eye=(168, 248, 64),
                                                extra=(88, 92, 72), weapon=(136, 144, 152))),
     'scarlet_tracking_hound': ('wolf', creature_palette((144, 72, 48), (200, 152, 120), eye=(248, 208, 64))),
+    # Stranglethorn Vale
+    'stranglethorn_tiger': ('tiger', creature_palette((224, 128, 40), (240, 224, 192), eye=(232, 216, 64),
+                                                      extra=(40, 28, 24), dark=(160, 80, 28), light=(240, 168, 80))),
+    'shadowmaw_panther': ('cat', creature_palette((52, 44, 64), (88, 68, 112), eye=(200, 240, 64),
+                                                  dark=(36, 30, 46), light=(96, 72, 132))),
+    'king_bangalash': ('tiger', creature_palette((228, 228, 224), (244, 240, 224), eye=(96, 176, 248),
+                                                 extra=(128, 132, 148), dark=(176, 176, 188), light=(255, 255, 255))),
+    'stranglethorn_raptor': ('raptor', creature_palette((48, 128, 72), (240, 212, 72), eye=(232, 72, 40),
+                                                        light=(88, 176, 96))),
+    'lashtail_raptor': ('raptor', creature_palette((200, 80, 40), (216, 184, 136), eye=(248, 216, 64),
+                                                   light=(232, 120, 72))),
+    'elder_mistvale_gorilla': ('gorilla', creature_palette((56, 56, 64), (168, 168, 176), eye=(232, 72, 40),
+                                                           light=(136, 136, 148))),
+    'mistvale_gorilla': ('gorilla', creature_palette((84, 60, 44), (184, 152, 112), eye=(232, 72, 40),
+                                                     light=(120, 92, 68))),
 }
 
 
@@ -3128,7 +3575,7 @@ def write_looks():
 
     enum = ['// Generated by tools/gen_characters.py. Do not edit by hand.', '#ifndef GW_LOOK_IDS_H',
             '#define GW_LOOK_IDS_H', '', '#include <cstdint>', '', 'namespace gw', '{', '',
-            'enum class look_id : uint8_t', '{']
+            'enum class look_id : uint16_t', '{']
     enum += [f'    {name.upper()},' for name, _ in looks]
     enum += ['    COUNT', '};', '', '}', '', '#endif', '']
     (INCLUDE / 'gw_look_ids.h').write_text('\n'.join(enum))

@@ -72,6 +72,9 @@ enum class enemy_ability_id : uint8_t
     ARCANE_EXPLOSION,
     PSYCHIC_SCREAM,
     POISON_CLOUD,
+    // Added with Stranglethorn and the Scarlet Monastery's last wings
+    WHIRLWIND,
+    DEEP_SLEEP,
     COUNT
 };
 
@@ -105,7 +108,9 @@ enum class enemy_family : uint8_t
     GNOME,
     OOZE,
     SYNDICATE,
-    SCARLET
+    SCARLET,
+    TROLL,
+    PIRATE
 };
 
 enum class enemy_effect : uint8_t

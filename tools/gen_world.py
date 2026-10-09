@@ -910,7 +910,7 @@ def gen_duskwood():
     wg.forest(m, trees, 0, 0, 544, border)
     wg.forest(m, trees, 592, 0, 528, border)
     wg.forest(m, trees, 0, 0, border, m.height)
-    wg.forest(m, trees, 0, m.height - border, 1056, border)
+    wg.forest(m, trees, 0, m.height - border, 1056, border, holes=[(144, m.height - border, 48, border)])
     # Old woods between the zones, with hidden clearings.
     wg.forest(m, trees, 48, 144, 224, 112, kinds=('pine', 'oak'), holes=[(128, 168, 64, 48)],
               secrets=[(144, 208, 32, 56)])
@@ -1054,6 +1054,13 @@ def gen_duskwood():
     m.spawn_group('DIRE_WOLF', 420, 470, 4, 50, seed=67)
     m.spawn_group('DIRE_WOLF', 640, 700, 4, 60, seed=68)
 
+    # The road south to Stranglethorn came later than the woods: the trees and props are placed as
+    # before it existed (so old saves stand where they stood), minus the ones in its way.
+    south_road = [(128, 864), (132, 900), (152, 944), (168, 1024)]
+    wg.corners_along(m, 'south_road', south_road, 1.1)
+    road = wg.corners(m, 'south_road')
+    gap = (144, m.height - border, 48, border)
+    m.block(*gap)
     rng = np.random.default_rng(23)
     path = wg.corners(m, 'path')
     water = wg.corners(m, 'water')
@@ -1061,6 +1068,7 @@ def gen_duskwood():
              (450, 600, 130, 140), (380, 800, 260, 180), (700, 720, 260, 260), (1100, 730, 290, 240),
              (900, 140, 220, 220), (440, 180, 120, 100), (690, 300, 140, 140)]
     placed = 0
+    skipped = []
     for i in range(3000):
         if placed >= 400:
             break
@@ -1070,18 +1078,28 @@ def gen_duskwood():
             water[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max()
         if near == 0 and m.area_free(x, y, 40, 56) and \
                 not any(cx - 40 <= x <= cx + cw and cy - 56 <= y <= cy + ch for cx, cy, cw, ch in clear):
-            if placed % 7 == 3:
-                wg.tree(m, dead, x, y, int(rng.integers(0, 3)), kind='small')
+            variant = int(rng.integers(0, 3))
+            if road[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max():
+                foot = (x // 8 * 8 + 8, y // 8 * 8 + 32, 16, 16)
+                m.block(*foot)
+                skipped.append(foot)
+            elif placed % 7 == 3:
+                wg.tree(m, dead, x, y, variant, kind='small')
             else:
-                wg.tree(m, trees, x, y, int(rng.integers(0, 3)), kind=('oak', 'pine', 'oak', 'small')[placed % 4])
+                wg.tree(m, trees, x, y, variant, kind=('oak', 'pine', 'oak', 'small')[placed % 4])
             placed += 1
+    for foot in skipped + [gap]:
+        m.unblock(*foot)
+    wg.paint_paths(m, 'south_road')
     wg.scatter_props(m, rng, 90, DUSKWOOD_PROPS, (56, 120, 1400, 840),
-                     avoid=[(1080, 260, 420, 420), (80, 280, 304, 224)])
+                     avoid=[(1080, 260, 420, 420), (80, 280, 304, 224), (96, 848, 96, 112)])
 
     m.point('from_elwynn', 568, 24)
     m.warp(544, 0, 48, 8, 'elwynn', 'from_duskwood')
     m.point('from_redridge', 1336, 24)
     m.warp(1312, 0, 48, 8, 'redridge', 'from_duskwood')
+    m.point('from_stranglethorn', 168, 996)
+    m.warp(144, 1016, 48, 8, 'stranglethorn', 'from_duskwood')
     m.area(0, 0, 1536, 1024, 'Duskwood')
     m.music = 'DUSKWOOD'
     m.night = True
@@ -3672,13 +3690,21 @@ def gen_tirisfal():
     wg.corners_along(m, 'water', [(768, 260), (700, 300), (680, 400), (720, 512)], 1.3)
     wg.paint_water(m)
 
-    # The Monastery's front: the Library's doors in the middle; the Graveyard's crypt to the west.
+    # The Monastery's front: the Library's doors in the middle, the Armory's in the west wing and the
+    # Cathedral's in the east wing; the Graveyard's crypt further west.
     door = wg.abbey(m, 352, 96)
-    for x in (256, 512):
+    for x, wing in ((256, 'sm_armory'), (512, 'sm_cathedral')):
         wg.bricks(m, m.ground, x, 160, 96, 64, 'stone_d', 'stone_m', 'stone_l')
         m.ground[160:163, x:x + 96] = m.g('stone_h')
         m.ground[223, x:x + 96] = m.g('outline')
         m.block(x, 160, 96, 64)
+        wg.door(m, x + 40, 196, 28)
+        for bx in (x + 16, x + 72):
+            m.ground[172:204, bx:bx + 8] = m.g('banner')
+            m.ground[172:204, bx] = m.g('banner_d')
+            m.ground[172:174, bx:bx + 8] = m.g('gold')
+        m.warp(x + 36, 216, 24, 8, wing, 'entry')
+        m.point(wing[3:] + '_exit', x + 48, 244)
     m.warp(door[0] - 12, door[1] - 14, 24, 8, 'sm_library', 'entry')
     m.point('library_exit', door[0], door[1] + 14)
     graveyard(m, 112, 240, 176, 96, seed=21, gaps=[(176, 240, 48, 96)])
@@ -3808,6 +3834,19 @@ class Monastery(Castle):
             g[y + 3:y + 6, cx:cx + 2] = m.g('wall_l')
             g[y + 1:y + 3, cx:cx + 2] = m.g('flame')
         self.m.block(x, y + 10, 8, 6)
+
+    def dummy(self, x, y):
+        """A straw training dummy on a post, 16x24."""
+        g, m = self.m.ground, self.m
+        g[y + 10:y + 24, x + 7:x + 9] = m.g('wood')
+        g[y + 22:y + 24, x + 3:x + 13] = m.g('wood')
+        g[y + 2:y + 14, x + 3:x + 13] = m.g('outline')
+        g[y + 3:y + 13, x + 4:x + 12] = m.g('straw')
+        g[y + 7, x + 1:x + 15] = m.g('wood')
+        g[y:y + 3, x + 5:x + 11] = m.g('outline')
+        g[y + 1:y + 3, x + 6:x + 10] = m.g('straw')
+        g[y + 6:y + 9, x + 6:x + 10] = m.g('red')
+        self.m.block(x + 2, y + 14, 12, 10)
 
     def altar(self, x, y, w=64, h=24):
         """A stone altar with a crimson cloth."""
@@ -3956,6 +3995,316 @@ def gen_sm_library():
     return m
 
 
+# ---------------------------------------------------------------------------------------------
+# Stranglethorn Vale
+# ---------------------------------------------------------------------------------------------
+
+STRANGLETHORN_PROPS = ('fern', 'bush', 'wide_bush', 'tall_grass', 'flower_bush', 'fern', 'rock', 'log')
+
+
+def gen_stranglethorn():
+    m = Map('stranglethorn', 1024, 1536,
+            Palette([wg.TERRAIN_STRANGLETHORN, wg.BUILDINGS_JUNGLE, wg.FARM, wg.ROCK_STRANGLETHORN]),
+            Palette([wg.OVERHEAD_LEAVES_JUNGLE, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    # --- the mountains along the east, and the cliffs around Booty Bay with a tunnel through them ------
+    rock = wg.corners(m, 'rock')
+    rock[:93, 60:] = 1
+    rock[73:79, 37:60] = 1
+    rock[73:79, 47:51] = 0              # the tunnel down to Booty Bay
+    rock[73:93, 36:39] = 1              # the bay's west cliff
+    wg.paint_cliffs(m)
+
+    # --- the sea along the west and south coasts, Booty Bay's harbor and Lake Nazferiti -------------
+    wg.corners_rect(m, 'water', 0, 608, 24, 928)
+    wg.corners_along(m, 'water', [(0, 560), (40, 700), (56, 900), (40, 1100), (56, 1300), (24, 1536)], 1.8)
+    wg.corners_rect(m, 'water', 0, 1488, 1024, 48)
+    wg.corners_along(m, 'water', [(0, 1456), (200, 1472), (400, 1464), (576, 1480)], 1.4)
+    wg.corners_rect(m, 'water', 608, 1456, 352, 80)
+    wg.corners_ellipse(m, 'water', 784, 1472, 150, 40)
+    wg.corners_ellipse(m, 'water', 800, 540, 72, 44)
+    wg.paint_water(m)
+
+    # --- roads --------------------------------------------------------------------------------------
+    roads = [
+        [(304, 0), (304, 120), (312, 200)],                                          # from Duskwood
+        [(312, 200), (480, 250), (640, 290), (696, 330)],                            # to Nesingwary's
+        [(480, 250), (440, 420), (420, 600), (460, 800), (520, 980), (600, 1100), (720, 1150), (776, 1200),
+         (776, 1376)],                                                                # south to Booty Bay
+        [(420, 600), (300, 630), (200, 640)],                                        # Zul'Kunda
+        [(460, 800), (620, 780), (720, 760)],                                        # Mistvale Valley
+        [(520, 980), (380, 1080), (260, 1160)],                                      # the Bloodsail Compound
+        [(696, 330), (800, 300), (860, 240)],                                        # the Kal'ai Ruins
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.1)
+    wg.paint_paths(m)
+
+    # --- the jungle's edge: the way back north to Duskwood --------------------------------------------
+    border = 48
+    wg.forest(m, trees, 0, 0, 1024, border, kinds=('oak', 'palm'), holes=[(280, 0, 48, border)])
+    wg.forest(m, trees, 0, border, border, 528, kinds=('oak', 'palm'))
+
+    # --- the Rebel Camp -----------------------------------------------------------------------------
+    wg.camp(m, 216, 120, 192, 96, tents=[(224, 128), (360, 128)], fire=(256, 176))
+    wg.crates(m, 368, 176)
+    m.npc('DOREN', 312, 144)
+    m.npc('BLUTH', 344, 196)
+    m.npc('REBEL_SOLDIER', 280, 204)
+    m.point('rebel_camp_respawn', 312, 236)
+    m.area(200, 100, 230, 140, 'Rebel Camp')
+
+    # --- Nesingwary's Expedition --------------------------------------------------------------------
+    wg.camp(m, 600, 288, 192, 96, tents=[(608, 296), (752, 296)], fire=(640, 344))
+    wg.crates(m, 720, 352)
+    m.npc('HEMET', 696, 316)
+    m.npc('AJECK', 664, 372)
+    m.npc('ERLGADIN', 760, 352)
+    m.npc('BARNIL', 700, 372)
+    m.area(580, 270, 240, 140, "Nesingwary's Expedition")
+
+    # --- the Kal'ai Ruins: King Bangalash ---------------------------------------------------------------
+    ruin(m, 816, 160, 96, 32, seed=21)
+    ruin(m, 880, 224, 64, 32, seed=22)
+    m.spawn('KING_BANGALASH', 864, 208)
+    m.spawn('STRANGLETHORN_TIGER', 824, 216)
+    m.spawn('STRANGLETHORN_TIGER', 920, 204)
+    m.area(790, 120, 170, 160, "Kal'ai Ruins")
+
+    # --- Lake Nazferiti: the tigers -----------------------------------------------------------------
+    m.spawn_group('STRANGLETHORN_TIGER', 568, 540, 6, 64, seed=171)
+    m.spawn_group('STRANGLETHORN_TIGER', 720, 620, 4, 50, seed=172)
+    m.area(560, 420, 380, 240, 'Lake Nazferiti')
+
+    # --- the Shadowmaw Thicket: the panthers --------------------------------------------------------
+    m.spawn_group('SHADOWMAW_PANTHER', 150, 410, 7, 80, seed=173)
+    m.area(60, 290, 300, 200, 'Shadowmaw Thicket')
+
+    # --- Zul'Kunda: the Bloodscalp trolls -----------------------------------------------------------
+    ruin(m, 96, 560, 112, 32, seed=23)
+    ruin(m, 248, 576, 96, 32, seed=24)
+    ruin(m, 112, 704, 96, 32, seed=25)
+    ruin(m, 256, 712, 80, 32, seed=26)
+    m.spawn_group('BLOODSCALP_WARRIOR', 210, 660, 6, 80, seed=174)
+    m.spawn_group('BLOODSCALP_SHAMAN', 150, 640, 3, 40, seed=175)
+    m.spawn_group('BLOODSCALP_HEADHUNTER', 290, 780, 5, 60, seed=176)
+    m.spawn('MOGH_THE_UNDYING', 176, 616)
+    m.chest(43, 168, 772, 37)
+    m.area(60, 520, 340, 320, "Zul'Kunda")
+
+    # --- the Ruins of Jubuwal: raptors ------------------------------------------------------------------
+    ruin(m, 528, 704, 96, 32, seed=27)
+    m.spawn_group('STRANGLETHORN_RAPTOR', 560, 680, 7, 80, seed=177)
+    m.area(470, 620, 200, 180, 'Ruins of Jubuwal')
+
+    # --- Mistvale Valley: the gorillas ----------------------------------------------------------------
+    for bx, by in ((680, 840), (900, 720), (912, 900), (760, 920)):
+        wg.big_rock(m, bx, by)
+    m.spawn_group('MISTVALE_GORILLA', 780, 820, 6, 80, seed=178)
+    m.spawn_group('ELDER_MISTVALE_GORILLA', 860, 880, 3, 50, seed=179)
+    m.area(640, 700, 320, 260, 'Mistvale Valley')
+
+    # --- the Crystalvein Mine: lashtail raptors -------------------------------------------------------
+    mine = wg.mine_entrance(m, 272, 896, 64, 48)
+    m.block(mine[0] - 16, mine[1] - 24, 32, 32)
+    m.spawn_group('LASHTAIL_RAPTOR', 360, 980, 7, 80, seed=180)
+    m.area(220, 860, 300, 200, 'Crystalvein Mine')
+
+    # --- the Bloodsail Compound on the Wild Shore ---------------------------------------------------
+    wg.camp(m, 96, 1200, 208, 96, tents=[(104, 1208), (256, 1208)], fire=(176, 1256))
+    wg.crates(m, 152, 1208)
+    m.spawn_group('BLOODSAIL_SWASHBUCKLER', 240, 1330, 6, 80, seed=181)
+    m.spawn_group('BLOODSAIL_MAGE', 140, 1310, 3, 40, seed=182)
+    m.spawn_group('BLOODSAIL_SEA_DOG', 360, 1380, 5, 60, seed=183)
+    m.spawn('FLEET_MASTER_FIRALLON', 208, 1232)
+    m.area(64, 1140, 400, 320, 'The Bloodsail Compound')
+
+    # --- Booty Bay ------------------------------------------------------------------------------------
+    wg.cobbles(m, 624, 1376, 320, 48)
+    inn = wg.house(m, 632, 1272, 112, 96, roof_colors=('red_d', 'red_m', 'red_l'), roof_ridge='red_l',
+                   roof_outline='o2')
+    baron = wg.house(m, 816, 1272, 120, 96, style='stone', roof_colors=('thatch_d', 'thatch_m', 'thatch_l'),
+                     roof_ridge='thatch_l', roof_outline='o2')
+    wg.pier(m, 704, 1424, 32, 72)
+    wg.pier(m, 848, 1424, 32, 72)
+    wg.anvil(m, 904, 1392)
+    wg.crates(m, 768, 1408)
+    m.npc('SKINDLE', inn[0], inn[1] + 4)
+    m.npc('REVILGAZ', baron[0], baron[1] + 4)
+    m.npc('BRUISER', 808, 1300)
+    m.npc('GYLL', 656, 1400)
+    m.point('flight', 656, 1416)
+    m.npc('BOOTY_BAY_VENDOR', 752, 1404)
+    m.npc('BOOTY_BAY_SMITH', 920, 1412)
+    m.npc('KEBOK', 808, 1404)
+    m.npc('SEAHORN', 864, 1404)
+    m.point('booty_bay_respawn', 776, 1396)
+    m.area(600, 1260, 360, 220, 'Booty Bay')
+
+    # --- trees, and a hidden glade under the eastern cliffs -------------------------------------------
+    wg.forest(m, trees, 864, 1000, 96, 128, kinds=('oak', 'palm'), holes=[(888, 1032, 48, 48)],
+              secrets=[(840, 1048, 56, 32)])
+    m.chest(42, 912, 1068, 38)
+    rng = np.random.default_rng(47)
+    path = wg.corners(m, 'path')
+    water = wg.corners(m, 'water')
+    clear = [(200, 100, 230, 140), (580, 270, 240, 140), (790, 140, 170, 190), (80, 548, 280, 220),
+             (80, 1180, 260, 150), (580, 1160, 380, 376), (240, 880, 120, 80), (820, 990, 140, 150)]
+    placed = 0
+    for _ in range(8000):
+        if placed >= 520:
+            break
+        x, y = int(rng.uniform(56, 920)), int(rng.uniform(56, 1420))
+        mx, my = (x + 16) // 16, (y + 40) // 16
+        near = path[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max() + \
+            water[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max()
+        if near == 0 and m.area_free(x, y, 40, 56) and \
+                not any(cx - 40 <= x <= cx + cw and cy - 56 <= y <= cy + ch for cx, cy, cw, ch in clear):
+            wg.tree(m, trees, x, y, int(rng.integers(0, 3)), kind=('oak', 'palm', 'small', 'oak', 'palm')[placed % 5])
+            placed += 1
+    wg.scatter_props(m, rng, 110, STRANGLETHORN_PROPS, (56, 60, 900, 1380),
+                     avoid=[(200, 100, 230, 140), (580, 270, 240, 140), (580, 1160, 380, 376)])
+
+    m.point('from_duskwood', 304, 28)
+    m.warp(280, 0, 48, 8, 'duskwood', 'from_stranglethorn')
+    m.area(0, 0, 1024, 1536, 'Stranglethorn Vale')
+    m.music = 'STRANGLETHORN'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# The Scarlet Monastery: the Armory and the Cathedral
+# ---------------------------------------------------------------------------------------------
+
+def gen_sm_armory():
+    c = Monastery('sm_armory', 1024, 512)
+    m = c.m
+    c.rect(448, 400, 128, 88)       # the gatehouse
+    c.rect(488, 488, 48, 24)        # the doors out
+    c.rect(488, 336, 48, 64)        # corridor north
+    c.rect(224, 216, 576, 120)      # the training grounds
+    c.rect(160, 248, 64, 56)        # corridor west
+    c.rect(48, 184, 112, 208)       # the barracks
+    c.rect(800, 248, 48, 56)        # corridor east
+    c.rect(848, 168, 144, 224)      # the armory
+    c.rect(896, 392, 48, 48)        # a hidden storeroom
+    c.rect(880, 440, 96, 56)
+    c.rect(488, 168, 48, 48)        # corridor north
+    c.rect(288, 24, 448, 144)       # the Hall of Champions, Herod's
+    c.render()
+    c.exit(488, 504, 'tirisfal', 'armory_exit')
+
+    c.rug(496, 216, 32, 184)
+    for x in (264, 328, 680, 744):
+        c.dummy(x, 256)
+    for x in (456, 552):
+        c.banner(x, 220)
+    for y in (232, 288, 344):
+        c.table(64, y, 48, 16)
+    for x in (864, 912, 952):
+        c.rack(x, 172)
+    for y in (240, 304):
+        c.table(872, y, 96, 20)
+    c.secret(896, 392, 48, 0)
+    for x in (896, 928):
+        c.barrel(x, 456)
+    m.chest(44, 952, 484, 38)
+    c.rug(472, 64, 80, 104)
+    for x in (320, 376, 640, 696):
+        c.rack(x, 28)
+    for x in (456, 560):
+        c.banner(x, 28)
+    for x in (304, 712):
+        c.torch(x, 30)
+
+    m.spawn('SCARLET_SOLDIER', 464, 424)
+    m.spawn('SCARLET_SOLDIER', 560, 424)
+    for x, y in ((300, 300), (380, 280), (440, 300), (600, 300), (660, 280), (720, 300)):
+        m.spawn('SCARLET_TRAINEE' if x in (380, 660) else 'SCARLET_SOLDIER', x, y)
+    for x, y in ((90, 240), (120, 300), (90, 360)):
+        m.spawn('SCARLET_MYRMIDON' if y != 300 else 'SCARLET_DEFENDER', x, y)
+    for x, y in ((900, 220), (940, 290), (900, 360)):
+        m.spawn('SCARLET_DEFENDER' if y != 290 else 'SCARLET_MYRMIDON', x, y)
+    m.spawn('SCARLET_MYRMIDON', 512, 196)
+    for x, y in ((360, 100), (664, 100)):
+        m.spawn('SCARLET_DEFENDER', x, y)
+    m.spawn('HEROD', 512, 84)
+    # Where the trainees come running from when Herod falls.
+    m.patrol = [(456, 240), (512, 236), (568, 240), (512, 300)]
+    m.area(0, 0, 1024, 512, 'Scarlet Monastery: Armory')
+    m.area(224, 216, 576, 120, 'The Training Grounds')
+    m.area(48, 184, 112, 208, 'The Barracks')
+    m.area(848, 168, 144, 224, 'The Armory')
+    m.area(288, 24, 448, 144, 'The Hall of Champions')
+    m.music = 'MONASTERY'
+    m.save()
+    return m
+
+
+def gen_sm_cathedral():
+    c = Monastery('sm_cathedral', 1024, 512)
+    m = c.m
+    c.rect(448, 400, 128, 88)       # the narthex
+    c.rect(488, 488, 48, 24)        # the doors out
+    c.rect(488, 368, 48, 32)        # steps north
+    c.rect(192, 264, 640, 104)      # the Chapel Gardens
+    c.rect(488, 216, 48, 48)        # corridor north
+    c.rect(256, 24, 512, 192)       # the nave
+    c.rect(200, 88, 56, 56)         # the door to the side chapel
+    c.rect(48, 56, 152, 160)        # the Chamber of Atonement, Fairbanks's
+    c.rect(768, 104, 48, 48)        # a hidden vestry
+    c.rect(816, 72, 112, 96)
+    c.render()
+    c.exit(488, 504, 'tirisfal', 'cathedral_exit')
+
+    # The Chapel Gardens: candles and banners along the wall.
+    for x in (224, 352, 640, 768):
+        c.candles(x, 268)
+    for x in (288, 416, 600, 728):
+        c.banner(x, 268)
+    # The nave: pews either side of a long carpet up to the altar.
+    c.rug(488, 72, 48, 144)
+    for y in (112, 144, 176):
+        for x in (296, 376, 568, 648):
+            c.table(x, y, 64, 16)
+    c.altar(480, 36, 64, 24)
+    for x in (432, 584):
+        c.candles(x, 32)
+    for x in (280, 360, 648, 728):
+        c.banner(x, 28)
+    c.secret(768, 104, 48, 0)
+    m.chest(45, 872, 156, 39)
+    c.bookshelf(832, 72, 80)
+    # The Chamber of Atonement.
+    c.altar(88, 64, 64, 24)
+    for x in (64, 168):
+        c.chains(x, 60)
+    c.bones(80, 176)
+
+    m.spawn('SCARLET_CENTURION', 464, 424)
+    m.spawn('SCARLET_CENTURION', 560, 424)
+    for x, y in ((240, 330), (320, 310), (400, 340), (620, 340), (700, 310), (780, 330)):
+        m.spawn(('SCARLET_CHAMPION', 'SCARLET_ABBOT', 'SCARLET_WIZARD')[(x // 80) % 3], x, y)
+    m.spawn('SCARLET_CHAMPION', 512, 240)
+    for x, y in ((320, 92), (700, 92), (312, 196), (712, 196)):
+        m.spawn('SCARLET_WIZARD' if y < 150 else 'SCARLET_CHAMPION', x, y)
+    for x, y in ((80, 140), (160, 190)):
+        m.spawn('SCARLET_ABBOT', x, y)
+    m.spawn('HIGH_INQUISITOR_FAIRBANKS', 120, 120)
+    m.spawn('SCARLET_COMMANDER_MOGRAINE', 512, 100)
+    m.spawn('HIGH_INQUISITOR_WHITEMANE', 512, 72)
+    m.area(0, 0, 1024, 512, 'Scarlet Monastery: Cathedral')
+    m.area(192, 264, 640, 104, 'The Chapel Gardens')
+    m.area(256, 24, 512, 192, 'The Crimson Cathedral')
+    m.area(48, 56, 152, 160, 'The Chamber of Atonement')
+    m.music = 'MONASTERY'
+    m.save()
+    return m
+
+
 GENERATORS = {
     'abbey': gen_abbey,
     'inn': gen_inn,
@@ -3981,6 +4330,9 @@ GENERATORS = {
     'tirisfal': gen_tirisfal,
     'sm_graveyard': gen_sm_graveyard,
     'sm_library': gen_sm_library,
+    'stranglethorn': gen_stranglethorn,
+    'sm_armory': gen_sm_armory,
+    'sm_cathedral': gen_sm_cathedral,
 }
 
 
@@ -3993,7 +4345,7 @@ def main():
     starts = {'elwynn': 'start', 'westfall': 'from_elwynn', 'stormwind': 'from_elwynn', 'redridge': 'from_elwynn',
               'duskwood': 'from_elwynn', 'silverpine': 'flight', 'dun_morogh': 'from_ironforge',
               'wetlands': 'from_dun_morogh', 'darkshore': 'from_menethil', 'hillsbrad': 'from_wetlands',
-              'tirisfal': 'flight'}
+              'tirisfal': 'flight', 'stranglethorn': 'from_duskwood'}
     for name, m in maps.items():
         m.check_reachable(starts.get(name, 'entry'))
     write_minimaps(maps)
@@ -4002,8 +4354,9 @@ def main():
 # Maps with a picture on the world map page, in the order D-pad left and right go through them.
 # Interiors show the map their door leads to.
 MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'duskwood', 'silverpine', 'ironforge', 'dun_morogh',
-            'wetlands', 'darkshore', 'hillsbrad', 'tirisfal', 'echo_ridge', 'fargodeep', 'deadmines', 'stockade',
-            'shadowfang', 'blackfathom_deeps', 'gnomeregan', 'sm_graveyard', 'sm_library']
+            'wetlands', 'darkshore', 'hillsbrad', 'tirisfal', 'stranglethorn', 'echo_ridge', 'fargodeep', 'deadmines',
+            'stockade', 'shadowfang', 'blackfathom_deeps', 'gnomeregan', 'sm_graveyard', 'sm_library', 'sm_armory',
+            'sm_cathedral']
 
 
 def write_minimaps(maps):

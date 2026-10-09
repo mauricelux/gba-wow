@@ -80,7 +80,7 @@ constexpr zone_def zones[] = {
     { "Westfall", 0, 33, 104, 10, 15, map_id::WESTFALL },
     { "Duskwood", 0, 49, 105, 20, 25, map_id::DUSKWOOD },
     { "Swamp of Sorrows", 0, 69, 107, 50, 55, map_id::NONE },
-    { "Stranglethorn Vale", 0, 42, 113, 35, 40, map_id::NONE },
+    { "Stranglethorn Vale", 0, 42, 113, 35, 40, map_id::STRANGLETHORN },
     { "Darkshore", 1, 46, 31, 24, 27, map_id::DARKSHORE },
     { "Ashenvale", 1, 60, 39, 20, 30, map_id::NONE },
     { "Desolace", 1, 41, 57, 45, 50, map_id::NONE },

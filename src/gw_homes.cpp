@@ -8,6 +8,7 @@
 #include "gw_map_ironforge.h"
 #include "gw_map_redridge.h"
 #include "gw_map_stormwind.h"
+#include "gw_map_stranglethorn.h"
 #include "gw_map_westfall.h"
 #include "gw_map_wetlands.h"
 
@@ -27,6 +28,7 @@ namespace
         { "Menethil Harbor", map_id::WETLANDS, map_data::wetlands::menethil_respawn },
         { "Auberdine", map_id::DARKSHORE, map_data::darkshore::auberdine_respawn },
         { "Southshore", map_id::HILLSBRAD, map_data::hillsbrad::southshore_respawn },
+        { "Booty Bay", map_id::STRANGLETHORN, map_data::stranglethorn::booty_bay_respawn },
     };
 
     static_assert(sizeof(homes) / sizeof(homes[0]) == int(home_id::COUNT));
@@ -68,6 +70,9 @@ home_id innkeeper_home(npc_id npc)
 
     case npc_id::ANDERSON:
         return home_id::SOUTHSHORE;
+
+    case npc_id::SKINDLE:
+        return home_id::BOOTY_BAY;
 
     default:
         return home_id::COUNT;
