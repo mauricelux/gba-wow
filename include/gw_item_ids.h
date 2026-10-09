@@ -11,6 +11,7 @@
 // shield(name, quality, level, str, agi, sta, int, spi)
 // consumable(name, type, level, amount restored, sell price, stack)
 // junk(name, sell price, stack)
+// reagent(name, sell price, stack): used up by abilities
 // special(name, type): no price, no stack
 #define GW_ITEM_LIST(X) \
     X(NONE, junk("Nothing", 0)) \
@@ -210,7 +211,22 @@
     X(DARK_IRON_RIFLE, weapon("Dark Iron Rifle", R, GUN, 20, 28, 0, 5, 2, 0, 0)) \
     X(THREDDS_DUSKBLADE, weapon("Thredd's Duskblade", R, SWORD, 20, 26, 5, 2, 4, 0, 0)) \
     X(SMOKEWEAVE_PANTS, armor("Smokeweave Pants", R, CLOTH, LEGS, 20, 0, 0, 4, 8, 5)) \
-    X(SHADOWHIDE_BOOTS, armor("Shadowhide Boots", R, LEATHER, FEET, 20, 0, 7, 4, 0, 0))
+    X(SHADOWHIDE_BOOTS, armor("Shadowhide Boots", R, LEATHER, FEET, 20, 0, 7, 4, 0, 0)) \
+    /* conjured by mages, a kind per rank */ \
+    X(CONJURED_WATER, consumable("Conjured Water", DRINK, 1, 150, 0, 20)) \
+    X(CONJURED_FRESH_WATER, consumable("Conjured Fresh Water", DRINK, 5, 400, 0, 20)) \
+    X(CONJURED_PURE_WATER, consumable("Conjured Pure Water", DRINK, 15, 800, 0, 20)) \
+    X(CONJURED_BROOK_WATER, consumable("Conjured Brook Water", DRINK, 25, 1300, 0, 20)) \
+    X(CONJURED_ICE_WATER, consumable("Conjured Ice Water", DRINK, 35, 1900, 0, 20)) \
+    X(CONJURED_CLEAR_WATER, consumable("Conjured Clear Water", DRINK, 45, 2600, 0, 20)) \
+    X(CONJURED_SNOW_WATER, consumable("Conjured Snow Water", DRINK, 55, 3400, 0, 20)) \
+    X(CONJURED_MUFFIN, consumable("Conjured Muffin", FOOD, 1, 60, 0, 20)) \
+    X(CONJURED_BREAD, consumable("Conjured Bread", FOOD, 5, 200, 0, 20)) \
+    X(CONJURED_RYE, consumable("Conjured Rye", FOOD, 15, 420, 0, 20)) \
+    X(CONJURED_SOURDOUGH, consumable("Conjured Sourdough", FOOD, 25, 700, 0, 20)) \
+    X(CONJURED_SWEET_ROLL, consumable("Conjured Sweet Roll", FOOD, 35, 1000, 0, 20)) \
+    X(CONJURED_CROISSANT, consumable("Conjured Croissant", FOOD, 45, 1400, 0, 20)) \
+    X(TELEPORTATION_RUNE, reagent("Teleportation Rune", 250, 20))
 
 namespace gw
 {

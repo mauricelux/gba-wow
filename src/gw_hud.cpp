@@ -22,10 +22,19 @@ namespace
 
     constexpr char slot_labels[7] = { 'A', 'B', 'L', '^', '>', 'v', '<' };
 
+    // By buff_id.
     constexpr icon_id buff_icons[] = {
-        icon_id::BATTLE_SHOUT, icon_id::FROST_ARMOR, icon_id::SHIELD_BLOCK, icon_id::ICE_BARRIER,
-        icon_id::ARCANE_INTELLECT, icon_id::ASPECT_HAWK, icon_id::ASPECT_HAWK, icon_id::FOOD
+        icon_id::BATTLE_SHOUT, icon_id::FROST_ARMOR, icon_id::LAST_STAND, icon_id::ICE_BARRIER,
+        icon_id::ARCANE_POWER, icon_id::ASPECT_HAWK, icon_id::BESTIAL_WRATH, icon_id::FOOD,
+        icon_id::ARCANE_INTELLECT, icon_id::MOLTEN_ARMOR, icon_id::MAGE_ARMOR, icon_id::FIRE_WARD,
+        icon_id::MANA_SHIELD, icon_id::ARCANE_BLAST, icon_id::PRESENCE_OF_MIND, icon_id::COMBUSTION,
+        icon_id::ICE_BLOCK, icon_id::RETALIATION, icon_id::SWEEPING_STRIKES, icon_id::WHIRLING_BLADES,
+        icon_id::BERSERKER_RAGE, icon_id::RECKLESSNESS, icon_id::DEATH_WISH, icon_id::SHIELD_BLOCK,
+        icon_id::SHIELD_WALL, icon_id::ASPECT_MONKEY, icon_id::ASPECT_CHEETAH, icon_id::RAPID_FIRE,
+        icon_id::DETERRENCE, icon_id::TRUESHOT_AURA, icon_id::CONCUSSIVE_SHOT
     };
+
+    static_assert(sizeof(buff_icons) / sizeof(buff_icons[0]) == int(buff_id::COUNT), "an icon per buff");
 
     [[nodiscard]] int slot_x(int slot)
     {
@@ -332,7 +341,16 @@ void hud::_update_action_bar(const combat& combat_ref)
 
             if(cooldown > global_cooldown)
             {
-                ui::text(slot_x(slot), action_label_row, bn::to_string<4>(seconds_left), ui::color::RED);
+                // Two characters: seconds, or minutes for long cooldowns.
+                bn::string<4> left = seconds_left < 100 ? bn::to_string<4>(seconds_left) :
+                                                          bn::to_string<4>((seconds_left + 59) / 60);
+
+                if(seconds_left >= 100)
+                {
+                    left += "m";
+                }
+
+                ui::text(slot_x(slot), action_label_row, left, ui::color::RED);
             }
             else
             {
@@ -347,13 +365,13 @@ void hud::_update_action_bar(const combat& combat_ref)
 
 void hud::_update_buffs(const combat& combat_ref)
 {
-    int mask = 0;
+    uint32_t mask = 0;
 
     for(int index = 0; index < int(buff_id::COUNT); ++index)
     {
         if(combat_ref.buff_frames(buff_id(index)) > 0)
         {
-            mask |= 1 << index;
+            mask |= uint32_t(1) << index;
         }
     }
 
@@ -376,7 +394,7 @@ void hud::_update_buffs(const combat& combat_ref)
 
     for(int index = 0; index < int(buff_id::COUNT) && ! _buff_icons.full(); ++index)
     {
-        if(mask & (1 << index))
+        if(mask & (uint32_t(1) << index))
         {
             bn::sprite_ptr icon = bn::sprite_items::fx_icons.create_sprite(-120 + 4 + x * 10, -80 + 20,
                                                                            int(buff_icons[index]));

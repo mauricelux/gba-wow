@@ -21,6 +21,15 @@ struct projectile_hit
     ability_id ability;
 };
 
+// Area circle colors.
+enum class circle_style : uint8_t
+{
+    DANGER,     // red: an enemy attack is about to land there
+    FROST,
+    FIRE,
+    TRAP        // green: the player's trap
+};
+
 // Short-lived sprites: the target ring, hit sparks, bursts, projectiles and area circles.
 class effects
 {
@@ -35,8 +44,11 @@ public:
 
     void burst(const bn::fixed_point& world_position, projectile_kind kind);
 
-    // An area circle of the given radius in pixels that lasts for frames.
-    void circle(const bn::fixed_point& world_position, int radius, int frames, bool frost);
+    // An area circle of the given radius in pixels that lasts for frames. Returns an id for
+    // remove_circle.
+    int circle(const bn::fixed_point& world_position, int radius, int frames, circle_style style);
+
+    void remove_circle(int id);
 
     void launch(const bn::fixed_point& from, projectile_kind kind, const projectile_hit& hit);
 
@@ -89,13 +101,15 @@ private:
         int first_frame = 0;
         int frame_count = 1;
         int lifetime = 0;
+        int id = 0;
     };
 
     bn::camera_ptr _camera;
     bn::optional<bn::sprite_ptr> _target_ring;
     bn::vector<projectile, 8> _projectiles;
     bn::vector<timed_sprite, 8> _sparks;
-    bn::vector<timed_sprite, 3> _circles;
+    bn::vector<timed_sprite, 6> _circles;
+    int _next_circle = 1;
 
     bool _move_projectile(projectile& item, const bn::fixed_point& target);
     void _update_effects();

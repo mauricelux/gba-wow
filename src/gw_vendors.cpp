@@ -24,7 +24,7 @@ namespace
 
     constexpr item_id inn[] = {
         i::TOUGH_JERKY, i::HAUNCH_OF_MEAT, i::SPRING_WATER, i::ICE_COLD_MILK, i::MINOR_HEALING_POTION,
-        i::LESSER_HEALING_POTION
+        i::LESSER_HEALING_POTION, i::TELEPORTATION_RUNE
     };
 
     constexpr item_id militia[] = {
@@ -39,7 +39,7 @@ namespace
 
     constexpr item_id stormwind_goods[] = {
         i::TOUGH_JERKY, i::HAUNCH_OF_MEAT, i::SPRING_WATER, i::ICE_COLD_MILK, i::MINOR_HEALING_POTION,
-        i::LESSER_HEALING_POTION
+        i::LESSER_HEALING_POTION, i::TELEPORTATION_RUNE
     };
 
     constexpr item_id stormwind_weapons[] = {

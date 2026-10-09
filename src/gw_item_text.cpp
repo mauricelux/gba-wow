@@ -28,6 +28,41 @@ namespace
         }
     }
 
+    // The subclasses that want the item's stats, a bit per subclass_id: strength for warriors,
+    // agility for hunters and Fury, intellect for mages, shields for Protection.
+    [[nodiscard]] int suited_subclasses(const item_def& def)
+    {
+        auto bit = [](subclass_id subclass)
+        {
+            return 1 << int(subclass);
+        };
+
+        int result = 0;
+
+        if(def.type == item_type::SHIELD)
+        {
+            result |= bit(subclass_id::PROTECTION);
+        }
+
+        if(def.strength > 0)
+        {
+            result |= bit(subclass_id::ARMS) | bit(subclass_id::FURY) | bit(subclass_id::PROTECTION);
+        }
+
+        if(def.agility > 0)
+        {
+            result |= bit(subclass_id::FURY) | bit(subclass_id::BEAST_MASTERY) | bit(subclass_id::MARKSMANSHIP) |
+                      bit(subclass_id::SURVIVAL);
+        }
+
+        if(def.intellect > 0)
+        {
+            result |= bit(subclass_id::ARCANE) | bit(subclass_id::FIRE) | bit(subclass_id::FROST);
+        }
+
+        return result;
+    }
+
     [[nodiscard]] const char* slot_name(equip_slot slot)
     {
         switch(slot)
@@ -66,6 +101,9 @@ const char* item_kind_name(item_id item)
 
     case item_type::QUEST:
         return "Quest item";
+
+    case item_type::REAGENT:
+        return "Reagent";
 
     case item_type::HEARTHSTONE:
         return "Use: return home";
@@ -157,6 +195,7 @@ void add_item_details(text_page& page, item_id item)
 
     case item_type::JUNK:
     case item_type::QUEST:
+    case item_type::REAGENT:
         text = item_kind_name(item);
         break;
 
@@ -210,6 +249,37 @@ void add_item_details(text_page& page, item_id item)
     if(! stats.empty())
     {
         page.add_copy(stats, ui::color::GREEN);
+    }
+
+    // Which of the class's subclasses want it, green when the character's own does.
+    if(def.slot != equip_slot::NONE && usable)
+    {
+        int suited = suited_subclasses(def);
+        bn::string<64> suits = "Suits ";
+        int count = 0;
+
+        for(int index = 0; index < subclasses_per_class; ++index)
+        {
+            subclass_id subclass = class_subclass(data.player_class, index);
+
+            if(suited & (1 << int(subclass)))
+            {
+                suits += count ? ", " : "";
+                suits += subclass_name(subclass);
+                ++count;
+            }
+        }
+
+        if(count == subclasses_per_class)
+        {
+            suits = "Suits every ";
+            suits += class_name(data.player_class);
+        }
+
+        if(count)
+        {
+            page.add_copy(suits, suited & (1 << int(data.subclass)) ? ui::color::GREEN : ui::color::GRAY);
+        }
     }
 
     if(def.level > 1)

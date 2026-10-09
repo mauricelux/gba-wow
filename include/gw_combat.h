@@ -27,7 +27,49 @@ enum class buff_id : uint8_t
     ASPECT_OF_THE_HAWK,
     BESTIAL_WRATH,
     WELL_FED,       // eating or drinking: restores health and mana quickly
+    ARCANE_INTELLECT,
+    MOLTEN_ARMOR,
+    MAGE_ARMOR,
+    FIRE_WARD,
+    MANA_SHIELD,
+    ARCANE_BLAST,   // value: stacks
+    PRESENCE_OF_MIND,
+    COMBUSTION,     // value: extra critical chance for the next fire spell
+    ICE_BLOCK,
+    RETALIATION,
+    SWEEPING_STRIKES,   // value: hits left
+    WHIRLING_BLADES,
+    BERSERKER_RAGE,
+    RECKLESSNESS,
+    DEATH_WISH,
+    SHIELD_BLOCK,
+    SHIELD_WALL,
+    ASPECT_OF_THE_MONKEY,
+    ASPECT_OF_THE_CHEETAH,
+    RAPID_FIRE,
+    DETERRENCE,
+    TRUESHOT_AURA,
+    DAZED,          // slowed after being hit while running with the Cheetah
     COUNT
+};
+
+static_assert(int(buff_id::COUNT) <= 32, "the hud keeps a bit per buff");
+
+// Lasts until death or until replaced (aspects).
+constexpr int permanent_buff = 0x7FFFFFFF;
+
+// Where a spell or a trap acts on the ground, for a while.
+struct ground_zone
+{
+    bn::fixed_point position;
+    ability_id ability = ability_id::NONE;
+    int radius = 0;
+    int frames = 0;         // left
+    int tick = 0;           // frames until the next tick
+    int value = 0;          // damage per tick, or what a trap does
+    int circle = 0;         // effects circle id
+    bool channel = false;   // ends when the channel stops
+    bool trap = false;      // waits for an enemy to step on it
 };
 
 // The player's side of fighting: targeting, auto-attack, abilities, casting, buffs, resources,
@@ -89,10 +131,18 @@ public:
     bool boss_update(int index);
 
     // Deals damage to an enemy with floating text. Returns true if it died.
-    bool damage_enemy(int index, int amount, bool crit, bool periodic = false);
+    bool damage_enemy(int index, int amount, bool crit, bool periodic = false,
+                      school damage_school = school::PHYSICAL);
 
     // Deals damage to the player (boss specials).
-    void damage_player(int amount, const bn::fixed_point& from);
+    void damage_player(int amount, const bn::fixed_point& from, school damage_school = school::PHYSICAL);
+
+    // Movement speed in percent, from aspects and dazes; 0 while the player can't move.
+    [[nodiscard]] int speed_percent() const;
+
+    // Set by Teleport: Stormwind; the game moves the player there and clears it.
+    map_id teleport_map = map_id::NONE;
+    bn::fixed_point teleport_point;
 
     void heal_player(int amount);
 
@@ -137,7 +187,7 @@ private:
     int _cooldowns[ability_count] = {};
     int _buffs[int(buff_id::COUNT)] = {};
     int _buff_values[int(buff_id::COUNT)] = {};
-    ability_id _queued = ability_id::NONE;   // Heroic Strike waits for the next swing
+    ability_id _queued = ability_id::NONE;   // Heroic Strike and Cleave wait for the next swing
     ability_id _cast_ability = ability_id::NONE;
     int _cast_frames = 0;
     int _cast_total = 0;
@@ -150,7 +200,13 @@ private:
     int _eat_mana = 0;
     bool _charging = false;
     int _charge_target = -1;
+    int _dodged_frames = 0;                  // the player dodged or blocked: Revenge, Mongoose Bite
+    int _overpower_frames = 0;               // the target dodged: Overpower
+    int _feign_frames = 0;                   // lying still after Feign Death
+    int _polymorph_target = -1;
+    int _combustion_crits = 0;
     bn::vector<projectile_hit, 8> _arrived;
+    bn::vector<ground_zone, 4> _zones;
 
     void _read_input();
     void _cycle_target();
@@ -178,9 +234,27 @@ private:
     void _gain_rage(int damage, bool dealt);
     void _spend(int cost);
     [[nodiscard]] int _power() const;
+    [[nodiscard]] int _cost(ability_id ability) const;
+    [[nodiscard]] int _cast_time(ability_id ability) const;
+    [[nodiscard]] int _cooldown_frames(ability_id ability) const;
+    [[nodiscard]] const char* _unusable_reason(ability_id ability) const;
     void _set_buff(buff_id buff, int frames, int value);
+    void _end_buff(buff_id buff);
     void _die();
     void _area(ability_id ability, int radius);
+    void _weapon_strike(int index, ability_id ability, int bonus, bool can_miss = true);
+    void _spell_hit(int index, ability_id ability, int damage, bool crit);
+    [[nodiscard]] bool _roll_crit(ability_id ability, int index) const;
+    void _update_channel();
+    void _update_zones();
+    void _add_zone(const ground_zone& zone);
+    void _spring_trap(ground_zone& trap, int index);
+    void _interrupt(int index);
+    void _polymorph(int index, int frames);
+    void _set_armor(buff_id armor, ability_id ability);
+    void _set_aspect(buff_id aspect, ability_id ability);
+    void _conjure(ability_id ability);
+    void _counter_hit(int index);
 };
 
 }

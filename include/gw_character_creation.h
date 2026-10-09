@@ -10,7 +10,8 @@
 namespace gw
 {
 
-// Choosing a race and a class before a new game, with the character turning on a pedestal.
+// Choosing a race, a class and its subclass before a new game, with the character turning on a
+// pedestal.
 class character_creation
 {
 
@@ -22,7 +23,9 @@ public:
         BACK        // the player backed out of the first step
     };
 
-    character_creation();
+    // With subclass_only, the race and class come from the loaded save and only the subclass is
+    // chosen, for characters from before subclasses (CREATED: choose_subclass() was called).
+    explicit character_creation(bool subclass_only = false);
 
     result update();
 
@@ -31,6 +34,7 @@ private:
     {
         RACE,
         CLASS,
+        SUBCLASS,
         CONFIRM
     };
 
@@ -39,12 +43,26 @@ private:
     step _step = step::RACE;
     race_id _race = race_id::HUMAN;
     class_id _class = class_id::WARRIOR;
+    int _subclass = 0;      // index in the class's subclasses
     int _frame = 0;
     bool _dirty = true;
+    bool _subclass_only = false;
 
     void _choose_class(int direction);
     void _refresh();
     void _draw();
+    void _draw_description();
+};
+
+// The subclass choice for a loaded save that has none.
+class subclass_choice : public character_creation
+{
+
+public:
+    subclass_choice() :
+        character_creation(true)
+    {
+    }
 };
 
 }

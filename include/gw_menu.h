@@ -71,7 +71,6 @@ private:
     status_line _status;
     text_page _page;
     int _page_scroll = 0;
-    int _talent_tree = 0;
 
     // Sub-modes (L, R and B belong to the page while one is active)
     quest_id _quest = quest_id::NONE;   // quest whose details are shown

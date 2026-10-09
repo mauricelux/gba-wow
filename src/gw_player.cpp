@@ -47,7 +47,34 @@ void player::dash_to(const bn::fixed_point& target, int stop_distance)
     face(target);
 }
 
-void player::update(bool input_enabled, bool can_run)
+void player::blink(int distance)
+{
+    bn::fixed step_x = _last_x;
+    bn::fixed step_y = _last_y;
+
+    if(_last_x && _last_y)
+    {
+        step_x *= diagonal_factor;
+        step_y *= diagonal_factor;
+    }
+
+    for(int moved = 0; moved < distance; moved += 2)
+    {
+        bn::fixed_point next(_position.x() + step_x * 2, _position.y() + step_y * 2);
+
+        if(! _fits(next.x(), next.y()))
+        {
+            break;
+        }
+
+        _position = next;
+    }
+
+    _dashing = false;
+    _sprite.update(_position, _facing, false, 0);
+}
+
+void player::update(bool input_enabled, bool can_run, int speed_percent)
 {
     if(_dashing)
     {
@@ -71,7 +98,14 @@ void player::update(bool input_enabled, bool can_run)
 
     if(moving)
     {
+        _last_x = input_x;
+        _last_y = input_y;
         bn::fixed speed = running ? run_speed : walk_speed;
+
+        if(speed_percent != 100)
+        {
+            speed = speed * speed_percent / 100;
+        }
 
         if(input_x && input_y)
         {

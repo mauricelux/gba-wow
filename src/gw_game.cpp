@@ -65,6 +65,7 @@ game::game() :
     ui::init();
     _enemies.set_combat(_combat);
     _combat.on_kill = _on_kill;
+    _combat.on_level_up = _on_level_up;
     _combat.callback_context = this;
 
     bool loaded = character().play_frames > 0;
@@ -123,11 +124,21 @@ void game::update()
         return;
     }
 
-    _player.update(input && ! abilities_held, ! _combat.in_combat());
+    int speed = _combat.speed_percent();
+    _player.update(input && ! abilities_held && speed > 0, ! _combat.in_combat(), speed);
     _enemies.update(_player.position(), ! dead);
     _npcs.update(_player.position());
     _chests.update(_player.position());
     _combat.update(input);
+
+    if(_combat.teleport_map != map_id::NONE)
+    {
+        // Teleport: Stormwind takes the same fade as a door.
+        _start_teleport(_combat.teleport_map, _combat.teleport_point.x().integer(),
+                        _combat.teleport_point.y().integer());
+        _combat.teleport_map = map_id::NONE;
+        warping = true;
+    }
 
     if(_rest_frames > 0)
     {
@@ -174,6 +185,9 @@ bool game::_update_overlays()
                 _dialog.rest_requested = false;
                 _rest_frames = 1;
             }
+
+            // Training can clear the trainer's marker.
+            _npcs.refresh_markers();
         }
 
         return true;
@@ -197,19 +211,26 @@ bool game::_update_overlays()
 
             if(_menu.teleport.map != map_id::NONE)
             {
-                // Reuse the door fade: a warp that leads where the debug page asked.
-                _teleport = warp_def{ 0, 0, 0, 0, _menu.teleport.map, int16_t(_menu.teleport.x),
-                                      int16_t(_menu.teleport.y) };
-                _warp = &_teleport;
-                _warp_frames = 0;
-                _combat.clear_target();
+                _start_teleport(_menu.teleport.map, _menu.teleport.x, _menu.teleport.y);
             }
+
+            // Talents can open new ranks at the trainer.
+            _npcs.refresh_markers();
         }
 
         return true;
     }
 
     return false;
+}
+
+void game::_start_teleport(map_id map, int x, int y)
+{
+    // Reuse the door fade: a warp that leads where the hearthstone, the debug page or Teleport asked.
+    _teleport = warp_def{ 0, 0, 0, 0, map, int16_t(x), int16_t(y) };
+    _warp = &_teleport;
+    _warp_frames = 0;
+    _combat.clear_target();
 }
 
 void game::_set_paused(bool paused)
@@ -261,6 +282,12 @@ void game::_on_kill(void* context, int index)
     {
         self._npcs.refresh_markers();
     }
+}
+
+void game::_on_level_up(void* context)
+{
+    // New quests and new ranks at the trainer.
+    static_cast<game*>(context)->_npcs.refresh_markers();
 }
 
 void game::_interact()

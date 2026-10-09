@@ -38,9 +38,13 @@ public:
     void clear();
 
 private:
+    // Four characters per sprite: texts are cut to max_length characters.
+    static constexpr int max_sprites = 6;
+    static constexpr int max_length = max_sprites * 4;
+
     struct entry
     {
-        bn::vector<bn::sprite_ptr, 4> sprites;
+        bn::vector<bn::sprite_ptr, max_sprites> sprites;
         bn::fixed_point position;
         int frames = 0;
     };

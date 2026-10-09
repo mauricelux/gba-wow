@@ -105,6 +105,12 @@ namespace
                  uint8_t(stack) };
     }
 
+    [[nodiscard]] constexpr item_def reagent(const char* name, int sell_price, int stack)
+    {
+        return { name, C, item_type::REAGENT, equip_slot::NONE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                 uint16_t(sell_price), uint8_t(stack) };
+    }
+
     [[nodiscard]] constexpr item_def special(const char* name, item_type type)
     {
         return { name, C, type, equip_slot::NONE, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };

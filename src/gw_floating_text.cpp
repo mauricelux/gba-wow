@@ -67,7 +67,7 @@ void floating_texts::show(const bn::fixed_point& world_position, const bn::strin
     _generator.set_palette_item(palettes[int(text_style)]);
 
     bn::fixed_point screen = world::to_screen_space(position);
-    _generator.generate(screen, text, new_entry.sprites);
+    _generator.generate(screen, text.substr(0, bn::min(text.size(), max_length)), new_entry.sprites);
 
     for(bn::sprite_ptr& sprite : new_entry.sprites)
     {

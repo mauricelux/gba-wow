@@ -138,7 +138,22 @@ void menu::_draw_spells()
             selected = ability;
         }
 
-        ui::text(4, y, get_ability(ability).name, ui::color::WHITE, true);
+        // "Fireball (Rank 5)" when it fits before the action bar label.
+        bn::string<32> name = get_ability(ability).name;
+
+        if(rank_count(ability) > 1)
+        {
+            bn::string<12> rank = " (Rank ";
+            rank += bn::to_string<4>(ability_rank(ability));
+            rank += ")";
+
+            if(name.size() + rank.size() <= 21)
+            {
+                name += rank;
+            }
+        }
+
+        ui::text(4, y, name, ui::color::WHITE, true);
 
         for(int slot = 0; slot < action_slots; ++slot)
         {
@@ -148,6 +163,11 @@ void menu::_draw_spells()
                 ui::text(26, y, label, ui::color::YELLOW, true);
             }
         }
+    }
+
+    if(_cursor.scroll > 0)
+    {
+        ui::scroll_arrow(28, content_top, true);
     }
 
     if(_cursor.scroll + list_rows < count)
@@ -161,11 +181,19 @@ void menu::_draw_spells()
     if(selected != ability_id::NONE)
     {
         const ability_def& def = get_ability(selected);
-        bn::string<32> cost;
+        int ability_cost_now = ability_cost(selected);
+        bn::string<48> cost;
 
-        if(def.cost)
+        if(rank_count(selected) > 1)
         {
-            cost += bn::to_string<4>(def.cost);
+            cost += "Rank ";
+            cost += bn::to_string<4>(ability_rank(selected));
+            cost += ": ";
+        }
+
+        if(ability_cost_now)
+        {
+            cost += bn::to_string<4>(ability_cost_now);
             cost += uses_mana() ? " mana" : " rage";
         }
         else

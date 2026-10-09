@@ -1,6 +1,7 @@
 #include "gw_trainer_screen.h"
 
 #include "bn_keypad.h"
+#include "bn_math.h"
 #include "bn_string.h"
 
 #include "gw_character.h"
@@ -31,18 +32,24 @@ void trainer_screen::open(npc_id npc)
     _status = status_line();
     _abilities.clear();
 
-    class_id trainer_class = get_npc_info(npc).trainer_class;
+    const character_data& data = character();
 
-    // Trainers teach every ability of their class except talents, cheapest first.
-    for(int level = 1; level <= max_level; ++level)
+    // Trainers teach the subclass's abilities in the order they come, and further ranks of talent
+    // abilities once the talent is learned.
+    if(get_npc_info(npc).trainer_class == data.player_class)
     {
-        for(int index = 1; index < ability_count && ! _abilities.full(); ++index)
+        for(int level = 1; level <= max_level; ++level)
         {
-            const ability_def& def = get_ability(ability_id(index));
-
-            if(def.player_class == trainer_class && def.level == level)
+            for(int index = 1; index < ability_count && ! _abilities.full(); ++index)
             {
-                _abilities.push_back(ability_id(index));
+                ability_id ability = ability_id(index);
+                const ability_def& def = get_ability(ability);
+
+                if(in_kit(ability, data.subclass) && ability_level(ability) == level &&
+                   (! (def.flags & ability_flag::TALENT) || knows_ability(ability)))
+                {
+                    _abilities.push_back(ability);
+                }
             }
         }
     }
@@ -89,30 +96,44 @@ void trainer_screen::_learn()
     ability_id ability = _abilities[_cursor.index];
     const ability_def& def = get_ability(ability);
     character_data& data = character();
+    int rank = trainable_rank(ability);
 
-    if(knows_ability(ability))
+    if(! rank)
     {
-        _status.show("You already know that", ui::color::GRAY);
+        int known = ability_rank(ability);
+
+        if(known >= rank_count(ability))
+        {
+            _status.show(known > 1 ? "You know every rank" : "You already know that", ui::color::GRAY);
+        }
+        else
+        {
+            _status.show("Your level is too low", ui::color::RED);
+        }
+
         return;
     }
 
-    if(data.level < def.level)
-    {
-        _status.show("Your level is too low", ui::color::RED);
-        return;
-    }
+    int cost = rank_train_cost(ability, rank);
 
-    if(data.money < def.train_cost)
+    if(data.money < cost)
     {
         _status.show("Not enough money", ui::color::RED);
         return;
     }
 
-    data.money -= def.train_cost;
-    learn_ability(ability);
+    data.money -= cost;
+    learn_ability(ability, rank);
 
     bn::string<48> text = "Learned ";
     text += def.name;
+
+    if(rank_count(ability) > 1)
+    {
+        text += " ";
+        text += bn::to_string<4>(rank);
+    }
+
     _status.show(text, ui::color::GREEN);
 }
 
@@ -138,8 +159,9 @@ void trainer_screen::_draw()
 
         ability_id ability = _abilities[index];
         const ability_def& def = get_ability(ability);
-        bool known = knows_ability(ability);
-        bool can_learn = ! known && data.level >= def.level;
+        int known = ability_rank(ability);
+        int next = trainable_rank(ability);
+        bool maxed = known >= rank_count(ability);
         int y = list_top + row;
 
         if(index == _cursor.index)
@@ -147,16 +169,25 @@ void trainer_screen::_draw()
             ui::cursor(2, y);
         }
 
-        ui::text(4, y, def.name, known ? ui::color::GRAY : can_learn ? ui::color::GREEN : ui::color::RED, true);
+        // Green: something to learn now. White: known, more ranks later. Red: not yet. Gray: done.
+        ui::color color = next ? ui::color::GREEN : maxed ? ui::color::GRAY : known ? ui::color::WHITE :
+                                                                                     ui::color::RED;
+        ui::text(4, y, def.name, color, true);
 
-        bn::string<8> level = known ? "" : "Lv ";
+        // The rank to learn now or known, or the level the next one comes at.
+        bn::string<4> right;
 
-        if(! known)
+        if(next || maxed)
         {
-            level += bn::to_string<4>(def.level);
+            right = "R";
+            right += bn::to_string<4>(next ? next : known);
+        }
+        else
+        {
+            right = bn::to_string<4>(rank_level(ability, known + 1));
         }
 
-        ui::text_right(27, y, known ? "Known" : level, ui::color::GRAY, true);
+        ui::text_right(27, y, right, next ? ui::color::GREEN : maxed ? ui::color::GRAY : ui::color::RED, true);
     }
 
     if(_cursor.scroll > 0)
@@ -173,18 +204,42 @@ void trainer_screen::_draw()
 
     if(! _abilities.empty())
     {
-        const ability_def& def = get_ability(_abilities[_cursor.index]);
+        ability_id ability = _abilities[_cursor.index];
+        const ability_def& def = get_ability(ability);
+        int known = ability_rank(ability);
+        int ranks = rank_count(ability);
+        int next = trainable_rank(ability);
+        int shown = next ? next : bn::min(known + 1, ranks);
 
-        if(! knows_ability(_abilities[_cursor.index]))
+        _rank_text = "Rank ";
+        _rank_text += bn::to_string<4>(shown);
+        _rank_text += " of ";
+        _rank_text += bn::to_string<4>(ranks);
+
+        if(next)
         {
-            if(def.train_cost > 0)
+            int cost = rank_train_cost(ability, next);
+
+            if(cost > 0)
             {
-                _details.add_money("Cost", def.train_cost);
+                _details.add_money(_rank_text, cost);
             }
             else
             {
-                _details.add("Cost: free", ui::color::WHITE);
+                _rank_text += ", free";
+                _details.add(_rank_text, ui::color::WHITE);
             }
+        }
+        else if(known >= ranks)
+        {
+            _rank_text += ", known";
+            _details.add(_rank_text, ui::color::GRAY);
+        }
+        else
+        {
+            _rank_text += " at level ";
+            _rank_text += bn::to_string<4>(rank_level(ability, shown));
+            _details.add(_rank_text, ui::color::RED);
         }
 
         _details.add(def.description, ui::color::GRAY);

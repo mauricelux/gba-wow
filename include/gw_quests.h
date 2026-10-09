@@ -84,7 +84,8 @@ enum class quest_marker : uint8_t
     NONE,
     IN_PROGRESS,    // gray question mark: the npc will take a quest that is not done yet
     AVAILABLE,      // yellow exclamation mark: the npc has a quest to give
-    COMPLETE        // yellow question mark: a quest can be turned in
+    COMPLETE,       // yellow question mark: a quest can be turned in
+    TRAINER         // blue exclamation mark: the class trainer has new ranks to teach
 };
 
 [[nodiscard]] quest_marker npc_quest_marker(npc_id npc);

@@ -92,6 +92,50 @@ const char* class_name(class_id player_class)
     return names[int(player_class)];
 }
 
+const char* subclass_name(subclass_id subclass)
+{
+    constexpr const char* names[] = {
+        "", "Arms", "Fury", "Protection", "Arcane", "Fire", "Frost", "Beast Mastery", "Marksmanship", "Survival"
+    };
+    return names[int(subclass) < int(subclass_id::COUNT) ? int(subclass) : 0];
+}
+
+const char* subclass_description(subclass_id subclass)
+{
+    constexpr const char* texts[] = {
+        "",
+        "Heavy two-handed hits and bleeding wounds. Battle Stance.",
+        "Fast hits and more crits, but takes more damage. Berserker Stance.",
+        "Shield and heavy armor, made to outlast anything. Defensive Stance.",
+        "Mana-hungry bursts, blinks and the best damage against groups.",
+        "Burst and burning damage over time.",
+        "Slows, freezes and shatters. The safest way to play a mage.",
+        "Hunts beside a tamed beast. Pets arrive in a later update.",
+        "Long-range shots and big aimed hits.",
+        "Melee and traps. The hardest hunter to kill.",
+    };
+    return texts[int(subclass) < int(subclass_id::COUNT) ? int(subclass) : 0];
+}
+
+const char* stance_name(subclass_id subclass)
+{
+    switch(subclass)
+    {
+
+    case subclass_id::ARMS:
+        return "Battle Stance";
+
+    case subclass_id::FURY:
+        return "Berserker Stance";
+
+    case subclass_id::PROTECTION:
+        return "Defensive Stance";
+
+    default:
+        return nullptr;
+    }
+}
+
 bool class_allowed(race_id race, class_id player_class)
 {
     switch(player_class)
@@ -124,11 +168,34 @@ look_id player_look(race_id race, class_id player_class)
     }
 }
 
-void new_character(race_id race, class_id player_class)
+namespace
+{
+    // The kit's starting abilities, attacks first so they take the first action slots.
+    void learn_starters()
+    {
+        for(int pass = 0; pass < 2; ++pass)
+        {
+            for(int index = 1; index < ability_count; ++index)
+            {
+                auto ability = ability_id(index);
+                const ability_def& def = get_ability(ability);
+
+                if((def.flags & ability_flag::STARTER) && in_kit(ability, data.subclass) &&
+                   (def.target == ability_target::SELF) == (pass == 1))
+                {
+                    learn_ability(ability);
+                }
+            }
+        }
+    }
+}
+
+void new_character(race_id race, class_id player_class, subclass_id subclass)
 {
     data = character_data();
     data.race = race;
     data.player_class = player_class;
+    data.subclass = subclass;
     data.map = map_id::ELWYNN;
     data.x = map_data::elwynn::start.x;
     data.y = map_data::elwynn::start.y;
@@ -146,8 +213,6 @@ void new_character(race_id race, class_id player_class)
         equip(item_id::APPRENTICES_ROBE);
         equip(item_id::APPRENTICES_PANTS);
         equip(item_id::APPRENTICES_BOOTS);
-        learn_ability(ability_id::FIREBALL);
-        learn_ability(ability_id::FROST_ARMOR);
         break;
 
     case class_id::HUNTER:
@@ -156,7 +221,6 @@ void new_character(race_id race, class_id player_class)
         equip(item_id::TRAPPERS_VEST);
         equip(item_id::TRAPPERS_PANTS);
         equip(item_id::TRAPPERS_BOOTS);
-        learn_ability(ability_id::RAPTOR_STRIKE);
         break;
 
     default:
@@ -164,9 +228,10 @@ void new_character(race_id race, class_id player_class)
         equip(item_id::RECRUITS_VEST);
         equip(item_id::RECRUITS_PANTS);
         equip(item_id::RECRUITS_BOOTS);
-        learn_ability(ability_id::HEROIC_STRIKE);
         break;
     }
+
+    learn_starters();
 
     add_item(item_id::HEARTHSTONE);
     add_item(item_id::TOUGH_JERKY, 4);
@@ -213,19 +278,65 @@ int opened_chest_count()
     return result;
 }
 
-bool knows_ability(ability_id ability)
+void choose_subclass(subclass_id subclass)
 {
-    return data.known_abilities & (1u << int(ability));
+    data.subclass = subclass;
+
+    for(uint8_t& rank : data.talents)
+    {
+        rank = 0;
+    }
+
+    data.talent_points_spent = 0;
+
+    for(int index = 1; index < ability_count; ++index)
+    {
+        auto ability = ability_id(index);
+        uint8_t& rank = data.ability_ranks[index];
+
+        if(rank)
+        {
+            bool kept = in_kit(ability, subclass) && ! (get_ability(ability).flags & ability_flag::TALENT);
+            rank = kept ? 1 : 0;
+        }
+    }
+
+    for(ability_id& slot : data.action_bar)
+    {
+        if(! knows_ability(slot))
+        {
+            slot = ability_id::NONE;
+        }
+    }
+
+    learn_starters();
 }
 
-void learn_ability(ability_id ability)
+bool knows_ability(ability_id ability)
 {
-    if(knows_ability(ability))
+    return ability != ability_id::NONE && int(ability) < ability_count && data.ability_ranks[int(ability)] > 0;
+}
+
+int ability_rank(ability_id ability)
+{
+    return int(ability) < ability_count ? data.ability_ranks[int(ability)] : 0;
+}
+
+void learn_ability(ability_id ability, int rank)
+{
+    if(ability == ability_id::NONE || int(ability) >= ability_count)
     {
         return;
     }
 
-    data.known_abilities |= 1u << int(ability);
+    bool known = knows_ability(ability);
+    uint8_t& own = data.ability_ranks[int(ability)];
+    own = uint8_t(bn::max(int(own), bn::clamp(rank, 1, bn::max(1, rank_count(ability)))));
+
+    if(known)
+    {
+        return;
+    }
 
     for(ability_id& slot : data.action_bar)
     {
@@ -239,7 +350,10 @@ void learn_ability(ability_id ability)
 
 void forget_ability(ability_id ability)
 {
-    data.known_abilities &= ~(1u << int(ability));
+    if(int(ability) < ability_count)
+    {
+        data.ability_ranks[int(ability)] = 0;
+    }
 
     for(ability_id& slot : data.action_bar)
     {
@@ -248,6 +362,59 @@ void forget_ability(ability_id ability)
             slot = ability_id::NONE;
         }
     }
+}
+
+int ability_value(ability_id ability)
+{
+    int value = rank_value(ability, bn::max(1, ability_rank(ability)), data.level);
+    int bonus = talent_value(talent_effect::ABILITY_DAMAGE, ability);
+    return bonus ? value * (100 + bonus) / 100 : value;
+}
+
+int ability_cost(ability_id ability)
+{
+    int cost = rank_cost(ability, bn::max(1, ability_rank(ability)));
+    int percent = talent_bonuses().cost_percent + talent_value(talent_effect::ABILITY_COST, ability);
+    return cost - cost * percent / 100;
+}
+
+int trainable_rank(ability_id ability)
+{
+    if(! in_kit(ability, data.subclass))
+    {
+        return 0;
+    }
+
+    int rank = ability_rank(ability);
+
+    if(rank == 0 && (get_ability(ability).flags & ability_flag::TALENT))
+    {
+        return 0;
+    }
+
+    int level = rank_level(ability, rank + 1);
+    return level && level <= data.level ? rank + 1 : 0;
+}
+
+int trainable_count()
+{
+    int count = 0;
+
+    for(int index = 1; index < ability_count; ++index)
+    {
+        if(trainable_rank(ability_id(index)))
+        {
+            ++count;
+        }
+    }
+
+    return count;
+}
+
+bool has_shield()
+{
+    item_id off_hand = data.equipment[int(equip_slot::OFF_HAND)];
+    return off_hand != item_id::NONE && get_item(off_hand).type == item_type::SHIELD;
 }
 
 int xp_for_level(int level)
@@ -395,7 +562,9 @@ stats compute_stats(const stat_bonus& bonus)
 
     (void) two_handed;
     talent_bonus talent = talent_bonuses();
+    s.intellect += bonus.intellect;
     s.strength += s.strength * talent.strength_percent / 100;
+    s.agility += s.agility * talent.agility_percent / 100;
     s.stamina += s.stamina * talent.stamina_percent / 100;
     s.intellect += s.intellect * talent.intellect_percent / 100;
 
@@ -450,17 +619,38 @@ stats compute_stats(const stat_bonus& bonus)
     }
 
     int haste = bonus.haste_percent + talent.haste_percent;
+    int ranged_haste = haste + bonus.ranged_haste_percent;
 
     if(haste)
     {
         s.melee_speed = s.melee_speed * 100 / (100 + haste);
-        s.ranged_speed = s.ranged_speed * 100 / (100 + haste);
     }
 
-    s.crit = 5 + s.agility / 20 + talent.crit;
-    s.spell_crit = 5 + s.intellect / 30 + talent.spell_crit;
-    s.dodge = 5 + s.agility / 20 + talent.dodge;
+    if(ranged_haste)
+    {
+        s.ranged_speed = s.ranged_speed * 100 / (100 + ranged_haste);
+    }
+
+    s.crit = 5 + s.agility / 20 + talent.crit + bonus.crit;
+    s.spell_crit = 5 + s.intellect / 30 + talent.spell_crit + bonus.spell_crit;
+    s.dodge = 5 + s.agility / 20 + talent.dodge + bonus.dodge;
+    s.block = has_shield() ? 5 + talent.block + bonus.block : 0;
     s.damage_percent = 100 + bonus.damage_percent + talent.damage_percent;
+    s.damage_taken_percent = 100 + bonus.damage_taken_percent - talent.damage_taken;
+
+    // Warriors fight in their subclass's stance.
+    if(data.subclass == subclass_id::FURY)
+    {
+        s.crit += 3;
+        s.damage_taken_percent += 10;
+    }
+    else if(data.subclass == subclass_id::PROTECTION)
+    {
+        s.damage_taken_percent -= 10;
+    }
+
+    s.damage_taken_percent = bn::max(10, s.damage_taken_percent);
+
     s.crit_percent = 200 + talent.crit_damage_percent;
     s.rage_percent = 100 + talent.rage_percent;
     s.spell_power = level * 2 + talent.spell_power;

@@ -43,7 +43,8 @@ jobs:
           ./mgba_script gba-wow.gba \
             wait:40 shot:screenshots/1_title.ppm \
             hold:A:2 wait:30 shot:screenshots/2_creation.ppm \
-            hold:A:2 wait:4 hold:A:2 wait:4 hold:A:2 wait:40 shot:screenshots/3_start.ppm \
+            hold:A:2 wait:4 hold:A:2 wait:6 shot:screenshots/2_creation_spec.ppm \
+            hold:A:2 wait:4 hold:A:2 wait:40 shot:screenshots/3_start.ppm \
             hold:A:2 wait:4 hold:A:2 wait:4 shot:screenshots/4_quest.ppm \
             hold:A:2 wait:30 hold:S:2 wait:4 hold:l:2 wait:4 hold:l:2 wait:4 hold:l:2 wait:4 \
             shot:screenshots/5_quest_log.ppm \
@@ -58,13 +59,16 @@ jobs:
             hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
             hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
             hold:A:2 wait:90 shot:screenshots/10_stockade.ppm
-          # A level 12 hero saved by the version 3 game (M11) must load and be saved again as version 4.
+          # A level 12 hero saved by the version 3 game (M11) must load, pick a subclass (the one with the
+          # most talent points is preselected) and be saved again as version 4.
           python3 -c "d = open('tools/headless/saves/v3_dwarf_hunter_12.sav', 'rb').read(); open('old.sav', 'wb').write(d + b'\xff' * (32768 - len(d)))"
           python3 tools/headless/check_save.py old.sav version=3 level=12
           MGBA_SAVE=old.sav ./mgba_script gba-wow.gba \
             wait:40 shot:screenshots/11_old_save.ppm \
-            hold:A:2 wait:60 hold:S:2 wait:6 shot:screenshots/12_old_save_character.ppm
-          python3 tools/headless/check_save.py old.sav version=4 race=Dwarf class=Hunter level=12 money=100000
+            hold:A:2 wait:30 shot:screenshots/11_old_save_spec.ppm \
+            hold:A:2 wait:4 hold:A:2 wait:60 hold:S:2 wait:6 shot:screenshots/12_old_save_character.ppm
+          python3 tools/headless/check_save.py old.sav version=4 race=Dwarf class=Hunter level=12 money=100000 \
+            subclass=Marksmanship
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm
 

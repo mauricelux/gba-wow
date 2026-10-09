@@ -53,7 +53,8 @@ enum class item_type : uint8_t
     BOW,
     GUN,
     WAND,
-    HEARTHSTONE
+    HEARTHSTONE,
+    REAGENT     // used up by abilities
 };
 
 struct item_def

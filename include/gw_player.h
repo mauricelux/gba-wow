@@ -25,7 +25,8 @@ public:
     player(look_id look, const bn::fixed_point& feet_position, const bn::camera_ptr& camera);
 
     // Reads the keypad and moves the player. With input disabled the player stands still.
-    void update(bool input_enabled = true, bool can_run = true);
+    // speed_percent scales walking and running (aspects, dazes).
+    void update(bool input_enabled = true, bool can_run = true, int speed_percent = 100);
 
     [[nodiscard]] const bn::fixed_point& position() const
     {
@@ -50,6 +51,9 @@ public:
     // Rushes towards target (Charge) until within stop_distance pixels or blocked.
     void dash_to(const bn::fixed_point& target, int stop_distance);
 
+    // Jumps up to distance pixels the way the player last moved (Blink), stopping at walls.
+    void blink(int distance);
+
     [[nodiscard]] bool dashing() const
     {
         return _dashing;
@@ -65,6 +69,8 @@ private:
     actor_sprite _sprite;
     bn::fixed_point _dash_target;
     facing _facing = facing::DOWN;
+    int _last_x = 0;    // the last direction moved, from the keypad
+    int _last_y = 1;
     int _walk_counter = 0;
     int _dash_stop = 0;
     int _dash_frames = 0;

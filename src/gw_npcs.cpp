@@ -4,6 +4,7 @@
 
 #include "bn_sprite_items_fx_markers.h"
 
+#include "gw_character.h"
 #include "gw_npc_data.h"
 #include "gw_world.h"
 
@@ -27,6 +28,9 @@ namespace
 
         case quest_marker::COMPLETE:
             return 1;
+
+        case quest_marker::TRAINER:
+            return 5;
 
         default:
             return 2;
@@ -64,6 +68,13 @@ void npcs::refresh_markers()
     for(npc& item : _npcs)
     {
         quest_marker marker = npc_quest_marker(item.id);
+        const npc_info& info = get_npc_info(item.id);
+
+        if(marker == quest_marker::NONE && (info.flags & npc_flag::TRAINER) &&
+           info.trainer_class == character().player_class && trainable_count() > 0)
+        {
+            marker = quest_marker::TRAINER;
+        }
 
         if(marker != item.marker)
         {

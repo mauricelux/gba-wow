@@ -22,14 +22,21 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![The new ending](docs/screenshots/m11_ending.png)
 ![Resting at the Lion's Pride Inn](docs/screenshots/m12_rest.png)
 ![A rested kill gives double experience](docs/screenshots/m12_rested_kill.png)
+![Choosing the Fire subclass for a Human Mage](docs/screenshots/m13_creation.png)
+![New ranks at the mage trainer](docs/screenshots/m13_trainer.png)
+![The Fire talent tree](docs/screenshots/m13_talents.png)
+![A polymorphed wolf and Mana Shield](docs/screenshots/m13_polymorph.png)
+![An old save chooses its subclass](docs/screenshots/m13_old_save.png)
 
 ## Status
 
 Every milestone of the roadmap is in. From the title screen, continue your saved hero or create a
-Human Warrior or Mage, a Dwarf Warrior or Hunter, or a Night Elf Warrior or Hunter, then walk freely from Northshire Abbey down to Goldshire,
+Human Warrior or Mage, a Dwarf Warrior or Hunter, or a Night Elf Warrior or Hunter in one of three
+subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Marksmanship or
+Survival), then walk freely from Northshire Abbey down to Goldshire,
 west to the city of Stormwind and south to Westfall, take on 29 quests from Northshire to the
-Stockade, fight with auto-attack and your class's abilities, loot and equip about 170 items, buy and
-sell at vendors, learn new ranks from your class trainer, spend talent points from level 10, face the
+Stockade, fight with auto-attack and your subclass's abilities, loot and equip about 170 items, buy and
+sell at vendors, buy new abilities and ranks from your class trainer, spend talent points from level 10, face the
 elites Princess and Hogger, clear the kobolds out of Echo Ridge and Fargodeep mines, hunt for 17
 hidden treasure chests, hearth home to an inn, fight through the Deadmines to Sneed and Edwin
 VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, see the story's
@@ -54,7 +61,7 @@ Stockade, without grinding. The level cap is 60: the road there is planned in
 | M10 Stormwind and exploration | Stormwind city, mine maps, hidden chests, world map, more trees and bushes | Done |
 | M11 The Stockade | Second dungeon under Stormwind, three bosses, final quest chain and new ending | Done |
 | M12 Systems for 60 | Level cap 60, XP curve to 60, rested XP, 16-bit ids, save version 4 | Done |
-| M13 Subclasses and ranks | Subclass choice, 9 kits, ability ranks, 18-talent trees | Planned |
+| M13 Subclasses and ranks | Subclass choice, 9 kits, ability ranks, 18-talent trees | Done |
 | M14 Keybinds and bags | Utility, Buffs and Items bars, buff reminder, unlimited sorted bags | Planned |
 | M15 Enemy abilities | Shared enemy ability table, cast bars, interrupts, flee and call for help | Planned |
 | M16 Travel and the pet | Flight masters, boats, tram, mount, two-level world map, hunter pet | Planned |
@@ -72,9 +79,18 @@ Stockade, without grinding. The level cap is 60: the road there is planned in
 | Select | A healing potion in combat, otherwise food or drink |
 | Start | Menu: character, bags, spellbook, talents, quest log, world map and system pages (L and R switch pages) |
 
-Talents: every level from 10 gives a point. Each class has three trees of eight talents; a tree's next
-row opens after three points in it, and the last row teaches an ability (Mortal Strike, Bloodthirst,
-Last Stand for warriors). Class trainers unlearn talents for 10 silver.
+Subclasses: each class has three, chosen when creating the hero. A subclass decides which abilities
+the class trainer teaches (a Fire Mage never sees Frostbolt) and which talent tree you get. Warriors
+fight in their subclass's stance: Battle for Arms, Berserker for Fury (more crits, more damage taken)
+and Defensive for Protection (less damage taken). Saves from before subclasses ask for one the first
+time they load, with the tree that had the most talent points preselected, and refund the talents.
+
+Ranks: abilities have ranks, as in WoW. Trainers sell each new rank once you reach its level; a blue
+"!" over a trainer means something new is waiting, and the spellbook shows the rank you know.
+
+Talents: every level from 10 gives a point, 51 by level 60. Each subclass has one tree of 18 talents
+in seven tiers; the next tier opens every five points, and some talents teach an ability (Mortal
+Strike, Pyroblast, Wyvern Sting and others). Class trainers unlearn talents for 10 silver.
 
 The hearthstone in your bags takes you back to your home inn every ten minutes; innkeepers in
 Goldshire, Stormwind's Trade District and at Sentinel Hill can make their inn your home.

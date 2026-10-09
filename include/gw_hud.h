@@ -53,7 +53,7 @@ private:
     bool _rested = false;
     int _level = -1;
     int _cast = -1;
-    int _buff_mask = -1;
+    uint32_t _buff_mask = 0xFFFFFFFF;
     struct line
     {
         bn::string<30> text;
@@ -67,7 +67,7 @@ private:
     bool _action_bar_shown = false;
     int _action_bar_state[7] = {};
     bn::vector<bn::sprite_ptr, 7> _icons;
-    bn::vector<bn::sprite_ptr, 6> _buff_icons;
+    bn::vector<bn::sprite_ptr, 8> _buff_icons;
     bn::optional<bn::sprite_affine_mat_ptr> _small;
 
     void _draw_player();

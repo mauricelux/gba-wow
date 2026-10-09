@@ -35,7 +35,21 @@ int main()
     {
         if(run_scene<gw::title_screen>(gw::title_screen::result::WAITING) == gw::title_screen::result::CONTINUE)
         {
-            break;
+            // Saves from before subclasses choose one first.
+            if(gw::character().subclass != gw::subclass_id::NONE)
+            {
+                break;
+            }
+
+            gw::set_fade(0);
+
+            if(run_scene<gw::subclass_choice>(gw::character_creation::result::CHOOSING) ==
+               gw::character_creation::result::CREATED)
+            {
+                break;
+            }
+
+            continue;
         }
 
         gw::set_fade(0);

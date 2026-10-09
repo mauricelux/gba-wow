@@ -3,7 +3,8 @@
 
 Usage: check_save.py SAVE [key=value ...]
   Prints the newest save's version and character, then fails if any key=value doesn't match.
-  Keys: version, race, class, level, xp, money, map, minutes (played) and rested (version 4).
+  Keys: version, race, class, level, xp, money, map, minutes (played), rested and subclass (version 4;
+  'None' before subclasses were chosen).
 
 Version 4 saves are two slots of chunks (see src/gw_save.cpp); versions 2 and 3 are one struct at the
 start of SRAM.
@@ -17,6 +18,8 @@ SLOT_SIZE = 16 * 1024
 HEADER = struct.Struct('<8siIiI')    # magic, version, checksum, size, sequence
 RACES = ['Human', 'Dwarf', 'Night Elf']
 CLASSES = ['Warrior', 'Mage', 'Hunter']
+SUBCLASSES = ['None', 'Arms', 'Fury', 'Protection', 'Arcane', 'Fire', 'Frost', 'Beast Mastery', 'Marksmanship',
+              'Survival']
 
 
 def fnv1a(data):
@@ -50,9 +53,10 @@ def read_v4(sram):
             map_id, = struct.unpack_from('<H', payload, position + 16)
             play_frames, = struct.unpack_from('<I', payload, position + 22)
             rest_xp, = struct.unpack_from('<i', payload, position + 31)
+            subclass = payload[position + 39] if length > 39 else 0
             return {'version': 4, 'slot': slot, 'sequence': sequence, 'race': RACES[race],
                     'class': CLASSES[player_class], 'level': level, 'xp': xp, 'money': money, 'map': map_id,
-                    'minutes': play_frames // 3600, 'rested': rest_xp}
+                    'minutes': play_frames // 3600, 'rested': rest_xp, 'subclass': SUBCLASSES[subclass]}
         position += length
     return None
 

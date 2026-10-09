@@ -18,22 +18,12 @@ namespace
 {
     constexpr int tree_row = content_top;
     constexpr int talents_top = content_top + 1;
+    constexpr int talent_rows = details_top - 1 - talents_top;
 }
 
 void menu::_update_talents()
 {
-    if(bn::keypad::left_pressed())
-    {
-        _talent_tree = (_talent_tree + talent_trees - 1) % talent_trees;
-        _dirty = true;
-    }
-    else if(bn::keypad::right_pressed())
-    {
-        _talent_tree = (_talent_tree + 1) % talent_trees;
-        _dirty = true;
-    }
-
-    if(_cursor.update(talents_per_tree, talents_per_tree))
+    if(_cursor.update(talents_per_tree, talent_rows))
     {
         _dirty = true;
     }
@@ -45,21 +35,21 @@ void menu::_update_talents()
 
     _dirty = true;
 
-    switch(can_learn_talent(_talent_tree, _cursor.index))
+    switch(can_learn_talent(_cursor.index))
     {
 
     case talent_check::OK:
     {
-        learn_talent(_talent_tree, _cursor.index);
+        learn_talent(_cursor.index);
         _combat.refresh_stats();
-        const talent_def& def = get_talent(character().player_class, _talent_tree, _cursor.index);
+        const talent_def& def = get_talent(character().subclass, _cursor.index);
         bn::string<32> text = def.effect == talent_effect::ABILITY ? "Learned " : "";
         text += def.name;
 
         if(def.effect != talent_effect::ABILITY)
         {
             text += " ";
-            text += bn::to_string<4>(talent_rank(_talent_tree, _cursor.index));
+            text += bn::to_string<4>(talent_rank(_cursor.index));
             text += "/";
             text += bn::to_string<4>(def.ranks);
         }
@@ -81,6 +71,14 @@ void menu::_update_talents()
         _status.show("That tier is not open yet", ui::color::RED);
         break;
 
+    case talent_check::LEVEL_TOO_LOW:
+        _status.show("Your level is too low", ui::color::RED);
+        break;
+
+    case talent_check::COMING:
+        _status.show("Not in the game yet", ui::color::GRAY);
+        break;
+
     default:
         break;
     }
@@ -88,23 +86,29 @@ void menu::_update_talents()
 
 void menu::_draw_talents()
 {
-    class_id player_class = character().player_class;
-    int tree_points = talent_points_in_tree(_talent_tree);
+    subclass_id subclass = character().subclass;
+    int tree_points = talent_points_total();
 
-    bn::string<32> header = talent_tree_name(player_class, _talent_tree);
-    header += " (";
+    bn::string<32> header = subclass_name(subclass);
+    header += " talents (";
     header += bn::to_string<4>(tree_points);
     header += ")";
-    ui::text(2, tree_row, "<", ui::color::GRAY, true);
     ui::text_center(tree_row, header, ui::color::WHITE, true);
-    ui::text_right(27, tree_row, ">", ui::color::GRAY, true);
 
-    for(int index = 0; index < talents_per_tree; ++index)
+    for(int row = 0; row < talent_rows; ++row)
     {
-        const talent_def& def = get_talent(player_class, _talent_tree, index);
-        int rank = talent_rank(_talent_tree, index);
-        bool open = tree_points >= def.tier * points_per_tier;
-        int y = talents_top + index;
+        int index = _cursor.scroll + row;
+
+        if(index >= talents_per_tree)
+        {
+            break;
+        }
+
+        const talent_def& def = get_talent(subclass, index);
+        int rank = talent_rank(index);
+        bool coming = def.effect == talent_effect::COMING;
+        bool open = ! coming && tree_points >= def.tier * points_per_tier;
+        int y = talents_top + row;
         ui::color color = rank >= def.ranks ? ui::color::GREEN : rank ? ui::color::YELLOW :
                           open ? ui::color::WHITE : ui::color::GRAY;
 
@@ -115,24 +119,55 @@ void menu::_draw_talents()
 
         ui::text(4, y, def.name, color, true);
 
-        bn::string<8> ranks = bn::to_string<4>(rank);
-        ranks += "/";
-        ranks += bn::to_string<4>(def.ranks);
+        bn::string<8> ranks;
+
+        if(coming)
+        {
+            ranks = "--";
+        }
+        else
+        {
+            ranks = bn::to_string<4>(rank);
+            ranks += "/";
+            ranks += bn::to_string<4>(def.ranks);
+        }
+
         ui::text_right(27, y, ranks, color, true);
+    }
+
+    if(_cursor.scroll > 0)
+    {
+        ui::scroll_arrow(28, talents_top, true);
+    }
+
+    if(_cursor.scroll + talent_rows < talents_per_tree)
+    {
+        ui::scroll_arrow(28, talents_top + talent_rows - 1, false);
     }
 
     ui::divider(1, details_top - 1, ui::columns - 2);
     _page.clear();
 
-    const talent_def& selected = get_talent(player_class, _talent_tree, _cursor.index);
+    const talent_def& selected = get_talent(subclass, _cursor.index);
     int needed = selected.tier * points_per_tier;
 
-    if(tree_points < needed)
+    if(selected.effect == talent_effect::COMING)
+    {
+        _page.add("Coming in a later update", ui::color::GRAY);
+    }
+    else if(tree_points < needed)
     {
         bn::string<32> text = "Needs ";
         text += bn::to_string<4>(needed);
         text += " points in ";
-        text += talent_tree_name(player_class, _talent_tree);
+        text += subclass_name(subclass);
+        _page.add_copy(text, ui::color::RED);
+    }
+    else if(selected.effect == talent_effect::ABILITY && ! talent_rank(_cursor.index) &&
+            character().level < ability_level(selected.ability))
+    {
+        bn::string<32> text = "Requires level ";
+        text += bn::to_string<4>(ability_level(selected.ability));
         _page.add_copy(text, ui::color::RED);
     }
 
@@ -142,7 +177,7 @@ void menu::_draw_talents()
     int points = talent_points_available();
     bn::string<16> available = "Points ";
     available += bn::to_string<4>(points);
-    ui::text(page_x, hint_row, "A Learn < > Tree", ui::color::WHITE, true);
+    ui::text(page_x, hint_row, "A Learn", ui::color::WHITE, true);
     ui::text_right(27, hint_row, available, points ? ui::color::GREEN : ui::color::GRAY, true);
 }
 

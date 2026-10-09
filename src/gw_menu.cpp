@@ -67,11 +67,26 @@ namespace
         LEVEL_UP,
         GOLD,
         GEAR,
+        TRAIN,
         COUNT
     };
 
     constexpr const char* system_names[] = { "Save game", "Debug: teleport", "Debug: level up", "Debug: +10 gold",
-                                             "Debug: gear up" };
+                                             "Debug: gear up", "Debug: train all" };
+
+    // Learns every rank the trainer would teach now, for free.
+    void train_all()
+    {
+        for(int index = 1; index < ability_count; ++index)
+        {
+            auto ability = ability_id(index);
+
+            while(int rank = trainable_rank(ability))
+            {
+                learn_ability(ability, rank);
+            }
+        }
+    }
 
     // Equips the best item the character can use in every slot, for testing later content. Epics are
     // left out: they are the story's last reward.
@@ -116,14 +131,14 @@ namespace
         }
     }
 
-    void stat(bn::string<32>& text, const char* name, int value)
+    void stat(bn::istring& text, const char* name, int value)
     {
         text += name;
         text += " ";
         text += bn::to_string<6>(value);
     }
 
-    void pad(bn::string<32>& text, int size)
+    void pad(bn::istring& text, int size)
     {
         while(text.size() < size)
         {
@@ -353,12 +368,31 @@ void menu::_draw_character()
     int y = content_top + int(equip_slot::COUNT);
     ui::divider(1, y, ui::columns - 2);
 
-    bn::string<32> line = "Level ";
-    line += bn::to_string<4>(data.level);
-    line += " ";
-    line += race_name(data.race);
-    line += " ";
-    line += class_name(data.player_class);
+    // "Level 12 Human Fire Mage", leaving out the race, then shortening the level, until it fits.
+    bn::string<48> line;
+
+    for(int attempt = 0; attempt < 3; ++attempt)
+    {
+        line = attempt < 2 ? "Level " : "Lv ";
+        line += bn::to_string<4>(data.level);
+        line += " ";
+
+        if(attempt == 0)
+        {
+            line += race_name(data.race);
+            line += " ";
+        }
+
+        line += subclass_name(data.subclass);
+        line += " ";
+        line += class_name(data.player_class);
+
+        if(line.size() <= ui::columns - 4)
+        {
+            break;
+        }
+    }
+
     ui::text(2, y + 1, line, ui::color::WHITE, true);
 
     line.clear();
@@ -392,6 +426,15 @@ void menu::_draw_character()
     line += "Dodge ";
     line += bn::to_string<4>(s.dodge);
     line += "%";
+
+    if(s.block)
+    {
+        pad(line, 19);
+        line += "Blk ";
+        line += bn::to_string<4>(s.block);
+        line += "%";
+    }
+
     ui::text(2, y + 5, line, ui::color::WHITE, true);
 
     ui::text(page_x, hint_row, "A Unequip", ui::color::WHITE, true);
@@ -472,6 +515,11 @@ void menu::_update_system()
         gear_up();
         _combat.refresh_stats();
         _status.show("Geared up for your level", ui::color::YELLOW);
+        break;
+
+    case system_entry::TRAIN:
+        train_all();
+        _status.show("Trained every rank", ui::color::YELLOW);
         break;
 
     default:

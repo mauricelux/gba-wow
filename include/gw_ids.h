@@ -26,6 +26,41 @@ enum class class_id : uint8_t
     COUNT
 };
 
+// Three per class, in the order of the class's talent trees. Saves store these values; NONE is a
+// character from before subclasses, who picks one when the save loads.
+enum class subclass_id : uint8_t
+{
+    NONE,
+    ARMS,
+    FURY,
+    PROTECTION,
+    ARCANE,
+    FIRE,
+    FROST,
+    BEAST_MASTERY,
+    MARKSMANSHIP,
+    SURVIVAL,
+    COUNT
+};
+
+constexpr int subclasses_per_class = 3;
+
+[[nodiscard]] constexpr class_id subclass_class(subclass_id subclass)
+{
+    return class_id((int(subclass) - 1) / subclasses_per_class);
+}
+
+// The subclass's place among its class's three, which is also its talent tree.
+[[nodiscard]] constexpr int subclass_index(subclass_id subclass)
+{
+    return (int(subclass) - 1) % subclasses_per_class;
+}
+
+[[nodiscard]] constexpr subclass_id class_subclass(class_id player_class, int index)
+{
+    return subclass_id(1 + int(player_class) * subclasses_per_class + index);
+}
+
 enum class map_id : uint16_t
 {
     NONE,

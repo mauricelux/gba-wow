@@ -5,6 +5,7 @@
 
 #include "gw_character.h"
 #include "gw_input.h"
+#include "gw_save.h"
 #include "gw_types.h"
 #include "gw_ui.h"
 
@@ -32,6 +33,8 @@ namespace
     constexpr int class_top = 9;
     constexpr int stats_x = 16;
     constexpr int stats_top = 10;
+    constexpr int subclass_x = 15;
+    constexpr int subclass_top = 9;
     constexpr int description_top = 14;
     constexpr int hint_row = 18;
 
@@ -42,10 +45,23 @@ namespace
     constexpr int turn_frames = 90;
 }
 
-character_creation::character_creation() :
-    _camera(bn::camera_ptr::create(0, 0))
+character_creation::character_creation(bool subclass_only) :
+    _camera(bn::camera_ptr::create(0, 0)),
+    _subclass_only(subclass_only)
 {
     ui::init();
+
+    if(subclass_only)
+    {
+        const character_data& data = character();
+        subclass_id suggested = suggested_subclass();
+        _race = data.race;
+        _class = data.player_class;
+        _step = step::SUBCLASS;
+        _subclass = suggested != subclass_id::NONE && subclass_class(suggested) == _class ?
+                    subclass_index(suggested) : 0;
+    }
+
     _refresh();
 }
 
@@ -69,6 +85,7 @@ character_creation::result character_creation::update()
             if(! class_allowed(_race, _class))
             {
                 _class = class_id::WARRIOR;
+                _subclass = 0;
             }
 
             _refresh();
@@ -91,7 +108,7 @@ character_creation::result character_creation::update()
         }
         else if(bn::keypad::a_pressed())
         {
-            _step = step::CONFIRM;
+            _step = step::SUBCLASS;
             _dirty = true;
         }
         else if(bn::keypad::b_pressed())
@@ -101,11 +118,42 @@ character_creation::result character_creation::update()
         }
         break;
 
+    case step::SUBCLASS:
+        if(up || down)
+        {
+            _subclass = (_subclass + subclasses_per_class + (down ? 1 : -1)) % subclasses_per_class;
+            _refresh();
+        }
+        else if(bn::keypad::a_pressed())
+        {
+            _step = step::CONFIRM;
+            _dirty = true;
+        }
+        else if(bn::keypad::b_pressed())
+        {
+            if(_subclass_only)
+            {
+                return result::BACK;
+            }
+
+            _step = step::CLASS;
+            _dirty = true;
+        }
+        break;
+
     case step::CONFIRM:
         if(bn::keypad::a_pressed())
         {
-            // _refresh() already made the character; start it fresh in case stats were browsed.
-            new_character(_race, _class);
+            if(_subclass_only)
+            {
+                choose_subclass(class_subclass(_class, _subclass));
+            }
+            else
+            {
+                // _refresh() already made the character; start it fresh in case stats were browsed.
+                new_character(_race, _class, class_subclass(_class, _subclass));
+            }
+
             ui::clear();
             ui::commit();
             return result::CREATED;
@@ -113,7 +161,7 @@ character_creation::result character_creation::update()
 
         if(bn::keypad::b_pressed())
         {
-            _step = step::CLASS;
+            _step = step::SUBCLASS;
             _dirty = true;
         }
         break;
@@ -154,13 +202,19 @@ void character_creation::_choose_class(int direction)
     }
 
     _class = class_id(index);
+    _subclass = 0;
     _refresh();
 }
 
 void character_creation::_refresh()
 {
-    // A fresh character of the choice, so the stats shown are the real ones.
-    new_character(_race, _class);
+    // A fresh character of the choice, so the stats shown are the real ones. A loaded save stays as
+    // it is until the choice is made.
+    if(! _subclass_only)
+    {
+        new_character(_race, _class, class_subclass(_class, _subclass));
+    }
+
     look_id look = player_look(_race, _class);
 
     if(_preview)
@@ -179,7 +233,7 @@ void character_creation::_draw()
 {
     ui::clear();
     ui::panel(0, 0, ui::columns, ui::rows);
-    ui::text_center(1, "Create Your Hero", ui::color::YELLOW, true);
+    ui::text_center(1, _subclass_only ? "Choose Your Spec" : "Create Your Hero", ui::color::YELLOW, true);
     ui::divider(1, 2, ui::columns - 2);
 
     bool choosing_race = _step == step::RACE;
@@ -214,7 +268,7 @@ void character_creation::_draw()
         }
 
         ui::color color = ! allowed ? ui::color::GRAY : selected ? (choosing_class ? ui::color::WHITE :
-                          _step == step::CONFIRM ? ui::color::GREEN : ui::color::WHITE) : ui::color::WHITE;
+                          choosing_race ? ui::color::WHITE : ui::color::GREEN) : ui::color::WHITE;
 
         if(choosing_race && allowed && ! selected)
         {
@@ -222,6 +276,32 @@ void character_creation::_draw()
         }
 
         ui::text(list_x, y, allowed ? class_name(class_id(index)) : "-", color, true);
+    }
+
+    if(_step == step::SUBCLASS || _step == step::CONFIRM)
+    {
+        // The subclass list takes the place of the numbers.
+        bool choosing_subclass = _step == step::SUBCLASS;
+        ui::text(subclass_x - 2, subclass_top - 1, "Spec", choosing_subclass ? ui::color::YELLOW : ui::color::GRAY,
+                 true);
+
+        for(int index = 0; index < subclasses_per_class; ++index)
+        {
+            bool selected = index == _subclass;
+            int y = subclass_top + index;
+
+            if(selected && choosing_subclass)
+            {
+                ui::cursor(subclass_x - 2, y);
+            }
+
+            ui::text(subclass_x, y, subclass_name(class_subclass(_class, index)),
+                     selected ? (choosing_subclass ? ui::color::WHITE : ui::color::GREEN) :
+                                (choosing_subclass ? ui::color::WHITE : ui::color::GRAY), true);
+        }
+
+        _draw_description();
+        return;
     }
 
     // Starting numbers of the choice.
@@ -249,25 +329,44 @@ void character_creation::_draw()
     ui::text(stats_x, stats_top + 2, line, data.player_class == class_id::WARRIOR ? ui::color::RED :
              ui::color::BLUE, true);
 
+    _draw_description();
+}
+
+void character_creation::_draw_description()
+{
+    subclass_id subclass = class_subclass(_class, _subclass);
     ui::divider(1, description_top - 1, ui::columns - 2);
 
-    if(_step == step::CONFIRM)
+    if(_step == step::CONFIRM && _subclass_only)
+    {
+        bn::string<96> text = "Train as a ";
+        text += subclass_name(subclass);
+        text += " ";
+        text += class_name(_class);
+        text += "? Your talent points come back to spend again.";
+        ui::text_wrapped(2, description_top, 26, 3, text, ui::color::WHITE, true);
+    }
+    else if(_step == step::CONFIRM)
     {
         bn::string<96> text = "Begin as a ";
         text += race_name(_race);
         text += " ";
+        text += subclass_name(subclass);
+        text += " ";
         text += class_name(_class);
-        text += "? Every hero starts in Northshire Valley.";
+        text += " in Northshire Valley?";
         ui::text_wrapped(2, description_top, 26, 3, text, ui::color::WHITE, true);
     }
     else
     {
-        ui::text_wrapped(2, description_top, 26, 3, choosing_race ? race_texts[int(_race)] : class_texts[int(_class)],
-                         ui::color::WHITE, true);
+        const char* text = _step == step::RACE ? race_texts[int(_race)] :
+                           _step == step::CLASS ? class_texts[int(_class)] : subclass_description(subclass);
+        ui::text_wrapped(2, description_top, 26, 3, text, ui::color::WHITE, true);
     }
 
     ui::divider(1, hint_row - 1, ui::columns - 2);
-    ui::text(2, hint_row, _step == step::CONFIRM ? "A Begin" : "A Choose", ui::color::WHITE, true);
+    ui::text(2, hint_row, _step != step::CONFIRM ? "A Choose" : _subclass_only ? "A Train" : "A Begin",
+             ui::color::WHITE, true);
     ui::text_right(27, hint_row, "B Back", ui::color::GRAY, true);
 }
 

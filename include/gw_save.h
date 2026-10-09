@@ -1,6 +1,8 @@
 #ifndef GW_SAVE_H
 #define GW_SAVE_H
 
+#include "gw_ids.h"
+
 namespace gw
 {
 
@@ -12,6 +14,10 @@ namespace gw
 bool load_game();
 
 void save_game();
+
+// For a character from before subclasses (loaded with subclass NONE): the subclass to preselect, the
+// one whose talent tree had the most points.
+[[nodiscard]] subclass_id suggested_subclass();
 
 void erase_save();
 

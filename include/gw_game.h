@@ -70,6 +70,8 @@ private:
     bool _update_overlays();
     void _set_paused(bool paused);
     static void _on_kill(void* context, int index);
+    static void _on_level_up(void* context);
+    void _start_teleport(map_id map, int x, int y);
     void _loot(int index);
     void _update_death();
     void _save_position();

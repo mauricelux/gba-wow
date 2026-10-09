@@ -1,6 +1,8 @@
 #include "gw_enemies.h"
 
+#include "bn_affine_mat_attributes.h"
 #include "bn_math.h"
+#include "bn_sprite_items_fx_icons.h"
 #include "bn_sprite_items_fx_markers.h"
 
 #include "gw_abilities.h"
@@ -108,6 +110,17 @@ void enemies::_spawn(enemy& item)
     item.slow_frames = 0;
     item.dot_ticks = 0;
     item.marked_frames = 0;
+    item.incapacitate_frames = 0;
+    item.incapacitated = incapacitate_kind::NONE;
+    item.sting_damage = 0;
+    item.fear_frames = 0;
+    item.weaken_frames = 0;
+    item.disarm_frames = 0;
+    item.sunder_frames = 0;
+    item.sunder_stacks = 0;
+    item.scorch_frames = 0;
+    item.scorch_stacks = 0;
+    item.silence_frames = 0;
     item.phase = 0;
     item.special_timer = 0;
     item.telegraph_frames = 0;
@@ -304,6 +317,31 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
         --item.marked_frames;
     }
 
+    if(item.weaken_frames > 0)
+    {
+        --item.weaken_frames;
+    }
+
+    if(item.disarm_frames > 0)
+    {
+        --item.disarm_frames;
+    }
+
+    if(item.silence_frames > 0)
+    {
+        --item.silence_frames;
+    }
+
+    if(item.sunder_frames > 0 && --item.sunder_frames == 0)
+    {
+        item.sunder_stacks = 0;
+    }
+
+    if(item.scorch_frames > 0 && --item.scorch_frames == 0)
+    {
+        item.scorch_stacks = 0;
+    }
+
     if(item.dot_ticks > 0 && --item.dot_timer <= 0)
     {
         item.dot_timer = dot_interval;
@@ -319,6 +357,26 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
     {
         --item.stun_frames;
         item.moving = false;
+        return;
+    }
+
+    if(item.incapacitate_frames > 0)
+    {
+        if(--item.incapacitate_frames == 0)
+        {
+            break_control(index);
+        }
+
+        item.moving = false;
+        return;
+    }
+
+    if(item.fear_frames > 0 && item.state == enemy_state::CHASE)
+    {
+        // Runs straight away from the player.
+        --item.fear_frames;
+        bn::fixed_point away(item.position.x() * 2 - player_feet.x(), item.position.y() * 2 - player_feet.y());
+        _move_towards(item, away, _speed(item, false) * 2, 0);
         return;
     }
 
@@ -425,6 +483,15 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
         item.dot_ticks = 0;
         item.slow_frames = 0;
         item.root_frames = 0;
+        item.incapacitate_frames = 0;
+        item.sting_damage = 0;
+        item.fear_frames = 0;
+        item.weaken_frames = 0;
+        item.disarm_frames = 0;
+        item.sunder_frames = 0;
+        item.sunder_stacks = 0;
+        item.scorch_frames = 0;
+        item.scorch_stacks = 0;
 
         if(_move_towards(item, item.spawn, 2, 2) || item.stuck_frames > 90)
         {
@@ -459,6 +526,7 @@ void enemies::_update_sprite(enemy& item, const bn::fixed_point& player_feet)
     {
         item.sprite.reset();
         item.sparkle.reset();
+        item.status.reset();
         return;
     }
 
@@ -474,6 +542,7 @@ void enemies::_update_sprite(enemy& item, const bn::fixed_point& player_feet)
 
     item.sprite->set_dead(item.state == enemy_state::DEAD);
     item.sprite->update(item.position, item.direction, item.moving, item.walk_counter);
+    _update_status(item);
 
     if(item.state != enemy_state::DEAD || ! item.has_loot())
     {
@@ -497,6 +566,67 @@ void enemies::_update_sprite(enemy& item, const bn::fixed_point& player_feet)
 
     bn::fixed_point screen = world::to_screen_space(item.position);
     item.sparkle->set_position(screen.x().floor_integer() + 6, screen.y().floor_integer() - 10);
+}
+
+void enemies::_update_status(enemy& item)
+{
+    icon_id icon = icon_id::COUNT;
+
+    if(item.alive() && item.incapacitate_frames > 0)
+    {
+        switch(item.incapacitated)
+        {
+
+        case incapacitate_kind::POLYMORPH:
+            icon = icon_id::POLYMORPH;
+            break;
+
+        case incapacitate_kind::FROZEN:
+            icon = icon_id::FREEZING_TRAP;
+            break;
+
+        case incapacitate_kind::DISORIENTED:
+            icon = icon_id::SCATTER_SHOT;
+            break;
+
+        default:
+            icon = icon_id::WYVERN_STING;
+            break;
+        }
+    }
+    else if(item.alive() && item.fear_frames > 0)
+    {
+        icon = icon_id::INTIMIDATING_SHOUT;
+    }
+
+    if(icon == icon_id::COUNT)
+    {
+        item.status.reset();
+        return;
+    }
+
+    // A small icon over the head saying what holds it.
+    if(! _small)
+    {
+        bn::affine_mat_attributes attributes;
+        attributes.set_scale(0.5);
+        _small = bn::sprite_affine_mat_ptr::create(attributes);
+    }
+
+    if(! item.status)
+    {
+        item.status = bn::sprite_items::fx_icons.create_sprite(0, 0, int(icon));
+        item.status->set_camera(_camera);
+        item.status->set_bg_priority(sparkle_bg_priority);
+        item.status->set_affine_mat(*_small);
+    }
+    else
+    {
+        item.status->set_tiles(bn::sprite_items::fx_icons.tiles_item(), int(icon));
+    }
+
+    bn::fixed_point screen = world::to_screen_space(item.position);
+    item.status->set_position(screen.x().floor_integer(), screen.y().floor_integer() - item.sprite->height() - 6);
 }
 
 int enemies::nearest(const bn::fixed_point& from, int max_distance, int exclude, bool fighting_only) const
@@ -609,6 +739,13 @@ bool enemies::damage(int index, int amount)
         item.sprite->flash();
     }
 
+    // Damage breaks every hold, and scares the fear out of it.
+    if(item.incapacitate_frames > 0)
+    {
+        break_control(index);
+    }
+
+    item.fear_frames = 0;
     item.health -= amount;
 
     if(item.health <= 0)
@@ -620,6 +757,44 @@ bool enemies::damage(int index, int amount)
     return false;
 }
 
+bool enemies::incapacitate(int index, incapacitate_kind kind, int frames)
+{
+    enemy& item = _enemies[index];
+
+    if(! item.alive() || item.state == enemy_state::EVADE || item.boss())
+    {
+        return false;
+    }
+
+    if(item.state == enemy_state::IDLE)
+    {
+        aggro(index);
+    }
+
+    item.incapacitate_frames = frames;
+    item.incapacitated = kind;
+    item.fear_frames = 0;
+    item.moving = false;
+    return true;
+}
+
+void enemies::break_control(int index)
+{
+    enemy& item = _enemies[index];
+    item.incapacitate_frames = 0;
+
+    if(item.incapacitated == incapacitate_kind::ASLEEP && item.sting_damage > 0)
+    {
+        // Wyvern Sting's poison works over 12 seconds once the target wakes.
+        item.dot_ticks = 4;
+        item.dot_damage = bn::max(1, item.sting_damage / 4);
+        item.dot_timer = dot_interval;
+        item.sting_damage = 0;
+    }
+
+    item.incapacitated = incapacitate_kind::NONE;
+}
+
 void enemies::_die(int index)
 {
     enemy& item = _enemies[index];
@@ -628,6 +803,10 @@ void enemies::_die(int index)
     item.state_timer = corpse_frames;
     item.moving = false;
     item.dot_ticks = 0;
+    item.incapacitate_frames = 0;
+    item.incapacitated = incapacitate_kind::NONE;
+    item.sting_damage = 0;
+    item.fear_frames = 0;
 
     if(item.tapped)
     {

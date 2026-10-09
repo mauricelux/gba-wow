@@ -27,3 +27,6 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
   save version only changes when a chunk's meaning does. Ids stored in saves (items, maps, quests,
   abilities, story flags, chest ids) are append-only. CI loads `tools/headless/saves/` and checks the
   result with `tools/headless/check_save.py`; keep those saves loading.
+- Abilities (`src/gw_abilities.cpp`) list the levels of their ranks and the kits (subclasses) that get
+  them; `rank_value` scales a rank with the level until the next rank. Talents are saved by their
+  position in the subclass's tree, so reorder a tree only together with a save migration.

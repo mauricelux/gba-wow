@@ -50,6 +50,7 @@ struct character_data
 {
     race_id race = race_id::HUMAN;
     class_id player_class = class_id::WARRIOR;
+    subclass_id subclass = subclass_id::NONE;
     uint8_t level = 1;
     uint8_t talent_points_spent = 0;
     int32_t xp = 0;
@@ -61,9 +62,9 @@ struct character_data
     int16_t y = 0;
     item_stack bags[bag_slots];
     item_id equipment[int(equip_slot::COUNT)] = {};
-    uint32_t known_abilities = 0;   // bit per ability_id
+    uint8_t ability_ranks[ability_count] = {};  // the rank known of each ability, 0 = not known
     ability_id action_bar[action_slots] = {};
-    uint8_t talents[max_talents] = {};
+    uint8_t talents[max_talents] = {};  // the rank of each talent of the subclass's tree
     quest_progress quests[max_quests];  // indexed by quest_id
     uint32_t flags[max_story_flags / 32] = {};      // bit per story_flag
     uint32_t play_frames = 0;
@@ -91,14 +92,26 @@ enum class story_flag : uint8_t
 
 [[nodiscard]] const char* class_name(class_id player_class);
 
+[[nodiscard]] const char* subclass_name(subclass_id subclass);
+
+// A line about how the subclass fights, for the creation screen.
+[[nodiscard]] const char* subclass_description(subclass_id subclass);
+
+// Warriors fight in the stance of their subclass; nullptr for the other classes.
+[[nodiscard]] const char* stance_name(subclass_id subclass);
+
 // The races each class is open to: humans can be warriors or mages, dwarves and night elves
 // warriors or hunters.
 [[nodiscard]] bool class_allowed(race_id race, class_id player_class);
 
 [[nodiscard]] look_id player_look(race_id race, class_id player_class);
 
-// Resets the character to a fresh level 1 of the race and class, at the start of the game.
-void new_character(race_id race, class_id player_class);
+// Resets the character to a fresh level 1 of the race, class and subclass, at the start of the game.
+void new_character(race_id race, class_id player_class, subclass_id subclass);
+
+// For characters from before subclasses: takes the subclass, refunds every talent point, keeps the
+// known abilities of its kit at rank 1 (and forgets the rest), and teaches its starting abilities.
+void choose_subclass(subclass_id subclass);
 
 [[nodiscard]] bool has_flag(story_flag flag);
 
@@ -112,11 +125,29 @@ void set_chest_opened(int chest);
 
 [[nodiscard]] bool knows_ability(ability_id ability);
 
-// Learns the ability and puts it on the first free action slot.
-void learn_ability(ability_id ability);
+// The rank known, 0 if the ability isn't known.
+[[nodiscard]] int ability_rank(ability_id ability);
+
+// Learns the rank (and the ones below it). A new ability goes on the first free action slot.
+void learn_ability(ability_id ability, int rank = 1);
 
 // Forgets the ability and takes it off the action bar (unlearning talents).
 void forget_ability(ability_id ability);
+
+// The ability's value at the known rank and the character's level.
+[[nodiscard]] int ability_value(ability_id ability);
+
+// What the known rank costs to use, in rage or mana.
+[[nodiscard]] int ability_cost(ability_id ability);
+
+// The next rank a trainer could teach now (level reached, in the subclass's kit, talent abilities
+// only after the talent), or 0.
+[[nodiscard]] int trainable_rank(ability_id ability);
+
+// How many abilities have a rank waiting at the trainer.
+[[nodiscard]] int trainable_count();
+
+[[nodiscard]] bool has_shield();
 
 // Experience needed to go from level to level + 1 (0 at the level cap).
 [[nodiscard]] int xp_for_level(int level);
@@ -145,9 +176,16 @@ struct stat_bonus
     int attack_power = 0;
     int ranged_attack_power = 0;
     int armor = 0;
+    int intellect = 0;
     int health_percent = 0;
     int damage_percent = 0;
+    int damage_taken_percent = 0;
     int haste_percent = 0;
+    int ranged_haste_percent = 0;
+    int crit = 0;
+    int spell_crit = 0;
+    int dodge = 0;
+    int block = 0;
 };
 
 struct stats
@@ -172,7 +210,9 @@ struct stats
     int crit;               // percent
     int spell_crit;         // percent
     int dodge;              // percent
+    int block;              // percent, with a shield: a blocked hit does half damage
     int damage_percent;     // all damage dealt, 100 = normal
+    int damage_taken_percent;   // 100 = normal
     int crit_percent;       // damage of a critical hit, 200 = double
     int rage_percent;       // rage gained, 100 = normal
     int spell_power;        // added to spell damage

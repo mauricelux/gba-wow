@@ -176,15 +176,17 @@ def projectiles():
 
 # --- markers (16x16): quest marks above heads, loot sparkle -----------------------------------------
 
-M = {'out': 1, 'y_d': 2, 'y': 3, 'y_l': 4, 'g_d': 5, 'g': 6, 'g_l': 7, 'white': 8, 'cyan': 9}
+M = {'out': 1, 'y_d': 2, 'y': 3, 'y_l': 4, 'g_d': 5, 'g': 6, 'g_l': 7, 'white': 8, 'cyan': 9, 'b_d': 10, 'b': 11,
+     'b_l': 12}
 MARKER_PALETTE = [(255, 0, 255), (24, 16, 8), (184, 120, 16), (248, 208, 40), (248, 240, 152),
-                  (88, 88, 96), (152, 152, 160), (208, 208, 216), (248, 248, 248), (152, 232, 248)] + \
-                 [(0, 0, 0)] * 6
+                  (88, 88, 96), (152, 152, 160), (208, 208, 216), (248, 248, 248), (152, 232, 248),
+                  (32, 80, 184), (72, 144, 240), (160, 208, 255)] + \
+                 [(0, 0, 0)] * 3
 
 
-def mark(question, gray):
+def mark(question, gray, blue=False):
     c = Canvas(16)
-    d, m, l = ('g_d', 'g', 'g_l') if gray else ('y_d', 'y', 'y_l')
+    d, m, l = ('b_d', 'b', 'b_l') if blue else ('g_d', 'g', 'g_l') if gray else ('y_d', 'y', 'y_l')
     if question:
         shape = c.ellipse(8, 5, 4.5, 4) & ~c.ellipse(8, 5.5, 2, 1.8) & ~c.rect(3, 5, 7, 10)
         shape |= c.rect(7, 7, 10, 10)
@@ -210,7 +212,10 @@ def sparkle(frame):
 
 
 def markers():
-    return [mark(False, False), mark(True, False), mark(True, True), sparkle(0), sparkle(1)]
+    # Frames by use: quest available, quest complete, quest in progress, two sparkles, new ranks at a
+    # trainer.
+    return [mark(False, False), mark(True, False), mark(True, True), sparkle(0), sparkle(1),
+            mark(False, False, True)]
 
 
 # --- treasure chest (16x16): closed and open ---------------------------------------------------------
@@ -490,7 +495,239 @@ def icons():
     c.fill(c.poly([(6, 2), (10, 2), (10, 5), (13, 9), (12, 14), (4, 14), (3, 9), (6, 5)]), I['lgray'], I['out'])
     c.fill(c.poly([(4, 9), (12, 9), (12, 13), (4, 13)]), I['blue_l'])
     out['drink'] = c
+
+    subclass_icons(out)
     return out
+
+
+def fist(c, color='orange'):
+    c.fill(c.rect(4, 6, 12, 12), I[color], I['out'])
+    for x in (6, 8, 10):
+        c.px(x, 6, I['out'])
+        c.px(x, 7, I['out'])
+    c.fill(c.rect(3, 8, 5, 11), I[color], I['out'])
+
+
+def axe(c, blade='lgray'):
+    c.fill(c.line(4, 13, 11, 4, 1.4), I['brown'], I['out'])
+    c.fill(c.poly([(8, 3), (13, 3), (14, 8), (10, 8)]), I[blade], I['out'])
+
+
+def face(c, skin='orange', mouth='out'):
+    c.fill(c.ellipse(8, 8, 5, 5.5), I[skin], I['out'])
+    c.px(6, 6, I['out']); c.px(10, 6, I['out'])
+    c.fill(c.ellipse(8, 10.5, 2, 1.5), I[mouth])
+
+
+def trap(c, jaws='lgray'):
+    c.fill(c.ellipse(8, 11, 6, 2.5) & ~c.ellipse(8, 11, 4, 1.5), I[jaws], I['out'])
+    for x in (4, 6, 8, 10, 12):
+        c.fill(c.line(x, 11, x, 8.5, 1), I[jaws])
+
+
+def ring(c, color, radius=6, width=1.5):
+    c.fill(c.ellipse(8, 8, radius, radius) & ~c.ellipse(8, 8, radius - width, radius - width), I[color])
+
+
+def skull(c, color='white'):
+    c.fill(c.ellipse(8, 7, 4.5, 4), I[color], I['out'])
+    c.fill(c.rect(6, 10, 10, 13), I[color], I['out'])
+    c.fill(c.ellipse(6.5, 7, 1.2, 1.2), I['out'])
+    c.fill(c.ellipse(9.5, 7, 1.2, 1.2), I['out'])
+
+
+def subclass_icons(out):
+    # warrior
+    c = icon_base('red_d'); shield(c, 'red', 'lgray'); c.fill(c.ellipse(8, 7.5, 1.5, 1.5), I['yellow'])
+    out['last_stand'] = c
+    c = icon_base('dgray'); fist(c); out['pummel'] = c
+    c = icon_base('blue_d'); shield(c)
+    for y in (3, 6, 9):
+        c.fill(c.line(12, y, 14, y + 1, 1), I['yellow'])
+    out['shield_bash'] = c
+    c = icon_base('purple_d'); face(c, 'lgray')
+    for y in (4, 8, 12):
+        c.fill(c.line(13, 8, 14.5, y, 1), I['white'])
+    out['intimidating_shout'] = c
+    c = icon_base('red_d'); sword(c)
+    c.fill(c.poly([(11, 9), (14, 12), (11, 14)]), I['yellow'], I['out'])
+    out['overpower'] = c
+    c = icon_base('red_d')
+    c.fill(c.line(3, 13, 12, 4, 1.5), I['lgray'], I['out'])
+    c.fill(c.line(13, 13, 4, 4, 1.5), I['lgray'], I['out'])
+    out['retaliation'] = c
+    c = icon_base('red_d')
+    c.fill(c.ellipse(8, 8, 6, 4) & ~c.ellipse(8, 9, 5, 3), I['white'])
+    c.fill(c.ellipse(8, 11, 5, 3) & ~c.ellipse(8, 12, 4, 2.2), I['lgray'])
+    out['sweeping_strikes'] = c
+    c = icon_base('dgray')
+    for k in range(4):
+        a = k * np.pi / 2
+        x, y = 8 + 5 * np.cos(a), 8 + 5 * np.sin(a)
+        c.fill(c.line(8, 8, x, y, 1.5), I['lgray'], I['out'])
+    c.fill(c.ellipse(8, 8, 1.5, 1.5), I['yellow'])
+    out['whirling_blades'] = c
+    c = icon_base('red_d'); axe(c); out['cleave'] = c
+    c = icon_base('brown')
+    c.fill(c.rect(4, 3, 12, 7), I['dgray'], I['out'])
+    c.fill(c.rect(7, 7, 9, 14), I['brown'], I['out'])
+    c.fill(c.line(3, 13, 13, 13, 1), I['yellow'])
+    out['slam'] = c
+    c = icon_base('red_d')
+    for r in (6, 4, 2):
+        c.fill(c.ellipse(8, 8, r, r) & ~c.ellipse(8.5, 7.5, r - 1, r - 1), I['lgray'])
+    out['whirlwind'] = c
+    c = icon_base('red_d'); face(c, 'red', 'white'); out['berserker_rage'] = c
+    c = icon_base('dgray')
+    c.fill(c.poly([(3, 9), (9, 5), (9, 12)]), I['purple_l'], I['out'])
+    for y in (4, 8, 12):
+        c.fill(c.line(11, 8, 14, y, 1), I['purple_l'])
+    out['demoralizing_shout'] = c
+    c = icon_base('red_d'); skull(c, 'red'); out['recklessness'] = c
+    c = icon_base('dgray'); skull(c); out['death_wish'] = c
+    c = icon_base('dgray'); shield(c, 'dgray')
+    c.fill(c.line(6, 4, 10, 10, 1), I['out']); c.fill(c.line(10, 10, 8, 12, 1), I['out'])
+    out['sunder_armor'] = c
+    c = icon_base('blue_d'); shield(c); sword(c); out['revenge'] = c
+    c = icon_base('dgray'); sword(c)
+    c.fill(c.line(3, 3, 13, 13, 1.4), I['red']); c.fill(c.line(13, 3, 3, 13, 1.4), I['red'])
+    out['disarm'] = c
+    c = icon_base('dgray')
+    c.fill(c.poly([(2, 2), (14, 2), (14, 9), (8, 14.5), (2, 9)]), I['lgray'], I['out'])
+    c.fill(c.poly([(4, 4), (12, 4), (12, 8.5), (8, 12), (4, 8.5)]), I['yellow'])
+    out['shield_wall'] = c
+    c = icon_base('brown'); burst_icon(c, 'yellow', 'white'); out['concussion_blow'] = c
+    c = icon_base('red_d'); shield(c, 'orange'); burst_icon(c, 'yellow', 'white'); shield(c, 'orange')
+    out['shield_slam'] = c
+
+    # mage
+    c = icon_base('purple_d')
+    c.fill(c.poly([(6, 2), (10, 2), (10, 5), (13, 9), (12, 14), (4, 14), (3, 9), (6, 5)]), I['lgray'], I['out'])
+    c.fill(c.poly([(4, 9), (12, 9), (12, 13), (4, 13)]), I['blue_l'])
+    c.px(12, 3, I['white']); c.px(13, 4, I['white'])
+    out['conjure_water'] = c
+    c = icon_base('purple_d')
+    c.fill(c.ellipse(8, 9, 5.5, 4), I['brown'], I['out'])
+    c.fill(c.ellipse(7, 8, 3, 1.5), I['orange'])
+    c.px(12, 3, I['white']); c.px(13, 4, I['white'])
+    out['conjure_food'] = c
+    c = icon_base('purple_d')
+    c.fill(c.ellipse(5, 9, 2.5, 3), I['purple_l'])
+    c.fill(c.ellipse(11, 7, 2.5, 3), I['white'], I['out'])
+    c.fill(c.line(5, 9, 11, 7, 1), I['purple_l'])
+    out['blink'] = c
+    c = icon_base('purple_d'); ring(c, 'purple_l'); c.fill(c.line(4, 12, 12, 4, 1.5), I['red'])
+    out['counterspell'] = c
+    c = icon_base('green_d')
+    c.fill(c.ellipse(8, 9, 5, 3.5), I['white'], I['out'])
+    c.fill(c.ellipse(12, 7, 2, 2), I['dgray'], I['out'])
+    c.fill(c.rect(5, 12, 6, 14), I['dgray']); c.fill(c.rect(10, 12, 11, 14), I['dgray'])
+    out['polymorph'] = c
+    c = icon_base('purple_d'); ring(c, 'purple_l', 6, 2); ring(c, 'white', 3.5, 1); out['teleport'] = c
+    c = icon_base('orange'); flame(c, 'red', 'yellow'); out['scorch'] = c
+    c = icon_base('red_d')
+    c.fill(c.rect(6, 2, 10, 12), I['orange'], I['out'])
+    c.fill(c.rect(7, 3, 9, 11), I['yellow'])
+    c.fill(c.ellipse(8, 12.5, 6, 1.5), I['red'])
+    out['flamestrike'] = c
+    c = icon_base('red_d'); shield(c, 'orange', 'red'); out['fire_ward'] = c
+    c = icon_base('red_d'); shield(c, 'red', 'orange'); c.fill(c.ellipse(8, 8, 1.8, 2.4), I['yellow'])
+    out['molten_armor'] = c
+    c = icon_base('red_d'); ring(c, 'orange', 6.5, 2); ring(c, 'yellow', 3.5, 1); out['blast_wave'] = c
+    c = icon_base('red_d'); flame(c, 'yellow', 'white'); out['combustion'] = c
+    c = icon_base('blue_d')
+    c.fill(c.poly([(2, 8), (14, 2), (14, 14)]), I['blue_l'], I['out'])
+    c.fill(c.poly([(5, 8), (12, 5), (12, 11)]), I['white'])
+    out['cone_of_cold'] = c
+    c = icon_base('blue_d')
+    for x, y in ((4, 3), (9, 2), (12, 6), (6, 7), (10, 10), (3, 11), (7, 13), (12, 13)):
+        c.fill(c.line(x, y, x - 1, y + 2, 1), I['white'])
+    out['blizzard'] = c
+    c = icon_base('blue_d')
+    c.fill(c.poly([(13.5, 2.5), (9, 10), (6, 7)]), I['white'], I['out'])
+    c.fill(c.line(3, 13, 8, 8, 1.4), I['blue_l'])
+    out['ice_lance'] = c
+    c = icon_base('lgray'); snowflake(c); c.fill(c.ellipse(8, 8, 1.5, 1.5), I['blue_d']); out['cold_snap'] = c
+    c = icon_base('blue_d')
+    c.fill(c.rect(3, 3, 13, 13), I['blue_l'], I['out'])
+    c.fill(c.rect(4, 4, 7, 7), I['white'])
+    out['ice_block'] = c
+    c = icon_base('purple_d'); burst_icon(c, 'white', 'purple_l'); ring(c, 'purple_l', 7, 1)
+    out['arcane_blast'] = c
+    c = icon_base('purple_d'); shield(c, 'purple_l', 'lgray'); out['mana_shield'] = c
+    c = icon_base('purple_d'); shield(c, 'white', 'purple_l'); c.fill(c.ellipse(8, 7.5, 1.5, 1.5), I['purple_d'])
+    out['mage_armor'] = c
+    c = icon_base('purple_d')
+    c.fill(c.poly([(4, 2), (12, 2), (8, 8)]), I['purple_l'], I['out'])
+    c.fill(c.poly([(4, 14), (12, 14), (8, 8)]), I['purple_l'], I['out'])
+    out['slow'] = c
+    c = icon_base('purple_d')
+    for r in (6, 4):
+        c.fill(c.ellipse(8, 8, r, r) & ~c.ellipse(9, 8, r - 1.2, r - 1.2), I['blue_l'])
+    c.fill(c.ellipse(8, 8, 1.5, 1.5), I['white'])
+    out['evocation'] = c
+    c = icon_base('purple_d')
+    c.fill(c.ellipse(8, 8, 6, 3.5), I['white'], I['out'])
+    c.fill(c.ellipse(8, 8, 2.2, 2.2), I['purple_l'])
+    c.px(8, 8, I['out'])
+    out['presence_of_mind'] = c
+    c = icon_base('purple_d'); burst_icon(c, 'purple_l', 'yellow'); c.fill(c.ellipse(8, 8, 1, 1), I['white'])
+    out['arcane_power'] = c
+
+    # hunter
+    c = icon_base('green_d'); face(c, 'brown'); c.fill(c.ellipse(8, 9.5, 3, 2.5), I['orange']); c.px(8, 10, I['out'])
+    out['aspect_monkey'] = c
+    c = icon_base('brown')
+    c.fill(c.ellipse(8, 8, 5.5, 4.5), I['yellow'], I['out'])
+    for x, y in ((6, 6), (10, 7), (7, 10), (11, 10), (5, 9)):
+        c.px(x, y, I['out'])
+    out['aspect_cheetah'] = c
+    c = icon_base('green_d')
+    c.fill(c.poly([(3, 12), (8, 3), (13, 6), (10, 9), (13, 12)]), I['lgray'], I['out'])
+    c.fill(c.line(4, 4, 12, 12, 1.2), I['red'])
+    out['wing_clip'] = c
+    c = icon_base('dgray'); skull(c, 'lgray'); out['feign_death'] = c
+    c = icon_base('green_d')
+    for dy in (-4, 0, 4):
+        c.fill(c.line(3, 8 + dy, 12, 8 + dy, 1), I['white'])
+        c.px(13, 8 + dy, I['yellow'])
+    out['rapid_fire'] = c
+    c = icon_base('green_d')
+    for x in (4, 8, 12):
+        c.fill(c.line(x, 2, x - 1, 10, 1), I['brown'])
+        c.fill(c.poly([(x - 2.5, 10), (x + 0.5, 10), (x - 1, 13)]), I['lgray'])
+    out['volley'] = c
+    c = icon_base('dgray'); arrow_icon(c)
+    for x, y in ((3, 4), (5, 2), (2, 7)):
+        c.px(x, y, I['yellow'])
+    out['scatter_shot'] = c
+    c = icon_base('green_d'); arrow_icon(c, 'yellow', 'white'); ring(c, 'yellow', 7, 1); out['trueshot_aura'] = c
+    c = icon_base('brown')
+    c.fill(c.poly([(3, 4), (13, 4), (11, 8), (5, 8)]), I['white'], I['out'])
+    c.fill(c.poly([(3, 12), (13, 12), (11, 9), (5, 9)]), I['white'], I['out'])
+    out['mongoose_bite'] = c
+    c = icon_base('dgray'); trap(c); flame(c); trap(c); out['immolation_trap'] = c
+    c = icon_base('dgray'); trap(c); c.fill(c.rect(5, 2, 11, 8), I['blue_l'], I['out']); out['freezing_trap'] = c
+    c = icon_base('blue_d'); trap(c, 'white'); snowflake(c); out['frost_trap'] = c
+    c = icon_base('dgray'); trap(c); burst_icon(c, 'orange', 'yellow'); out['explosive_trap'] = c
+    c = icon_base('green_d')
+    c.fill(c.line(3, 13, 13, 3, 1.2), I['lgray']); c.fill(c.line(3, 3, 13, 13, 1.2), I['lgray'])
+    c.fill(c.ellipse(8, 8, 2.5, 2.5), I['yellow'], I['out'])
+    out['deterrence'] = c
+    c = icon_base('green_d')
+    c.fill(c.poly([(3, 3), (13, 6), (8, 8), (11, 13)]), I['green_l'], I['out'])
+    c.px(11, 13, I['white'])
+    out['wyvern_sting'] = c
+    c = icon_base('green_d')
+    for dx in (-3, 0, 3):
+        c.fill(c.line(11 + dx, 3, 7 + dx, 13, 1.2), I['white'])
+    c.fill(c.ellipse(4, 12, 2, 2), I['yellow'])
+    out['counterattack'] = c
+    c = icon_base('red_d')
+    for dx in (-3, 0, 3):
+        c.fill(c.line(5 + dx, 3, 9 + dx, 13, 1.6), I['red'])
+    c.fill(c.ellipse(11, 4, 2, 2), I['yellow'])
+    out['bestial_wrath'] = c
 
 
 def main():

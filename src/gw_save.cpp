@@ -44,13 +44,50 @@ namespace
         EQUIPMENT,
         ABILITIES,
         ACTION_BAR,
-        TALENTS,
+        TALENTS,        // three trees of eight, from before subclasses: only read
         QUESTS,
         STORY_FLAGS,
-        CHESTS
+        CHESTS,
+        TALENT_TREE     // the subclass's tree
     };
 
     BN_DATA_EWRAM_BSS uint8_t payload[max_payload];
+
+    // For characters from before subclasses: the subclass whose tree had the most talent points.
+    subclass_id suggestion = subclass_id::NONE;
+
+    void suggest_subclass(const uint8_t* old_talents)
+    {
+        // Three trees of eight talents, in the order of the class's subclasses.
+        int best = -1;
+        int best_points = 0;
+
+        for(int tree = 0; tree < subclasses_per_class; ++tree)
+        {
+            int points = 0;
+
+            for(int index = 0; index < 8; ++index)
+            {
+                points += old_talents[tree * 8 + index];
+            }
+
+            if(points > best_points)
+            {
+                best = tree;
+                best_points = points;
+            }
+        }
+
+        // Without talents, the subclass closest to how the class played before: Fireball for mages.
+        class_id player_class = character().player_class;
+
+        if(best < 0)
+        {
+            best = player_class == class_id::MAGE ? 1 : player_class == class_id::HUNTER ? 1 : 0;
+        }
+
+        suggestion = class_subclass(player_class, best);
+    }
 
     [[nodiscard]] uint32_t checksum(const uint8_t* bytes, int size)
     {
@@ -177,6 +214,7 @@ namespace
         out.put32(data.hearthstone_ready);
         out.put32(uint32_t(data.rest_xp));
         out.put32(data.last_rest);
+        out.put8(int(data.subclass));
         out.end();
 
         out.begin(chunk::BAGS);
@@ -198,12 +236,11 @@ namespace
 
         out.end();
 
-        // A rank per ability; for now every known ability is at rank 1.
         out.begin(chunk::ABILITIES);
 
-        for(int index = 0; index < ability_count; ++index)
+        for(uint8_t rank : data.ability_ranks)
         {
-            out.put8(knows_ability(ability_id(index)) ? 1 : 0);
+            out.put8(rank);
         }
 
         out.end();
@@ -217,7 +254,7 @@ namespace
 
         out.end();
 
-        out.begin(chunk::TALENTS);
+        out.begin(chunk::TALENT_TREE);
 
         for(uint8_t rank : data.talents)
         {
@@ -287,6 +324,13 @@ namespace
             data.hearthstone_ready = in.get32();
             data.rest_xp = int32_t(in.get32());
             data.last_rest = in.get32();
+            data.subclass = subclass_id(in.get8());
+
+            if(data.subclass >= subclass_id::COUNT || (data.subclass != subclass_id::NONE &&
+                                                        subclass_class(data.subclass) != data.player_class))
+            {
+                data.subclass = subclass_id::NONE;
+            }
             break;
 
         case chunk::BAGS:
@@ -305,12 +349,9 @@ namespace
             break;
 
         case chunk::ABILITIES:
-            for(int index = 0; index < ability_count && in.remaining() > 0; ++index)
+            for(int index = 0; index < ability_count; ++index)
             {
-                if(in.get8())
-                {
-                    data.known_abilities |= 1u << index;
-                }
+                data.ability_ranks[index] = uint8_t(bn::min(in.get8(), rank_count(ability_id(index))));
             }
             break;
 
@@ -322,6 +363,19 @@ namespace
             break;
 
         case chunk::TALENTS:
+        {
+            uint8_t old_talents[24];
+
+            for(uint8_t& rank : old_talents)
+            {
+                rank = uint8_t(in.get8());
+            }
+
+            suggest_subclass(old_talents);
+            break;
+        }
+
+        case chunk::TALENT_TREE:
             for(uint8_t& rank : data.talents)
             {
                 rank = uint8_t(in.get8());
@@ -409,6 +463,7 @@ namespace
     void parse_payload(int size)
     {
         character() = character_data();
+        suggestion = subclass_id::NONE;
         int position = 0;
 
         while(position + 4 <= size)
@@ -537,17 +592,20 @@ namespace
                 data.equipment[index] = item_id(old.equipment[index]);
             }
 
-            data.known_abilities = old.known_abilities;
+            for(int index = 0; index < 32; ++index)
+            {
+                if(old.known_abilities & (1u << index))
+                {
+                    data.ability_ranks[index] = 1;
+                }
+            }
 
             for(int index = 0; index < 7; ++index)
             {
                 data.action_bar[index] = ability_id(old.action_bar[index]);
             }
 
-            for(int index = 0; index < 24; ++index)
-            {
-                data.talents[index] = old.talents[index];
-            }
+            suggest_subclass(old.talents);
 
             for(int index = 0; index < 32; ++index)
             {
@@ -571,7 +629,7 @@ namespace
         }
     }
 
-    static_assert(bag_slots >= 16 && int(equip_slot::COUNT) >= 8 && action_slots >= 7 && max_talents >= 24 &&
+    static_assert(bag_slots >= 16 && int(equip_slot::COUNT) >= 8 && action_slots >= 7 && ability_count >= 32 &&
                   max_quests >= 32 && max_chests >= 64, "legacy::migrate copies the old lists whole");
 }
 
@@ -639,6 +697,11 @@ void save_game()
     bn::span<const uint8_t> bytes(payload, out.size());
     bn::sram::write_span_offset(bytes, offset + int(sizeof(header)));
     bn::sram::write_offset(head, offset);
+}
+
+subclass_id suggested_subclass()
+{
+    return suggestion;
 }
 
 void erase_save()

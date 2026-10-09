@@ -49,6 +49,22 @@ namespace
     };
     constexpr bn::sprite_palette_item frost_circle(frost_circle_colors, bn::bpp_mode::BPP_4);
 
+    constexpr bn::color fire_circle_colors[] = {
+        bn::color(31, 0, 31), bn::color(28, 12, 2), bn::color(31, 20, 4), bn::color(31, 28, 12),
+        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
+        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
+        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0)
+    };
+    constexpr bn::sprite_palette_item fire_circle(fire_circle_colors, bn::bpp_mode::BPP_4);
+
+    constexpr bn::color trap_circle_colors[] = {
+        bn::color(31, 0, 31), bn::color(6, 16, 6), bn::color(12, 26, 10), bn::color(22, 31, 16),
+        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
+        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
+        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0)
+    };
+    constexpr bn::sprite_palette_item trap_circle(trap_circle_colors, bn::bpp_mode::BPP_4);
+
     [[nodiscard]] int burst_frame(projectile_kind kind)
     {
         switch(kind)
@@ -147,28 +163,56 @@ void effects::burst(const bn::fixed_point& world_position, projectile_kind kind)
     _place(item.sprite, world_position);
 }
 
-void effects::circle(const bn::fixed_point& world_position, int radius, int frames, bool frost)
+int effects::circle(const bn::fixed_point& world_position, int radius, int frames, circle_style style)
 {
     if(_circles.full())
     {
         _circles.erase(_circles.begin());
     }
 
+    int id = _next_circle++;
     _circles.push_back(
-        timed_sprite{ bn::sprite_items::fx_circle.create_sprite(0, 0), world_position, 0, 0, 1, frames });
+        timed_sprite{ bn::sprite_items::fx_circle.create_sprite(0, 0), world_position, 0, 0, 1, frames, id });
     timed_sprite& item = _circles.back();
     item.sprite.set_camera(_camera);
     item.sprite.set_bg_priority(2);
     item.sprite.set_z_order(31000);
 
-    if(frost)
+    switch(style)
     {
+
+    case circle_style::FROST:
         item.sprite.set_palette(frost_circle);
+        break;
+
+    case circle_style::FIRE:
+        item.sprite.set_palette(fire_circle);
+        break;
+
+    case circle_style::TRAP:
+        item.sprite.set_palette(trap_circle);
+        break;
+
+    default:
+        break;
     }
 
     item.sprite.set_double_size_mode(bn::sprite_double_size_mode::ENABLED);
     item.sprite.set_scale(bn::fixed(radius) / 32);
     _place(item.sprite, world_position);
+    return id;
+}
+
+void effects::remove_circle(int id)
+{
+    for(auto it = _circles.begin(); it != _circles.end(); ++it)
+    {
+        if(it->id == id)
+        {
+            _circles.erase(it);
+            return;
+        }
+    }
 }
 
 void effects::launch(const bn::fixed_point& from, projectile_kind kind, const projectile_hit& hit)
@@ -251,8 +295,8 @@ void effects::_update_effects()
             continue;
         }
 
-        // Blink during the last quarter so the player sees it is about to go off.
-        if(it->frames * 4 >= it->lifetime * 3)
+        // Blink near the end so the player sees it is about to go off (or wear off).
+        if(it->lifetime - it->frames <= bn::min(it->lifetime / 4, 60))
         {
             it->sprite.set_visible((it->frames & 4) == 0);
         }
