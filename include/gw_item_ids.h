@@ -226,7 +226,46 @@
     X(CONJURED_SOURDOUGH, consumable("Conjured Sourdough", FOOD, 25, 700, 0, 20)) \
     X(CONJURED_SWEET_ROLL, consumable("Conjured Sweet Roll", FOOD, 35, 1000, 0, 20)) \
     X(CONJURED_CROISSANT, consumable("Conjured Croissant", FOOD, 45, 1400, 0, 20)) \
-    X(TELEPORTATION_RUNE, reagent("Teleportation Rune", 250, 20))
+    X(TELEPORTATION_RUNE, reagent("Teleportation Rune", 250, 20)) \
+    /* Redridge: quest rewards */ \
+    X(LAKESHIRE_GAUNTLETS, armor("Lakeshire Gauntlets", U, MAIL, HANDS, 15, 3, 0, 2, 0, 0)) \
+    X(CANYON_WRAPS, armor("Canyon Wraps", U, CLOTH, HANDS, 15, 0, 0, 1, 3, 2)) \
+    X(MONGREL_HIDE_GLOVES, armor("Mongrel Hide Gloves", U, LEATHER, HANDS, 15, 0, 3, 2, 0, 0)) \
+    X(DOCKHAND_BOOTS, armor("Dockhand's Boots", U, MAIL, FEET, 15, 2, 0, 3, 0, 0)) \
+    X(SHORELINE_SANDALS, armor("Shoreline Sandals", U, CLOTH, FEET, 15, 0, 0, 1, 3, 2)) \
+    X(POACHERS_BOOTS, armor("Poacher's Boots", U, LEATHER, FEET, 15, 0, 3, 2, 0, 0)) \
+    X(LUCKY_FISHING_HAT, armor("Lucky Fishing Hat", U, CLOTH, HEAD, 15, 0, 0, 2, 1, 3)) \
+    X(LAKESHIRE_LEGGUARDS, armor("Lakeshire Legguards", U, MAIL, LEGS, 16, 3, 0, 3, 0, 0)) \
+    X(MAGISTRATE_TROUSERS, armor("Magistrate's Trousers", U, CLOTH, LEGS, 16, 0, 0, 1, 4, 2)) \
+    X(SHADOWHIDE_LEGGINGS, armor("Shadowhide Leggings", U, LEATHER, LEGS, 16, 0, 4, 2, 0, 0)) \
+    X(LAKESHIRE_LONGSWORD, weapon("Lakeshire Longsword", U, SWORD, 16, 27, 3, 0, 1, 0, 0)) \
+    X(EVERSTILL_STAFF, weapon("Everstill Staff", U, STAFF, 16, 31, 0, 0, 1, 4, 2)) \
+    X(REDRIDGE_RECURVE, weapon("Redridge Recurve", U, BOW, 16, 28, 0, 3, 1, 0, 0)) \
+    X(LAKESHIRE_CHAINMAIL, armor("Lakeshire Chainmail", U, MAIL, CHEST, 17, 4, 0, 3, 0, 0)) \
+    X(LAKESHIRE_ROBE, armor("Lakeshire Robe", U, CLOTH, CHEST, 17, 0, 0, 1, 5, 3)) \
+    X(GORETUSK_HIDE_VEST, armor("Goretusk Hide Vest", U, LEATHER, CHEST, 17, 0, 4, 3, 0, 0)) \
+    X(IRONWORKER_HELM, armor("Ironworker's Helm", U, MAIL, HEAD, 17, 3, 0, 3, 0, 0)) \
+    X(SURVEYOR_HOOD, armor("Surveyor's Hood", U, CLOTH, HEAD, 17, 0, 0, 1, 4, 2)) \
+    X(RIGGER_CAP, armor("Rigger's Cap", U, LEATHER, HEAD, 17, 0, 4, 2, 0, 0)) \
+    X(TUSK_CLEAVER, weapon("Tusk Cleaver", U, AXE, 18, 26, 4, 0, 1, 0, 0)) \
+    X(OSGOOD_WALKING_STAFF, weapon("Osgood's Walking Staff", U, STAFF, 18, 31, 0, 0, 2, 5, 3)) \
+    X(PIGSTICKER_BOW, weapon("Pigsticker Bow", U, BOW, 18, 28, 0, 4, 1, 0, 0)) \
+    X(MARRIS_SABATONS, armor("Marris's Sabatons", U, MAIL, FEET, 18, 3, 0, 3, 0, 0)) \
+    X(LAKESHIRE_SLIPPERS, armor("Lakeshire Slippers", U, CLOTH, FEET, 18, 0, 0, 1, 4, 3)) \
+    X(OUTRUNNER_BOOTS, armor("Outrunner Boots", U, LEATHER, FEET, 18, 0, 4, 2, 0, 0)) \
+    X(STONEWATCH_GAUNTLETS, armor("Stonewatch Gauntlets", U, MAIL, HANDS, 19, 4, 0, 3, 0, 0)) \
+    X(SUMMONER_GLOVES, armor("Summoner's Gloves", U, CLOTH, HANDS, 19, 0, 0, 2, 5, 3)) \
+    X(RENEGADE_GRIPS, armor("Renegade Grips", U, LEATHER, HANDS, 19, 0, 5, 2, 0, 0)) \
+    X(REDRIDGE_WARBLADE, weapon("Redridge Warblade", R, TWO_HANDED, 20, 35, 7, 0, 5, 0, 0)) \
+    X(STAFF_OF_LAKESHIRE, weapon("Staff of Lakeshire", R, STAFF, 20, 32, 0, 0, 3, 8, 5)) \
+    X(EVERSTILL_LONGBOW, weapon("Everstill Longbow", R, BOW, 20, 28, 0, 7, 3, 0, 0)) \
+    /* Redridge: drops of Ribchaser and Gath'Ilzogg */ \
+    X(RIBCHASERS_CLEAVER, weapon("Ribchaser's Cleaver", R, AXE, 18, 25, 4, 1, 3, 0, 0)) \
+    X(GNOLLBONE_STAFF, weapon("Gnollbone Staff", R, STAFF, 18, 31, 0, 0, 3, 7, 4)) \
+    X(RIBCHASERS_LONGBOW, weapon("Ribchaser's Longbow", R, BOW, 18, 28, 0, 6, 2, 0, 0)) \
+    X(GATHS_WARMAUL, weapon("Gath'Ilzogg's Warmaul", R, TWO_HANDED, 20, 36, 7, 0, 6, 0, 0)) \
+    X(SHADOWCASTER_ROBE, armor("Shadowcaster Robe", R, CLOTH, CHEST, 20, 0, 0, 4, 8, 4)) \
+    X(BLACKROCK_HUNTING_BOW, weapon("Blackrock Hunting Bow", R, BOW, 20, 28, 0, 7, 3, 0, 0))
 
 namespace gw
 {

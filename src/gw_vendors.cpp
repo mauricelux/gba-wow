@@ -52,6 +52,11 @@ namespace
         i::STUDDED_CAP, i::STUDDED_VEST, i::STUDDED_GLOVES, i::STUDDED_PANTS, i::STUDDED_BOOTS,
         i::PADDED_HOOD, i::PADDED_ROBE, i::PADDED_GLOVES, i::PADDED_PANTS, i::PADDED_BOOTS
     };
+
+    constexpr item_id lakeshire[] = {
+        i::HAUNCH_OF_MEAT, i::MUTTON_CHOP, i::ICE_COLD_MILK, i::MELON_JUICE, i::LESSER_HEALING_POTION,
+        i::HEALING_POTION, i::TELEPORTATION_RUNE
+    };
 }
 
 bn::span<const item_id> vendor_stock(int vendor)
@@ -79,6 +84,9 @@ bn::span<const item_id> vendor_stock(int vendor)
 
     case 7:
         return stormwind_armor;
+
+    case 8:
+        return lakeshire;
 
     default:
         return general_goods;

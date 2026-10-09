@@ -63,7 +63,7 @@ endgame. Each zone is one streamed outdoor map, about the size of Westfall (1024
 | 1 | 1–5 | Northshire Valley ✓ | Northshire Abbey | Kobolds and the Blackrock worgs | Echo Ridge Mine (cave) ✓ |
 | 2 | 5–10 | Elwynn Forest ✓ | Goldshire, **Stormwind** ✓ | Defias in the farms, Hogger, Princess | Fargodeep Mine (cave) ✓ |
 | 3 | 10–15 | Westfall ✓ | Sentinel Hill | The People's Militia vs the Defias | (Deadmines entrance is here) |
-| 4 | 15–20 | Redridge Mountains | Lakeshire | Blackrock orcs and the Redridge gnolls | **Deadmines** ✓, **Stockade** ✓ |
+| 4 | 15–20 | Redridge Mountains ✓ | Lakeshire ✓ | Blackrock orcs and the Redridge gnolls | **Deadmines** ✓, **Stockade** ✓ |
 | 5 | 20–25 | Duskwood | Darkshire | Worgen, Stitches, Morbent Fel, the Night Watch | **Shadowfang Keep** |
 | 6 | 25–30 | Wetlands | Menethil Harbor, **Ironforge** | Dark Iron dwarves, Dragonmaw orcs, Grim Batol | **Blackfathom Deeps**, **Gnomeregan** |
 | 7 | 30–35 | Hillsbrad Foothills | Southshore | Syndicate, Forsaken, Alterac ogres | **SM Graveyard**, **SM Library** |
@@ -610,12 +610,12 @@ are one bracket each so they can be played and tuned one at a time.
 
 | Milestone | What it adds | Depends on |
 | --- | --- | --- |
-| **M12 Systems for 60** | Level cap 60, XP table, rest XP, wider ids, save version 4 and migration | |
-| **M13 Subclasses and ranks** | Subclass choice at creation, 9 kits, ranks for every existing ability, trainer and spellbook changes, one 18-talent tree per subclass (levels 10 to 20 filled in, higher tiers stubbed) | M12 |
-| **M14 Keybinds and bags** | Combat, Utility, Buffs and Items bars, HUD cross, buff reminder; unlimited bags with sorting | M12 |
-| **M15 Enemy abilities** | Shared enemy ability table, cast bars, interrupts, flee and call for help; abilities on the existing Elwynn and Westfall enemies | M12 |
-| **M16 Travel and the pet** | Flight masters, boats, Deeprun Tram, mount at 30, two-level world map; Beast Mastery pet and taming | M12 |
-| **M17 Redridge** (15–20) | Lakeshire, about 12 quests, retuned Westfall, Deadmines and Stockade; the old ending becomes the end of the chapter | M13–M16 |
+| **M12 Systems for 60** ✓ | Level cap 60, XP table, rest XP, wider ids, save version 4 and migration | |
+| **M13 Subclasses and ranks** ✓ | Subclass choice at creation, 9 kits, ranks for every existing ability, trainer and spellbook changes, one 18-talent tree per subclass (levels 10 to 20 filled in, higher tiers stubbed) | M12 |
+| **M14 Keybinds and bags** ✓ | Combat, Utility, Buffs and Items bars, HUD cross, buff reminder; unlimited bags with sorting | M12 |
+| **M15 Enemy abilities** ✓ | Shared enemy ability table, cast bars, interrupts, flee and call for help; abilities on the existing Elwynn and Westfall enemies | M12 |
+| **M16 Travel and the pet** ✓ | Flight masters, boats, Deeprun Tram, mount at 30, two-level world map; Beast Mastery pet and taming | M12 |
+| **M17 Redridge** (15–20) ✓ | Lakeshire, about 12 quests, retuned Westfall, Deadmines and Stockade; the old ending becomes the end of the chapter | M13–M16 |
 | **M18 Duskwood and Shadowfang Keep** (20–25) | Night palette, Darkshire, Stitches, Silverpine entrance, SFK. Optional new gear slots | M17 |
 | **M19 Wetlands, Ironforge, BFD, Gnomeregan** (25–30) | Second capital, two dungeons | M18 |
 | **M20 Hillsbrad and Scarlet Monastery 1** (30–35) | Southshore, Graveyard, Library, mount | M19 |

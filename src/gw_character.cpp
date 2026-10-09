@@ -14,16 +14,16 @@ namespace
 {
     BN_DATA_EWRAM character_data data;
 
-    // Experience per level: classic values scaled down for a handheld session. From level 20 the
-    // number of same-level kills a level takes grows with the square root of WoW's (42 at level 19,
-    // 80 at level 59), so the curve keeps WoW's shape without its grind.
+    // Experience per level: classic values scaled down for a handheld session up to level 14. From
+    // level 15 each level is what its zone hands out: about 28 kills and 4 quests of its level, so the
+    // quests of Redridge, the Deadmines and the Stockade take a hero from 15 to 21.
     constexpr int xp_table[max_level] = {
         160, 360, 560, 840, 1120, 1440, 1800, 2160, 2600, 2950,
-        3250, 3550, 3850, 4150, 4450, 4800, 5150, 5500, 5900, 6250,
-        6650, 7050, 7400, 7800, 8200, 8600, 9050, 9450, 9900, 10400,
-        10900, 11400, 11850, 12350, 12900, 13400, 13900, 14450, 15000, 15550,
-        16100, 16650, 17200, 17800, 18350, 18950, 19550, 20150, 20750, 21350,
-        21950, 22600, 23200, 23850, 24500, 25150, 25800, 26450, 27150, 0
+        3250, 3550, 3850, 4150, 9000, 11500, 13250, 14500, 15200, 15950,
+        16900, 17900, 18900, 19900, 20950, 22000, 23050, 24150, 25300, 26450,
+        27600, 28800, 30000, 31250, 32500, 33750, 35050, 36350, 37700, 39050,
+        40450, 41850, 43300, 44700, 46200, 47700, 49200, 50750, 52300, 53850,
+        55450, 57100, 58700, 60400, 62050, 63750, 65500, 67250, 69000, 0
     };
 
     struct class_base

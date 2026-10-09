@@ -125,6 +125,7 @@ enum class icon_id : uint8_t
     ASPECT_BEAST,
     PET_PASSIVE,
     WATER_ELEMENTAL,
+    FISHING,
     COUNT
 };
 

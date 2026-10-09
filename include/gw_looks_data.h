@@ -19,6 +19,8 @@
 #include "bn_sprite_items_char_kobold.h"
 #include "bn_sprite_items_char_kobold_candle.h"
 #include "bn_sprite_items_char_murloc.h"
+#include "bn_sprite_items_char_orc_staff.h"
+#include "bn_sprite_items_char_orc_sword.h"
 #include "bn_sprite_items_char_spider.h"
 #include "bn_sprite_items_char_watcher.h"
 #include "bn_sprite_items_char_water_elemental.h"
@@ -73,6 +75,18 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_dwarf_sword, palettes::gryphon_master, false },
     { bn::sprite_items::char_hum_plain, palettes::riding_trainer, false },
     { bn::sprite_items::char_dwarf_sword, palettes::tram_conductor, false },
+    { bn::sprite_items::char_hum_robe, palettes::magistrate, false },
+    { bn::sprite_items::char_hum_plain, palettes::foreman, false },
+    { bn::sprite_items::char_hum_plain, palettes::dockmaster, false },
+    { bn::sprite_items::char_fem_robe, palettes::chef_f, false },
+    { bn::sprite_items::char_hum_plain, palettes::fisherman, false },
+    { bn::sprite_items::char_fem_robe, palettes::gryphon_master_f, false },
+    { bn::sprite_items::char_orc_sword, palettes::blackrock_outrunner, false },
+    { bn::sprite_items::char_orc_sword, palettes::blackrock_grunt, false },
+    { bn::sprite_items::char_orc_staff, palettes::blackrock_shadowcaster, false },
+    { bn::sprite_items::char_orc_sword, palettes::blackrock_renegade, false },
+    { bn::sprite_items::char_orc_staff, palettes::blackrock_summoner, false },
+    { bn::sprite_items::char_orc_sword, palettes::gath_ilzogg, false },
     { bn::sprite_items::char_wolf, palettes::young_wolf, true },
     { bn::sprite_items::char_wolf, palettes::timber_wolf, true },
     { bn::sprite_items::char_boar, palettes::boar, true },
@@ -88,6 +102,14 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_goblin, palettes::goblin_engineer, true },
     { bn::sprite_items::char_goblin, palettes::sneed, true },
     { bn::sprite_items::char_water_elemental, palettes::water_elemental, true },
+    { bn::sprite_items::char_gnoll, palettes::redridge_mongrel, true },
+    { bn::sprite_items::char_gnoll, palettes::shadowhide_gnoll, true },
+    { bn::sprite_items::char_gnoll, palettes::shadowhide_mystic, true },
+    { bn::sprite_items::char_gnoll, palettes::ribchaser, true },
+    { bn::sprite_items::char_murloc, palettes::murloc_flesheater, true },
+    { bn::sprite_items::char_boar, palettes::great_goretusk, true },
+    { bn::sprite_items::char_boar, palettes::bellygrub, true },
+    { bn::sprite_items::char_spider, palettes::tarantula, true },
 };
 
 static_assert(sizeof(look_table) / sizeof(look_table[0]) == int(look_id::COUNT));

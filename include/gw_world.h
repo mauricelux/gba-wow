@@ -26,6 +26,9 @@ public:
     // True if the pixel is blocked (walls, trunks, water) or outside the map.
     [[nodiscard]] static bool solid_at(int x, int y);
 
+    // True if the pixel is open water (lakes, rivers, the sea), where a fishing line can land.
+    [[nodiscard]] static bool water_at(int x, int y);
+
     // True if no pixel of the inclusive rectangle [left, right] x [top, bottom] is solid.
     [[nodiscard]] static bool area_free(int left, int top, int right, int bottom);
 

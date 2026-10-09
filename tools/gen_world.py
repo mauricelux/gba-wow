@@ -7,6 +7,7 @@ Maps:
   abbey      Northshire Abbey interior
   inn        Lion's Pride Inn interior (Goldshire)
   westfall   1024x1024 outdoor region: Sentinel Hill, farms, Moonbrook
+  redridge   1280x1024 outdoor region: Lakeshire, Lake Everstill, Stonewatch Keep, Render's Valley
   deadmines  dungeon below Moonbrook
   echo_ridge kobold mine in Northshire Valley
   fargodeep  kobold mine south of Goldshire
@@ -198,7 +199,7 @@ def gen_elwynn():
     wg.corners_along(m, 'path', [(960, 1220), (760, 1260), (560, 1330), (340, 1420), (120, 1440),
                                 (0, 1440)], 1.1)
     wg.corners_along(m, 'path', [(1090, 1220), (1300, 1240), (1500, 1270), (1650, 1240),
-                                (1720, 1230)], 1.0)
+                                (1720, 1236), (1900, 1240), (2048, 1240)], 1.0)
     wg.corners_along(m, 'path', [(1024, 470), (1180, 480), (1260, 470)], 0.8)
     wg.corners_along(m, 'path', [(1010, 640), (880, 640), (800, 620)], 0.8)
     wg.corners_along(m, 'path', [(1000, 300), (880, 240), (760, 170)], 0.8)
@@ -217,7 +218,8 @@ def gen_elwynn():
     wg.forest(m, trees, 0, 0, border, 928)
     wg.forest(m, trees, 0, 1008, border, 392)
     wg.forest(m, trees, 0, 1480, border, m.height - 1480)
-    wg.forest(m, trees, m.width - border, 0, border, m.height)
+    wg.forest(m, trees, m.width - border, 0, border, 1200)
+    wg.forest(m, trees, m.width - border, 1280, border, m.height - 1280)
     # Northshire Valley: x 640..1408, y 64..832, opening south at x 992..1056.
     wg.forest(m, trees, 576, 64, 64, 832)
     wg.forest(m, trees, 1408, 64, 64, 832)
@@ -369,6 +371,10 @@ def gen_elwynn():
     m.warp(0, 936, 8, 64, 'stormwind', 'from_elwynn')
     m.point('from_stormwind', 24, 968)
 
+    # The road east, past Stonefield, leads to Redridge.
+    m.warp(2040, 1208, 8, 64, 'redridge', 'from_elwynn')
+    m.point('from_redridge', 2020, 1240)
+
     # Road west leads to the Westfall bridge.
     m.warp(0, 1416, 8, 48, 'westfall', 'from_elwynn')
     m.point('from_westfall', 24, 1440)
@@ -466,6 +472,269 @@ def gen_westfall():
     m.warp(1016, 424, 8, 48, 'elwynn', 'from_westfall')
     m.area(0, 0, 1024, 1024, 'Westfall')
     m.music = 'WESTFALL'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Redridge Mountains
+# ---------------------------------------------------------------------------------------------
+
+REDRIDGE_PROPS = ('tall_grass', 'rock', 'bush', 'fern', 'big_rock', 'flowers', 'rock', 'stump', 'tall_grass')
+
+
+def border_rock(m, thickness, seed):
+    """Mountains around the map: rock corners thickness metatiles deep (top, bottom, left, right),
+    wobbling by a metatile or two."""
+    c = wg.corners(m, 'rock')
+    ny, nx = c.shape
+
+    def wobble(n, base, amp, salt):
+        points = np.random.default_rng(seed * 10 + salt).uniform(-1, 1, n // 5 + 2)
+        return base + amp * np.interp(np.linspace(0, len(points) - 1, n), np.arange(len(points)), points)
+
+    top, bottom = wobble(nx, thickness[0], 1.5, 1), wobble(nx, thickness[1], 1.5, 2)
+    left, right = wobble(ny, thickness[2], 1.2, 3), wobble(ny, thickness[3], 1.5, 4)
+    for cy in range(ny):
+        for cx in range(nx):
+            if cy < top[cx] or cy > ny - 1 - bottom[cx] or cx < left[cy] or cx > nx - 1 - right[cy]:
+                c[cy, cx] = 1
+
+
+def stonewatch_keep(m, x, y):
+    """A walled courtyard with a tower on its north wall, gate in the south wall. 224x200.
+
+    Returns the gate's center on the outside."""
+    W, H, t = 224, 200, 24
+    g = m.ground
+    face = 48
+    # The north wall faces the courtyard.
+    wg.bricks(m, g, x, y, W, face, 'stone_d', 'stone_m', 'stone_l')
+    g[y:y + 3, x:x + W] = m.g('stone_h')
+    g[y + face - 1, x:x + W] = m.g('outline')
+    for wx in (x + 24, x + W - 40):
+        g[y + 16:y + 32, wx:wx + 16] = m.g('outline')
+        g[y + 18:y + 32, wx + 2:wx + 14] = m.g('glass_d')
+    for bx in (x + 56, x + W - 64):
+        # Blackrock banners, black with a dull orange mark.
+        g[y + 8:y + 40, bx:bx + 8] = m.g('outline')
+        g[y + 8:y + 40, bx + 7] = m.g('stone_d')
+        g[y + 18:y + 24, bx + 2:bx + 6] = m.g('wood_l')
+        g[y + 36:y + 40, bx + 2:bx + 6] = m.g('stone_m')
+    m.block(x, y, W, face)
+    wg.cobbles(m, x + t, y + face, W - 2 * t, H - face - t)
+
+    def wall_top(wx, wy, ww, wh):
+        ys, xs = np.mgrid[wy:wy + wh, wx:wx + ww]
+        pattern = np.full((wh, ww), m.g('stone_m'), dtype=np.uint8)
+        pattern[(ys % 16 < 8) & (xs % 16 < 8)] = m.g('stone_l')
+        pattern[(ys % 16 == 15) | (xs % 16 == 15)] = m.g('stone_d')
+        g[wy:wy + wh, wx:wx + ww] = pattern
+        m.block(wx, wy, ww, wh)
+
+    wall_top(x, y + face, t, H - face)
+    wall_top(x + W - t, y + face, t, H - face)
+    g[y + face:y + H, x + t - 2:x + t] = m.g('outline')
+    g[y + face:y + H, x + W - t:x + W - t + 2] = m.g('outline')
+    # The south wall: its top, then its outer face, with the gate in the middle.
+    gate = 48
+    gx = x + W // 2 - gate // 2
+    for wx, ww in ((x, gx - x), (gx + gate, x + W - gx - gate)):
+        wall_top(wx, y + H - t, ww, 8)
+        wg.bricks(m, g, wx, y + H - t + 8, ww, t - 8, 'stone_d', 'stone_m', 'stone_l')
+        g[y + H - t + 8, wx:wx + ww] = m.g('outline')
+        g[y + H - 1, wx:wx + ww] = m.g('outline')
+        m.block(wx, y + H - t, ww, t)
+    wg.cobbles(m, gx, y + H - t, gate, t)
+    # Rubble where the orcs broke the wall.
+    for rx, ry in ((x + 32, y + face + 24), (x + W - 56, y + H - t - 40)):
+        g[ry:ry + 8, rx:rx + 16] = m.g('stone_d')
+        g[ry + 1:ry + 7, rx + 1:rx + 15] = m.g('stone_m')
+        g[ry + 2:ry + 4, rx + 3:rx + 8] = m.g('stone_l')
+        m.block(rx, ry + 2, 16, 6)
+    # The tower stands behind the north wall and rises over it.
+    tx = x + W // 2 - 40
+    wg.bricks(m, g, tx, y - 40, 80, face + 40, 'stone_d', 'stone_m', 'stone_l')
+    g[y - 40:y + face, tx] = m.g('outline')
+    g[y - 40:y + face, tx + 79] = m.g('outline')
+    wg.window(m, tx + 36, y - 24)
+    wg.door(m, tx + 32, y + face - 24)
+    wg.roof(m, tx - 8, y - 88, 96, 56, ('roof_d', 'roof_m', 'roof_l'), 'roof_h', 'outline')
+    m.block(tx, y - 40, 80, face + 40)
+    return (x + W // 2, y + H + 8)
+
+
+def broken_bridge(m, x, y0, y1, gap):
+    """The Everstill bridge: planks from both shores, its middle span gone into the lake."""
+    mid = (y0 + y1) // 2
+    wg.pier(m, x, y0, 32, mid - gap // 2 - y0)
+    south_y = mid + gap // 2
+    for py in range(south_y, y1):
+        for px in range(x, x + 32):
+            c = m.g('trunk_m') if (py % 8) not in (0, 7) else m.g('trunk_d')
+            if px in (x, x + 1, x + 30, x + 31):
+                c = m.g('trunk_d')
+            m.ground[py, px] = c
+    m.unblock(x + 4, south_y + 4, 24, y1 - south_y - 4)
+    m.block(x, south_y, 32, 4)
+    m.block(x, south_y, 4, y1 - south_y)
+    m.block(x + 28, south_y, 4, y1 - south_y)
+    # Broken plank ends.
+    for py, sign in ((mid - gap // 2 - 1, 1), (south_y, -1)):
+        for px in range(x + 2, x + 30, 5):
+            m.ground[py:py + 2, px:px + 2] = m.g('shadow')
+
+
+def gen_redridge():
+    m = Map('redridge', 1280, 1024,
+            Palette([wg.TERRAIN_REDRIDGE, wg.BUILDINGS, wg.FARM, wg.ROCK]),
+            Palette([wg.OVERHEAD_LEAVES, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    # --- mountains ----------------------------------------------------------------------------
+    border_rock(m, (6, 5, 4, 5), seed=3)
+    rock = wg.corners(m, 'rock')
+    # The pass west to Elwynn (Three Corners) and the Lakeridge Highway south to Duskwood.
+    rock[41:47, 0:8] = 0
+    rock[57:, 26:31] = 0
+    # Ridges between the valleys.
+    wg.corners_along(m, 'rock', [(300, 40), (296, 170), (270, 250)], 2.2)
+    wg.corners_along(m, 'rock', [(920, 40), (912, 150), (880, 210)], 2.0)
+    wg.corners_along(m, 'rock', [(720, 1024), (712, 900), (690, 840)], 2.2)
+    wg.corners_along(m, 'rock', [(1180, 640), (1100, 680)], 1.8)
+    wg.paint_cliffs(m)
+
+    # --- roads ----------------------------------------------------------------------------------
+    roads = [
+        [(0, 704), (160, 700), (300, 690), (400, 668)],             # Three Corners to the broken bridge
+        [(160, 700), (130, 620), (150, 520), (230, 450), (330, 420), (420, 400)],  # around the lake
+        [(420, 400), (600, 392), (760, 400), (900, 380), (1000, 372), (1096, 360), (1096, 344)],  # Stonewatch
+        [(400, 668), (430, 760), (440, 880), (440, 1024)],          # Lakeridge Highway
+        [(430, 760), (600, 720), (800, 740), (940, 790)],           # to Render's Valley
+        [(600, 392), (640, 300), (700, 220)],                       # up to Alther's Mill
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.1)
+    wg.paint_paths(m)
+
+    # --- Lake Everstill -------------------------------------------------------------------------
+    wg.corners_along(m, 'water', [(250, 584), (420, 584), (600, 572), (720, 556)], 3.3)
+    wg.corners_ellipse(m, 'water', 900, 548, 250, 84)
+    wg.corners_along(m, 'water', [(960, 160), (960, 300), (940, 420), (930, 480)], 0.9)
+    wg.paint_water(m)
+    wg.bridge(m, 936, 352, 48, 40)
+    broken_bridge(m, 384, 504, 664, 48)
+    wg.pier(m, 528, 496, 32, 72)
+    m.area(180, 470, 980, 220, 'Lake Everstill', 'LAKE_EVERSTILL')
+    m.area(900, 140, 120, 300, 'Stonewatch Falls')
+
+    # --- Lakeshire ------------------------------------------------------------------------------
+    wg.cobbles(m, 432, 376, 176, 48)
+    hall = wg.house(m, 424, 248, 128, 128, style='stone', roof_colors=('red_d', 'red_m', 'red_l'),
+                    roof_ridge='red_l', roof_outline='o2')
+    inn = wg.house(m, 568, 264, 112, 112, roof_colors=('red_d', 'red_m', 'red_l'), door_x=40)
+    wg.house(m, 320, 288, 88, 96, roof_colors=('red_d', 'red_m', 'red_l'))
+    wg.house(m, 640, 408, 80, 80, roof_colors=('thatch_d', 'thatch_m', 'thatch_l'), roof_ridge='thatch_l')
+    wg.house(m, 248, 392, 72, 80, roof_colors=('red_d', 'red_m', 'red_l'))
+    wg.well(m, 568, 384)
+    wg.crop_field(m, 344, 448, 32, 32)
+    wg.fence(m, 336, 440, 48)
+    m.npc('SOLOMON', hall[0] + 20, hall[1] + 10)
+    m.npc('MARRIS', 470, 412)
+    m.npc('BRIANNA', inn[0] + 18, inn[1] + 8)
+    m.npc('BREANNA', inn[0] - 18, inn[1] + 8)
+    m.npc('KAREN', 400, 420)
+    m.npc('OSLOW', 400, 496)
+    m.npc('BAREN', 496, 494)
+    m.npc('BRAY', 580, 496)
+    m.npc('OSGOOD', 392, 470)
+    m.npc('BERTON', 336, 500)
+    m.npc('ARIENA', 712, 352)
+    m.point('flight', 712, 374)
+    m.point('lakeshire_respawn', 500, 440)
+    m.area(232, 232, 520, 290, 'Lakeshire')
+
+    # --- Redridge Canyons (gnolls, Ribchaser) --------------------------------------------------
+    m.spawn_group('REDRIDGE_MONGREL', 170, 230, 6, 80, seed=31)
+    m.spawn_group('REDRIDGE_MONGREL', 130, 330, 4, 40, seed=32)
+    m.spawn('RIBCHASER', 120, 150)
+    wg.camp(m, 112, 168, 96, 64, tents=[(120, 176)], fire=(176, 200))
+    m.chest(18, 236, 128, 18)
+    m.area(64, 96, 220, 340, 'Redridge Canyons')
+
+    # --- Alther's Mill (Shadowhide gnolls) ----------------------------------------------------
+    wg.house(m, 664, 120, 96, 96, roof_colors=('thatch_d', 'thatch_m', 'thatch_l'), roof_ridge='thatch_l')
+    wg.camp(m, 784, 160, 96, 80, tents=[(792, 168), (840, 168)], fire=(824, 216))
+    m.spawn_group('SHADOWHIDE_GNOLL', 810, 280, 6, 60, seed=33)
+    m.spawn_group('SHADOWHIDE_MYSTIC', 828, 214, 4, 30, seed=34)
+    m.spawn_group('TARANTULA', 520, 170, 5, 70, seed=35)
+    m.area(600, 96, 300, 200, "Alther's Mill")
+
+    # --- Stonewatch Keep (Blackrock orcs, Gath'Ilzogg) ------------------------------------------
+    stonewatch_keep(m, 984, 136)
+    m.spawn('GATH_ILZOGG', 1096, 212)
+    # Placed one by one, a little more than social range apart, so a pull brings one or two orcs.
+    for x, y in ((1028, 204), (1164, 204), (1176, 252), (1030, 300), (1162, 300), (1064, 400), (1132, 404),
+                 (904, 296)):
+        m.spawn('BLACKROCK_RENEGADE', x, y)
+    for x, y in ((1060, 268), (1132, 268), (1016, 252), (1010, 416), (1068, 452), (912, 236)):
+        m.spawn('BLACKROCK_SUMMONER', x, y)
+    m.spawn_group('TARANTULA', 330, 150, 3, 40, seed=40)
+    # A pine grove by the keep hides a clearing, reached under the branches from the lake shore.
+    wg.forest(m, trees, 1112, 392, 80, 96, kinds=('pine',), holes=[(1128, 408, 48, 40)],
+              secrets=[(1136, 448, 24, 56)])
+    m.chest(19, 1152, 436, 19)
+    m.area(970, 80, 260, 360, 'Stonewatch Keep')
+
+    # --- Render's Valley (the Blackrock camp) ---------------------------------------------------
+    wg.camp(m, 896, 744, 192, 128, tents=[(904, 752), (952, 752), (1032, 752), (1000, 816)], fire=(968, 808))
+    wg.crates(m, 1048, 832)
+    m.spawn_group('BLACKROCK_GRUNT', 980, 820, 7, 120, seed=41)
+    m.spawn_group('BLACKROCK_SHADOWCASTER', 1040, 790, 4, 60, seed=42)
+    m.chest(20, 1176, 900, 18)
+    m.area(760, 680, 460, 280, "Render's Valley")
+
+    # --- the hills south of the lake -------------------------------------------------------------
+    m.spawn_group('BLACKROCK_OUTRUNNER', 600, 800, 6, 90, seed=43)
+    m.spawn_group('BLACKROCK_OUTRUNNER', 820, 680, 3, 40, seed=44)
+    m.spawn_group('GREAT_GORETUSK', 220, 830, 6, 90, seed=45)
+    m.spawn_group('GREAT_GORETUSK', 560, 900, 3, 50, seed=46)
+    m.spawn('BELLYGRUB', 300, 920)
+    m.spawn_group('MURLOC_FLESHEATER', 620, 664, 5, 50, seed=47)
+    m.spawn_group('MURLOC_FLESHEATER', 1130, 560, 4, 40, seed=48)
+    m.spawn_group('MURLOC_FLESHEATER', 820, 462, 3, 30, seed=49)
+    m.area(64, 720, 380, 260, 'Three Corners')
+    m.area(400, 740, 120, 284, 'Lakeridge Highway')
+
+    # The road to Duskwood is closed by the Night Watch.
+    wg.fence(m, 400, 960, 96)
+    m.npc('GUARD_LAKERIDGE', 444, 944)
+
+    rng = np.random.default_rng(17)
+    path = wg.corners(m, 'path')
+    water = wg.corners(m, 'water')
+    placed = 0
+    for _ in range(400):
+        if placed >= 80:
+            break
+        x, y = int(rng.uniform(60, 1200)), int(rng.uniform(80, 960))
+        mx, my = (x + 16) // 16, (y + 40) // 16
+        near = path[max(0, my - 3):my + 4, max(0, mx - 3):mx + 4].max() + \
+            water[max(0, my - 3):my + 4, max(0, mx - 3):mx + 4].max()
+        clear = [(200, 200, 580, 340), (960, 40, 260, 340), (100, 150, 120, 100), (770, 140, 130, 120),
+                 (880, 720, 230, 170)]
+        if near == 0 and m.area_free(x, y, 40, 56) and \
+                not any(cx - 40 <= x <= cx + cw and cy - 56 <= y <= cy + ch for cx, cy, cw, ch in clear):
+            wg.tree(m, trees, x, y, int(rng.integers(0, 2)), kind=('pine', 'oak', 'pine', 'birch')[placed % 4])
+            placed += 1
+    wg.scatter_props(m, rng, 70, REDRIDGE_PROPS, (64, 64, 1150, 900),
+                     avoid=[(200, 200, 580, 340), (960, 40, 260, 340), (880, 720, 230, 170)])
+
+    m.point('from_elwynn', 24, 704)
+    m.warp(0, 672, 8, 64, 'elwynn', 'from_redridge')
+    m.area(0, 0, 1280, 1024, 'Redridge Mountains')
+    m.music = 'REDRIDGE'
     m.save()
     return m
 
@@ -1727,6 +1996,7 @@ GENERATORS = {
     'inn': gen_inn,
     'elwynn': gen_elwynn,
     'westfall': gen_westfall,
+    'redridge': gen_redridge,
     'deadmines': gen_deadmines,
     'echo_ridge': gen_echo_ridge,
     'fargodeep': gen_fargodeep,
@@ -1742,7 +2012,7 @@ def main():
     if len(ids) != len(set(ids)) or max(ids) >= 256:
         raise SystemExit(f'chest ids must be unique and below 256: {sorted(ids)}')
     print(f'{len(ids)} treasure chests')
-    starts = {'elwynn': 'start', 'westfall': 'from_elwynn', 'stormwind': 'from_elwynn'}
+    starts = {'elwynn': 'start', 'westfall': 'from_elwynn', 'stormwind': 'from_elwynn', 'redridge': 'from_elwynn'}
     for name, m in maps.items():
         m.check_reachable(starts.get(name, 'entry'))
     write_minimaps(maps)
@@ -1750,7 +2020,7 @@ def main():
 
 # Maps with a picture on the world map page, in the order D-pad left and right go through them.
 # Interiors show the map their door leads to.
-MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'echo_ridge', 'fargodeep', 'deadmines', 'stockade']
+MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'echo_ridge', 'fargodeep', 'deadmines', 'stockade']
 
 
 def write_minimaps(maps):

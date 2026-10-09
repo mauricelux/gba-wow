@@ -120,6 +120,19 @@ jobs:
             hold:A:2 wait:90 hold:U:100 wait:120 shot:screenshots/27_tram.ppm wait:260 \
             shot:screenshots/28_ironforge_station.ppm hold:S:2 wait:10 hold:A:2 wait:10 hold:S:2 wait:10
           python3 tools/headless/check_save.py pet.sav map=10 pet=1
+          # The mage teleports to Lakeshire in Redridge, takes Bray's fishing contest, fishes from the pier
+          # on Lake Everstill and learns the Lakeshire flight path from Ariena.
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 shot:screenshots/29_lakeshire.ppm \
+            hold:R:64 hold:D:40 wait:5 hold:A:2 wait:6 hold:A:2 wait:6 shot:screenshots/30_fishing_contest.ppm \
+            hold:A:2 wait:10 hold:L:28 hold:D:52 hold:L:1 wait:5 hold:A:2 wait:100 shot:screenshots/31_fishing.ppm \
+            wait:90 shot:screenshots/32_catch.ppm \
+            hold:U:130 hold:R:134 hold:U:12 wait:4 hold:A:2 wait:30 shot:screenshots/33_lakeshire_flight.ppm \
+            hold:B:2 wait:10 hold:S:2 wait:10 hold:A:2 wait:10 hold:S:2 wait:10
+          python3 tools/headless/check_save.py bars.sav map=11 flights=1
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm
 

@@ -45,27 +45,35 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![A Frost mage's Water Elemental freezes a convict](docs/screenshots/m16_water_elemental.png)
 ![On the Deeprun Tram](docs/screenshots/m16_tram.png)
 ![Ironforge Station, where the lift is still shut](docs/screenshots/m16_ironforge_station.png)
+![Lakeshire, on the shore of Lake Everstill](docs/screenshots/m17_lakeshire.png)
+![Fishing for Redridge Goldfin](docs/screenshots/m17_fishing.png)
+![The road east out of Elwynn into the Redridge Mountains](docs/screenshots/m17_east_road.png)
+![Blackrock orcs in the courtyard of Stonewatch Keep](docs/screenshots/m17_stonewatch_keep.png)
+![Fighting Gath'Ilzogg at the door of the keep](docs/screenshots/m17_gath.png)
+![A Blackrock war party in Render's Valley](docs/screenshots/m17_renders_valley.png)
+![Ariena Stormfeather's flight paths in Lakeshire](docs/screenshots/m17_lakeshire_flight.png)
 
 ## Status
 
 Every milestone of the roadmap is in. From the title screen, continue your saved hero or create a
 Human Warrior or Mage, a Dwarf Warrior or Hunter, or a Night Elf Warrior or Hunter in one of three
 subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Marksmanship or Survival),
-then walk freely from Northshire Abbey down to Goldshire, west to the city of Stormwind and south to
-Westfall, take on 29 quests from Northshire to the Stockade, fight with auto-attack and your
-subclass's abilities, loot and equip about 170 items, buy and sell at vendors, carry as much as you
-like in bags sorted by type, quality, level or age, use 19 ability slots on three bars and 4 item
-slots, buy new abilities and ranks from your class trainer, spend talent points from level 10, face
-the elites Princess and Hogger, clear the kobolds out of Echo Ridge and Fargodeep mines, hunt for 17
-hidden treasure chests, hearth home to an inn, ride from level 30, fly by gryphon between Stormwind
-and Sentinel Hill, take the Deeprun Tram, tame a pet as a Beast Mastery hunter, fight through the
-Deadmines to Sneed and Edwin VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil
-Thredd, see the story's end, and save to the cartridge. Every zone has its own music, and elite fights
+then walk freely from Northshire Abbey down to Goldshire, west to the city of Stormwind, south to
+Westfall and east to the Redridge Mountains, take on 42 quests from Northshire to the Stockade, fight
+with auto-attack and your subclass's abilities, loot and equip about 210 items, buy and sell at
+vendors, carry as much as you like in bags sorted by type, quality, level or age, use 19 ability
+slots on three bars and 4 item slots, buy new abilities and ranks from your class trainer, spend
+talent points from level 10, face the elites Princess, Hogger and Gath'Ilzogg, clear the kobolds out
+of Echo Ridge and Fargodeep mines, hunt for 20 hidden treasure chests, fish in Lake Everstill, hearth
+home to an inn, ride from level 30, fly by gryphon between Stormwind, Sentinel Hill and Lakeshire,
+take the Deeprun Tram, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
+Edwin VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, reach the end
+of the first chapter, and save to the cartridge. Every zone has its own music, and elite fights
 switch to a boss tune.
 
-Following the quests in order takes a hero to about level 17 at the Deadmines and to level 20 in the
-Stockade, without grinding. The level cap is 60: the road there is planned in
-[docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12 to M26).
+Following the quests in order takes a hero to level 15 at the end of Westfall, about 19 after
+Redridge, 20 after the Deadmines and 21 in the Stockade, without grinding. The level cap is 60: the
+road there is planned in [docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12 to M26).
 
 | Milestone | What it adds | State |
 | --- | --- | --- |
@@ -86,7 +94,8 @@ Stockade, without grinding. The level cap is 60: the road there is planned in
 | M14 Keybinds and bags | Utility, Buffs and Items bars, buff reminder, unlimited sorted bags | Done |
 | M15 Enemy abilities | Shared enemy ability table, cast bars, interrupts, flee and call for help | Done |
 | M16 Travel and the pet | Flight masters, boats, tram, mount, two-level world map, hunter pet | Done |
-| M17 to M26 | Redridge to the Plaguelands, 18 new dungeons, Onyxia and the new ending | Planned |
+| M17 Redridge | Redridge Mountains and Lakeshire (15 to 20), 13 quests, fishing, the orcs of Stonewatch Keep, retuned Deadmines, end of chapter one | Done |
+| M18 to M26 | Duskwood to the Plaguelands, 18 new dungeons, Onyxia and the new ending | Planned |
 
 ## Controls
 
@@ -94,7 +103,7 @@ Stockade, without grinding. The level cap is 60: the road there is planned in
 | --- | --- |
 | D-pad | Walk (8 directions) |
 | B (hold) | Run (out of combat) |
-| A | Talk to someone next to you, loot a corpse, or attack the nearest enemy |
+| A | Talk to someone next to you, loot a corpse, fish when facing water, or attack the nearest enemy |
 | L (tap) | Switch target |
 | R (hold) | Combat bar: then A, B, L or a D-pad direction uses that slot |
 | L (hold) | Utility bar: then A, B or a D-pad direction |
@@ -131,7 +140,7 @@ in seven tiers; the next tier opens every five points, and some talents teach an
 Strike, Pyroblast, Wyvern Sting and others). Class trainers unlearn talents for 10 silver.
 
 The hearthstone in your bags takes you back to your home inn every ten minutes; innkeepers in
-Goldshire, Stormwind's Trade District and at Sentinel Hill can make their inn your home.
+Goldshire, Stormwind's Trade District, at Sentinel Hill and in Lakeshire can make their inn your home.
 
 Rested experience: ask an innkeeper to let you rest a while (or save and switch off inside an inn).
 Every six minutes played since your last rest becomes 5% of a level of rested experience, up to a
@@ -146,7 +155,7 @@ tunnels, and in clearings reached by secret paths through the forests (look for 
 trunks). Walk up to a chest and press A to open it for money, an item and sometimes a potion. Each
 chest opens once per hero. The world map (Start, then the World Map page) shows where you are, quest
 givers with a `!` or `?`, the chests you have already opened, the flight masters you know, and how
-many of the 17 you have found; left and right show the other zones. B steps out to the whole
+many of the 20 you have found; left and right show the other zones. B steps out to the whole
 continent: the D-pad picks a zone (its levels, or "Coming later" for zones of later chapters), A
 opens its map, and Select turns to Kalimdor. Brann Bronzebeard in Stormwind pays for five opened
 chests.
@@ -155,7 +164,7 @@ Getting around: from level 30, Randal Hunter in Stormwind's Valley of Heroes tea
 gold. Mount (on the Buffs bar) puts a Human on a horse, a Dwarf on a ram and a Night Elf on a
 nightsaber, 60% faster out of combat; a blow, any other ability, eating, the hearthstone or going
 indoors gets you off. Gryphon masters (Dungar Longdrink in the Valley of Heroes, Thor at Sentinel
-Hill) remember you the first time you talk to them and fly you to any other one you have met, for a
+Hill, Ariena Stormfeather in Lakeshire) remember you the first time you talk to them and fly you to any other one you have met, for a
 price that grows with the distance: the gryphon crosses the continent while the map scrolls under it.
 The Deeprun Tram leaves from the station house in Stormwind's Dwarven District. Its far end is
 Ironforge Station, where the lift up to Ironforge stays shut until the Ironforge chapter. Boats work
@@ -193,6 +202,21 @@ Targorr goes into a frenzy at half health, Kam Deepfury raises his shield before
 Slam, and Bazil Thredd throws smoke bombs at your feet from the start of the fight, calls a rioter
 at two thirds and one third of his health, and frenzies near the end. Clear his two guards first and
 bring healing potions. Bring his head to Highlord Bolvar to finish the story.
+
+Redridge Mountains: the road east out of Elwynn, past Stonefield Farm, climbs to Three Corners and
+on to Lakeshire, on the shore of Lake Everstill. Gryan Stoutmantle sends you there once you have found
+the Defias hideout, and Magistrate Solomon, Marshal Marris and the townsfolk have 13 quests for levels
+15 to 20: gnolls in the canyons and at Alther's Mill, murlocs on the shore, boars and spiders in the
+hills, Bellygrub the giant boar, and the Blackrock orcs of Render's Valley and Stonewatch Keep, whose
+warlord Gath'Ilzogg is an elite with a cleave and a war stomp. Ribchaser is a rare gnoll: his frame
+says Rare, and he drops like an elite. To fish, stand at the edge of any lake or river out of combat,
+face the water and press A: the line takes three seconds, and moving or a blow scares the fish. Bray
+the Fisherman's contest wants six Redridge Goldfin from Lake Everstill, with his lucky hat as the
+prize. Afterwards Solomon sends you back to Westfall for the Deadmines, which are now level 16 to 20;
+the Stockade stays at 20. The road south to Duskwood is closed until the next chapter.
+
+The end of the first chapter: after Bazil Thredd, the epilogue tells what became of Westfall, of
+Lakeshire if you freed it, and of the Stockade, then where the story goes next.
 
 Auto-attack keeps going after a kill if another enemy is on you, and turns to whoever is hitting you
 when your target is out of reach.

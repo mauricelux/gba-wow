@@ -17,22 +17,65 @@ namespace
     {
         const char* title;
         const char* text;
+        quest_id after;         // shown only once this quest is turned in, or always for NONE
     };
 
     constexpr page_def story_pages[] = {
         { "Westfall Is Free",
           "Edwin VanCleef is dead and the Defias Brotherhood is broken. The farmers of Westfall "
-          "return to their fields, and the People's Militia raises its banner over Sentinel Hill." },
+          "return to their fields, and the People's Militia raises its banner over Sentinel Hill.",
+          quest_id::NONE },
+        { "Lakeshire Stands",
+          "Gath'Ilzogg's head hangs from the gate of Lakeshire. The Blackrock fall back beyond the "
+          "mountains, Foreman Oslow mends the Everstill bridge and Bray wears a new hat.",
+          quest_id::WANTED_GATH_ILZOGG },
         { "Quiet in the Stockade",
           "With Bazil Thredd dead, the riot dies with him. The last of VanCleef's plots ends in "
-          "Stormwind's own prison, and Warden Thelwater locks the cells once more." },
+          "Stormwind's own prison, and Warden Thelwater locks the cells once more.",
+          quest_id::NONE },
         { "Champion of Stormwind",
           "Highlord Bolvar names you a champion of the Alliance. Children in Goldshire play at being "
-          "you, and Marshal Dughan buys the first round at the Lion's Pride Inn." },
+          "you, and Marshal Dughan buys the first round at the Lion's Pride Inn.",
+          quest_id::NONE },
+        { "The Road South",
+          "But Bolvar's letters speak of darker roads. In Duskwood the dead walk and the night never "
+          "ends, and Darkshire begs for help. The road is closed for now. When it opens, it will "
+          "need a champion.",
+          quest_id::NONE },
     };
 
-    constexpr int story_page_count = sizeof(story_pages) / sizeof(story_pages[0]);
-    constexpr int page_count = story_page_count + 1;
+    constexpr int story_page_total = sizeof(story_pages) / sizeof(story_pages[0]);
+
+    [[nodiscard]] bool page_shown(const page_def& page)
+    {
+        return page.after == quest_id::NONE || quest_state(page.after).status == quest_status::TURNED_IN;
+    }
+
+    // The index-th story page shown, or nullptr past the last: then comes the numbers page.
+    [[nodiscard]] const page_def* story_page(int index)
+    {
+        for(const page_def& page : story_pages)
+        {
+            if(page_shown(page) && index-- == 0)
+            {
+                return &page;
+            }
+        }
+
+        return nullptr;
+    }
+
+    [[nodiscard]] int page_count()
+    {
+        int result = 1;
+
+        for(int index = 0; index < story_page_total; ++index)
+        {
+            result += page_shown(story_pages[index]);
+        }
+
+        return result;
+    }
 }
 
 void ending::open()
@@ -48,7 +91,7 @@ bool ending::update()
 {
     if(bn::keypad::a_pressed())
     {
-        if(++_page >= page_count)
+        if(++_page >= page_count())
         {
             _open = false;
             ui::clear();
@@ -74,17 +117,16 @@ void ending::_draw()
     ui::divider(1, 2, ui::columns - 2);
     ui::divider(1, 16, ui::columns - 2);
 
-    if(_page < story_page_count)
+    if(const page_def* page = story_page(_page))
     {
-        const page_def& page = story_pages[_page];
-        ui::text_center(1, page.title, ui::color::YELLOW, true);
-        ui::text_wrapped(2, 4, 26, 11, page.text, ui::color::WHITE, true);
+        ui::text_center(1, page->title, ui::color::YELLOW, true);
+        ui::text_wrapped(2, 4, 26, 11, page->text, ui::color::WHITE, true);
         ui::text(2, 18, "A Continue", ui::color::WHITE, true);
         return;
     }
 
     const character_data& data = character();
-    ui::text_center(1, "Thanks for Playing", ui::color::YELLOW, true);
+    ui::text_center(1, "End of Chapter One", ui::color::YELLOW, true);
 
     bn::string<32> line = "Level ";
     line += bn::to_string<4>(data.level);
@@ -131,8 +173,8 @@ void ending::_draw()
     ui::money_right(27, 8, data.money);
 
     ui::text_wrapped(2, 10, 26, 5,
-                     "The world stays open: finish your quests, hunt for better gear, or start over with "
-                     "another race and class.", ui::color::GRAY, true);
+                     "Thanks for playing! The world stays open: finish your quests, hunt for better gear, "
+                     "or start over with another race and class.", ui::color::GRAY, true);
     ui::text(2, 18, "A Keep exploring", ui::color::WHITE, true);
 }
 

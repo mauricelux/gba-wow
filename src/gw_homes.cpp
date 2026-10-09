@@ -2,6 +2,7 @@
 
 #include "gw_map_elwynn.h"
 #include "gw_map_inn.h"
+#include "gw_map_redridge.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
 
@@ -15,6 +16,7 @@ namespace
         { "Goldshire", map_id::INN, map_data::inn::respawn },
         { "Sentinel Hill", map_id::WESTFALL, map_data::westfall::sentinel_respawn },
         { "Stormwind", map_id::STORMWIND, map_data::stormwind::inn },
+        { "Lakeshire", map_id::REDRIDGE, map_data::redridge::lakeshire_respawn },
     };
 
     static_assert(sizeof(homes) / sizeof(homes[0]) == int(home_id::COUNT));
@@ -38,6 +40,9 @@ home_id innkeeper_home(npc_id npc)
 
     case npc_id::ALLISON:
         return home_id::STORMWIND;
+
+    case npc_id::BRIANNA:
+        return home_id::LAKESHIRE;
 
     default:
         return home_id::COUNT;

@@ -21,6 +21,17 @@ namespace
         int byte = current_map->collision[row * bytes_per_row + (column >> 3)];
         return (byte >> (column & 7)) & 1;
     }
+
+    [[nodiscard]] bool cell_water(int column, int row)
+    {
+        if(column < 0 || row < 0 || column >= current_map->collision_columns || row >= rows)
+        {
+            return false;
+        }
+
+        int byte = current_map->water[row * bytes_per_row + (column >> 3)];
+        return (byte >> (column & 7)) & 1;
+    }
 }
 
 void world::set_map(const map_info& map)
@@ -53,6 +64,11 @@ bool world::solid_at(int x, int y)
     }
 
     return cell_solid(x / cell_size, y / cell_size);
+}
+
+bool world::water_at(int x, int y)
+{
+    return x >= 0 && y >= 0 && cell_water(x / cell_size, y / cell_size);
 }
 
 bool world::area_free(int left, int top, int right, int bottom)

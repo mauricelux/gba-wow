@@ -76,7 +76,7 @@ constexpr zone_def zones[] = {
     { "Burning Steppes", 0, 57, 87, 50, 55, map_id::NONE },
     { "Elwynn Forest", 0, 45, 96, 1, 10, map_id::ELWYNN },
     { "Stormwind City", 0, 37, 91, 1, 60, map_id::STORMWIND },
-    { "Redridge Mountains", 0, 63, 96, 15, 20, map_id::NONE },
+    { "Redridge Mountains", 0, 63, 96, 15, 20, map_id::REDRIDGE },
     { "Westfall", 0, 33, 104, 10, 15, map_id::WESTFALL },
     { "Duskwood", 0, 49, 105, 20, 25, map_id::NONE },
     { "Swamp of Sorrows", 0, 69, 107, 50, 55, map_id::NONE },

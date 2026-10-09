@@ -19,7 +19,8 @@ enum class objective_type : uint8_t
     COLLECT,    // enemies drop the quest item with chance percent (kept with the quest, not in bags)
     EXPLORE,    // walk into the area
     TREASURE,   // open count treasure chests (chests opened before count too)
-    TAME        // tame count beasts
+    TAME,       // tame count beasts
+    FISH        // each Fishing cast from inside the area catches one with chance percent
 };
 
 struct objective_def
@@ -106,6 +107,10 @@ bool quests_on_explore(const map_info& map, int x, int y, hud& hud_ref);
 bool quests_on_chest(hud& hud_ref);
 
 bool quests_on_tame(hud& hud_ref);
+
+// A Fishing cast from (x, y) ended: rolls each fishing objective of the area the player stands in, and
+// tells what was caught.
+bool quests_on_fish(const map_info& map, int x, int y, hud& hud_ref);
 
 }
 

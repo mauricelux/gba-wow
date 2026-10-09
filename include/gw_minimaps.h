@@ -7,6 +7,7 @@
 #include "bn_sprite_items_minimap_echo_ridge.h"
 #include "bn_sprite_items_minimap_elwynn.h"
 #include "bn_sprite_items_minimap_fargodeep.h"
+#include "bn_sprite_items_minimap_redridge.h"
 #include "bn_sprite_items_minimap_stockade.h"
 #include "bn_sprite_items_minimap_stormwind.h"
 #include "bn_sprite_items_minimap_westfall.h"
@@ -34,6 +35,7 @@ constexpr minimap_def minimaps[] = {
     { map_id::ELWYNN, bn::sprite_items::minimap_elwynn, 8, 8, 2048 },
     { map_id::STORMWIND, bn::sprite_items::minimap_stormwind, 8, 8, 1024 },
     { map_id::WESTFALL, bn::sprite_items::minimap_westfall, 8, 8, 1024 },
+    { map_id::REDRIDGE, bn::sprite_items::minimap_redridge, 8, 19, 1280 },
     { map_id::ECHO_RIDGE, bn::sprite_items::minimap_echo_ridge, 8, 8, 512 },
     { map_id::FARGODEEP, bn::sprite_items::minimap_fargodeep, 8, 26, 768 },
     { map_id::DEADMINES, bn::sprite_items::minimap_deadmines, 8, 36, 1024 },

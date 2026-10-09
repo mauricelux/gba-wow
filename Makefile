@@ -46,7 +46,9 @@ DMGAUDIO    	:=  dmg_audio
 DMGAUDIOBACKEND	:=  default
 ROMTITLE    	:=  GBA WOW
 ROMCODE     	:=  GWOW
-USERFLAGS   	:=  
+# Every character's feet row is its own sprite z order (gw_actor_sprite): crowded camps need more
+# sort layers than Butano's 16.
+USERFLAGS   	:=  -DBN_CFG_SPRITES_MAX_SORT_LAYERS=48
 USERCXXFLAGS	:=  
 USERASFLAGS 	:=  
 USERLDFLAGS 	:=  

@@ -191,6 +191,13 @@ public:
     // Food and drink: restore health and mana over 18 seconds while standing still.
     void start_eating(int health, int mana);
 
+    // Casts a line out of combat: a three second channel that moving or a hit stops. Returns false
+    // (with a message) when it can't.
+    bool start_fishing();
+
+    // Set when a Fishing channel ends; the game rolls the catch and clears it.
+    bool fish_caught = false;
+
     // Uses food, drink, a potion or the hearthstone from the bags. When it can't, the reason goes to
     // error if given, otherwise to the HUD.
     bool use_item(item_id item, const char** error = nullptr);

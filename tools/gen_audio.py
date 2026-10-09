@@ -473,6 +473,29 @@ def song_westfall():
     return s
 
 
+def song_redridge():
+    """Lakeshire under the red peaks: a slow march in D."""
+    s = Song('redridge', 8)
+    drums = 'k.......h...k.h.'
+    a = arrange(['D', 'C', 'G', 'D'],
+                'A4 - - - D5 - E5 - F#5 - - - E5 - D5 - '
+                'E5 - - - C5 - - - G4 - - - C5 - - - '
+                'D5 - - - B4 - G4 - B4 - D5 - G5 - - - '
+                'F#5 - - - E5 - D5 - A4 - - - - - - - ',
+                lead='soft', lead_volume=44, harmony='arp', harmony_sample='bell', harmony_volume=28,
+                bass='root_fifth', drums=drums)
+    b = arrange(['Bm', 'G', 'A', 'A'],
+                'F#5 - - - D5 - B4 - D5 - F#5 - B5 - - - '
+                'G5 - - - - - D5 - B4 - - - G4 - - - '
+                'A4 - - - C#5 - E5 - A5 - G5 - E5 - - - '
+                'C#5 - - - - - - - E5 - - - - - - - ',
+                lead='soft', lead_volume=44, harmony='pad', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=24, bass='roots', drums=drums)
+    s.add(a)
+    s.add(b)
+    return s
+
+
 def song_dungeon():
     s = Song('dungeon', 10)
     drums = 'k...............|k.......k.......'
@@ -576,7 +599,8 @@ def write_sounds():
 
 def main():
     os.makedirs(OUT, exist_ok=True)
-    for song in (song_title(), song_elwynn(), song_town(), song_westfall(), song_dungeon(), song_boss()):
+    for song in (song_title(), song_elwynn(), song_town(), song_westfall(), song_dungeon(), song_boss(),
+                 song_redridge()):
         write_mod(song)
         print(f'{song.name}.mod: {len(song.patterns)} patterns, {len(song.order)} in order')
     write_sounds()

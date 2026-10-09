@@ -1031,6 +1031,7 @@ void combat::_finish_cast()
         }
 
         _tame_target = -1;
+        fish_caught = ability == ability_id::FISHING;
         return;
     }
 
@@ -2594,6 +2595,33 @@ void combat::_update_buffs()
     }
 }
 
+bool combat::start_fishing()
+{
+    if(_cast_ability != ability_id::NONE)
+    {
+        return false;
+    }
+
+    if(in_combat())
+    {
+        _hud.message("Can't fish in combat", ui::color::RED);
+        return false;
+    }
+
+    if(_player.moving())
+    {
+        _hud.message("Can't do that while moving", ui::color::RED);
+        return false;
+    }
+
+    dismount();
+    _cast_ability = ability_id::FISHING;
+    _cast_frames = get_ability(ability_id::FISHING).cast_time;
+    _cast_total = _cast_frames;
+    _player.sprite().set_casting(true);
+    return true;
+}
+
 void combat::start_eating(int health, int mana)
 {
     // Eating while drinking (or the other way round) keeps both going.
@@ -3220,8 +3248,14 @@ void combat::damage_player(int amount, const bn::fixed_point& from, school damag
     character_data& data = character();
     data.health -= amount;
 
-    // Getting hit pushes back casting a little, like in WoW. Channels keep going.
-    if(_cast_ability != ability_id::NONE && ! (get_ability(_cast_ability).flags & ability_flag::CHANNELED))
+    // Getting hit pushes back casting a little, like in WoW. Channels keep going, but a hit scares
+    // the fish away.
+    if(_cast_ability == ability_id::FISHING)
+    {
+        _cast_ability = ability_id::NONE;
+        _player.sprite().set_casting(false);
+    }
+    else if(_cast_ability != ability_id::NONE && ! (get_ability(_cast_ability).flags & ability_flag::CHANNELED))
     {
         _cast_frames = bn::min(_cast_total, _cast_frames + 15);
     }

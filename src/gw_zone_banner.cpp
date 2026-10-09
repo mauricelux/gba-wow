@@ -7,6 +7,11 @@ namespace
 {
     constexpr int visible_frames = 180;
     constexpr int banner_y = -60;
+
+    // Over tree tops and under the ui layer like floating texts, and first in OAM: the GBA drops the
+    // last sprites of a crowded scanline, and the banner shares its lines with the heads of the town.
+    constexpr int banner_bg_priority = 1;
+    constexpr int banner_z_order = -32000;
 }
 
 zone_banner::zone_banner(bn::sprite_text_generator& text_generator) :
@@ -19,6 +24,13 @@ void zone_banner::show(const bn::string_view& zone_name)
     _sprites.clear();
     _text_generator.set_center_alignment();
     _text_generator.generate(0, banner_y, zone_name, _sprites);
+
+    for(bn::sprite_ptr& sprite : _sprites)
+    {
+        sprite.set_bg_priority(banner_bg_priority);
+        sprite.set_z_order(banner_z_order);
+    }
+
     _frames_left = visible_frames;
 }
 

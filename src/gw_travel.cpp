@@ -3,6 +3,7 @@
 #include "bn_math.h"
 
 #include "gw_character.h"
+#include "gw_map_redridge.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
 
@@ -14,6 +15,7 @@ namespace
     constexpr flight_def flights[] = {
         { "Stormwind", npc_id::DUNGAR, map_id::STORMWIND, map_data::stormwind::flight, 0, 41, 87 },
         { "Sentinel Hill", npc_id::THOR, map_id::WESTFALL, map_data::westfall::flight, 0, 37, 100 },
+        { "Lakeshire", npc_id::ARIENA, map_id::REDRIDGE, map_data::redridge::flight, 0, 67, 92 },
     };
 
     static_assert(sizeof(flights) / sizeof(flights[0]) == int(flight_id::COUNT));

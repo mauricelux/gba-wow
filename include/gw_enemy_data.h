@@ -15,6 +15,7 @@ namespace enemy_flag
     constexpr uint8_t PASSIVE = 4;      // only fights back
     constexpr uint8_t FAST = 8;         // runs faster than the player walks
     constexpr uint8_t NO_RESPAWN = 16;  // stays dead until the map is reloaded
+    constexpr uint8_t RARE = 32;        // a named wanderer: tougher, better loot, slow to come back
 }
 
 struct enemy_def

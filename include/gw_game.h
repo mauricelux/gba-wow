@@ -74,6 +74,8 @@ private:
     void _rest(bool loaded);
     void _check_area(bool force);
     void _interact();
+    [[nodiscard]] bool _water_ahead(bn::fixed_point& spot) const;
+    void _update_fishing();
     bool _update_overlays();
     void _set_paused(bool paused);
     static void _on_kill(void* context, int index);

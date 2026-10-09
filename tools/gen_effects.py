@@ -933,6 +933,15 @@ def travel_and_pet_icons(out):
     c.px(6, 5, I['white'])
     out['water_elemental'] = c
 
+    # Fishing: a rod bent over the water, its line and a red and white bobber.
+    c = icon_base('blue_d')
+    c.fill(c.rect(1, 11, 15, 15), I['blue_l'])
+    c.fill(c.line(2, 14, 11, 2.5, 1.2), I['brown'], I['out'])
+    c.fill(c.line(11.5, 2.5, 12.5, 9, 0.5), I['lgray'])
+    c.fill(c.ellipse(12.5, 10.5, 1.6, 1.6), I['white'], I['out'])
+    c.fill(c.rect(11, 9, 14, 10.5), I['red'])
+    out['fishing'] = c
+
 
 def main():
     write('target', target_ring(), TARGET_PALETTE, 16)

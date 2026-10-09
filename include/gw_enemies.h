@@ -116,6 +116,11 @@ struct enemy
         return def->flags & enemy_flag::ELITE;
     }
 
+    [[nodiscard]] bool rare() const
+    {
+        return def->flags & enemy_flag::RARE;
+    }
+
     [[nodiscard]] bool boss() const
     {
         return def->flags & enemy_flag::BOSS;

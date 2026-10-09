@@ -37,6 +37,9 @@ namespace
         case music_id::BOSS:
             return bn::music_items::boss;
 
+        case music_id::REDRIDGE:
+            return bn::music_items::redridge;
+
         default:
             return bn::nullopt;
         }

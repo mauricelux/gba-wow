@@ -134,6 +134,7 @@ void game::update()
     _chests.update(_player.position());
     _combat.update(input);
     _pet.update(! _combat.dead());
+    _update_fishing();
 
     if(_combat.teleport_map != map_id::NONE)
     {
@@ -387,7 +388,91 @@ void game::_interact()
         return;
     }
 
+    if(_combat.casting() == ability_id::FISHING)
+    {
+        return;
+    }
+
+    bn::fixed_point spot;
+
+    if(! _combat.in_combat() && _water_ahead(spot))
+    {
+        if(_combat.start_fishing())
+        {
+            _effects.burst(spot, projectile_kind::FROST);
+        }
+
+        return;
+    }
+
     _combat.engage();
+}
+
+bool game::_water_ahead(bn::fixed_point& spot) const
+{
+    int x = _player.position().x().floor_integer();
+    int y = _player.position().y().floor_integer();
+    int dx = 0;
+    int dy = 0;
+
+    switch(_player.direction())
+    {
+
+    case facing::UP:
+        dy = -1;
+        break;
+
+    case facing::DOWN:
+        dy = 1;
+        break;
+
+    case facing::LEFT:
+        dx = -1;
+        break;
+
+    default:
+        dx = 1;
+        break;
+    }
+
+    // The line lands a few steps out, past the reeds at the water's edge.
+    for(int step = 12; step <= 20; step += 4)
+    {
+        if(world::water_at(x + dx * step, y + dy * step))
+        {
+            spot = bn::fixed_point(x + dx * (step + 8), y + dy * (step + 8));
+            return true;
+        }
+
+        if(world::solid_at(x + dx * step, y + dy * step))
+        {
+            return false;
+        }
+    }
+
+    return false;
+}
+
+void game::_update_fishing()
+{
+    if(! _combat.fish_caught)
+    {
+        return;
+    }
+
+    _combat.fish_caught = false;
+    bn::fixed_point spot;
+
+    if(_water_ahead(spot))
+    {
+        _effects.burst(spot, projectile_kind::FROST);
+    }
+
+    if(quests_on_fish(world::map(), _player.position().x().floor_integer(),
+                      _player.position().y().floor_integer(), _hud))
+    {
+        _npcs.refresh_markers();
+    }
 }
 
 void game::_loot(int index)

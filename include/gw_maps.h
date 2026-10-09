@@ -17,6 +17,7 @@ struct map_info
     int width;
     int height;
     const uint8_t* collision;
+    const uint8_t* water;           // the solid cells that are water, laid out like collision
     int collision_columns;
     music_id music;
     bool dungeon;

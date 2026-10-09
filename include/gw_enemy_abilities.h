@@ -81,7 +81,8 @@ enum class enemy_family : uint8_t
     MURLOC,
     GNOLL,
     DEFIAS,
-    CONSTRUCT
+    CONSTRUCT,
+    ORC
 };
 
 enum class enemy_effect : uint8_t

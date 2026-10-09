@@ -58,6 +58,11 @@ namespace
         return { o::TAME, uint8_t(count), e::NONE, e::NONE, 0, area_id::NONE, name };
     }
 
+    [[nodiscard]] constexpr objective_def fish(area_id area, int count, int chance, const char* name)
+    {
+        return { o::FISH, uint8_t(count), e::NONE, e::NONE, uint8_t(chance), area, name };
+    }
+
     constexpr quest_def quests[] = {
         { "", "", "", "", "", n::NONE, n::NONE, 0, 0, qid::NONE, { none, none, none }, 0, 0,
           { i::NONE, i::NONE, i::NONE } },
@@ -295,7 +300,7 @@ namespace
           "Bring 8 Red Silk Bandanas from the Deadmines to Scout Galiaan.",
           "The Deadmines are dangerous. Take your time.",
           "Silk! So you made it into their mine. Impressive.",
-          n::GUARD_WF, n::GUARD_WF, 17, 15, qid::RED_LEATHER_BANDANAS,
+          n::GUARD_WF, n::GUARD_WF, 17, 16, qid::RED_LEATHER_BANDANAS,
           { collect(e::DEFIAS_MINER, 8, 60, "Red Silk Bandana", e::DEFIAS_PIRATE), none, none },
           xp(17), money(17),
           { i::MILITIA_LEGPLATES, i::SILK_TROUSERS, i::DEFIAS_LEGGINGS } },
@@ -307,7 +312,7 @@ namespace
           "Kill Sneed in the Deadmines.",
           "Sneed's still working on his machines, I'd wager.",
           "Without Sneed the Defias will have no more machines. Well fought.",
-          n::LEWIS, n::LEWIS, 18, 16, qid::THE_DEFIAS_BROTHERHOOD,
+          n::LEWIS, n::LEWIS, 18, 17, qid::THE_DEFIAS_BROTHERHOOD,
           { kill(e::SNEED, 1, "Sneed slain"), none, none }, xp(18, 200), money(18),
           { i::SHREDDER_GAUNTLETS, i::TINKER_GLOVES, i::MECHANIC_GLOVES } },
 
@@ -319,8 +324,8 @@ namespace
           "VanCleef still lives. Westfall waits.",
           "So falls Edwin VanCleef. Westfall is free, and every farmer here owes you their life.\n\n"
           "But he carried a letter I don't like the look of. Hear me out before you rest.",
-          n::GRYAN, n::GRYAN, 20, 17, qid::THE_DEFIAS_BROTHERHOOD,
-          { collect(e::VANCLEEF, 1, 100, "Head of VanCleef"), none, none }, xp(20, 200), money(20),
+          n::GRYAN, n::GRYAN, 19, 18, qid::THE_DEFIAS_BROTHERHOOD,
+          { collect(e::VANCLEEF, 1, 100, "Head of VanCleef"), none, none }, xp(19, 200), money(20),
           { i::CHAUSSES_OF_WESTFALL, i::TUNIC_OF_WESTFALL, i::STAFF_OF_WESTFALL } },
 
         // --- Stormwind ------------------------------------------------------------------------------
@@ -413,6 +418,157 @@ namespace
           "when it falls.",
           n::EINRIS, n::EINRIS, 10, 10, qid::NONE, { tame(1, "Beast tamed"), none, none }, xp(10), 0,
           { i::NONE, i::NONE, i::NONE }, subclass_id::BEAST_MASTERY },
+
+        // --- Redridge Mountains ---------------------------------------------------------------------
+
+        { "Lakeshire Needs Aid",
+          "A rider came down from Redridge last night. Orcs of the Blackrock clan are raiding "
+          "Lakeshire, and Stormwind has sent no one.\n\n"
+          "VanCleef can wait in his mine a little longer. Take the east road out of Elwynn and offer "
+          "your sword to Magistrate Solomon.",
+          "Report to Magistrate Solomon in Lakeshire, east of Elwynn Forest.",
+          "",
+          "Gryan sent you? Then at least one man in this kingdom remembers us. Welcome to Lakeshire.",
+          n::GRYAN, n::SOLOMON, 15, 14, qid::THE_DEFIAS_BROTHERHOOD, { none, none, none }, xp(15, 40),
+          money(5), { i::NONE, i::NONE, i::NONE } },
+
+        { "Encroaching Gnolls",
+          "Mongrels from the western canyons come down to the road at dusk. They took a cart and its "
+          "driver two nights ago.\n\n"
+          "Thin the pack before they grow bold enough to try the town.",
+          "Kill 10 Redridge Mongrels in the canyons west of Lakeshire.",
+          "I can still hear them howling at night.",
+          "Quieter already. The carters will thank you.",
+          n::BERTON, n::BERTON, 15, 14, qid::NONE,
+          { kill(e::REDRIDGE_MONGREL, 10, "Redridge Mongrel slain"), none, none }, xp(15), money(15),
+          { i::LAKESHIRE_GAUNTLETS, i::CANYON_WRAPS, i::MONGREL_HIDE_GLOVES } },
+
+        { "Murloc Poachers",
+          "Murlocs strip my nets every morning and carry the catch off to their huts on the shore. "
+          "Spotted sunfish, the best in the lake!\n\n"
+          "Get them back. The inn won't stay open on bread alone.",
+          "Bring 8 Spotted Sunfish from the Murloc Flesheaters to Dockmaster Baren.",
+          "Still no sunfish? The murlocs eat well, at least.",
+          "That's a fine haul. Breanna will have fish on the menu tonight.",
+          n::BAREN, n::BAREN, 15, 14, qid::NONE,
+          { collect(e::MURLOC_FLESHEATER, 8, 60, "Spotted Sunfish"), none, none }, xp(15), money(15),
+          { i::DOCKHAND_BOOTS, i::SHORELINE_SANDALS, i::POACHERS_BOOTS } },
+
+        { "The Fishing Contest",
+          "Every summer Lakeshire holds a fishing contest, orcs or no orcs. The prize is my lucky "
+          "hat!\n\n"
+          "Stand on the shore of Lake Everstill, face the water and press A to cast. Bring me six "
+          "Redridge Goldfin and the hat is yours.",
+          "Catch 6 Redridge Goldfin in Lake Everstill: face the water and press A.",
+          "Patience. The goldfin bite for those who wait.",
+          "Six goldfin! You're a natural. Here, wear it with pride.",
+          n::BRAY, n::BRAY, 15, 14, qid::NONE,
+          { fish(area_id::LAKE_EVERSTILL, 6, 60, "Redridge Goldfin"), none, none }, xp(15, 60), money(10),
+          { i::LUCKY_FISHING_HAT, i::NONE, i::NONE } },
+
+        { "Solomon's Law",
+          "Shadowhide gnolls hold Alther's Mill in the north. Their mystics speak to things in the "
+          "dark, and their warriors take our sheep and our people.\n\n"
+          "Lakeshire's law is mine to keep. Go and enforce it.",
+          "Kill 8 Shadowhide Gnolls and 6 Shadowhide Mystics at Alther's Mill.",
+          "The gnolls still hold the mill.",
+          "Justice is done. The mill will grind again.",
+          n::SOLOMON, n::SOLOMON, 16, 15, qid::LAKESHIRE_NEEDS_AID,
+          { kill(e::SHADOWHIDE_GNOLL, 8, "Shadowhide Gnoll slain"), kill(e::SHADOWHIDE_MYSTIC, 6,
+            "Shadowhide Mystic slain"), none }, xp(16), money(16),
+          { i::LAKESHIRE_LEGGUARDS, i::MAGISTRATE_TROUSERS, i::SHADOWHIDE_LEGGINGS } },
+
+        { "Blackrock Menace",
+          "Blackrock outrunners scout the Lakeridge Highway for the war parties behind them. Each "
+          "carries a battleworn axe.\n\n"
+          "Bring me their axes. Every one is a scout who won't report back to the keep.",
+          "Bring 10 Battleworn Axes from the Blackrock Outrunners to Marshal Marris.",
+          "The outrunners are still on the highway.",
+          "Ten axes. Their chieftain is blind in the south now.",
+          n::MARRIS, n::MARRIS, 16, 15, qid::LAKESHIRE_NEEDS_AID,
+          { collect(e::BLACKROCK_OUTRUNNER, 10, 60, "Battleworn Axe"), none, none }, xp(16), money(16),
+          { i::LAKESHIRE_LONGSWORD, i::EVERSTILL_STAFF, i::REDRIDGE_RECURVE } },
+
+        { "Redridge Goulash",
+          "My Redridge goulash is famous from here to Stormwind, but with the orcs about nobody "
+          "dares go hunting.\n\n"
+          "Bring me snouts from the great goretusks south of the lake and meat from the tarantulas "
+          "in the hills.",
+          "Bring 5 Great Goretusk Snouts and 5 Crisp Spider Meat to Chef Breanna.",
+          "A goulash without snouts is just soup, dear.",
+          "Perfect! Come back tonight for the first bowl.",
+          n::BREANNA, n::BREANNA, 17, 15, qid::NONE,
+          { collect(e::GREAT_GORETUSK, 5, 60, "Great Goretusk Snout"), collect(e::TARANTULA, 5, 60,
+            "Crisp Spider Meat"), none }, xp(17), money(17),
+          { i::LAKESHIRE_CHAINMAIL, i::LAKESHIRE_ROBE, i::GORETUSK_HIDE_VEST } },
+
+        { "The Everstill Bridge",
+          "The orcs broke the bridge over the lake so their war parties could raid both shores. To "
+          "fix it I need iron rivets, and the Blackrock grunts in Render's Valley stole ours.\n\n"
+          "Take them back.",
+          "Bring 8 Iron Rivets from the Blackrock Grunts in Render's Valley to Foreman Oslow.",
+          "No rivets, no bridge.",
+          "Good iron, this. We start on the bridge in the morning.",
+          n::OSLOW, n::OSLOW, 17, 15, qid::NONE,
+          { collect(e::BLACKROCK_GRUNT, 8, 60, "Iron Rivet"), none, none }, xp(17), money(17),
+          { i::IRONWORKER_HELM, i::SURVEYOR_HOOD, i::RIGGER_CAP } },
+
+        { "Bellygrub",
+          "There's a boar in the south hills the size of a hay cart. Bellygrub, the farmers call "
+          "it. It has eaten three fences and a scarecrow.\n\n"
+          "Bring me its tusk and I'll know it won't eat a fourth.",
+          "Bring Bellygrub's Tusk to Verner Osgood.",
+          "Bellygrub still roams the hills, I'd bet.",
+          "That's a tusk! I'll hang it over my door.",
+          n::OSGOOD, n::OSGOOD, 18, 16, qid::NONE,
+          { collect(e::BELLYGRUB, 1, 100, "Bellygrub's Tusk"), none, none }, xp(18, 120), money(18),
+          { i::TUSK_CLEAVER, i::OSGOOD_WALKING_STAFF, i::PIGSTICKER_BOW } },
+
+        { "Blackrock Bounty",
+          "With their scouts gone, the war party in Render's Valley is ours to break. Grunts and "
+          "shadowcasters, camped in the open.\n\n"
+          "Strike them before they march on the town.",
+          "Kill 10 Blackrock Grunts and 6 Blackrock Shadowcasters in Render's Valley.",
+          "The war party still camps in the valley.",
+          "Render's Valley is clear. Lakeshire sleeps tonight.",
+          n::MARRIS, n::MARRIS, 18, 16, qid::BLACKROCK_MENACE,
+          { kill(e::BLACKROCK_GRUNT, 10, "Blackrock Grunt slain"), kill(e::BLACKROCK_SHADOWCASTER, 6,
+            "Shadowcaster slain"), none }, xp(18), money(18),
+          { i::MARRIS_SABATONS, i::LAKESHIRE_SLIPPERS, i::OUTRUNNER_BOOTS } },
+
+        { "Stonewatch Keep",
+          "Stonewatch Keep guarded these mountains for a hundred years. Now the Blackrock hold it, "
+          "and their summoners burn fires in its courtyard day and night.\n\n"
+          "Climb the road east of the lake and break the garrison.",
+          "Kill 8 Blackrock Renegades and 6 Blackrock Summoners at Stonewatch Keep.",
+          "The fires still burn at Stonewatch.",
+          "The garrison is broken. Only their warlord is left.",
+          n::SOLOMON, n::SOLOMON, 19, 17, qid::SOLOMONS_LAW,
+          { kill(e::BLACKROCK_RENEGADE, 8, "Blackrock Renegade slain"), kill(e::BLACKROCK_SUMMONER, 6,
+            "Blackrock Summoner slain"), none }, xp(19), money(19),
+          { i::STONEWATCH_GAUNTLETS, i::SUMMONER_GLOVES, i::RENEGADE_GRIPS } },
+
+        { "Wanted: Gath'Ilzogg",
+          "WANTED: Gath'Ilzogg, warlord of the Blackrock in Redridge. He leads the raids from the "
+          "top of Stonewatch Keep.\n\n"
+          "Lakeshire pays for his head. By order of Magistrate Solomon.",
+          "Bring the Head of Gath'Ilzogg to Magistrate Solomon.",
+          "Gath'Ilzogg still holds the keep.",
+          "The warlord is dead. Redridge is free of the Blackrock, for now. Lakeshire will never "
+          "forget this.",
+          n::SOLOMON, n::SOLOMON, 20, 18, qid::STONEWATCH_KEEP,
+          { collect(e::GATH_ILZOGG, 1, 100, "Head of Gath'Ilzogg"), none, none }, xp(20, 200), money(20),
+          { i::REDRIDGE_WARBLADE, i::STAFF_OF_LAKESHIRE, i::EVERSTILL_LONGBOW } },
+
+        { "Return to Sentinel Hill",
+          "Gryan Stoutmantle sent you to us, and you gave us back our mountains. Go back to Westfall "
+          "and tell him Lakeshire stands.\n\n"
+          "He has a debt to settle with VanCleef. Help him settle it.",
+          "Return to Gryan Stoutmantle at Sentinel Hill in Westfall.",
+          "",
+          "Gath'Ilzogg dead, and the Blackrock driven off! Then you're ready for the Deadmines.",
+          n::SOLOMON, n::GRYAN, 18, 18, qid::WANTED_GATH_ILZOGG, { none, none, none }, xp(18, 40),
+          money(10), { i::NONE, i::NONE, i::NONE } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));
@@ -823,6 +979,77 @@ bool quests_on_tame(hud& hud_ref)
         if(complete_if_done(quest))
         {
             completed_message(hud_ref, quest);
+        }
+    }
+
+    return changed;
+}
+
+bool quests_on_fish(const map_info& map, int x, int y, hud& hud_ref)
+{
+    bool changed = false;
+    bool wanted = false;
+
+    // Areas overlap (a town by its lake): any area of the objective's id around the player counts.
+    auto inside = [&map, x, y](area_id id)
+    {
+        for(const area_def& area : map.areas)
+        {
+            if(area.id == id && x >= area.x && y >= area.y && x < area.x + area.width && y < area.y + area.height)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    for(int index = 1; index < int(quest_id::COUNT); ++index)
+    {
+        quest_id quest = quest_id(index);
+        quest_progress& progress = quest_state(quest);
+
+        if(progress.status != quest_status::ACTIVE)
+        {
+            continue;
+        }
+
+        const quest_def& def = get_quest(quest);
+
+        for(int objective_index = 0; objective_index < quest_objectives; ++objective_index)
+        {
+            const objective_def& objective = def.objectives[objective_index];
+            uint8_t& count = progress.counts[objective_index];
+
+            if(objective.type == objective_type::FISH && count < objective.count && inside(objective.area))
+            {
+                wanted = true;
+
+                if(random_chance(objective.chance))
+                {
+                    ++count;
+                    progress_message(hud_ref, objective, count);
+                    changed = true;
+                }
+            }
+        }
+
+        if(complete_if_done(quest))
+        {
+            completed_message(hud_ref, quest);
+        }
+    }
+
+    if(! changed)
+    {
+        if(wanted)
+        {
+            hud_ref.message("It got away", ui::color::WHITE);
+        }
+        else
+        {
+            hud_ref.message(random_chance(50) ? "A small fish. You let it go" : "Nothing bites",
+                            ui::color::WHITE);
         }
     }
 

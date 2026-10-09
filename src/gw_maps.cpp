@@ -14,6 +14,8 @@
 #include "bn_regular_bg_items_map_fargodeep_overhead.h"
 #include "bn_regular_bg_items_map_inn_ground.h"
 #include "bn_regular_bg_items_map_inn_overhead.h"
+#include "bn_regular_bg_items_map_redridge_ground.h"
+#include "bn_regular_bg_items_map_redridge_overhead.h"
 #include "bn_regular_bg_items_map_stockade_ground.h"
 #include "bn_regular_bg_items_map_stockade_overhead.h"
 #include "bn_regular_bg_items_map_stormwind_ground.h"
@@ -28,6 +30,7 @@
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
 #include "gw_map_inn.h"
+#include "gw_map_redridge.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
@@ -55,6 +58,7 @@ namespace
     constexpr point_def stormwind_graveyards[] = { map_data::stormwind::respawn };
     constexpr point_def stockade_graveyards[] = { map_data::stockade::respawn };
     constexpr point_def deeprun_tram_graveyards[] = { map_data::deeprun_tram::respawn };
+    constexpr point_def redridge_graveyards[] = { map_data::redridge::lakeshire_respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
@@ -64,6 +68,7 @@ namespace
         map_data::NAME::width, \
         map_data::NAME::height, \
         map_data::NAME::collision, \
+        map_data::NAME::water, \
         map_data::NAME::collision_columns, \
         map_data::NAME::music, \
         DUNGEON, \
@@ -87,6 +92,7 @@ namespace
         GW_MAP_INFO(STORMWIND, stormwind, false, false),
         GW_MAP_INFO(STOCKADE, stockade, true, true),
         GW_MAP_INFO(DEEPRUN_TRAM, deeprun_tram, false, true),
+        GW_MAP_INFO(REDRIDGE, redridge, false, false),
     };
 
     [[nodiscard]] int count_chests()

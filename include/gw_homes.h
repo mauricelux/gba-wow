@@ -14,6 +14,7 @@ enum class home_id : uint8_t
     GOLDSHIRE,
     SENTINEL_HILL,
     STORMWIND,
+    LAKESHIRE,
     COUNT
 };
 

@@ -120,6 +120,8 @@ enum class ability_id : uint8_t
     PET_PASSIVE,
     // mage: the Frost capstone
     WATER_ELEMENTAL,
+    // everyone: casting a line from the shore (A facing water where fish bite); never on a bar
+    FISHING,
     COUNT
 };
 

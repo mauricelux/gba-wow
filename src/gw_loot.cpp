@@ -85,6 +85,20 @@ namespace
         // 20 Bazil Thredd
         { { { i::HEALING_POTION, 100, 2, 3 }, none, none }, true,
           { i::THREDDS_DUSKBLADE, i::SMOKEWEAVE_PANTS, i::SHADOWHIDE_BOOTS } },
+        // 21 Blackrock orcs
+        { { { i::WOOL_CLOTH, 40, 1, 2 }, { i::MUTTON_CHOP, 8, 1, 1 }, { i::HEALING_POTION, 5, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 22 Bellygrub
+        { { { i::CHIPPED_TUSK, 100, 2, 3 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 23 Ribchaser
+        { { { i::GNOLL_PELT, 100, 1, 2 }, { i::HEALING_POTION, 50, 1, 1 }, none }, true,
+          { i::RIBCHASERS_CLEAVER, i::GNOLLBONE_STAFF, i::RIBCHASERS_LONGBOW } },
+        // 24 Gath'Ilzogg
+        { { { i::HEALING_POTION, 100, 1, 2 }, none, none }, true,
+          { i::GATHS_WARMAUL, i::SHADOWCASTER_ROBE, i::BLACKROCK_HUNTING_BOW } },
+        // 25 Redridge gnolls
+        { { { i::GNOLL_PELT, 45, 1, 1 }, { i::WOOL_CLOTH, 25, 1, 1 }, { i::HEALING_POTION, 4, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
     };
 
     // Uncommon items any enemy of a level band may drop.
@@ -169,7 +183,7 @@ void roll_loot(enemy& item)
     {
         item.loot_money = random_range(level * 2, level * 5);
 
-        if(item.elite())
+        if(item.elite() || item.rare())
         {
             item.loot_money *= 4;
         }
@@ -181,7 +195,7 @@ void roll_loot(enemy& item)
         add(item, table.choice[random_range(0, choices - 1)], 1);
     }
 
-    if(random_chance(item.elite() ? elite_world_drop_chance : world_drop_chance))
+    if(random_chance(item.elite() || item.rare() ? elite_world_drop_chance : world_drop_chance))
     {
         add(item, world_drop(level), 1);
     }

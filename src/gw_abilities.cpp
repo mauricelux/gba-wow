@@ -302,6 +302,10 @@ namespace
         { "Water Elemental", "A water elemental fights for you for 45 seconds, casting Frostbolt.", c::MAGE,
           FROST, i::WATER_ELEMENTAL, TALENT, 90, 180 * seconds, 0, 0, 20, 3, v::DAMAGE, 45 * seconds, a::SELF,
           s::FROST, p::FROST, { 40 } },
+
+        // everyone: started from the shore with A, so it has no ranks to learn
+        { "Fishing", "Cast a line and wait for a bite.", any_class, ALL, i::FISHING, QUEST | CHANNELED, 0, 0,
+          180, 0, 0, 0, v::LEVEL, 0, a::SELF, s::PHYSICAL, p::NONE, {} },
     };
 
     static_assert(sizeof(abilities) / sizeof(abilities[0]) == ability_count);
@@ -495,6 +499,7 @@ bar_id default_bar(ability_id ability)
     case ability_id::INTIMIDATION:
     case ability_id::PET_PASSIVE:
     case ability_id::WATER_ELEMENTAL:
+    case ability_id::FISHING:
         return bar_id::UTILITY;
 
     default:

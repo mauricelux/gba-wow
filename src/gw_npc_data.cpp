@@ -24,6 +24,7 @@ namespace
     constexpr uint8_t stormwind_goods = 5;
     constexpr uint8_t stormwind_weapons = 6;
     constexpr uint8_t stormwind_armor = 7;
+    constexpr uint8_t lakeshire = 8;
 
     constexpr npc_info npcs[] = {
         { "", "", l::PEASANT, 0, c::WARRIOR, 0, "" },
@@ -115,6 +116,30 @@ namespace
           "Reach level 30, bring 5 gold, and I'll teach you to ride." },
         { "Monty", "Deeprun Tram", l::TRAM_CONDUCTOR, 0, c::WARRIOR, 0,
           "The lift up to Ironforge is shut for repairs. The tram still runs back to Stormwind!" },
+        { "Magistrate Solomon", "", l::MAGISTRATE, 0, c::WARRIOR, 0,
+          "Lakeshire stands alone. Stormwind sends letters, not soldiers." },
+        { "Marshal Marris", "", l::MARSHAL, 0, c::WARRIOR, 0,
+          "The Blackrock orcs come down from the keep every night. We need every blade." },
+        { "Foreman Oslow", "", l::FOREMAN, 0, c::WARRIOR, 0,
+          "That bridge won't fix itself, and my crew won't go near the orcs." },
+        { "Dockmaster Baren", "", l::DOCKMASTER, 0, c::WARRIOR, 0,
+          "Murlocs in the lake, gnolls on the shore. Fine place to run a dock." },
+        { "Chef Breanna", "", l::CHEF_F, 0, c::WARRIOR, 0,
+          "Nobody leaves the Lakeshire Inn hungry. Not while I'm cooking." },
+        { "Innkeeper Brianna", "Innkeeper", l::INNKEEPER_F, innkeeper, c::WARRIOR, lakeshire,
+          "Welcome to the Lakeshire Inn. Warm beds and a view of the lake." },
+        { "Verner Osgood", "", l::PEASANT, 0, c::WARRIOR, 0,
+          "There's a boar in the hills as big as a cart. Bellygrub, they call it." },
+        { "Bray the Fisherman", "", l::FISHERMAN, 0, c::WARRIOR, 0,
+          "Face the lake from the shore and press A to cast. Patience does the rest." },
+        { "Guard Berton", "", l::GUARD, 0, c::WARRIOR, 0,
+          "The gnolls in the west hills grow bolder. Keep your eyes open." },
+        { "Ariena Stormfeather", "Gryphon Master", l::GRYPHON_MASTER_F, flight_master, c::WARRIOR, 0,
+          "Lakeshire's gryphons fly to Stormwind and beyond." },
+        { "Karen Taylor", "General Goods", l::MERCHANT, vendor, c::WARRIOR, lakeshire,
+          "Food, drink and potions for the road. The orcs won't sell you any." },
+        { "Lakeridge Guard", "", l::GUARD, 0, c::WARRIOR, 0,
+          "The road to Duskwood is closed. Orders from Lakeshire until the orcs are dealt with." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

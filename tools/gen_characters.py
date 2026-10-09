@@ -124,6 +124,16 @@ HEAD_PATCHES = {
                  7: '.ommmmsShhhho...', 8: '..ommmsohhho....', 9: '...ooAAohhho....',
                  10: '..oALLAAohhgo...'},
     },
+    # A topknot, a heavy brow, a wide jaw and two tusks (the trim color).
+    'orc': {
+        'front': {1: '.....oHH', 2: '....oHHH', 3: '..ooSSHH', 4: '.oSSSSSH', 5: '.osSSSSS', 6: '.oSSoSSS',
+                  7: '.oSmmgmm', 8: '..osmmmm'},
+        'back': {1: '.....oHH', 2: '....oHHH', 3: '..ooSSHH', 4: '.oSSSSSH', 5: '.osSSSSS', 6: '.oSSSSSS',
+                 7: '.oSSSSSS', 8: '..osSSSS'},
+        'side': {0: '.......ooo......', 1: '......oHHHo.....', 2: '....ooHHHHo.....',
+                 3: '..ooSSSHHSSo....', 4: '.oSSSSSSSSSo....', 5: 'osSSSSSSSSSo....',
+                 6: '.oSoSSSSSSSo....', 7: 'ogmmmmsSSSSo....', 8: '.ommmmsooo......'},
+    },
     'dwarf': {
         'front': {7: '...ommmm', 8: '...ommmm', 9: '.ooAommm', 10: 'oALLAomm', 11: 'oAAAaobm'},
         'side': {8: '.ommmmsooo......', 9: '..ommmAooogo....', 10: '..ommLAAobBgo...',
@@ -481,6 +491,8 @@ HUMANOID_SHEETS = {
     'dwarf_bow': Humanoid('dwarf', 'armor', 'bow'),
     'elf_sword': Humanoid('elf', 'armor', 'sword'),
     'elf_bow': Humanoid('elf', 'armor', 'bow'),
+    'orc_sword': Humanoid('orc', 'armor', 'sword'),
+    'orc_staff': Humanoid('orc', 'robe', 'staff'),
 }
 
 # --- creatures --------------------------------------------------------------------------------------
@@ -983,6 +995,14 @@ SKIN_TAN = (200, 136, 96)
 SKIN_DARK = (152, 96, 64)
 SKIN_ELF = (176, 152, 224)
 SKIN_DWARF = (232, 160, 128)
+SKIN_ORC = (104, 152, 72)
+TUSK = (232, 224, 200)
+
+
+def orc_palette(armor, tabard, hair=(40, 32, 32), leather=(96, 64, 40), skin=SKIN_ORC):
+    return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=TUSK, leather=leather,
+                            lower_face=(skin[0] - 8, skin[1] - 8, skin[2]))
+
 
 # Looks used by the player (race_class) and by NPCs and humanoid enemies. Each is a sheet + palette.
 HUMANOID_LOOKS = {
@@ -1106,6 +1126,28 @@ HUMANOID_LOOKS = {
     'tram_conductor': ('dwarf_sword', humanoid_palette(skin=SKIN_DWARF, hair=(160, 160, 168), armor=(56, 64, 104),
                                                        tabard=(176, 136, 56), trim=(232, 200, 96),
                                                        lower_face=(160, 160, 168))),
+    # Lakeshire
+    'magistrate': ('hum_robe', humanoid_palette(hair=(184, 184, 192), armor=(56, 56, 88), tabard=(152, 32, 40),
+                                                trim=(232, 184, 64))),
+    'foreman': ('hum_plain', humanoid_palette(hair=(120, 72, 40), armor=(144, 104, 64), tabard=(96, 96, 104),
+                                              trim=(184, 152, 96), leather=(104, 72, 48))),
+    'dockmaster': ('hum_plain', humanoid_palette(skin=SKIN_TAN, hair=(80, 56, 40), armor=(64, 88, 136),
+                                                 tabard=(216, 208, 184), trim=(184, 152, 96))),
+    'chef_f': ('fem_robe', humanoid_palette(hair=(176, 104, 56), armor=(232, 228, 216), tabard=(200, 64, 56),
+                                            trim=(232, 184, 64))),
+    'fisherman': ('hum_plain', humanoid_palette(hair=(176, 176, 168), armor=(88, 112, 72), tabard=(136, 104, 64),
+                                                trim=(200, 168, 96), lower_face=(176, 176, 168))),
+    'gryphon_master_f': ('fem_robe', humanoid_palette(hair=(224, 200, 120), armor=(120, 96, 64),
+                                                      tabard=(48, 96, 136), trim=(232, 184, 64))),
+    # The Blackrock orcs
+    'blackrock_outrunner': ('orc_sword', orc_palette(armor=(136, 96, 64), tabard=(152, 40, 32))),
+    'blackrock_grunt': ('orc_sword', orc_palette(armor=(120, 120, 136), tabard=(136, 32, 32))),
+    'blackrock_shadowcaster': ('orc_staff', orc_palette(armor=(80, 56, 104), tabard=(40, 32, 48))),
+    'blackrock_renegade': ('orc_sword', orc_palette(armor=(88, 80, 80), tabard=(96, 24, 24),
+                                                    skin=(96, 136, 64))),
+    'blackrock_summoner': ('orc_staff', orc_palette(armor=(144, 40, 32), tabard=(56, 40, 40))),
+    'gath_ilzogg': ('orc_sword', orc_palette(armor=(64, 64, 72), tabard=(176, 40, 32), hair=(24, 20, 24),
+                                             skin=(88, 128, 56))),
 }
 
 CREATURE_LOOKS = {
@@ -1135,6 +1177,20 @@ CREATURE_LOOKS = {
                                          extra=(232, 184, 64), weapon=(184, 184, 192))),
     'water_elemental': ('water_elemental', creature_palette((64, 136, 216), (216, 240, 248),
                                                             eye=(240, 252, 255), light=(136, 200, 248))),
+    # Redridge
+    'redridge_mongrel': ('gnoll', creature_palette((176, 104, 64), (104, 56, 40), eye=(232, 48, 32),
+                                                   extra=(112, 80, 56), weapon=(136, 96, 56))),
+    'shadowhide_gnoll': ('gnoll', creature_palette((96, 96, 120), (48, 48, 64), eye=(232, 200, 64),
+                                                   extra=(72, 56, 48), weapon=(152, 152, 160))),
+    'shadowhide_mystic': ('gnoll', creature_palette((104, 88, 128), (56, 40, 72), eye=(160, 232, 248),
+                                                    extra=(120, 48, 136), weapon=(136, 96, 56))),
+    'ribchaser': ('gnoll', creature_palette((208, 200, 184), (136, 120, 104), eye=(232, 32, 32),
+                                            extra=(152, 40, 40), weapon=(184, 184, 192))),
+    'murloc_flesheater': ('murloc', creature_palette((168, 104, 72), (216, 176, 136), eye=(24, 24, 24),
+                                                     extra=(136, 48, 40))),
+    'great_goretusk': ('boar', creature_palette((96, 64, 56), (168, 128, 112), eye=(232, 64, 32))),
+    'bellygrub': ('boar', creature_palette((216, 152, 144), (240, 200, 184), eye=(40, 24, 24))),
+    'tarantula': ('spider', creature_palette((120, 80, 48), (216, 136, 48), eye=(232, 48, 32))),
 }
 
 

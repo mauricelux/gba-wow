@@ -74,6 +74,7 @@ enum class map_id : uint16_t
     STORMWIND,
     STOCKADE,
     DEEPRUN_TRAM,
+    REDRIDGE,
     COUNT
 };
 
@@ -85,7 +86,8 @@ enum class music_id : uint8_t
     TOWN,
     WESTFALL,
     DUNGEON,
-    BOSS
+    BOSS,
+    REDRIDGE
 };
 
 enum class area_id : uint8_t
@@ -94,7 +96,8 @@ enum class area_id : uint8_t
     FARGODEEP,
     IRONCLAD_COVE,
     ECHO_RIDGE,
-    MOONBROOK
+    MOONBROOK,
+    LAKE_EVERSTILL      // fishing waters
 };
 
 enum class npc_id : uint16_t
@@ -144,6 +147,19 @@ enum class npc_id : uint16_t
     THOR,
     RANDAL,
     MONTY,
+    // Redridge
+    SOLOMON,
+    MARRIS,
+    OSLOW,
+    BAREN,
+    BREANNA,
+    BRIANNA,
+    OSGOOD,
+    BRAY,
+    BERTON,
+    ARIENA,
+    KAREN,
+    GUARD_LAKERIDGE,
     COUNT
 };
 
@@ -178,6 +194,21 @@ enum class enemy_id : uint16_t
     KAM_DEEPFURY,
     BAZIL_THREDD,
     DEFIAS_RIOTER,
+    // Redridge
+    REDRIDGE_MONGREL,
+    SHADOWHIDE_GNOLL,
+    SHADOWHIDE_MYSTIC,
+    RIBCHASER,
+    MURLOC_FLESHEATER,
+    GREAT_GORETUSK,
+    BELLYGRUB,
+    TARANTULA,
+    BLACKROCK_OUTRUNNER,
+    BLACKROCK_GRUNT,
+    BLACKROCK_SHADOWCASTER,
+    BLACKROCK_RENEGADE,
+    BLACKROCK_SUMMONER,
+    GATH_ILZOGG,
     COUNT
 };
 

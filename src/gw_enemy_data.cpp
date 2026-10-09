@@ -11,6 +11,7 @@ namespace
     using namespace enemy_flag;
 
     constexpr ai_style MELEE = ai_style::MELEE;
+    constexpr ai_style CASTER = ai_style::CASTER;
     constexpr ai_style RUNNER = ai_style::RUNNER;
 
     // name, look, min level, max level, flags, health %, damage %, attack speed, scale %, respawn s, loot,
@@ -33,12 +34,12 @@ namespace
         { "Harvest Watcher", l::HARVEST_WATCHER, 12, 14, 0, 115, 110, 26, 110, 60, 11, f::CONSTRUCT, MELEE, {} },
         { "Defias Trapper", l::DEFIAS_TRAPPER, 11, 13, 0, 100, 100, 20, 100, 60, 12, f::DEFIAS, MELEE, { a::NET } },
         { "Defias Smuggler", l::DEFIAS_SMUGGLER, 12, 14, 0, 100, 105, 20, 100, 60, 12, f::DEFIAS, MELEE, {} },
-        { "Riverpaw Brute", l::GNOLL_BRUTE, 14, 16, 0, 115, 110, 24, 110, 60, 9, f::GNOLL, MELEE, { a::ENRAGE } },
+        { "Riverpaw Brute", l::GNOLL_BRUTE, 13, 15, 0, 115, 110, 24, 110, 60, 9, f::GNOLL, MELEE, { a::ENRAGE } },
         { "Defias Miner", l::DEFIAS_MINER, 16, 17, 0, 130, 105, 20, 100, 90, 13, f::DEFIAS, MELEE, {} },
         { "Goblin Engineer", l::GOBLIN_ENGINEER, 17, 18, 0, 125, 110, 20, 100, 90, 14, f::DEFIAS, MELEE, {} },
         { "Sneed", l::SNEED, 19, 19, ELITE | BOSS | NO_RESPAWN, 240, 130, 20, 160, 0, 15, f::DEFIAS, MELEE, {} },
         { "Defias Pirate", l::DEFIAS_PIRATE, 18, 19, 0, 130, 110, 20, 100, 90, 13, f::DEFIAS, MELEE, { a::CLEAVE } },
-        { "Edwin VanCleef", l::VANCLEEF, 21, 21, ELITE | BOSS | NO_RESPAWN, 300, 110, 18, 140, 0, 16,
+        { "Edwin VanCleef", l::VANCLEEF, 20, 20, ELITE | BOSS | NO_RESPAWN, 300, 110, 18, 140, 0, 16,
           f::DEFIAS, MELEE, {} },
         { "Blackguard", l::DEFIAS_BLACKGUARD, 19, 19, NO_RESPAWN, 70, 75, 20, 100, 0, 0, f::DEFIAS, MELEE, {} },
         { "Defias Prisoner", l::DEFIAS_PRISONER, 19, 20, 0, 120, 100, 20, 100, 90, 17, f::DEFIAS, MELEE, {} },
@@ -51,6 +52,33 @@ namespace
         { "Bazil Thredd", l::BAZIL_THREDD, 21, 21, ELITE | BOSS | NO_RESPAWN, 250, 95, 18, 140, 0, 20,
           f::DEFIAS, MELEE, {} },
         { "Defias Rioter", l::DEFIAS_CONVICT, 19, 19, NO_RESPAWN, 60, 70, 20, 100, 0, 0, f::DEFIAS, MELEE, {} },
+        // Redridge
+        { "Redridge Mongrel", l::REDRIDGE_MONGREL, 15, 16, 0, 105, 100, 22, 100, 60, 25, f::GNOLL, RUNNER,
+          { a::THRASH } },
+        { "Shadowhide Gnoll", l::SHADOWHIDE_GNOLL, 16, 17, 0, 115, 105, 22, 105, 60, 25, f::GNOLL, MELEE,
+          { a::SUNDER_ARMOR } },
+        { "Shadowhide Mystic", l::SHADOWHIDE_MYSTIC, 16, 17, 0, 90, 90, 22, 100, 60, 25, f::GNOLL, CASTER,
+          { a::SHADOW_BOLT, a::CURSE_OF_WEAKNESS } },
+        { "Ribchaser", l::RIBCHASER, 18, 18, RARE, 190, 125, 22, 120, 255, 23, f::GNOLL, MELEE,
+          { a::THRASH, a::ENRAGE } },
+        { "Murloc Flesheater", l::MURLOC_FLESHEATER, 15, 16, 0, 100, 100, 20, 100, 60, 6, f::MURLOC, RUNNER,
+          { a::CALL_FOR_HELP } },
+        { "Great Goretusk", l::GREAT_GORETUSK, 16, 17, 0, 115, 100, 20, 110, 60, 7, f::BEAST, MELEE, { a::CHARGE } },
+        { "Bellygrub", l::BELLYGRUB, 19, 19, 0, 230, 120, 24, 150, 180, 22, f::BEAST, MELEE,
+          { a::CHARGE, a::ENRAGE } },
+        { "Tarantula", l::TARANTULA, 15, 17, 0, 95, 105, 18, 95, 60, 4, f::BEAST, MELEE, { a::POISON } },
+        { "Blackrock Outrunner", l::BLACKROCK_OUTRUNNER, 15, 17, FAST, 100, 100, 20, 100, 60, 21, f::ORC, MELEE,
+          { a::CHARGE } },
+        { "Blackrock Grunt", l::BLACKROCK_GRUNT, 17, 18, 0, 120, 105, 22, 105, 60, 21, f::ORC, MELEE,
+          { a::SUNDER_ARMOR, a::BATTLE_SHOUT } },
+        { "Blackrock Shadowcaster", l::BLACKROCK_SHADOWCASTER, 17, 18, 0, 95, 95, 22, 100, 60, 21, f::ORC, CASTER,
+          { a::SHADOW_BOLT, a::CURSE_OF_WEAKNESS } },
+        { "Blackrock Renegade", l::BLACKROCK_RENEGADE, 18, 19, 0, 125, 110, 22, 105, 75, 21, f::ORC, MELEE,
+          { a::MORTAL_STRIKE } },
+        { "Blackrock Summoner", l::BLACKROCK_SUMMONER, 18, 19, 0, 100, 100, 22, 100, 75, 21, f::ORC, CASTER,
+          { a::FIREBALL, a::BURNING } },
+        { "Gath'Ilzogg", l::GATH_ILZOGG, 20, 20, ELITE, 320, 150, 22, 140, 240, 24, f::ORC, MELEE,
+          { a::CLEAVE, a::WAR_STOMP } },
     };
 
     static_assert(sizeof(enemies) / sizeof(enemies[0]) == int(enemy_id::COUNT));

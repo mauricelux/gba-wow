@@ -59,6 +59,45 @@ namespace
     // By held_bar.
     constexpr const char* bar_names[] = { "", "Combat", "Utility", "Buffs", "Items" };
 
+    // The target frame's name row, right of the player's numbers.
+    constexpr int target_name_width = 16;
+
+    // A name too long for the target frame loses its title ("Targorr the Dread" becomes "Targorr") or
+    // keeps the first word's initial ("Blackrock Shadowcaster" becomes "B. Shadowcaster").
+    [[nodiscard]] bn::string<32> frame_name(const bn::string_view& name)
+    {
+        if(name.size() <= target_name_width)
+        {
+            return bn::string<32>(name);
+        }
+
+        int space = 0;
+
+        while(space < name.size() && name[space] != ' ')
+        {
+            ++space;
+        }
+
+        if(space + 1 >= name.size())
+        {
+            return bn::string<32>(name.substr(0, target_name_width));
+        }
+
+        char next = name[space + 1];
+
+        if(next >= 'a' && next <= 'z')
+        {
+            return bn::string<32>(name.substr(0, space));
+        }
+
+        bn::string<32> result;
+        result.push_back(name[0]);
+        result.append(". ");
+        bn::string_view rest = name.substr(space + 1);
+        result.append(rest.substr(0, bn::min(rest.size(), target_name_width - 3)));
+        return result;
+    }
+
     // Items bar slots go on the D-pad slots: up, right, down, left.
     constexpr int first_item_slot = 3;
 
@@ -309,9 +348,10 @@ void hud::_draw_target(const combat& combat_ref, const enemies& enemies_ref)
         int difference = int(item.level) - int(character().level);
         ui::color name_color = is_gray(item.level) ? ui::color::GRAY : difference >= 3 ? ui::color::RED :
                 difference >= -2 ? ui::color::YELLOW : ui::color::GREEN;
-        ui::text_right(29, 0, item.def->name, name_color);
+        ui::text_right(29, 0, frame_name(item.def->name), name_color);
 
-        bn::string<8> level_text = item.boss() ? bn::string<8>("??") : bn::to_string<8>(int(item.level));
+        bn::string<8> level_text = item.boss() ? bn::string<8>("??") : item.rare() ? bn::string<8>("Rare") :
+                                                                                bn::to_string<8>(int(item.level));
 
         if(item.elite())
         {

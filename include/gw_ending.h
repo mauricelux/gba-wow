@@ -4,8 +4,8 @@
 namespace gw
 {
 
-// The story's end, shown after turning in Bazil Thredd: a few pages of epilogue and the
-// player's numbers. The world stays open afterwards.
+// The end of the first chapter, shown after turning in Bazil Thredd: a few pages of epilogue (Redridge's
+// only after Gath'Ilzogg), the road ahead and the player's numbers. The world stays open afterwards.
 class ending
 {
 
