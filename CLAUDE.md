@@ -82,4 +82,9 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
 - A boss script can use the map's patrol points as spawn spots: Thermaplugg's Walking Bombs climb
   out of them (`combat::_launch_bomb`), and `SELF_DESTRUCT` removes its caster when it goes off.
 - Text limits: a HUD message shows 30 characters and a gossip line 26 columns (3 lines under a
-  subtitle, 4 without); boss lines and gossip must fit, or they are cut off.
+  subtitle, 4 without); boss lines and gossip must fit, or they are cut off. A flight master's first
+  visit puts "New flight path discovered!" on the gossip's last line, so keep theirs to two lines.
+- A flight path no road leads to is marked when a quest is accepted (`accept_quest`): Into Shadowfang
+  marks the Scouts' Camp and Down the Scarlet Path the Argent Watch in Tirisfal.
+- `look_id` is a `uint8_t`, and M20 uses 215 looks. `gen_characters.py` lists every humanoid look
+  before the creatures, so new humanoid looks shift the creature ids (looks are not saved).

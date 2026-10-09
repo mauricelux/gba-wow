@@ -46,7 +46,7 @@ PALETTE = list(COLORS.values())
 # the map_id it is in the game as (or NONE).
 EASTERN_KINGDOMS = [
     ('Tirisfal Glades', 'forest', [(16, 10), (30, 6), (40, 9), (42, 18), (34, 24), (20, 22), (14, 16)],
-     (1, 10), 'NONE'),
+     (30, 40), 'TIRISFAL'),
     ('Western Plaguelands', 'plague', [(40, 9), (56, 8), (60, 18), (56, 28), (42, 28), (34, 24), (42, 18)],
      (55, 60), 'NONE'),
     ('Eastern Plaguelands', 'plague', [(56, 8), (74, 6), (88, 12), (90, 24), (80, 30), (64, 30), (56, 28),
@@ -54,7 +54,7 @@ EASTERN_KINGDOMS = [
     ('Silverpine Forest', 'forest', [(14, 16), (20, 22), (34, 24), (36, 34), (30, 42), (18, 40), (12, 28)],
      (20, 25), 'SILVERPINE'),
     ('Hillsbrad Foothills', 'grass', [(34, 24), (42, 28), (56, 28), (58, 36), (50, 42), (36, 42), (30, 42),
-                                      (36, 34)], (30, 35), 'NONE'),
+                                      (36, 34)], (30, 35), 'HILLSBRAD'),
     ('Arathi Highlands', 'tan', [(56, 28), (64, 30), (80, 30), (84, 38), (76, 46), (60, 46), (58, 36)],
      None, 'NONE'),
     ('Wetlands', 'swamp', [(36, 42), (50, 42), (58, 36), (60, 46), (66, 50), (62, 58), (48, 58), (40, 54)],

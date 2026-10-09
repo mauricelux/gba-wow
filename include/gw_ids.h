@@ -84,6 +84,10 @@ enum class map_id : uint16_t
     DARKSHORE,
     BLACKFATHOM_DEEPS,
     GNOMEREGAN,
+    HILLSBRAD,
+    TIRISFAL,
+    SM_GRAVEYARD,
+    SM_LIBRARY,
     COUNT
 };
 
@@ -99,7 +103,9 @@ enum class music_id : uint8_t
     REDRIDGE,
     DUSKWOOD,
     IRONFORGE,
-    WETLANDS
+    WETLANDS,
+    HILLSBRAD,
+    MONASTERY
 };
 
 enum class area_id : uint8_t
@@ -112,7 +118,8 @@ enum class area_id : uint8_t
     LAKE_EVERSTILL,     // fishing waters
     MISTMANTLE_MANOR,
     THANDOL_SPAN,
-    RADIATION           // fallout that burns whoever stands in it; unnamed, under a named room
+    RADIATION,          // fallout that burns whoever stands in it; unnamed, under a named room
+    THE_STACKS
 };
 
 enum class npc_id : uint16_t
@@ -226,6 +233,20 @@ enum class npc_id : uint16_t
     SENTINEL,
     // Blackfathom Deeps
     THAELRID,
+    // Hillsbrad Foothills
+    MALEB,
+    REDPATH,
+    RALEIGH,
+    DIBBS,
+    DARREN_MALVEW,
+    ANDERSON,
+    SOUTHSHORE_VENDOR,
+    SOUTHSHORE_SMITH,
+    DARLA,
+    SOUTHSHORE_GUARD,
+    // Tirisfal Glades
+    ARGENT_SCOUT,
+    GRYPHON_TIRISFAL,
     COUNT
 };
 
@@ -349,6 +370,44 @@ enum class enemy_id : uint16_t
     ELECTROCUTIONER_6000,
     CROWD_PUMMELER,
     MEKGINEER_THERMAPLUGG,
+    // Hillsbrad Foothills
+    GRAY_BEAR,
+    MOUNTAIN_LION,
+    SYNDICATE_FOOTPAD,
+    SYNDICATE_THIEF,
+    SYNDICATE_SHADOW_MAGE,
+    SYNDICATE_ENFORCER,
+    GRAVIS_SLIPKNOT,
+    CRUSHRIDGE_OGRE,
+    CRUSHRIDGE_MAGE,
+    CRUSHRIDGE_ENFORCER,
+    FORSAKEN_THUG,
+    FORSAKEN_HERBALIST,
+    FORSAKEN_COURIER,
+    MOUNTAIN_YETI,
+    BLOODFANG,
+    TORN_FIN_TIDEHUNTER,
+    TORN_FIN_ORACLE,
+    // Tirisfal Glades and the Graveyard
+    SCARLET_CONVERT,
+    SCARLET_SCOUT,
+    SCARLET_TORTURER,
+    HAUNTING_PHANTASM,
+    UNFETTERED_SPIRIT,
+    INTERROGATOR_VISHAS,
+    AZSHIR_THE_SLEEPLESS,
+    BLOODMAGE_THALNOS,
+    IRONSPINE,
+    // The Library
+    SCARLET_GALLANT,
+    SCARLET_ADEPT,
+    SCARLET_MONK,
+    SCARLET_BEASTMASTER,
+    SCARLET_CHAPLAIN,
+    SCARLET_DIVINER,
+    SCARLET_TRACKING_HOUND,
+    HOUNDMASTER_LOKSEY,
+    ARCANIST_DOAN,
     COUNT
 };
 

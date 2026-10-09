@@ -63,6 +63,14 @@ namespace
           "his people will go home one day, and King Magni raises a toast to you in the Great Forge. "
           "Beyond the Thandol Span, the hills of Hillsbrad wait.",
           quest_id::THE_GRAND_BETRAYAL },
+        { "Southshore Holds",
+          "Gravis Slipknot is dead and the Syndicate scatter into Alterac. The fishing boats sail "
+          "again, and Magistrate Maleb hangs a Syndicate mask on the town hall wall.",
+          quest_id::SYNDICATE_LEADER },
+        { "The Library Falls",
+          "Arcanist Doan is dead among his books, and the Graveyard sleeps at last. The Argent Dawn "
+          "watches the monastery doors. Beyond them, the Armory and the Cathedral wait.",
+          quest_id::ARCANIST_DOAN },
     };
 
     constexpr int story_page_total = sizeof(story_pages) / sizeof(story_pages[0]);

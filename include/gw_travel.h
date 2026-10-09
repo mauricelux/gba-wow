@@ -18,6 +18,8 @@ enum class flight_id : uint8_t
     IRONFORGE,
     MENETHIL,
     AUBERDINE,
+    SOUTHSHORE,
+    ARGENT_WATCH,
     COUNT
 };
 

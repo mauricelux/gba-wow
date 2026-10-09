@@ -1045,6 +1045,221 @@ namespace
           n::MEKKATORQUE, n::MEKKATORQUE, 30, 26, qid::THE_GNOMES_PLEA,
           { kill(e::MEKGINEER_THERMAPLUGG, 1, "Mekgineer Thermaplugg slain"), none, none }, xp(30, 150),
           money(30), { i::THERMAPLUGGS_UNDOING, i::MEKKATORQUES_ARCANO_STAFF, i::TINKER_TOWN_HAND_CANNON } },
+
+        // --- Hillsbrad Foothills --------------------------------------------------------------------
+
+        { "The Road to Southshore",
+          "North of the Thandol Span lie the Hillsbrad Foothills and the town of Southshore. Magistrate "
+          "Maleb writes that the Syndicate, the ogres of Alterac and now the Forsaken press on every "
+          "side.\n\n"
+          "Cross the span and take the north road. Southshore needs a hero more than Menethil does now.",
+          "Speak with Magistrate Henry Maleb in Southshore, north of the Thandol Span.",
+          "",
+          "Stoutfist sent you? Then the Light still smiles on Southshore. We need every blade we can get.",
+          n::STOUTFIST, n::MALEB, 30, 28, qid::THE_THANDOL_SPAN, { none, none, none }, xp(30, 25), money(10),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Down the Coast",
+          "The Torn Fin murlocs came up the Western Strand this spring. They raid the fishing boats and "
+          "drag the nets into the sea.\n\n"
+          "Thin them out. The fishermen won't sail until the beach is clear.",
+          "Kill 6 Torn Fin Tidehunters and 4 Torn Fin Oracles on the Western Strand.",
+          "The murlocs still hold the beach.",
+          "The boats are out again. Southshore eats tonight because of you.",
+          n::REDPATH, n::REDPATH, 30, 28, qid::NONE,
+          { kill(e::TORN_FIN_TIDEHUNTER, 6, "Torn Fin Tidehunter slain"),
+            kill(e::TORN_FIN_ORACLE, 4, "Torn Fin Oracle slain"), none }, xp(30, 75), money(30),
+          { i::SOUTHSHORE_SABATONS, i::SEASPRAY_SANDALS, i::SALTWATER_BOOTS } },
+
+        { "Costly Menace",
+          "The bears and mountain lions of Darrow Hill have grown bold. They took two of my sheep last "
+          "week and a shepherd the week before.\n\n"
+          "Hunt them down. I'll pay for the trouble, and the pelts are yours.",
+          "Kill 6 Gray Bears and 6 Mountain Lions on Darrow Hill.",
+          "I still hear them at night.",
+          "Quiet nights at last. Here, a little something from the shop.",
+          n::DARREN_MALVEW, n::DARREN_MALVEW, 31, 28, qid::NONE,
+          { kill(e::GRAY_BEAR, 6, "Gray Bear slain"), kill(e::MOUNTAIN_LION, 6, "Mountain Lion slain"), none },
+          xp(31, 75), money(31), { i::HILLSBRAD_HELM, i::DARROW_HILL_HOOD, i::LIONHIDE_CAP } },
+
+        { "Hints of a New Plague",
+          "The Forsaken have taken the farms of Hillsbrad Fields. They don't plant grain there. They "
+          "grow something else, something that kills the soil.\n\n"
+          "Go and see what they're brewing. Their thugs and herbalists won't let you look for free.",
+          "Kill 8 Forsaken Thugs and 3 Forsaken Herbalists in Hillsbrad Fields.",
+          "What are they growing out there?",
+          "Plague. I knew it. The Forsaken mean to poison the whole kingdom.",
+          n::MALEB, n::MALEB, 31, 28, qid::NONE,
+          { kill(e::FORSAKEN_THUG, 8, "Forsaken Thug slain"),
+            kill(e::FORSAKEN_HERBALIST, 3, "Forsaken Herbalist slain"), none }, xp(31, 75), money(31),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Hints of a New Plague II",
+          "A courier carries the Forsaken's notes between the fields and Undercity. If we read them, we "
+          "know what they plan.\n\n"
+          "He rides the field road at dusk. Find him, and bring me what he carries.",
+          "Kill the Forsaken Courier in Hillsbrad Fields and bring his satchel to Magistrate Maleb.",
+          "The courier still rides.",
+          "Recipes for plague. Undercity's apothecaries are worse than I feared. Take these, and my thanks.",
+          n::MALEB, n::MALEB, 32, 29, qid::HINTS_OF_A_NEW_PLAGUE,
+          { kill(e::FORSAKEN_COURIER, 1, "Forsaken Courier slain"), none, none }, xp(32, 75), money(32),
+          { i::PLAGUEWARDEN_LEGPLATES, i::APOTHECARYS_LEGGINGS, i::PLAGUE_HUNTERS_BREECHES } },
+
+        { "Syndicate Assassins",
+          "The Syndicate are the old nobles of Alterac, turned thieves and cutthroats. They took "
+          "Strahnbrad, north of here, and their footpads rob every cart on the road.\n\n"
+          "Kill them. The road must be safe again.",
+          "Kill 8 Syndicate Footpads and 3 Syndicate Thieves at Strahnbrad.",
+          "The road is still not safe.",
+          "The carts are moving again. You have Southshore's gratitude, and these.",
+          n::MALEB, n::MALEB, 32, 29, qid::NONE,
+          { kill(e::SYNDICATE_FOOTPAD, 8, "Syndicate Footpad slain"),
+            kill(e::SYNDICATE_THIEF, 3, "Syndicate Thief slain"), none }, xp(32, 75), money(32),
+          { i::MAGISTRATES_GAUNTLETS, i::GARROTE_WRAPS, i::FOOTPADS_GLOVES } },
+
+        { "Crushridge Bounty",
+          "The ogres of Crushridge Hold come down from the Alterac mountains to raid the farms. Big, "
+          "stupid and very strong.\n\n"
+          "Southshore pays a bounty on every one. Break their camp, and bring down their mages too.",
+          "Kill 6 Crushridge Ogres and 3 Crushridge Mages at Crushridge Hold.",
+          "The ogres still raid us.",
+          "Crushridge is quiet. The bounty, as promised, and a weapon from the armory.",
+          n::REDPATH, n::REDPATH, 33, 30, qid::NONE,
+          { kill(e::CRUSHRIDGE_OGRE, 6, "Crushridge Ogre slain"), kill(e::CRUSHRIDGE_MAGE, 3, "Crushridge Mage slain"),
+            none }, xp(33, 75), money(33), { i::CRUSHRIDGE_CLEAVER, i::CRUSHRIDGE_ROD, i::ALTERAC_LONGBOW } },
+
+        { "Durnholde Keep",
+          "Durnholde Keep was a prison for orcs once. Now the Syndicate hold it, and their shadow mages "
+          "work dark magic behind its walls.\n\n"
+          "Go in, and break them before they strike at Southshore.",
+          "Kill 4 Syndicate Enforcers and 3 Syndicate Shadow Mages at Durnholde Keep.",
+          "Durnholde is still theirs.",
+          "Durnholde will not threaten us again. Take this, from the old garrison's stores.",
+          n::REDPATH, n::REDPATH, 34, 30, qid::SYNDICATE_ASSASSINS,
+          { kill(e::SYNDICATE_ENFORCER, 4, "Syndicate Enforcer slain"),
+            kill(e::SYNDICATE_SHADOW_MAGE, 3, "Syndicate Shadow Mage slain"), none }, xp(34, 75), money(34),
+          { i::DURNHOLDE_HAUBERK, i::SHADOW_MAGES_ROBE, i::DURNHOLDE_JERKIN } },
+
+        { "Syndicate Leader",
+          "The Syndicate in Strahnbrad answer to Gravis Slipknot, a cutthroat with a lord's airs. While "
+          "he lives, they'll keep coming back.\n\n"
+          "He has guards, and he's no easy kill. Take friends if you have them, and end him.",
+          "Kill Gravis Slipknot at Strahnbrad.",
+          "Gravis Slipknot still lives.",
+          "Slipknot is dead? Then the Syndicate in these hills are finished. Choose your reward.",
+          n::MALEB, n::MALEB, 34, 30, qid::SYNDICATE_ASSASSINS,
+          { kill(e::GRAVIS_SLIPKNOT, 1, "Gravis Slipknot slain"), none, none }, xp(34, 125), money(34),
+          { i::SYNDICATE_SABRE, i::STAFF_OF_STRAHNBRAD, i::STRAHNBRAD_LONGBOW } },
+
+        { "Yeti Hides",
+          "Up in the snow by Growless Cave live the yetis. Their hides are the warmest thing in the "
+          "kingdom, and Lordaeron's nobles pay a fortune for them.\n\n"
+          "Bring me some, and I'll make you gloves fit for a king.",
+          "Bring 6 Yeti Hides from Mountain Yetis to Darren Malvew.",
+          "Not enough hides yet.",
+          "Beautiful hides. As promised: gloves fit for a king.",
+          n::DARREN_MALVEW, n::DARREN_MALVEW, 33, 30, qid::COSTLY_MENACE,
+          { collect(e::MOUNTAIN_YETI, 6, 50, "Yeti Hide"), none, none }, xp(33, 60), money(33),
+          { i::YETI_FUR_GAUNTLETS, i::FROSTWEAVE_GLOVES, i::YETIHIDE_GLOVES } },
+
+        { "Bloodfang",
+          "One yeti is bigger than the rest, with red fur and a temper to match. The shepherds call him "
+          "Bloodfang. He killed three hunters this winter.\n\n"
+          "He lairs at the mouth of the old mine. Bring me his hide, if you live.",
+          "Bring Bloodfang's Hide to Darren Malvew. He lairs by the mine north of Growless Cave.",
+          "Bloodfang still roams.",
+          "Bloodfang's hide! The shepherds will sleep tonight. These boots will keep your feet warm.",
+          n::DARREN_MALVEW, n::DARREN_MALVEW, 35, 31, qid::YETI_HIDES,
+          { collect(e::BLOODFANG, 1, 100, "Bloodfang's Hide"), none, none }, xp(35, 125), money(35),
+          { i::YETI_SLAYERS_SABATONS, i::FROSTWALKER_SANDALS, i::SNOWSTALKER_BOOTS } },
+
+        // --- Scarlet Monastery ----------------------------------------------------------------------
+
+        { "Down the Scarlet Path",
+          "In Tirisfal Glades the Scarlet Crusade has made a fortress of its monastery. They burn the "
+          "dead, and the living who look at them wrong.\n\n"
+          "The Argent Dawn keeps a watch outside its walls. Darla Harris will fly you there. Thin the "
+          "Crusade's patrols, then report to their scout.",
+          "Fly to Argent Watch in Tirisfal, kill 4 Scarlet Converts and 2 Scarlet Scouts, then speak "
+          "with Argent Scout Nathan.",
+          "The Crusade still patrols the glades.",
+          "Raleigh sent you? Good. The Crusade grows more mad every day, and the dead below the abbey "
+          "will not rest.",
+          n::RALEIGH, n::ARGENT_SCOUT, 30, 29, qid::THE_ROAD_TO_SOUTHSHORE,
+          { kill(e::SCARLET_CONVERT, 4, "Scarlet Convert slain"), kill(e::SCARLET_SCOUT, 2, "Scarlet Scout slain"),
+            none }, xp(30, 60), money(30), { i::NONE, i::NONE, i::NONE } },
+
+        { "The Restless Dead",
+          "The Crusade buries its dead in the crypt below the monastery, and the dead do not stay "
+          "buried. Phantasms and spirits haunt the halls.\n\n"
+          "Put them to rest. The Light owes them that much.",
+          "Kill 4 Haunting Phantasms and 6 Unfettered Spirits in the Scarlet Monastery Graveyard.",
+          "The dead still wander.",
+          "The crypt is quieter already. Wear these with the Dawn's blessing.",
+          n::ARGENT_SCOUT, n::ARGENT_SCOUT, 31, 29, qid::DOWN_THE_SCARLET_PATH,
+          { kill(e::HAUNTING_PHANTASM, 4, "Haunting Phantasm slain"),
+            kill(e::UNFETTERED_SPIRIT, 6, "Unfettered Spirit slain"), none }, xp(31, 75), money(31),
+          { i::ARGENT_CHAIN_VEST, i::GHOSTWEAVE_ROBE, i::SPIRITBOUND_TUNIC } },
+
+        { "Torment in the Graveyard",
+          "Two of the Crusade work in the crypt. Interrogator Vishas tortures prisoners until they say "
+          "what he wants. Bloodmage Thalnos raises their bodies when they die.\n\n"
+          "Neither deserves to leave the crypt alive.",
+          "Kill Interrogator Vishas and Bloodmage Thalnos in the Scarlet Monastery Graveyard.",
+          "Vishas and Thalnos still work below.",
+          "It's done, then. No one else will die screaming in that crypt.",
+          n::ARGENT_SCOUT, n::ARGENT_SCOUT, 32, 29, qid::DOWN_THE_SCARLET_PATH,
+          { kill(e::INTERROGATOR_VISHAS, 1, "Interrogator Vishas slain"),
+            kill(e::BLOODMAGE_THALNOS, 1, "Bloodmage Thalnos slain"), none }, xp(32, 125), money(32),
+          { i::CRYPT_WARDENS_HELM, i::ARGENT_COWL, i::GRAVE_STALKERS_CAP } },
+
+        { "Rest for Ironspine",
+          "Deep in the ossuary walks Ironspine, a skeleton bound by Scarlet magic. Azshir the "
+          "Sleepless drifts nearby, a spirit that has not closed its eyes in a hundred years.\n\n"
+          "Destroy them both, and the Graveyard will finally sleep.",
+          "Destroy Ironspine and Azshir the Sleepless in the Scarlet Monastery Graveyard.",
+          "Ironspine still walks.",
+          "The Graveyard sleeps. The Dawn will remember this.",
+          n::ARGENT_SCOUT, n::ARGENT_SCOUT, 33, 30, qid::THE_RESTLESS_DEAD,
+          { kill(e::IRONSPINE, 1, "Ironspine destroyed"), kill(e::AZSHIR_THE_SLEEPLESS, 1, "Azshir destroyed"),
+            none }, xp(33, 125), money(33),
+          { i::CRYPTWARDEN_LEGPLATES, i::LEGGINGS_OF_ETERNAL_REST, i::BONECARVER_BREECHES } },
+
+        { "Hearts of Zeal",
+          "The Crusade's zealots believe the Light burns in their hearts. Maybe it did once.\n\n"
+          "Go into the Library and bring me their hearts. The Argent Dawn needs proof that the "
+          "Crusade has fallen.",
+          "Bring 8 Hearts of Zeal from Scarlet Gallants and Scarlet Monks in the Library.",
+          "More hearts. We need more proof.",
+          "There is no Light left in these. Only fire. Take these gloves, and burn the rest.",
+          n::ARGENT_SCOUT, n::ARGENT_SCOUT, 34, 31, qid::DOWN_THE_SCARLET_PATH,
+          { collect(e::SCARLET_GALLANT, 8, 50, "Heart of Zeal", e::SCARLET_MONK), none, none }, xp(34, 75),
+          money(34), { i::ZEALOTS_GAUNTLETS, i::ZEALOTS_WRAPS, i::ZEALOTS_GRIPS } },
+
+        { "Mythology of the Titans",
+          "The Scarlet Library holds a book I have sought for twenty years: the Mythology of the "
+          "Titans. It tells of the makers who shaped the world, before the elves, before the dwarves.\n\n"
+          "It must be somewhere in the stacks. Bring it to me, and the Explorers' League will reward you.",
+          "Find the Mythology of the Titans in the Stacks of the Scarlet Library and bring it to Loremaster "
+          "Dibbs in Southshore.",
+          "Have you found it?",
+          "The Mythology of the Titans! After twenty years. The League sends this, with my thanks.",
+          n::DIBBS, n::DIBBS, 34, 31, qid::NONE,
+          { explore(area_id::THE_STACKS, "Mythology of the Titans found"), none, none }, xp(34, 100), money(34),
+          { i::TITAN_FORGED_BLADE, i::STAFF_OF_THE_TITANS, i::EXPLORERS_LONGRIFLE } },
+
+        { "Arcanist Doan",
+          "At the end of the Library is the Athenaeum, where Arcanist Doan keeps the Crusade's secrets. "
+          "He guards them with fire. Houndmaster Loksey keeps his hounds at the kennel door.\n\n"
+          "Kill them both. With Doan gone, the Library falls, and the way to the Armory opens.",
+          "Kill Houndmaster Loksey and Arcanist Doan in the Scarlet Monastery Library.",
+          "Doan still guards the Athenaeum.",
+          "Doan is dead. The Crusade will feel this, deep in its cathedral. The Argent Dawn names you "
+          "its friend: take this, the finest thing we carry.",
+          n::ARGENT_SCOUT, n::ARGENT_SCOUT, 35, 31, qid::DOWN_THE_SCARLET_PATH,
+          { kill(e::HOUNDMASTER_LOKSEY, 1, "Houndmaster Loksey slain"),
+            kill(e::ARCANIST_DOAN, 1, "Arcanist Doan slain"), none }, xp(35, 150), money(35),
+          { i::BLADE_OF_THE_DEVOUT, i::STAFF_OF_THE_SILVER_HAND, i::BOW_OF_THE_ARGENT_WATCH } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));
@@ -1174,6 +1389,12 @@ void accept_quest(quest_id quest)
     if(quest == quest_id::INTO_SHADOWFANG)
     {
         (void) discover_flight(flight_id::SCOUTS_CAMP);
+    }
+
+    // Tirisfal is beyond the Horde's lands: Down the Scarlet Path marks Argent Watch the same way.
+    if(quest == quest_id::DOWN_THE_SCARLET_PATH)
+    {
+        (void) discover_flight(flight_id::ARGENT_WATCH);
     }
 
     (void) complete_if_done(quest);

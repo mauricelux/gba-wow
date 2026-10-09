@@ -3,6 +3,7 @@
 #include "gw_map_darkshore.h"
 #include "gw_map_duskwood.h"
 #include "gw_map_elwynn.h"
+#include "gw_map_hillsbrad.h"
 #include "gw_map_inn.h"
 #include "gw_map_ironforge.h"
 #include "gw_map_redridge.h"
@@ -25,6 +26,7 @@ namespace
         { "Ironforge", map_id::IRONFORGE, map_data::ironforge::ironforge_respawn },
         { "Menethil Harbor", map_id::WETLANDS, map_data::wetlands::menethil_respawn },
         { "Auberdine", map_id::DARKSHORE, map_data::darkshore::auberdine_respawn },
+        { "Southshore", map_id::HILLSBRAD, map_data::hillsbrad::southshore_respawn },
     };
 
     static_assert(sizeof(homes) / sizeof(homes[0]) == int(home_id::COUNT));
@@ -63,6 +65,9 @@ home_id innkeeper_home(npc_id npc)
 
     case npc_id::SHAUSSIY:
         return home_id::AUBERDINE;
+
+    case npc_id::ANDERSON:
+        return home_id::SOUTHSHORE;
 
     default:
         return home_id::COUNT;

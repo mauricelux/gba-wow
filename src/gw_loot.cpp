@@ -223,6 +223,51 @@ namespace
         // 68 Mekgineer Thermaplugg
         { { { i::GREATER_HEALING_POTION, 100, 2, 3 }, none, none }, true,
           { i::THERMAPLUGGS_LEFT_ARM, i::MEKGINEERS_SPARK_STAFF, i::THERMAPLUGGS_BLUNDERBUSS } },
+        // 69 bears, mountain lions and hounds
+        { { { i::THICK_FUR, 50, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 70 Syndicate
+        { { { i::SILK_CLOTH, 40, 1, 2 }, { i::GOLDENBARK_APPLE, 8, 1, 1 }, { i::SUPERIOR_HEALING_POTION, 4, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 71 Crushridge ogres
+        { { { i::SILK_CLOTH, 35, 1, 2 }, { i::GOLDENBARK_APPLE, 10, 1, 1 }, { i::SUPERIOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 72 Forsaken
+        { { { i::SILK_CLOTH, 40, 1, 2 }, { i::MORNING_GLORY_DEW, 8, 1, 1 }, { i::SUPERIOR_HEALING_POTION, 4, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 73 yetis
+        { { { i::YETI_HORN, 45, 1, 1 }, { i::THICK_FUR, 30, 1, 1 }, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 74 Torn Fin murlocs
+        { { { i::MURLOC_SCALE, 50, 1, 1 }, { i::SILK_CLOTH, 15, 1, 1 }, none }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 75 Gravis Slipknot
+        { { { i::SILK_CLOTH, 100, 2, 3 }, { i::SUPERIOR_HEALING_POTION, 60, 1, 2 }, none }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 76 Bloodfang
+        { { { i::YETI_HORN, 100, 2, 3 }, { i::THICK_FUR, 100, 1, 2 }, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 77 Scarlet Crusade
+        { { { i::SCARLET_INSIGNIA, 40, 1, 1 }, { i::SILK_CLOTH, 35, 1, 2 }, { i::SUPERIOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 78 spirits
+        { { { i::GHOSTLY_ECTOPLASM, 50, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 79 Interrogator Vishas
+        { { { i::SUPERIOR_HEALING_POTION, 60, 1, 2 }, { i::SCARLET_INSIGNIA, 100, 1, 2 }, none }, true,
+          { i::INTERROGATORS_HELM, i::HOOD_OF_CONFESSION, i::TORTURERS_MASK } },
+        // 80 Azshir the Sleepless
+        { { { i::GHOSTLY_ECTOPLASM, 100, 2, 3 }, none, none }, false,
+          { i::SLEEPLESS_GAUNTLETS, i::GHOSTSHROUD_WRAPS, i::GHOSTWALKER_GRIPS } },
+        // 81 Bloodmage Thalnos
+        { { { i::SUPERIOR_HEALING_POTION, 60, 1, 2 }, { i::SCARLET_INSIGNIA, 100, 1, 2 }, none }, true,
+          { i::THALNOS_CLEAVER, i::STAFF_OF_THE_BLOODMAGE, i::FLAMESPIKE_BOW } },
+        // 82 Ironspine
+        { { { i::SUPERIOR_HEALING_POTION, 60, 1, 2 }, none, none }, false,
+          { i::IRONSPINES_RIBCAGE, i::SHROUD_OF_THE_OSSUARY, i::BONE_STUDDED_JERKIN } },
+        // 83 Houndmaster Loksey
+        { { { i::SUPERIOR_HEALING_POTION, 60, 1, 2 }, { i::SCARLET_INSIGNIA, 100, 1, 2 }, none }, true,
+          { i::HOUNDMASTERS_SABATONS, i::KENNELKEEPERS_SLIPPERS, i::HOUNDMASTERS_BOOTS } },
+        // 84 Arcanist Doan
+        { { { i::SUPERIOR_HEALING_POTION, 100, 2, 3 }, none, none }, true,
+          { i::HYPNOTIC_BLADE, i::ILLUSIONARY_ROD, i::SCARLET_LONGBOW } },
     };
 
     // Uncommon items any enemy of a level band may drop.
@@ -237,6 +282,8 @@ namespace
                                    i::KNIGHTS_LONGSWORD, i::EMBERSTONE_STAFF, i::OUTRIDERS_BOW };
     constexpr item_id band_6[] = { i::BOGWALKER_BOOTS, i::FENPLATE_LEGGINGS, i::MOONGLOW_HOOD, i::KNIGHTLY_GREATSWORD,
                                    i::SAGES_STAFF, i::HAWKEYE_BOW, i::BULWARK_SHIELD };
+    constexpr item_id band_7[] = { i::ALTERAC_CHAIN_HELM, i::SILKWEAVE_ROBE, i::STALKERS_LEGGINGS,
+                                   i::BATTLEFORGE_GREATSWORD, i::IVORY_STAFF, i::IRONBARK_LONGBOW, i::BASTION_SHIELD };
 
     constexpr int world_drop_chance = 3;
     constexpr int elite_world_drop_chance = 35;
@@ -282,7 +329,12 @@ namespace
             return pick(band_5);
         }
 
-        return pick(band_6);
+        if(level <= 30)
+        {
+            return pick(band_6);
+        }
+
+        return pick(band_7);
     }
 
     void add(enemy& item, item_id loot, int count)

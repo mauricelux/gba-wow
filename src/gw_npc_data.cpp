@@ -29,6 +29,8 @@ namespace
     constexpr uint8_t ironforge_goods = 10;
     constexpr uint8_t ironforge_smith = 11;
     constexpr uint8_t menethil = 12;
+    constexpr uint8_t southshore = 13;
+    constexpr uint8_t southshore_smith = 14;
 
     constexpr npc_info npcs[] = {
         { "", "", l::PEASANT, 0, c::WARRIOR, 0, "" },
@@ -239,6 +241,32 @@ namespace
         // Blackfathom Deeps
         { "Argent Guard Thaelrid", "The Argent Dawn", l::ARGENT_GUARD_THAELRID, 0, c::WARRIOR, 0,
           "The Twilight's Hammer serve something old in these waters: Aku'mai." },
+        // Southshore
+        { "Magistrate Henry Maleb", "", l::MAGISTRATE_MALEB, 0, c::WARRIOR, 0,
+          "Southshore holds, but only just. The Syndicate and the Forsaken both want these hills." },
+        { "Marshal Redpath", "", l::MARSHAL, 0, c::WARRIOR, 0,
+          "Ogres in the north, thieves in Strahnbrad, and my men stretched thin as parchment." },
+        { "Raleigh the Devout", "", l::RALEIGH_THE_DEVOUT, 0, c::WARRIOR, 0,
+          "The Light shelters Southshore. The Scarlet Crusade claims it shelters them too." },
+        { "Loremaster Dibbs", "", l::LOREMASTER_DIBBS, 0, c::WARRIOR, 0,
+          "The Scarlet library holds tales of the titans older than Ironforge itself." },
+        { "Darren Malvew", "", l::DARREN_MALVEW, 0, c::WARRIOR, 0,
+          "Lions and yetis both raid my stock. I pay well for every pelt you bring." },
+        { "Innkeeper Anderson", "Innkeeper", l::SOUTHSHORE_INNKEEPER, innkeeper, c::WARRIOR, southshore,
+          "Welcome to the Southshore inn. Fresh fish, warm beds, no questions." },
+        { "Sarah Raycroft", "General Goods", l::MERCHANT, vendor, c::WARRIOR, southshore,
+          "Supplies for the road north. You'll want them in the Alterac foothills." },
+        { "Robert Aebischer", "Blacksmith", l::SMITH, vendor, c::WARRIOR, southshore_smith,
+          "Southshore steel. Not as pretty as Ironforge's, but it'll stop an ogre club." },
+        { "Darla Harris", "Gryphon Master", l::GRYPHON_MASTER_F, flight_master, c::WARRIOR, 0,
+          "My gryphons fly as far as the glades of Tirisfal." },
+        { "Southshore Guard", "", l::GUARD, 0, c::WARRIOR, 0,
+          "Keep clear of Durnholde. The Syndicate hold the old keep now." },
+        // Tirisfal Glades
+        { "Argent Scout Nathan", "The Argent Dawn", l::ARGENT_SCOUT, 0, c::WARRIOR, 0,
+          "The Scarlet Crusade guard their monastery like a fortress. Zeal gone sour." },
+        { "Gryphon Rider Talan", "Gryphon Master", l::GRYPHON_MASTER, flight_master, c::WARRIOR, 0,
+          "Argent Watch is no town, but my gryphons will carry you south to Southshore." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

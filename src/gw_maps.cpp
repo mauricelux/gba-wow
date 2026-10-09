@@ -22,6 +22,8 @@
 #include "bn_regular_bg_items_map_fargodeep_overhead.h"
 #include "bn_regular_bg_items_map_gnomeregan_ground.h"
 #include "bn_regular_bg_items_map_gnomeregan_overhead.h"
+#include "bn_regular_bg_items_map_hillsbrad_ground.h"
+#include "bn_regular_bg_items_map_hillsbrad_overhead.h"
 #include "bn_regular_bg_items_map_inn_ground.h"
 #include "bn_regular_bg_items_map_inn_overhead.h"
 #include "bn_regular_bg_items_map_ironforge_ground.h"
@@ -32,10 +34,16 @@
 #include "bn_regular_bg_items_map_shadowfang_overhead.h"
 #include "bn_regular_bg_items_map_silverpine_ground.h"
 #include "bn_regular_bg_items_map_silverpine_overhead.h"
+#include "bn_regular_bg_items_map_sm_graveyard_ground.h"
+#include "bn_regular_bg_items_map_sm_graveyard_overhead.h"
+#include "bn_regular_bg_items_map_sm_library_ground.h"
+#include "bn_regular_bg_items_map_sm_library_overhead.h"
 #include "bn_regular_bg_items_map_stockade_ground.h"
 #include "bn_regular_bg_items_map_stockade_overhead.h"
 #include "bn_regular_bg_items_map_stormwind_ground.h"
 #include "bn_regular_bg_items_map_stormwind_overhead.h"
+#include "bn_regular_bg_items_map_tirisfal_ground.h"
+#include "bn_regular_bg_items_map_tirisfal_overhead.h"
 #include "bn_regular_bg_items_map_westfall_ground.h"
 #include "bn_regular_bg_items_map_westfall_overhead.h"
 #include "bn_regular_bg_items_map_wetlands_ground.h"
@@ -52,13 +60,17 @@
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
 #include "gw_map_gnomeregan.h"
+#include "gw_map_hillsbrad.h"
 #include "gw_map_inn.h"
 #include "gw_map_ironforge.h"
 #include "gw_map_redridge.h"
 #include "gw_map_shadowfang.h"
 #include "gw_map_silverpine.h"
+#include "gw_map_sm_graveyard.h"
+#include "gw_map_sm_library.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
+#include "gw_map_tirisfal.h"
 #include "gw_map_westfall.h"
 #include "gw_map_wetlands.h"
 
@@ -96,6 +108,10 @@ namespace
     constexpr point_def darkshore_graveyards[] = { map_data::darkshore::auberdine_respawn };
     constexpr point_def blackfathom_deeps_graveyards[] = { map_data::blackfathom_deeps::respawn };
     constexpr point_def gnomeregan_graveyards[] = { map_data::gnomeregan::respawn };
+    constexpr point_def hillsbrad_graveyards[] = { map_data::hillsbrad::southshore_respawn };
+    constexpr point_def tirisfal_graveyards[] = { map_data::tirisfal::tirisfal_respawn };
+    constexpr point_def sm_graveyard_graveyards[] = { map_data::sm_graveyard::respawn };
+    constexpr point_def sm_library_graveyards[] = { map_data::sm_library::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
@@ -141,6 +157,10 @@ namespace
         GW_MAP_INFO(DARKSHORE, darkshore, false, false),
         GW_MAP_INFO(BLACKFATHOM_DEEPS, blackfathom_deeps, true, true),
         GW_MAP_INFO(GNOMEREGAN, gnomeregan, true, true),
+        GW_MAP_INFO(HILLSBRAD, hillsbrad, false, false),
+        GW_MAP_INFO(TIRISFAL, tirisfal, false, false),
+        GW_MAP_INFO(SM_GRAVEYARD, sm_graveyard, true, true),
+        GW_MAP_INFO(SM_LIBRARY, sm_library, true, true),
     };
 
     [[nodiscard]] int count_chests()

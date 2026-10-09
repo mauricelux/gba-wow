@@ -2011,6 +2011,266 @@ def bomb(step, pose):
     return c.done()
 
 
+def paw(c, x, top, key, dark=None, width=3, claws=True):
+    """A thick beast leg from row top down to the feet line, ending in a paw a pixel longer in front, with
+    claws (tooth) at its toes."""
+    c.rect(x, top, x + width - 1, 27, key, dark=dark)
+    c.rect(x - 1, 28, x + width - 1, 28, key)
+    if claws:
+        c.px(x - 1, 28, 'tooth_dark' if key == 'dark' else 'tooth')
+
+
+def bear(step, pose):
+    """A bear: a heavy body on thick legs with a hump over the shoulders, a big round head carried low with
+    a pale muzzle and small round ears; it rears up on its hind legs to swipe with a clawed forepaw."""
+    c = Canvas()
+    if pose == 'attack':
+        paw(c, 19, 21, 'dark')                                                       # far hind leg
+        c.line(13, 9, 4, 3, 'dark', width=3)                                          # far forepaw raised
+        for x, y in ((1, 1), (1, 3), (2, 5)):
+            c.line(x + 1, y, x, y, 'tooth_dark', edge=False)
+        c.ellipse(26, 21, 1.5, 1.5, 'main', dark='dark')                              # tail
+        body = tube(c, [(21, 21), (17, 15), (14, 10)], 6.5, 5)
+        c.part(body, 'main', dark='dark', light='light')
+        paw(c, 21, 21, 'main', dark='dark', width=4)                                   # near hind leg
+        hx, hy = 9, 7
+        c.ellipse(hx + 1, hy, 4.5, 4, 'main', dark='dark', light='light')
+        c.ellipse(hx + 3, hy - 4, 1.6, 1.6, 'main', light='light')                    # ear
+        c.px(hx + 3, hy - 4, 'dark')
+        c.rect(hx - 5, hy - 1, hx - 2, hy, 'second', light='light')                   # snout, roaring
+        c.rect(hx - 4, hy + 2, hx - 2, hy + 3, 'second', dark='second_dark')
+        c.line(hx - 4, hy + 1, hx - 2, hy + 1, 'outline', edge=False)
+        c.px(hx - 5, hy - 1, 'outline')                                               # nose
+        c.px(hx - 4, hy, 'tooth')
+        c.px(hx - 3, hy + 2, 'tooth')
+        c.px(hx - 1, hy - 2, 'eye')
+        c.line(14, 13, 6, 15, 'main', width=3, dark='dark')                           # near forepaw swiping
+        c.ellipse(5, 15, 2, 2, 'main', dark='dark')
+        for x, y in ((2, 13), (2, 15), (3, 17)):
+            c.line(x + 1, y, x, y, 'tooth', edge=False)
+        return c.done()
+    s = STRIDE[step] // 2
+    b = 1 if step in (1, 3) else 0
+    paw(c, 20 - s, 22, 'dark')                                                       # far legs
+    paw(c, 10 + s, 22, 'dark')
+    c.ellipse(27.5, 15 + b, 1.5, 1.5, 'main', dark='dark')                           # tail stub
+    body = c.ellipse_mask(18.5, 18 + b, 9, 6.5) | c.ellipse_mask(14, 14 + b, 6.5, 6)  # the hump over the shoulders
+    c.part(body, 'main', dark='dark', light='light')
+    for x in (12, 15, 18):
+        c.px(x, 10 + b + (x % 2), 'light')                                           # fur on the hump
+    paw(c, 22 + s, 22, 'main', dark='dark', width=4)                                 # near legs
+    paw(c, 11 - s, 21, 'main', dark='dark', width=4)
+    hx, hy = 6, 17 + b
+    c.ellipse(hx + 1.5, hy, 4.5, 4.5, 'main', dark='dark', light='light')             # big round head
+    c.ellipse(hx + 3.5, hy - 5, 1.6, 1.6, 'main', light='light')                      # ear
+    c.px(hx + 3, hy - 4, 'dark')
+    c.rect(hx - 4, hy, hx - 1, hy + 2, 'second', dark='second_dark', light='light')   # blunt muzzle
+    c.rect(hx - 4, hy, hx - 4, hy, 'outline', edge=False)                             # nose
+    c.px(hx, hy - 2, 'eye')
+    return c.done()
+
+
+def cat(step, pose):
+    """A big cat (a mountain lion; panthers and tigers recolor it): a long, low body on slender legs, a small
+    head with round ears, a pale belly and muzzle (second) and a long tail hanging in a curve with a dark
+    tip. It pounces with the body stretched out, forepaws thrown ahead and claws bared."""
+    c = Canvas()
+    if pose == 'attack':
+        c.line(22, 22, 27, 25, 'dark', width=2)                                      # far hind leg pushing off
+        c.line(27, 25, 30, 27, 'dark', width=2)
+        c.line(10, 15, 3, 9, 'dark', width=2)                                        # far foreleg reaching
+        tail = tube(c, [(24, 18), (28, 16), (31, 13)], 1.3, 0.9)
+        c.part(tail, 'main', dark='dark')
+        c.px(31, 12, 'dark')
+        body = tube(c, [(23, 20), (17, 17.5), (11, 15)], 4, 4.2)
+        c.part(body, 'main', dark='dark', light='light')
+        c.part(body & tube(c, [(22, 23), (11, 18)], 2.2, 2) & ~tube(c, [(23, 19.5), (11, 14)], 3.6, 3.8), 'second',
+               edge=False)                                                            # pale belly
+        c.line(21, 22, 25, 26, 'main', width=2, dark='dark')                          # near hind leg
+        c.line(25, 26, 28, 27, 'main', width=2, dark='dark')
+        hx, hy = 6, 11
+        c.ellipse(hx + 2, hy - 3, 1.3, 1.3, 'main', dark='dark')                      # ear
+        c.ellipse(hx + 1, hy, 3.5, 3, 'main', dark='dark', light='light')
+        c.rect(hx - 4, hy - 1, hx - 2, hy, 'second', light='light')                   # jaws wide open
+        c.rect(hx - 3, hy + 2, hx - 1, hy + 3, 'second', dark='second_dark')
+        c.line(hx - 3, hy + 1, hx - 1, hy + 1, 'outline', edge=False)
+        c.px(hx - 4, hy - 1, 'outline')
+        c.px(hx - 3, hy, 'tooth')
+        c.px(hx - 2, hy + 2, 'tooth')
+        c.px(hx, hy - 1, 'eye')
+        c.line(12, 16, 4, 14, 'main', width=2, light='light')                         # near foreleg reaching
+        for x, y in ((2, 12), (2, 14), (2, 16)):
+            c.px(x, y, 'tooth')
+        c.px(3, 8, 'tooth_dark')
+        c.px(2, 10, 'tooth_dark')
+        return c.done()
+    s = STRIDE[step]
+    b = 1 if step in (1, 3) else 0
+    w = [0, 1, 0, -1][step]
+    paw(c, 20 - s, 22, 'dark', width=2)                                              # far legs
+    paw(c, 9 + s, 22, 'dark', width=2)
+    tail = tube(c, [(23, 17 + b), (27, 19 + b), (29, 23 + w), (29.5 + w * 0.5, 26), (31, 25)], 1.3, 0.9)
+    c.part(tail, 'main', dark='dark')
+    c.part(tail & (c.ys >= 25), 'dark', edge=False)                                  # dark tail tip
+    body = c.ellipse_mask(16.5, 19 + b, 9.5, 4) | c.ellipse_mask(10, 19 + b, 4.5, 4.5)
+    c.part(body, 'main', dark='dark', light='light')
+    c.part(body & (c.ys >= 21 + b), 'second', edge=False)                             # pale belly
+    c.px(11, 15 + b, 'light')                                                        # shoulder blade
+    c.px(12, 15 + b, 'light')
+    paw(c, 22 + s, 22, 'main', dark='dark', width=2)                                 # near legs
+    paw(c, 11 - s, 22, 'main', dark='dark', width=2)
+    hx, hy = 5, 15 + b
+    c.poly([(hx + 1, hy - 2), (hx + 2.5, hy - 5.5), (hx + 4.5, hy - 2)], 'main', light='light')   # ear
+    c.ellipse(hx + 1.5, hy, 3.5, 3, 'main', dark='dark', light='light')               # head
+    c.px(hx + 2, hy - 3, 'dark')
+    c.rect(hx - 3, hy, hx - 1, hy + 1, 'second', edge=True)                           # muzzle
+    c.px(hx - 3, hy, 'outline')                                                       # nose
+    c.px(hx - 1, hy + 2, 'second_dark')                                               # chin
+    c.px(hx, hy - 1, 'eye')
+    return c.done()
+
+
+def shaggy(c, mask, phase=0, sides=False):
+    """A fur fringe around a mask: on every other column one pixel more hangs below its lowest edge, and
+    (sides) on every other row one pixel more sticks out to the left and right."""
+    out = mask.copy()
+    out[1:, :] |= mask[:-1, :] & ((c.xs[1:, :] + phase) % 2 == 0)
+    if sides:
+        rows = (c.ys + phase) % 2 == 0
+        out[:, 1:] |= mask[:, :-1] & rows[:, 1:]
+        out[:, :-1] |= mask[:, 1:] & rows[:, :-1]
+    return out
+
+
+YETI_HORN = ['.XX',
+             'Xx.',
+             'X..']
+
+
+def yeti(step, pose):
+    """A yeti: a broad, shaggy ape standing upright with hunched shoulders and long arms hanging to its
+    knuckles, a bare face (second) under a fringe of fur and two small horns; it smashes both fists down
+    in front."""
+    c = Canvas()
+    d = STRIDE[step] // 2
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    c.rect(19 + d, 21, 23 + d, 27, 'dark')                                            # far leg
+    c.rect(18 + d, 28, 23 + d, 28, 'second_dark')
+    if attack:
+        arm = shaggy(c, tube(c, [(19, 11 + b), (14, 17), (10, 24)], 2.6, 2.2), phase=1)
+        c.part(arm, 'dark')                                                           # far arm smashing
+        c.ellipse(9, 26, 2.5, 2.2, 'second_dark')
+    else:
+        arm = shaggy(c, tube(c, [(22, 11 + b), (23, 17 + b), (21 - d, 22 + b)], 2.6, 2), phase=1)
+        c.part(arm, 'dark')                                                           # far arm
+        c.ellipse(20.5 - d, 23.5 + b, 2, 2, 'second_dark')
+    sx, sy = (13, 12 + b) if attack else (16, 10 + b)
+    body = shaggy(c, c.ellipse_mask(18, 16 + b, 6.5, 7.5) | c.ellipse_mask(sx, sy, 6.5, 4.5), sides=True)
+    c.part(body, 'main', dark='dark', light='light')
+    for x, y in ((21, 13), (19, 17), (22, 19), (17, 21)):
+        c.line(x, y + b, x + 1, y + 1 + b, 'dark', edge=False)                        # shaggy locks
+    c.rect(13 - d, 21, 17 - d, 27, 'main', dark='dark')                               # near leg
+    c.rect(12 - d, 28, 17 - d, 28, 'second', dark='second_dark')
+    hx, hy = (8, 13 + b) if attack else (10, 7 + b)
+    c.sticker(YETI_HORN, hx + 3, hy - 6, far=True)                                    # far horn
+    head = shaggy(c, c.ellipse_mask(hx + 0.5, hy, 4.5, 4.5), phase=1)
+    c.part(head, 'main', dark='dark', light='light')
+    c.sticker(YETI_HORN, hx - 1, hy - 6)                                              # near horn
+    face = c.ellipse_mask(hx + 0.5, hy, 4.5, 4.5) & (c.xs <= hx) & (c.ys >= hy - 1)
+    c.part(face, 'second', dark='second_dark', edge=False)                            # bare face
+    c.line(hx - 4, hy - 2, hx, hy - 2, 'light', edge=False)                           # fringe of fur
+    c.px(hx - 2, hy - 1, 'eye')
+    if attack:
+        c.rect(hx - 3, hy + 2, hx - 1, hy + 3, 'outline', edge=False)                 # roaring
+        c.px(hx - 3, hy + 2, 'tooth')
+        c.px(hx - 1, hy + 2, 'tooth')
+        for x, y in ((0, 28), (11, 28), (12, 26), (0, 23), (2, 21), (9, 21)):
+            c.px(x, y, 'light')                                                       # snow thrown up
+        arm = shaggy(c, tube(c, [(15, 13 + b), (10, 19), (5, 24)], 2.6, 2.2), phase=1)
+        c.part(arm, 'main', dark='dark', light='light')                               # near arm smashing
+        c.ellipse(4, 26, 2.5, 2.2, 'second', dark='second_dark')
+        return c.done()
+    arm = shaggy(c, tube(c, [(14, 11 + b), (12, 17 + b), (10 + d, 22 + b)], 2.8, 2.2), phase=1)
+    c.part(arm, 'main', dark='dark', light='light')                                   # near arm
+    c.ellipse(9.5 + d, 23.5 + b, 2.2, 2, 'second', dark='second_dark')                # fist
+    return c.done()
+
+
+def wisps(img, region, keep=0):
+    """Thin out the pixels of img inside region in a checker pattern, so that part of a spirit fades into
+    the air: the outline goes and every other colored pixel with it."""
+    ys, xs = np.mgrid[0:FRAME, 0:FRAME]
+    img[region & (img == C['outline'])] = 0
+    img[region & ((xs + ys) % 2 == keep)] = 0
+    return img
+
+
+def ghost_claws(c, x, y, key, fan):
+    """Long fingers fanning out ahead (to the left) of a spirit's hand at (x, y); fan lists where each
+    fingertip ends up or down."""
+    for dy in fan:
+        c.line(x, y, x - 3, y + dy, key, edge=True)
+
+
+def spirit(step, pose):
+    """A spirit: a hooded, wispy ghost floating over the ground on a trailing tail that fades into the air,
+    glowing eyes in the dark of the hood and clawed hands reaching ahead. It bobs instead of walking, the
+    tail swaying; it lunges with the claws spread, and dies as a fading wisp on the ground."""
+    c = Canvas()
+    ys, xs = c.ys, c.xs
+    if pose == 'dead':
+        robe = c.ellipse_mask(15, 28, 8.5, 2.6) & (ys <= 28)
+        c.part(robe, 'main', dark='dark', light='light')                              # the robe, flat on the ground
+        c.part(robe & (ys == 27) & (xs >= 12) & (xs <= 19), 'second', edge=False)
+        c.ellipse(8.5, 25.5, 4.5, 3.4, 'main', dark='dark', light='light')             # the hood, empty
+        c.ellipse(6, 25.5, 2, 2, 'outline', edge=False)
+        c.px(5, 25, 'second_dark')                                                    # a last, dim glint
+        mist = tube(c, [(22, 27.5), (26, 27), (30, 26)], 1.6, 1) & (ys <= 28)
+        c.part(mist, 'main', light='light')
+        rising = (tube(c, [(11, 20), (12, 17), (11, 15), (12, 13)], 0.8, 0.5) |
+                  tube(c, [(16, 23), (17, 20), (16, 18)], 0.8, 0.5) | tube(c, [(21, 24), (22, 22), (21, 20)], 0.8, 0.5))
+        c.part(rising, 'second', edge=False)                                          # wisps rising
+        img = c.done()
+        return wisps(img, neighbors(rising) | rising | (xs >= 23))
+    bob = [0, -1, -2, -1][step]
+    w = [0, 1, 0, -1][step]
+    attack = pose == 'attack'
+    u = -2 if attack else 0
+    y0 = 2 + bob
+    if attack:
+        path = [(15 + u, y0 + 11), (16, y0 + 15), (20, y0 + 18), (24, y0 + 19), (28, y0 + 18), (31, y0 + 15)]
+    else:
+        path = [(15, y0 + 11), (16, y0 + 16), (19, y0 + 20), (23, y0 + 22 + w), (27, y0 + 21 + w * 2),
+                (30, y0 + 18 + w * 2)]
+    tail = tube(c, path, 5.5, 0.8)
+    if attack:
+        c.line(16 + u, y0 + 10, 7 + u, y0 + 9, 'dark', width=2)                      # far arm thrust out
+        ghost_claws(c, 6 + u, y0 + 9, 'second_dark', (-3, -1, 1))
+    else:
+        c.line(16, y0 + 11, 9, y0 + 14 + w, 'dark', width=2)                          # far arm reaching
+    c.part(tail, 'main', dark='dark', light='light')
+    glow_path = [(x - 1.5, y + 2.5) for x, y in path[:4]]
+    c.part(tail & tube(c, glow_path, 2, 1) & ~tube(c, path[:4], 3.5, 1), 'second', edge=False)
+    hood = (c.ellipse_mask(13 + u, y0 + 6, 5, 5) |
+            c.poly_mask([(14 + u, y0 + 1), (22 + u, y0 + 3 + w), (18 + u, y0 + 10)]))
+    c.part(hood, 'main', dark='dark', light='light')
+    c.ellipse(11 + u, y0 + 7, 2.5, 3.5, 'outline', edge=False)                       # the dark inside the hood
+    for x in (10, 12):
+        c.px(x + u, y0 + 6, 'eye')
+        if attack:
+            c.px(x + u, y0 + 7, 'eye')                                                # the eyes flare
+    c.line(13 + u, y0 + 2, 15 + u, y0 + 10, 'dark', edge=False)                      # hood edge
+    if attack:
+        c.line(15 + u, y0 + 12, 8 + u, y0 + 13, 'main', width=2, light='light')       # near arm lunging
+        ghost_claws(c, 7 + u, y0 + 13, 'second', (-1, 1, 3))
+    else:
+        c.line(15, y0 + 12, 7, y0 + 15 - w, 'main', width=2, light='light')           # near arm reaching
+        ghost_claws(c, 6, y0 + 15 - w, 'second', (-1, 1, 3))
+    img = c.done()
+    return wisps(img, (xs >= 26) | (ys >= y0 + 23), keep=step % 2)
+
+
 CREATURES = {
     'water_elemental': water_elemental,
     'wolf': wolf,
@@ -2039,14 +2299,19 @@ CREATURES = {
     'ooze': ooze,
     'robot': robot,
     'bomb': bomb,
+    'bear': bear,
+    'cat': cat,
+    'yeti': yeti,
+    'spirit': spirit,
 }
 
 
 # Upright creatures fall on their back instead of turning over like beasts.
-LYING_DEAD = {'worgen', 'worgen_caster', 'skeleton', 'skeleton_mage'}
+LYING_DEAD = {'worgen', 'worgen_caster', 'skeleton', 'skeleton_mage', 'yeti'}
 
-# Creatures that draw their own dead frame (pose 'dead'): an ooze dies as a puddle, a robot as a wreck.
-OWN_DEAD = {'raptor', 'naga', 'naga_caster', 'hydra', 'trogg', 'ooze', 'robot', 'bomb'}
+# Creatures that draw their own dead frame (pose 'dead'): an ooze dies as a puddle, a robot as a wreck, a spirit
+# as a fading wisp.
+OWN_DEAD = {'raptor', 'naga', 'naga_caster', 'hydra', 'trogg', 'ooze', 'robot', 'bomb', 'spirit'}
 
 
 def creature_sheet(draw, lying=False, own_dead=False):
@@ -2254,6 +2519,7 @@ TUSK = (232, 224, 200)
 
 SKIN_GNOME = (240, 184, 152)
 SKIN_DARK_IRON = (140, 140, 160)
+SKIN_FORSAKEN = (136, 152, 128)
 
 
 def orc_palette(armor, tabard, hair=(40, 32, 32), leather=(96, 64, 40), skin=SKIN_ORC, trim=TUSK):
@@ -2544,6 +2810,80 @@ HUMANOID_LOOKS = {
     'mekgineer_thermaplugg': ('gnome_sword', gnome_palette(hair=(40, 36, 44), armor=(84, 52, 112),
                                                            tabard=(56, 36, 76), trim=(232, 192, 72),
                                                            armor_light=(132, 92, 160))),
+    # Hillsbrad: Southshore and the Syndicate
+    'magistrate_maleb': ('hum_plain', humanoid_palette(hair=(168, 168, 176), armor=(48, 44, 52), tabard=(36, 32, 40),
+                                                       trim=(232, 192, 72), leather=(72, 56, 40),
+                                                       armor_light=(96, 92, 104))),
+    'raleigh_the_devout': ('hum_sword', humanoid_palette(hair=(232, 200, 96), armor=(224, 224, 232),
+                                                         tabard=(240, 236, 224), trim=(232, 184, 64),
+                                                         armor_light=(248, 248, 248), hair_dark=(176, 136, 56))),
+    'loremaster_dibbs': ('hum_robe', humanoid_palette(hair=(232, 232, 228), armor=(120, 88, 56), tabard=(64, 112, 64),
+                                                      trim=(200, 176, 104), lower_face=(232, 232, 228))),
+    'darren_malvew': ('hum_sword', humanoid_palette(hair=(112, 72, 40), armor=(128, 92, 56), tabard=(56, 112, 56),
+                                                    trim=(184, 152, 96), leather=(104, 68, 40))),
+    'syndicate_footpad': ('hum_sword', humanoid_palette(hair=(40, 36, 44), armor=(48, 44, 52), tabard=(104, 48, 136),
+                                                        trim=(104, 48, 136), lower_face=(104, 48, 136),
+                                                        leather=(64, 52, 60))),
+    'syndicate_thief': ('hum_plain', humanoid_palette(hair=(64, 52, 44), armor=(80, 80, 88), tabard=(64, 64, 72),
+                                                      trim=(136, 72, 168), leather=(72, 60, 64))),
+    'syndicate_shadow_mage': ('hum_robe', humanoid_palette(hair=(40, 32, 44), armor=(88, 44, 120), tabard=(36, 28, 44),
+                                                           trim=(168, 104, 208), armor_light=(128, 80, 160))),
+    'syndicate_enforcer': ('hum_sword', humanoid_palette(hair=(56, 48, 40), armor=(88, 88, 100), tabard=(104, 48, 136),
+                                                         trim=(152, 152, 168), armor_light=(136, 136, 152))),
+    'gravis_slipknot': ('hum_sword', humanoid_palette(hair=(184, 64, 32), armor=(40, 36, 44), tabard=(28, 24, 32),
+                                                      trim=(232, 192, 72), lower_face=(184, 64, 32),
+                                                      armor_light=(88, 80, 96), leather=(56, 44, 40))),
+    # the Forsaken
+    'forsaken_thug': ('hum_sword', humanoid_palette(skin=SKIN_FORSAKEN, hair=(48, 44, 40), armor=(104, 80, 56),
+                                                    tabard=(44, 40, 40), trim=(120, 112, 96),
+                                                    lower_face=(120, 132, 112), leather=(72, 56, 44))),
+    'forsaken_herbalist': ('hum_robe', humanoid_palette(skin=SKIN_FORSAKEN, hair=(96, 88, 72), armor=(88, 120, 64),
+                                                        tabard=(64, 92, 52), trim=(160, 136, 88),
+                                                        lower_face=(120, 132, 112))),
+    'forsaken_courier': ('hum_plain', humanoid_palette(skin=SKIN_FORSAKEN, hair=(40, 36, 44), armor=(48, 44, 52),
+                                                       tabard=(96, 52, 120), trim=(152, 144, 160),
+                                                       lower_face=(120, 132, 112))),
+    # the Scarlet Crusade
+    'scarlet_convert': ('hum_plain', humanoid_palette(hair=(136, 96, 56), armor=(216, 212, 200), tabard=(176, 32, 32),
+                                                      trim=(232, 228, 216), leather=(112, 80, 56))),
+    'scarlet_scout': ('fem_bow', humanoid_palette(hair=(192, 128, 64), armor=(168, 40, 36), tabard=(224, 220, 208),
+                                                  trim=(176, 32, 32), leather=(120, 84, 56),
+                                                  armor_light=(208, 72, 64))),
+    'scarlet_torturer': ('hum_sword', humanoid_palette(hair=(152, 28, 28), armor=(48, 44, 48), tabard=(152, 28, 28),
+                                                       trim=(120, 116, 120), lower_face=(152, 28, 28),
+                                                       hair_dark=(96, 20, 20), leather=(56, 44, 40))),
+    'interrogator_vishas': ('hum_plain', humanoid_palette(hair=(56, 40, 36), armor=(36, 32, 36), tabard=(144, 24, 32),
+                                                          trim=(184, 40, 48), hair_dark=(176, 120, 88),
+                                                          armor_light=(80, 72, 80), leather=(48, 36, 36))),
+    'bloodmage_thalnos': ('hum_robe', humanoid_palette(skin=(168, 168, 160), hair=(56, 52, 56), armor=(152, 24, 32),
+                                                       tabard=(112, 20, 28), trim=(232, 192, 72),
+                                                       armor_light=(200, 56, 56))),
+    'scarlet_gallant': ('hum_sword', humanoid_palette(hair=(184, 136, 72), armor=(216, 216, 224), tabard=(176, 32, 32),
+                                                      trim=(232, 192, 72), armor_light=(244, 244, 248))),
+    'scarlet_adept': ('hum_robe', humanoid_palette(hair=(104, 72, 40), armor=(176, 32, 32), tabard=(228, 224, 212),
+                                                   trim=(176, 32, 32), armor_light=(216, 72, 64))),
+    'scarlet_monk': ('hum_plain', humanoid_palette(hair=(36, 32, 32), armor=(184, 36, 36), tabard=(232, 228, 216),
+                                                   trim=(184, 36, 36), leather=(232, 228, 216),
+                                                   armor_light=(224, 80, 72), hair_dark=(20, 18, 20))),
+    'scarlet_beastmaster': ('fem_bow', humanoid_palette(hair=(120, 64, 40), armor=(120, 36, 32), tabard=(88, 28, 28),
+                                                        trim=(200, 168, 120), leather=(96, 64, 44),
+                                                        armor_light=(160, 64, 56))),
+    'scarlet_chaplain': ('fem_robe', humanoid_palette(hair=(216, 184, 120), armor=(232, 228, 220), tabard=(176, 32, 32),
+                                                      trim=(232, 192, 72), armor_light=(248, 248, 244))),
+    'scarlet_diviner': ('hum_staff', humanoid_palette(hair=(152, 120, 88), armor=(168, 32, 36), tabard=(128, 24, 28),
+                                                      trim=(232, 192, 72), armor_light=(208, 64, 64))),
+    'houndmaster_loksey': ('hum_sword', humanoid_palette(hair=(36, 30, 30), armor=(128, 88, 56), tabard=(176, 32, 32),
+                                                         trim=(216, 184, 104), leather=(96, 64, 40),
+                                                         lower_face=(36, 30, 30), hair_dark=(20, 18, 20))),
+    'arcanist_doan': ('hum_staff', humanoid_palette(hair=(236, 236, 236), armor=(160, 24, 40), tabard=(112, 16, 28),
+                                                    trim=(240, 200, 72), lower_face=(236, 236, 236),
+                                                    armor_light=(208, 64, 72))),
+    # Southshore's inn and the Argent Dawn
+    'southshore_innkeeper': ('hum_robe', humanoid_palette(hair=(120, 80, 48), armor=(72, 120, 72), tabard=(136, 96, 56),
+                                                          trim=(200, 168, 104), armor_light=(112, 160, 104))),
+    'argent_scout': ('elf_bow', humanoid_palette(skin=SKIN_ELF, hair=(208, 212, 228), armor=(176, 180, 196),
+                                                 tabard=(104, 56, 144), trim=(232, 232, 240),
+                                                 armor_light=(220, 224, 236))),
 }
 
 CREATURE_LOOKS = {
@@ -2689,6 +3029,34 @@ CREATURE_LOOKS = {
     'walking_bomb': ('bomb', creature_palette((56, 56, 64), (176, 144, 72), extra=(200, 176, 120),
                                               weapon=(120, 120, 128), light=(120, 120, 136),
                                               flame=(255, 232, 96), flame_dark=(240, 128, 32))),
+    # Alterac Mountains, Hillsbrad and the Scarlet Monastery
+    'gray_bear': ('bear', creature_palette((128, 112, 100), (176, 160, 140), eye=(216, 152, 56),
+                                           light=(164, 148, 136))),
+    'mountain_lion': ('cat', creature_palette((192, 140, 80), (236, 216, 176), eye=(232, 200, 64),
+                                              dark=(128, 88, 48), light=(224, 176, 112))),
+    'mountain_yeti': ('yeti', creature_palette((216, 220, 232), (120, 124, 144), eye=(96, 184, 248),
+                                               extra=(168, 152, 128), dark=(144, 148, 168), light=(248, 248, 255))),
+    'bloodfang': ('yeti', creature_palette((176, 92, 64), (104, 76, 76), eye=(248, 40, 24), extra=(208, 192, 160),
+                                           dark=(112, 52, 40), light=(216, 144, 112))),
+    'crushridge_ogre': ('ogre', creature_palette((120, 136, 168), (56, 48, 56), eye=(240, 216, 96),
+                                                 extra=(128, 84, 48), weapon=(120, 84, 48))),
+    'crushridge_mage': ('ogre', creature_palette((136, 120, 160), (48, 40, 56), eye=(200, 168, 255),
+                                                 extra=(64, 44, 88), weapon=(96, 72, 104))),
+    'crushridge_enforcer': ('ogre', creature_palette((88, 100, 128), (40, 36, 44), eye=(248, 72, 40),
+                                                     extra=(144, 148, 160), weapon=(160, 164, 176))),
+    'torn_fin_tidehunter': ('murloc', creature_palette((104, 104, 152), (176, 176, 208), eye=(24, 24, 24),
+                                                       extra=(136, 96, 152))),
+    'torn_fin_oracle': ('murloc', creature_palette((48, 144, 144), (176, 224, 208), eye=(24, 24, 24),
+                                                   extra=(248, 200, 56))),
+    'haunting_phantasm': ('spirit', creature_palette((136, 96, 192), (208, 184, 240), eye=(248, 240, 160),
+                                                     light=(184, 152, 232))),
+    'unfettered_spirit': ('spirit', creature_palette((168, 200, 228), (232, 244, 252), eye=(96, 184, 248),
+                                                     dark=(112, 144, 184), light=(220, 236, 248))),
+    'azshir_the_sleepless': ('spirit', creature_palette((64, 44, 88), (120, 88, 152), eye=(136, 255, 96),
+                                                        dark=(36, 28, 52), light=(104, 76, 136))),
+    'ironspine': ('skeleton', creature_palette((200, 208, 128), (152, 160, 96), eye=(168, 248, 64),
+                                               extra=(88, 92, 72), weapon=(136, 144, 152))),
+    'scarlet_tracking_hound': ('wolf', creature_palette((144, 72, 48), (200, 152, 120), eye=(248, 208, 64))),
 }
 
 

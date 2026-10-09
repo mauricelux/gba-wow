@@ -4003,6 +4003,76 @@ bool combat::boss_update(int index)
         _update_frenzy(boss, health_percent, 20, 2, "Thermaplugg");
         break;
 
+    // --- Hillsbrad Foothills -----------------------------------------------------------------------
+
+    case enemy_id::GRAVIS_SLIPKNOT:
+        // A thief comes out of the shadows at half health.
+        _boss_greeting(boss, "Gravis: Nobody leaves alive!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::SYNDICATE_THIEF);
+            _hud.message("Gravis: To me, Syndicate!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::BLOODFANG:
+        _boss_greeting(boss, "Bloodfang roars!");
+        _update_frenzy(boss, health_percent, 30, 2, "Bloodfang");
+        break;
+
+    // --- Scarlet Monastery: Graveyard --------------------------------------------------------------
+
+    case enemy_id::INTERROGATOR_VISHAS:
+        _boss_greeting(boss, "Vishas: Tell me your secrets!");
+        _update_frenzy(boss, health_percent, 25, 2, "Vishas");
+        break;
+
+    case enemy_id::AZSHIR_THE_SLEEPLESS:
+        _boss_greeting(boss, "Azshir the Sleepless wails!");
+        break;
+
+    case enemy_id::BLOODMAGE_THALNOS:
+        _boss_greeting(boss, "Thalnos: No rest for the dead!");
+        _update_frenzy(boss, health_percent, 25, 2, "Thalnos");
+        break;
+
+    case enemy_id::IRONSPINE:
+        _boss_greeting(boss, "Ironspine rattles to life!");
+        _update_frenzy(boss, health_percent, 30, 2, "Ironspine");
+        break;
+
+    // --- Scarlet Monastery: Library ----------------------------------------------------------------
+
+    case enemy_id::HOUNDMASTER_LOKSEY:
+        // Another hound off the leash at 60%, then Bloodlust near the end.
+        _boss_greeting(boss, "Loksey: Release the hounds!");
+
+        if(boss.phase == 1 && health_percent <= 60)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::SCARLET_TRACKING_HOUND);
+        }
+
+        _update_frenzy(boss, health_percent, 30, 3, "Loksey");
+        break;
+
+    case enemy_id::ARCANIST_DOAN:
+        // At half health an Arcane Bubble shields him while Detonation builds: run out of its circle.
+        _boss_greeting(boss, "Doan: Who disturbs my study?");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            boss.ai.guard_frames = 3 * seconds;
+            boss.ai.guard_percent = 100;
+            boss.ai.guard_physical = false;
+            _texts.show(_head(boss.position, 44), "Arcane Bubble", floating_texts::style::DAMAGE_TAKEN);
+            _hud.message("Doan: Burn in righteous fire!", ui::color::RED);
+        }
+        break;
+
     default:
         break;
     }

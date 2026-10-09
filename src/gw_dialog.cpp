@@ -427,7 +427,7 @@ void dialog::_complete()
     save_game();
 
     if(_quest == quest_id::BAZIL_THREDD || _quest == quest_id::ARUGAL_MUST_DIE ||
-       _quest == quest_id::THE_GRAND_BETRAYAL)
+       _quest == quest_id::THE_GRAND_BETRAYAL || _quest == quest_id::ARCANIST_DOAN)
     {
         ending_requested = true;
     }

@@ -5,10 +5,12 @@
 #include "gw_character.h"
 #include "gw_map_darkshore.h"
 #include "gw_map_duskwood.h"
+#include "gw_map_hillsbrad.h"
 #include "gw_map_ironforge.h"
 #include "gw_map_redridge.h"
 #include "gw_map_silverpine.h"
 #include "gw_map_stormwind.h"
+#include "gw_map_tirisfal.h"
 #include "gw_map_westfall.h"
 #include "gw_map_wetlands.h"
 
@@ -26,6 +28,8 @@ namespace
         { "Ironforge", npc_id::GRYTH, map_id::IRONFORGE, map_data::ironforge::flight, 0, 41, 69 },
         { "Menethil Harbor", npc_id::SHELLEI, map_id::WETLANDS, map_data::wetlands::flight, 0, 50, 53 },
         { "Auberdine", npc_id::CAYLAIS, map_id::DARKSHORE, map_data::darkshore::flight, 1, 40, 30 },
+        { "Southshore", npc_id::DARLA, map_id::HILLSBRAD, map_data::hillsbrad::flight, 0, 56, 47 },
+        { "Argent Watch", npc_id::GRYPHON_TIRISFAL, map_id::TIRISFAL, map_data::tirisfal::flight, 0, 44, 20 },
     };
 
     static_assert(sizeof(flights) / sizeof(flights[0]) == int(flight_id::COUNT));

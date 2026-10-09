@@ -565,6 +565,52 @@ def song_wetlands():
     return s
 
 
+def song_hillsbrad():
+    """Hillsbrad: green foothills by the sea, a bright folk tune in G major with a lilting step."""
+    s = Song('hillsbrad', 8)
+    drums = 'k.....h.k.....h.|k.....h.k...h.h.'
+    a = arrange(['G', 'C', 'G', 'D'],
+                'D5 - - - G5 - - - B5 - A5 - G5 - - - '
+                'E5 - - - G5 - - - C6 - B5 - A5 - - - '
+                'B5 - - - D6 - B5 - G5 - - - B5 - - - '
+                'A5 - - - - - F#5 - D5 - - - - - - - ',
+                lead='soft', lead_volume=42, harmony='arp_up_down', harmony_sample='bell', harmony_volume=22,
+                bass='root_fifth', drums=drums)
+    b = arrange(['Em', 'C', 'Am', 'D'],
+                'G5 - - - E5 - G5 - B5 - - - A5 - G5 - '
+                'E5 - - - - - G5 - C6 - - - B5 - - - '
+                'A5 - - - C6 - A5 - E5 - - - A5 - - - '
+                'F#5 - - - A5 - - - D5 - - - - - - - ',
+                lead='soft', lead_volume=42, harmony='pad', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=22, bass='roots', drums=drums)
+    s.add(a)
+    s.add(b)
+    return s
+
+
+def song_monastery():
+    """The Scarlet Monastery: a slow chant in E minor, organ over a low drone and a tolling bell."""
+    s = Song('monastery', 12)
+    drums = 't...............|................'
+    a = arrange(['Em', 'Em', 'C', 'B'],
+                'E5 - - - - - G5 - F#5 - - - E5 - - - '
+                'B4 - - - - - D5 - E5 - - - - - - - '
+                'G5 - - - - - E5 - C5 - - - E5 - - - '
+                'D#5 - - - - - - - B4 - - - - - - - ',
+                lead='organ', lead_volume=36, harmony='pad', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=24, bass='drone', bass_sample='bass', bass_octave=2, bass_volume=30, drums=drums)
+    b = arrange(['Am', 'Em', 'C', 'B'],
+                'A5 - - - - - C6 - B5 - - - A5 - - - '
+                'G5 - - - - - - - E5 - - - - - - - '
+                'E5 - - - G5 - - - C6 - - - B5 - A5 - '
+                'B5 - - - - - - - F#5 - - - D#5 - - - ',
+                lead='bell', lead_volume=40, harmony='pad', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=22, bass='drone', bass_sample='bass', bass_octave=2, bass_volume=30, drums=drums)
+    s.add(a)
+    s.add(b)
+    return s
+
+
 def song_dungeon():
     s = Song('dungeon', 10)
     drums = 'k...............|k.......k.......'
@@ -669,7 +715,8 @@ def write_sounds():
 def main():
     os.makedirs(OUT, exist_ok=True)
     for song in (song_title(), song_elwynn(), song_town(), song_westfall(), song_dungeon(), song_boss(),
-                 song_redridge(), song_duskwood(), song_ironforge(), song_wetlands()):
+                 song_redridge(), song_duskwood(), song_ironforge(), song_wetlands(), song_hillsbrad(),
+                 song_monastery()):
         write_mod(song)
         print(f'{song.name}.mod: {len(song.patterns)} patterns, {len(song.order)} in order')
     write_sounds()

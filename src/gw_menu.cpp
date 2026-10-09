@@ -18,12 +18,16 @@
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
 #include "gw_map_gnomeregan.h"
+#include "gw_map_hillsbrad.h"
 #include "gw_map_ironforge.h"
 #include "gw_map_redridge.h"
 #include "gw_map_shadowfang.h"
 #include "gw_map_silverpine.h"
+#include "gw_map_sm_graveyard.h"
+#include "gw_map_sm_library.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
+#include "gw_map_tirisfal.h"
 #include "gw_map_westfall.h"
 #include "gw_map_wetlands.h"
 #include "gw_menu_layout.h"
@@ -86,6 +90,11 @@ namespace
         { "The Moonshrine", map_id::BLACKFATHOM_DEEPS, map_data::blackfathom_deeps::moonshrine_door },
         { "Gnomeregan", map_id::GNOMEREGAN, map_data::gnomeregan::entry },
         { "Thermaplugg", map_id::GNOMEREGAN, { 512, 240 } },
+        { "Southshore", map_id::HILLSBRAD, map_data::hillsbrad::southshore_respawn },
+        { "Argent Watch", map_id::TIRISFAL, map_data::tirisfal::tirisfal_respawn },
+        { "SM Graveyard", map_id::SM_GRAVEYARD, map_data::sm_graveyard::entry },
+        { "SM Library", map_id::SM_LIBRARY, map_data::sm_library::entry },
+        { "The Athenaeum", map_id::SM_LIBRARY, { 512, 140 } },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);

@@ -81,6 +81,21 @@ namespace
         i::WILD_HOG_SHANK, i::DWARVEN_MILD, i::SWEET_NECTAR, i::MOONBERRY_JUICE, i::GREATER_HEALING_POTION,
         i::TELEPORTATION_RUNE
     };
+
+    constexpr item_id southshore[] = {
+        i::WILD_HOG_SHANK, i::GOLDENBARK_APPLE, i::MOONBERRY_JUICE, i::MORNING_GLORY_DEW,
+        i::GREATER_HEALING_POTION, i::SUPERIOR_HEALING_POTION, i::TELEPORTATION_RUNE
+    };
+
+    constexpr item_id southshore_smith[] = {
+        i::HARDENED_BROADSWORD, i::SOUTHSHORE_WAR_AXE, i::HEAVY_FLANGED_MACE, i::IRONBOUND_STAFF, i::HEAVY_CLAYMORE,
+        i::HILLSBRAD_LONGBOW, i::HEAVY_BLUNDERBUSS, i::HEATER_SHIELD,
+        i::REINFORCED_CHAIN_HELM, i::REINFORCED_CHAIN_HAUBERK, i::REINFORCED_CHAIN_GAUNTLETS,
+        i::REINFORCED_CHAIN_LEGGINGS, i::REINFORCED_CHAIN_BOOTS,
+        i::HARDENED_LEATHER_CAP, i::HARDENED_LEATHER_VEST, i::HARDENED_LEATHER_GLOVES, i::HARDENED_LEATHER_PANTS,
+        i::HARDENED_LEATHER_BOOTS,
+        i::SILK_HOOD, i::SILK_ROBE, i::SILK_GLOVES, i::SILK_PANTS, i::SILK_BOOTS
+    };
 }
 
 bn::span<const item_id> vendor_stock(int vendor)
@@ -123,6 +138,12 @@ bn::span<const item_id> vendor_stock(int vendor)
 
     case 12:
         return menethil;
+
+    case 13:
+        return southshore;
+
+    case 14:
+        return southshore_smith;
 
     default:
         return general_goods;

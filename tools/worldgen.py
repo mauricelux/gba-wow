@@ -136,6 +136,26 @@ TERRAIN_DARKSHORE = [
     ('flower', (184, 144, 216)),
 ]
 
+# Hillsbrad: bright green foothills and pale dirt roads by the sea.
+TERRAIN_HILLSBRAD = [
+    ('shadow', (36, 64, 48)), ('grass_d', (60, 112, 56)), ('grass_m', (84, 144, 64)),
+    ('grass_l', (116, 172, 80)), ('grass_h', (168, 204, 112)),
+    ('dirt_d', (124, 100, 72)), ('dirt_m', (164, 140, 100)), ('dirt_l', (196, 176, 136)),
+    ('water_d', (36, 72, 128)), ('water_m', (56, 108, 168)), ('water_l', (104, 156, 208)),
+    ('foam', (228, 236, 240)), ('trunk_d', (72, 48, 32)), ('trunk_m', (112, 80, 48)),
+    ('flower', (232, 216, 232)),
+]
+
+# Tirisfal: sickly yellow-green grass under a grey sky, dark mud and black water.
+TERRAIN_TIRISFAL = [
+    ('shadow', (40, 44, 36)), ('grass_d', (84, 92, 52)), ('grass_m', (112, 120, 64)),
+    ('grass_l', (140, 144, 80)), ('grass_h', (176, 176, 108)),
+    ('dirt_d', (80, 68, 56)), ('dirt_m', (112, 98, 80)), ('dirt_l', (144, 130, 108)),
+    ('water_d', (32, 44, 52)), ('water_m', (48, 64, 72)), ('water_l', (84, 104, 108)),
+    ('foam', (176, 184, 176)), ('trunk_d', (52, 44, 36)), ('trunk_m', (84, 72, 56)),
+    ('flower', (168, 120, 152)),
+]
+
 BUILDINGS = [
     ('outline', (32, 32, 48)), ('stone_d', (88, 88, 104)), ('stone_m', (128, 128, 144)),
     ('stone_l', (168, 168, 176)), ('stone_h', (208, 208, 200)),
@@ -153,6 +173,16 @@ BUILDINGS_DUSK = [
     ('glass_l', (248, 200, 96)), ('banner_d', (64, 24, 32)), ('banner', (108, 40, 48)),
     ('gold', (200, 160, 64)), ('cobble_d', (64, 62, 68)), ('cobble_l', (108, 104, 104)),
     ('plaster', (160, 152, 136)),
+]
+
+# The Scarlet Monastery: pale limestone, crimson banners and gold.
+BUILDINGS_SCARLET = [
+    ('outline', (32, 28, 36)), ('stone_d', (112, 104, 104)), ('stone_m', (152, 144, 136)),
+    ('stone_l', (192, 184, 168)), ('stone_h', (224, 216, 196)),
+    ('wood_d', (80, 48, 32)), ('wood_l', (132, 88, 52)), ('glass_d', (56, 32, 48)),
+    ('glass_l', (240, 176, 96)), ('banner_d', (112, 16, 24)), ('banner', (176, 32, 40)),
+    ('gold', (232, 184, 64)), ('cobble_d', (100, 96, 92)), ('cobble_l', (168, 160, 148)),
+    ('plaster', (224, 216, 200)),
 ]
 
 FARM = [
@@ -219,6 +249,15 @@ OVERHEAD_LEAVES_DARKSHORE = [
     ('roof_d', (56, 40, 88)), ('roof_m', (84, 64, 128)), ('roof_l', (116, 96, 168)),
     ('stone_d', (80, 80, 104)), ('stone_m', (116, 116, 140)), ('stone_l', (156, 156, 176)),
     ('gold', (200, 184, 120)), ('glass', (32, 40, 72)), ('roof_h', (152, 136, 200)),
+]
+
+# Tirisfal's dying woods: olive and brown leaves; the Monastery's roofs are dark red slate.
+OVERHEAD_LEAVES_TIRISFAL = [
+    ('outline', (24, 24, 20)), ('leaf_0', (52, 52, 32)), ('leaf_1', (76, 72, 40)),
+    ('leaf_2', (104, 96, 52)), ('leaf_3', (132, 120, 68)), ('leaf_4', (168, 152, 96)),
+    ('roof_d', (72, 28, 32)), ('roof_m', (112, 48, 52)), ('roof_l', (140, 60, 60)),
+    ('stone_d', (112, 104, 104)), ('stone_m', (152, 144, 136)), ('stone_l', (192, 184, 168)),
+    ('gold', (232, 184, 64)), ('glass', (56, 32, 48)), ('roof_h', (176, 88, 80)),
 ]
 
 OVERHEAD_ROOFS = [
@@ -751,6 +790,22 @@ ROCK_DARKSHORE = [
     ('r_grass_l', (76, 120, 112)), ('r_grass_h', (112, 152, 144)),
     ('rock_0', (40, 32, 56)), ('rock_1', (60, 56, 76)), ('rock_2', (88, 84, 104)),
     ('rock_3', (116, 112, 132)), ('rock_4', (148, 144, 164)), ('rock_5', (184, 180, 196)),
+]
+
+# Hillsbrad's grey granite, with twins of TERRAIN_HILLSBRAD's grass.
+ROCK_HILLSBRAD = [
+    ('r_shadow', (36, 64, 56)), ('r_grass_d', (60, 112, 64)), ('r_grass_m', (84, 144, 72)),
+    ('r_grass_l', (116, 172, 88)), ('r_grass_h', (168, 204, 120)),
+    ('rock_0', (44, 48, 56)), ('rock_1', (76, 80, 92)), ('rock_2', (108, 112, 124)),
+    ('rock_3', (140, 144, 156)), ('rock_4', (176, 180, 188)), ('rock_5', (212, 216, 220)),
+]
+
+# Tirisfal's cliffs and the Monastery graveyard's stones.
+ROCK_TIRISFAL = [
+    ('r_shadow', (32, 48, 48)), ('r_grass_d', (84, 92, 60)), ('r_grass_m', (112, 120, 72)),
+    ('r_grass_l', (140, 144, 88)), ('r_grass_h', (176, 176, 116)),
+    ('rock_0', (44, 40, 44)), ('rock_1', (72, 68, 72)), ('rock_2', (100, 96, 100)),
+    ('rock_3', (132, 128, 128)), ('rock_4', (164, 160, 156)), ('rock_5', (200, 196, 188)),
 ]
 
 # Terrain colors as the rock bank draws them.

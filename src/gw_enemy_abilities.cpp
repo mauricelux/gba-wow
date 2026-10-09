@@ -114,6 +114,19 @@ namespace
           1, none },
         { "Throw Dynamite", e::HIT, t::AT_PLAYER, b::COUNT, s::FIRE, p::NONE, INTERRUPTIBLE, 80, 28, 12, 10, 0, 140,
           0, 0, 1, none },
+
+        // Bloodmage Thalnos: a spike of fire where the player stood.
+        { "Flame Spike", e::HIT, t::AT_PLAYER, b::BURNING, s::FIRE, p::NONE, CAST, 96, 28, 15, 7, 6, 180, 30, 0, 1,
+          none },
+        // Arcanist Doan, from half health: nothing can stop it, so get out of the circle.
+        { "Detonation", e::HIT, t::AROUND_SELF, b::COUNT, s::ARCANE, p::NONE, SPELL, 64, 60, 30, 20, 0, 255, 0, 50,
+          1, none },
+        { "Arcane Explosion", e::HIT, t::AROUND_SELF, b::COUNT, s::ARCANE, p::NONE, CAST, 36, 40, 10, 8, 0, 110, 0,
+          0, 1, none },
+        { "Psychic Scream", e::HIT, t::AROUND_SELF, b::FEARED, s::SHADOW, p::NONE, SPELL, 40, 44, 10, 25, 4, 0, 0,
+          0, 1, none },
+        { "Poison Cloud", e::HIT, t::AT_PLAYER, b::POISONED, s::NATURE, p::NONE, CAST, 80, 36, 15, 12, 15, 60, 30,
+          0, 1, none },
     };
 
     static_assert(sizeof(abilities) / sizeof(abilities[0]) == enemy_ability_count, "an entry per enemy ability");

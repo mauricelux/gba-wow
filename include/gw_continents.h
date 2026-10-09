@@ -65,11 +65,11 @@ struct zone_def
 };
 
 constexpr zone_def zones[] = {
-    { "Tirisfal Glades", 0, 36, 23, 1, 10, map_id::NONE },
+    { "Tirisfal Glades", 0, 36, 23, 30, 40, map_id::TIRISFAL },
     { "Western Plaguelands", 0, 56, 26, 55, 60, map_id::NONE },
     { "Eastern Plaguelands", 0, 80, 26, 55, 60, map_id::NONE },
     { "Silverpine Forest", 0, 31, 38, 20, 25, map_id::SILVERPINE },
-    { "Hillsbrad Foothills", 0, 52, 42, 30, 35, map_id::NONE },
+    { "Hillsbrad Foothills", 0, 52, 42, 30, 35, map_id::HILLSBRAD },
     { "Wetlands", 0, 59, 57, 25, 30, map_id::WETLANDS },
     { "Ironforge", 0, 47, 71, 25, 30, map_id::IRONFORGE },
     { "Badlands", 0, 68, 81, 50, 55, map_id::NONE },

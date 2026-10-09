@@ -279,10 +279,12 @@ namespace gw::map_data::wetlands
     constexpr point_def flight = { 392, 810 };
     constexpr point_def from_darkshore = { 176, 880 };
     constexpr point_def from_dun_morogh = { 816, 1000 };
+    constexpr point_def from_hillsbrad = { 640, 24 };
     constexpr point_def menethil_respawn = { 296, 840 };
 
     constexpr warp_def warps[] = {
         { 164, 912, 24, 8, map_id::DARKSHORE, 136, 340, vehicle::BOAT },
+        { 624, 0, 32, 8, map_id::HILLSBRAD, 1232, 688 },
         { 792, 1016, 48, 8, map_id::DUN_MOROGH, 1004, 408 },
     };
 

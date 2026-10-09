@@ -466,7 +466,113 @@
     X(GEAR_STUDDED_JERKIN, armor("Gear-Studded Jerkin", R, LEATHER, CHEST, 28, 0, 10, 6, 0, 0)) \
     X(THERMAPLUGGS_LEFT_ARM, weapon("Thermaplugg's Left Arm", R, TWO_HANDED, 29, 36, 12, 0, 8, 0, 0)) \
     X(MEKGINEERS_SPARK_STAFF, weapon("Mekgineer's Spark Staff", R, STAFF, 29, 32, 0, 0, 6, 12, 7)) \
-    X(THERMAPLUGGS_BLUNDERBUSS, weapon("Thermaplugg's Blunderbuss", R, GUN, 29, 29, 0, 11, 5, 0, 0))
+    X(THERMAPLUGGS_BLUNDERBUSS, weapon("Thermaplugg's Blunderbuss", R, GUN, 29, 29, 0, 11, 5, 0, 0)) \
+    /* World drops, levels 31 to 35 */ \
+    X(ALTERAC_CHAIN_HELM, armor("Alterac Chain Helm", U, MAIL, HEAD, 32, 6, 0, 5, 0, 0)) \
+    X(SILKWEAVE_ROBE, armor("Silkweave Robe", U, CLOTH, CHEST, 33, 0, 0, 4, 8, 5)) \
+    X(STALKERS_LEGGINGS, armor("Stalker's Leggings", U, LEATHER, LEGS, 33, 0, 8, 4, 0, 0)) \
+    X(BATTLEFORGE_GREATSWORD, weapon("Battleforge Greatsword", U, TWO_HANDED, 33, 36, 9, 0, 6, 0, 0)) \
+    X(IVORY_STAFF, weapon("Ivory Staff", U, STAFF, 33, 32, 0, 0, 4, 9, 5)) \
+    X(IRONBARK_LONGBOW, weapon("Ironbark Longbow", U, BOW, 33, 28, 0, 8, 4, 0, 0)) \
+    X(BASTION_SHIELD, shield("Bastion Shield", U, 32, 3, 0, 6, 0, 0)) \
+    /* Hillsbrad and the Monastery: supplies and what their creatures carry */ \
+    X(GOLDENBARK_APPLE, consumable("Goldenbark Apple", FOOD, 35, 1000, 250, 20)) \
+    X(MORNING_GLORY_DEW, consumable("Morning Glory Dew", DRINK, 35, 1900, 250, 20)) \
+    X(SUPERIOR_HEALING_POTION, consumable("Superior Healing Potion", POTION, 31, 900, 400, 5)) \
+    X(THICK_FUR, junk("Thick Fur", 65, 20)) \
+    X(YETI_HORN, junk("Yeti Horn", 75, 20)) \
+    X(GHOSTLY_ECTOPLASM, junk("Ghostly Ectoplasm", 75, 20)) \
+    X(SCARLET_INSIGNIA, junk("Scarlet Insignia", 70, 20)) \
+    /* Southshore's smith */ \
+    X(HARDENED_BROADSWORD, weapon("Hardened Broadsword", C, SWORD, 30, 26)) \
+    X(SOUTHSHORE_WAR_AXE, weapon("Southshore War Axe", C, AXE, 30, 25)) \
+    X(HEAVY_FLANGED_MACE, weapon("Heavy Flanged Mace", C, MACE, 30, 27)) \
+    X(IRONBOUND_STAFF, weapon("Ironbound Staff", C, STAFF, 30, 31)) \
+    X(HEAVY_CLAYMORE, weapon("Heavy Claymore", C, TWO_HANDED, 30, 35)) \
+    X(HILLSBRAD_LONGBOW, weapon("Hillsbrad Longbow", C, BOW, 30, 28)) \
+    X(HEAVY_BLUNDERBUSS, weapon("Heavy Blunderbuss", C, GUN, 30, 29)) \
+    X(HEATER_SHIELD, shield("Heater Shield", C, 30)) \
+    X(REINFORCED_CHAIN_HELM, armor("Reinforced Chain Helm", C, MAIL, HEAD, 30)) \
+    X(REINFORCED_CHAIN_HAUBERK, armor("Reinforced Chain Hauberk", C, MAIL, CHEST, 30)) \
+    X(REINFORCED_CHAIN_GAUNTLETS, armor("Reinforced Chain Gauntlets", C, MAIL, HANDS, 30)) \
+    X(REINFORCED_CHAIN_LEGGINGS, armor("Reinforced Chain Leggings", C, MAIL, LEGS, 30)) \
+    X(REINFORCED_CHAIN_BOOTS, armor("Reinforced Chain Boots", C, MAIL, FEET, 30)) \
+    X(HARDENED_LEATHER_CAP, armor("Hardened Leather Cap", C, LEATHER, HEAD, 30)) \
+    X(HARDENED_LEATHER_VEST, armor("Hardened Leather Vest", C, LEATHER, CHEST, 30)) \
+    X(HARDENED_LEATHER_GLOVES, armor("Hardened Leather Gloves", C, LEATHER, HANDS, 30)) \
+    X(HARDENED_LEATHER_PANTS, armor("Hardened Leather Pants", C, LEATHER, LEGS, 30)) \
+    X(HARDENED_LEATHER_BOOTS, armor("Hardened Leather Boots", C, LEATHER, FEET, 30)) \
+    X(SILK_HOOD, armor("Silk Hood", C, CLOTH, HEAD, 30)) \
+    X(SILK_ROBE, armor("Silk Robe", C, CLOTH, CHEST, 30)) \
+    X(SILK_GLOVES, armor("Silk Gloves", C, CLOTH, HANDS, 30)) \
+    X(SILK_PANTS, armor("Silk Pants", C, CLOTH, LEGS, 30)) \
+    X(SILK_BOOTS, armor("Silk Boots", C, CLOTH, FEET, 30)) \
+    /* Hillsbrad Foothills: quest rewards */ \
+    X(SOUTHSHORE_SABATONS, armor("Southshore Sabatons", U, MAIL, FEET, 30, 5, 0, 4, 0, 0)) \
+    X(SEASPRAY_SANDALS, armor("Seaspray Sandals", U, CLOTH, FEET, 30, 0, 0, 3, 6, 4)) \
+    X(SALTWATER_BOOTS, armor("Saltwater Boots", U, LEATHER, FEET, 30, 0, 6, 4, 0, 0)) \
+    X(HILLSBRAD_HELM, armor("Hillsbrad Helm", U, MAIL, HEAD, 30, 6, 0, 4, 0, 0)) \
+    X(DARROW_HILL_HOOD, armor("Darrow Hill Hood", U, CLOTH, HEAD, 30, 0, 0, 3, 7, 4)) \
+    X(LIONHIDE_CAP, armor("Lionhide Cap", U, LEATHER, HEAD, 30, 0, 7, 4, 0, 0)) \
+    X(MAGISTRATES_GAUNTLETS, armor("Magistrate's Gauntlets", U, MAIL, HANDS, 31, 6, 0, 4, 0, 0)) \
+    X(GARROTE_WRAPS, armor("Garrote Wraps", U, CLOTH, HANDS, 31, 0, 0, 3, 7, 4)) \
+    X(FOOTPADS_GLOVES, armor("Footpad's Gloves", U, LEATHER, HANDS, 31, 0, 7, 4, 0, 0)) \
+    X(CRUSHRIDGE_CLEAVER, weapon("Crushridge Cleaver", U, AXE, 32, 26, 7, 0, 4, 0, 0)) \
+    X(CRUSHRIDGE_ROD, weapon("Crushridge Rod", U, STAFF, 32, 32, 0, 0, 4, 9, 5)) \
+    X(ALTERAC_LONGBOW, weapon("Alterac Longbow", U, BOW, 32, 28, 0, 8, 4, 0, 0)) \
+    X(PLAGUEWARDEN_LEGPLATES, armor("Plaguewarden Legplates", R, MAIL, LEGS, 32, 8, 0, 6, 0, 0)) \
+    X(APOTHECARYS_LEGGINGS, armor("Apothecary's Leggings", R, CLOTH, LEGS, 32, 0, 0, 5, 9, 5)) \
+    X(PLAGUE_HUNTERS_BREECHES, armor("Plague Hunter's Breeches", R, LEATHER, LEGS, 32, 0, 9, 5, 0, 0)) \
+    X(DURNHOLDE_HAUBERK, armor("Durnholde Hauberk", R, MAIL, CHEST, 33, 10, 0, 7, 0, 0)) \
+    X(SHADOW_MAGES_ROBE, armor("Shadow Mage's Robe", R, CLOTH, CHEST, 33, 0, 0, 6, 12, 7)) \
+    X(DURNHOLDE_JERKIN, armor("Durnholde Jerkin", R, LEATHER, CHEST, 33, 0, 11, 7, 0, 0)) \
+    X(YETI_FUR_GAUNTLETS, armor("Yeti Fur Gauntlets", R, MAIL, HANDS, 33, 7, 0, 5, 0, 0)) \
+    X(FROSTWEAVE_GLOVES, armor("Frostweave Gloves", R, CLOTH, HANDS, 33, 0, 0, 4, 9, 5)) \
+    X(YETIHIDE_GLOVES, armor("Yetihide Gloves", R, LEATHER, HANDS, 33, 0, 9, 4, 0, 0)) \
+    X(SYNDICATE_SABRE, weapon("Syndicate Sabre", R, SWORD, 34, 26, 8, 2, 5, 0, 0)) \
+    X(STAFF_OF_STRAHNBRAD, weapon("Staff of Strahnbrad", R, STAFF, 34, 32, 0, 0, 5, 12, 7)) \
+    X(STRAHNBRAD_LONGBOW, weapon("Strahnbrad Longbow", R, BOW, 34, 28, 0, 11, 5, 0, 0)) \
+    X(YETI_SLAYERS_SABATONS, armor("Yeti-Slayer's Sabatons", R, MAIL, FEET, 35, 8, 0, 6, 0, 0)) \
+    X(FROSTWALKER_SANDALS, armor("Frostwalker Sandals", R, CLOTH, FEET, 35, 0, 0, 5, 9, 5)) \
+    X(SNOWSTALKER_BOOTS, armor("Snowstalker Boots", R, LEATHER, FEET, 35, 0, 9, 5, 0, 0)) \
+    /* The Scarlet Monastery: quest rewards */ \
+    X(ARGENT_CHAIN_VEST, armor("Argent Chain Vest", U, MAIL, CHEST, 31, 7, 0, 5, 0, 0)) \
+    X(GHOSTWEAVE_ROBE, armor("Ghostweave Robe", U, CLOTH, CHEST, 31, 0, 0, 4, 8, 5)) \
+    X(SPIRITBOUND_TUNIC, armor("Spiritbound Tunic", U, LEATHER, CHEST, 31, 0, 8, 5, 0, 0)) \
+    X(CRYPT_WARDENS_HELM, armor("Crypt Warden's Helm", R, MAIL, HEAD, 32, 8, 0, 5, 0, 0)) \
+    X(ARGENT_COWL, armor("Argent Cowl", R, CLOTH, HEAD, 32, 0, 0, 5, 9, 5)) \
+    X(GRAVE_STALKERS_CAP, armor("Grave Stalker's Cap", R, LEATHER, HEAD, 32, 0, 9, 5, 0, 0)) \
+    X(CRYPTWARDEN_LEGPLATES, armor("Cryptwarden Legplates", R, MAIL, LEGS, 33, 9, 0, 6, 0, 0)) \
+    X(LEGGINGS_OF_ETERNAL_REST, armor("Leggings of Eternal Rest", R, CLOTH, LEGS, 33, 0, 0, 5, 10, 6)) \
+    X(BONECARVER_BREECHES, armor("Bonecarver Breeches", R, LEATHER, LEGS, 33, 0, 10, 5, 0, 0)) \
+    X(ZEALOTS_GAUNTLETS, armor("Zealot's Gauntlets", R, MAIL, HANDS, 34, 8, 0, 5, 0, 0)) \
+    X(ZEALOTS_WRAPS, armor("Zealot's Wraps", R, CLOTH, HANDS, 34, 0, 0, 4, 10, 5)) \
+    X(ZEALOTS_GRIPS, armor("Zealot's Grips", R, LEATHER, HANDS, 34, 0, 10, 5, 0, 0)) \
+    X(TITAN_FORGED_BLADE, weapon("Titan-Forged Blade", R, SWORD, 34, 26, 9, 2, 5, 0, 0)) \
+    X(STAFF_OF_THE_TITANS, weapon("Staff of the Titans", R, STAFF, 34, 32, 0, 0, 6, 13, 7)) \
+    X(EXPLORERS_LONGRIFLE, weapon("Explorer's Longrifle", R, GUN, 34, 29, 0, 12, 5, 0, 0)) \
+    X(BLADE_OF_THE_DEVOUT, weapon("Blade of the Devout", E, TWO_HANDED, 35, 36, 15, 0, 10, 0, 0)) \
+    X(STAFF_OF_THE_SILVER_HAND, weapon("Staff of the Silver Hand", E, STAFF, 35, 32, 0, 0, 8, 17, 9)) \
+    X(BOW_OF_THE_ARGENT_WATCH, weapon("Bow of the Argent Watch", E, BOW, 35, 28, 0, 14, 7, 0, 0)) \
+    /* The Scarlet Monastery: boss drops */ \
+    X(INTERROGATORS_HELM, armor("Interrogator's Helm", R, MAIL, HEAD, 31, 7, 0, 5, 0, 0)) \
+    X(HOOD_OF_CONFESSION, armor("Hood of Confession", R, CLOTH, HEAD, 31, 0, 0, 4, 9, 5)) \
+    X(TORTURERS_MASK, armor("Torturer's Mask", R, LEATHER, HEAD, 31, 0, 9, 4, 0, 0)) \
+    X(SLEEPLESS_GAUNTLETS, armor("Sleepless Gauntlets", R, MAIL, HANDS, 32, 7, 0, 5, 0, 0)) \
+    X(GHOSTSHROUD_WRAPS, armor("Ghostshroud Wraps", R, CLOTH, HANDS, 32, 0, 0, 4, 9, 5)) \
+    X(GHOSTWALKER_GRIPS, armor("Ghostwalker Grips", R, LEATHER, HANDS, 32, 0, 9, 4, 0, 0)) \
+    X(THALNOS_CLEAVER, weapon("Thalnos's Cleaver", R, AXE, 33, 26, 8, 1, 5, 0, 0)) \
+    X(STAFF_OF_THE_BLOODMAGE, weapon("Staff of the Bloodmage", R, STAFF, 33, 32, 0, 0, 5, 12, 7)) \
+    X(FLAMESPIKE_BOW, weapon("Flamespike Bow", R, BOW, 33, 28, 0, 11, 5, 0, 0)) \
+    X(IRONSPINES_RIBCAGE, armor("Ironspine's Ribcage", R, MAIL, CHEST, 33, 10, 0, 7, 0, 0)) \
+    X(SHROUD_OF_THE_OSSUARY, armor("Shroud of the Ossuary", R, CLOTH, CHEST, 33, 0, 0, 6, 12, 7)) \
+    X(BONE_STUDDED_JERKIN, armor("Bone-Studded Jerkin", R, LEATHER, CHEST, 33, 0, 11, 7, 0, 0)) \
+    X(HOUNDMASTERS_SABATONS, armor("Houndmaster's Sabatons", R, MAIL, FEET, 34, 8, 0, 6, 0, 0)) \
+    X(KENNELKEEPERS_SLIPPERS, armor("Kennelkeeper's Slippers", R, CLOTH, FEET, 34, 0, 0, 5, 10, 5)) \
+    X(HOUNDMASTERS_BOOTS, armor("Houndmaster's Boots", R, LEATHER, FEET, 34, 0, 10, 5, 0, 0)) \
+    X(HYPNOTIC_BLADE, weapon("Hypnotic Blade", R, SWORD, 35, 26, 9, 2, 6, 0, 0)) \
+    X(ILLUSIONARY_ROD, weapon("Illusionary Rod", R, STAFF, 35, 32, 0, 0, 6, 14, 8)) \
+    X(SCARLET_LONGBOW, weapon("Scarlet Longbow", R, BOW, 35, 28, 0, 12, 6, 0, 0))
 
 namespace gw
 {

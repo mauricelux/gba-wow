@@ -64,6 +64,10 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Aku'mai rises from the deep in Blackfathom Deeps](docs/screenshots/m19_akumai.png)
 ![Irradiated slimes by a radiation pool in Gnomeregan](docs/screenshots/m19_radiation.png)
 ![Mekgineer Thermaplugg sends a Walking Bomb](docs/screenshots/m19_thermaplugg.png)
+![Southshore in the Hillsbrad Foothills](docs/screenshots/m20_southshore.png)
+![Flying from Southshore to the Argent Watch in Tirisfal](docs/screenshots/m20_argent_watch_flight.png)
+![Scarlet torturers in the Graveyard of the Scarlet Monastery](docs/screenshots/m20_torture_chamber.png)
+![Arcanist Doan builds a Detonation](docs/screenshots/m20_doan.png)
 
 ## Status
 
@@ -72,23 +76,25 @@ Human Warrior or Mage, a Dwarf Warrior or Hunter, or a Night Elf Warrior or Hunt
 subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Marksmanship or Survival),
 then walk freely from Northshire Abbey down to Goldshire, west to the city of Stormwind, south to
 Westfall, east to the Redridge Mountains and south to Duskwood, ride the tram to Ironforge and go on
-to the Wetlands and Darkshore, take on 81 quests from Northshire to Gnomeregan, fight with auto-attack
-and your subclass's abilities, loot and equip about 420 items, buy and sell at vendors, carry as much
+to the Wetlands, Darkshore and the Hillsbrad Foothills, take on 99 quests from Northshire to the Scarlet
+Monastery, fight with auto-attack and your subclass's abilities, loot and equip about 520 items, buy and sell at vendors, carry as much
 as you like in bags sorted by type, quality, level or age, use 19 ability slots on three bars and 4
 item slots, buy new abilities and ranks from your class trainer, spend talent points from level 10,
-face the elites Princess, Hogger, Gath'Ilzogg, Mor'Ladim, Stitches, Balgaras and Nek'rosh, clear the
-kobolds out of Echo Ridge and Fargodeep mines, hunt for 34 hidden treasure chests, fish in Lake
-Everstill, hearth home to an inn, ride from level 30, fly by gryphon between Stormwind, Sentinel Hill,
-Lakeshire, Darkshire, Silverpine Forest, Ironforge and Menethil Harbor, take the Deeprun Tram and the
-boat to Auberdine, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
+face the elites Princess, Hogger, Gath'Ilzogg, Mor'Ladim, Stitches, Balgaras, Nek'rosh, Gravis
+Slipknot and Bloodfang, clear the kobolds out of Echo Ridge and Fargodeep mines, hunt for 36 hidden
+treasure chests, fish in Lake Everstill, hearth home to an inn, ride from level 30, fly by gryphon
+between Stormwind, Sentinel Hill, Lakeshire, Darkshire, Silverpine Forest, Ironforge, Menethil Harbor,
+Southshore and the Argent Watch in Tirisfal, take the Deeprun Tram and the boat to Auberdine, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
 Edwin VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, keep the night
 off Darkshire, climb Shadowfang Keep to Archmage Arugal, light the braziers of Blackfathom Deeps for
-Aku'mai, take Gnomeregan back from Mekgineer Thermaplugg, and save to the cartridge. Every zone has
+Aku'mai, take Gnomeregan back from Mekgineer Thermaplugg, clear the Graveyard and the Library of the
+Scarlet Monastery up to Arcanist Doan, and save to the cartridge. Every zone has
 its own music, and elite fights switch to a boss tune.
 
 Following the quests in order takes a hero to level 15 at the end of Westfall, about 19 after
 Redridge, 20 after the Deadmines, 21 in the Stockade, about 25 at the door of Shadowfang Keep, 26
-after Arugal, about 28 after the Wetlands and 30 after Thermaplugg, without grinding. The level cap is
+after Arugal, about 28 after the Wetlands, 30 after Thermaplugg, 33 after Hillsbrad and 35 after
+Arcanist Doan, without grinding. The level cap is
 60: the road there is planned in [docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12
 to M26).
 
@@ -114,7 +120,8 @@ to M26).
 | M17 Redridge | Redridge Mountains and Lakeshire (15 to 20), 13 quests, fishing, the orcs of Stonewatch Keep, retuned Deadmines, end of chapter one | Done |
 | M18 Duskwood | Duskwood at night and Darkshire (20 to 25), 17 quests, Stitches walking to town, Silverpine Forest and Shadowfang Keep with six bosses | Done |
 | M19 Ironforge and the Wetlands | Ironforge, Dun Morogh, the Wetlands and Darkshore (25 to 30), 22 quests, Blackfathom Deeps with its braziers, Gnomeregan with radiation and Walking Bombs | Done |
-| M20 to M26 | Hillsbrad to the Plaguelands, 15 new dungeons, Onyxia and the new ending | Planned |
+| M20 Hillsbrad and Scarlet Monastery 1 | The Hillsbrad Foothills and Southshore (30 to 35), Tirisfal's Argent Watch, 18 quests, the Graveyard and the Library with six bosses | Done |
+| M21 to M26 | Stranglethorn to the Plaguelands, 13 new dungeons, Onyxia and the new ending | Planned |
 
 ## Controls
 
@@ -292,6 +299,22 @@ next to it.
 Mekgineer Thermaplugg sends a Walking Bomb out of a hatch every ten seconds, up to three at a time:
 step out of its circle before it blows up, or kill it first. His fall ends the chapter with a new
 epilogue page, as do Nek'rosh and Aku'mai.
+
+Hillsbrad Foothills: from level 30, Captain Stoutfist's *The Road to Southshore* leads north over the
+Thandol Span. Southshore has an inn, a vendor, a smith with level 30 gear and Darla Harris's gryphons.
+Magistrate Maleb wants the Forsaken plague farms of Hillsbrad Fields looked into and the Syndicate
+thieves of Strahnbrad cleared, up to the elite Gravis Slipknot, who calls a thief at half health.
+Marshal Redpath sends you after the Torn Fin murlocs of the Western Strand, the Crushridge ogres and
+the Syndicate in Durnholde Keep, and Darren Malvew wants the bears and lions of Darrow Hill, yeti
+hides from Growless Cave and the elite yeti Bloodfang.
+
+Scarlet Monastery: Raleigh the Devout's *Down the Scarlet Path* marks the Argent Watch in Tirisfal on
+Darla's map, where Argent Scout Nathan watches the monastery. The crypt to the west is the Graveyard:
+Interrogator Vishas tortures prisoners, Azshir the Sleepless and Bloodmage Thalnos (who drops Flame
+Spike circles where you stand) haunt the halls, and Ironspine walks the ossuary. The abbey's doors open
+on the Library: Houndmaster Loksey looses another hound and frenzies, and Arcanist Doan hides in an
+Arcane Bubble at half health while he builds a Detonation; run out of its circle. Loremaster Dibbs in
+Southshore wants a book from the Library's stacks, and Doan's fall ends the chapter with a new page.
 
 Auto-attack keeps going after a kill if another enemy is on you, and turns to whoever is hitting you
 when your target is out of reach.

@@ -3018,6 +3018,8 @@ def gen_wetlands():
     ruin(m, 528, 232, 64, 32, seed=9)
     ruin(m, 704, 232, 64, 32, seed=10)
     ns_bridge(m, 624, 0, 32, 104)
+    m.point('from_hillsbrad', 640, 24)
+    m.warp(624, 0, 32, 8, 'hillsbrad', 'from_wetlands')
     m.spawn_group('DARK_IRON_DWARF', 640, 200, 5, 70, seed=100)
     m.spawn_group('DARK_IRON_SABOTEUR', 600, 260, 3, 50, seed=101)
     m.spawn('BALGARAS_THE_FOUL', 640, 120)
@@ -3480,6 +3482,480 @@ def gen_gnomeregan():
     return m
 
 
+# ---------------------------------------------------------------------------------------------
+# Hillsbrad Foothills (Southshore, the Alterac foothills and Durnholde Keep)
+# ---------------------------------------------------------------------------------------------
+
+HILLSBRAD_PROPS = ('flowers', 'tall_grass', 'bush', 'rock', 'fern', 'flower_bush', 'wide_bush', 'stump',
+                   'big_rock')
+
+
+def gen_hillsbrad():
+    m = Map('hillsbrad', 1280, 1024,
+            Palette([wg.TERRAIN_HILLSBRAD, wg.BUILDINGS, wg.FARM, wg.ROCK_HILLSBRAD]),
+            Palette([wg.OVERHEAD_LEAVES, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    # --- the Alterac Mountains along the north; the Thandol road comes in from the east ------------
+    rock = wg.corners(m, 'rock')
+    rock[0:5, :] = 1
+    rock[0:9, 0:8] = 1
+    rock[:, 0:3] = 1
+    rock[:, 78:] = 1
+    rock[40:47, 78:] = 0                # the road east to the Thandol Span
+    rock[5:12, 62:78] = 1               # the crag over Growless Cave
+    wg.paint_cliffs(m)
+
+    # --- the sea along the south coast --------------------------------------------------------------
+    wg.corners_rect(m, 'water', 0, 944, 1280, 80)
+    wg.corners_along(m, 'water', [(0, 912), (240, 928), (480, 920), (680, 936), (1000, 928), (1280, 912)],
+                     1.6)
+    wg.paint_water(m)
+
+    # --- roads ----------------------------------------------------------------------------------------
+    roads = [
+        [(1280, 688), (1120, 688), (1000, 760), (900, 800)],                 # from the Thandol Span
+        [(880, 720), (840, 600), (820, 520), (760, 380), (680, 260)],        # north to Strahnbrad
+        [(820, 520), (620, 520), (440, 520), (260, 480)],                    # west to the fields
+        [(440, 520), (360, 400), (300, 300)],                                # up to Crushridge Hold
+        [(820, 520), (960, 500), (1100, 540)],                               # east to Durnholde
+        [(760, 380), (900, 320), (1040, 300)],                               # to Growless Cave
+        [(640, 840), (520, 860), (400, 870)],                                # the Western Strand
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.1)
+    wg.paint_paths(m)
+
+    # --- Southshore ---------------------------------------------------------------------------------
+    wg.cobbles(m, 720, 816, 256, 72)
+    hall = wg.house(m, 848, 696, 112, 112, style='stone', roof_colors=('roof_d', 'roof_m', 'roof_l'),
+                    roof_ridge='roof_h', roof_outline='outline')
+    inn = wg.house(m, 720, 712, 112, 96, roof_colors=('red_d', 'red_m', 'red_l'), roof_ridge='red_l',
+                   roof_outline='o2')
+    shop = wg.house(m, 984, 736, 80, 80, roof_colors=('roof_d', 'roof_m', 'roof_l'), roof_ridge='roof_h',
+                    roof_outline='outline')
+    chapel = wg.house(m, 608, 712, 96, 96, style='stone', roof_colors=('roof_d', 'roof_m', 'roof_l'),
+                      roof_ridge='roof_h', roof_outline='outline')
+    wg.anvil(m, 728, 832)
+    wg.well(m, 800, 832)
+    wg.pier(m, 896, 888, 32, 104)
+    m.npc('MALEB', hall[0], hall[1] + 4)
+    m.npc('REDPATH', 896, 852)
+    m.npc('ANDERSON', inn[0], inn[1] + 4)
+    m.npc('DIBBS', 952, 864)
+    m.npc('SOUTHSHORE_VENDOR', shop[0], shop[1] + 4)
+    m.npc('SOUTHSHORE_SMITH', 744, 868)
+    m.npc('RALEIGH', chapel[0], chapel[1] + 4)
+    m.npc('DARLA', 1064, 848)
+    m.point('flight', 1064, 868)
+    m.npc('DARREN_MALVEW', 1104, 720)
+    m.npc('SOUTHSHORE_GUARD', 1040, 700)
+    m.point('southshore_respawn', 856, 876)
+    m.area(600, 680, 520, 260, 'Southshore')
+
+    # --- Hillsbrad Fields: the farms the Forsaken have taken ---------------------------------------
+    wg.wheat_field(m, 168, 408, 128, 64)
+    wg.wheat_field(m, 168, 584, 112, 56)
+    wg.crop_field(m, 304, 600, 96, 48)
+    wg.house(m, 320, 392, 96, 96, roof_colors=('thatch_d', 'thatch_m', 'thatch_l'), roof_ridge='thatch_l',
+             roof_outline='o2')
+    wg.house(m, 424, 576, 96, 80, roof_colors=('red_d', 'red_m', 'red_l'), roof_ridge='red_l', roof_outline='o2')
+    wg.fence(m, 160, 400, 144)
+    wg.fence(m, 160, 656, 248)
+    m.spawn_group('FORSAKEN_THUG', 260, 520, 5, 70, seed=141)
+    m.spawn_group('FORSAKEN_HERBALIST', 420, 520, 3, 50, seed=142)
+    m.spawn_group('FORSAKEN_THUG', 380, 680, 2, 30, seed=143)
+    m.spawn('FORSAKEN_COURIER', 240, 552)
+    m.area(140, 380, 400, 300, 'Hillsbrad Fields')
+
+    # --- the Western Strand: the Torn Fin murlocs ---------------------------------------------------
+    m.spawn_group('TORN_FIN_TIDEHUNTER', 300, 880, 4, 70, seed=144)
+    m.spawn_group('TORN_FIN_ORACLE', 460, 890, 3, 50, seed=145)
+    m.chest(37, 112, 880, 30)
+    m.area(80, 820, 500, 120, 'Western Strand')
+
+    # --- Darrow Hill: bears and mountain lions ------------------------------------------------------
+    m.spawn_group('GRAY_BEAR', 600, 400, 4, 80, seed=146)
+    m.spawn_group('GRAY_BEAR', 980, 640, 2, 40, seed=147)
+    m.spawn_group('MOUNTAIN_LION', 700, 280, 3, 60, seed=148)
+    m.spawn_group('MOUNTAIN_LION', 560, 700, 3, 50, seed=149)
+    m.area(500, 300, 340, 280, 'Darrow Hill')
+
+    # --- Crushridge Hold: the Alterac ogres ---------------------------------------------------------
+    wg.camp(m, 168, 176, 176, 96, tents=[(184, 184), (296, 184)], fire=(248, 224))
+    m.spawn_group('CRUSHRIDGE_OGRE', 260, 300, 5, 80, seed=150)
+    m.spawn_group('CRUSHRIDGE_MAGE', 220, 230, 3, 40, seed=151)
+    m.spawn_group('CRUSHRIDGE_ENFORCER', 340, 240, 2, 30, seed=152)
+    m.area(140, 150, 300, 220, 'Crushridge Hold')
+
+    # --- Strahnbrad: the Syndicate's camp and Gravis Slipknot --------------------------------------
+    ruin(m, 528, 104, 96, 32, seed=11)
+    ruin(m, 720, 104, 80, 32, seed=12)
+    wg.camp(m, 576, 144, 176, 96, tents=[(592, 152), (704, 152)], fire=(648, 192))
+    m.spawn_group('SYNDICATE_FOOTPAD', 640, 290, 5, 80, seed=153)
+    m.spawn_group('SYNDICATE_THIEF', 560, 240, 3, 50, seed=154)
+    m.spawn('GRAVIS_SLIPKNOT', 664, 168)
+    m.area(520, 90, 300, 220, 'Strahnbrad')
+
+    # --- Durnholde Keep: the Syndicate's stronghold ------------------------------------------------
+    keep_wall(m, 1008, 384, 192, 64, gate_w=40)
+    wg.camp(m, 1000, 480, 208, 96, tents=[(1016, 488), (1160, 488)], fire=(1096, 520))
+    ruin(m, 984, 592, 96, 32, seed=13)
+    ruin(m, 1136, 592, 80, 32, seed=14)
+    m.spawn_group('SYNDICATE_ENFORCER', 1080, 560, 4, 70, seed=155)
+    m.spawn_group('SYNDICATE_SHADOW_MAGE', 1100, 500, 3, 50, seed=156)
+    m.spawn_group('SYNDICATE_FOOTPAD', 960, 460, 2, 30, seed=157)
+    m.chest(38, 1192, 472, 33)
+    m.area(970, 340, 270, 290, 'Durnholde Keep')
+
+    # --- Growless Cave: the yetis -------------------------------------------------------------------
+    cave = wg.mine_entrance(m, 1080, 152, 64, 48)
+    m.block(cave[0] - 16, cave[1] - 24, 32, 32)
+    m.spawn_group('MOUNTAIN_YETI', 1060, 280, 5, 70, seed=158)
+    m.spawn('BLOODFANG', cave[0], cave[1] + 32)
+    m.area(980, 180, 260, 160, 'Growless Cave')
+
+    # --- trees, and a clearing in the woods above the fields ---------------------------------------
+    wg.forest(m, trees, 48, 320, 96, 160, kinds=('oak', 'birch'), holes=[(64, 352, 56, 48)],
+              secrets=[(104, 368, 48, 32)])
+    m.chest(36, 88, 380, 32)
+    rng = np.random.default_rng(41)
+    path = wg.corners(m, 'path')
+    water = wg.corners(m, 'water')
+    clear = [(600, 680, 520, 260), (140, 380, 400, 300), (140, 150, 300, 220), (520, 90, 300, 220),
+             (970, 340, 270, 290), (980, 180, 260, 160), (40, 310, 110, 180)]
+    placed = 0
+    for _ in range(3000):
+        if placed >= 130:
+            break
+        x, y = int(rng.uniform(56, 1180), ), int(rng.uniform(100, 860))
+        mx, my = (x + 16) // 16, (y + 40) // 16
+        near = path[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max() + \
+            water[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max()
+        if near == 0 and m.area_free(x, y, 40, 56) and \
+                not any(cx - 40 <= x <= cx + cw and cy - 56 <= y <= cy + ch for cx, cy, cw, ch in clear):
+            wg.tree(m, trees, x, y, int(rng.integers(0, 3)), kind=('oak', 'birch', 'small', 'oak')[placed % 4])
+            placed += 1
+    wg.scatter_props(m, rng, 90, HILLSBRAD_PROPS, (56, 100, 1160, 780),
+                     avoid=[(600, 680, 520, 260), (140, 380, 400, 300)])
+
+    m.point('from_wetlands', 1232, 688)
+    m.warp(1272, 664, 8, 48, 'wetlands', 'from_hillsbrad')
+    m.area(1140, 640, 140, 100, "Thoradin's Wall")
+    m.area(0, 0, 1280, 1024, 'Hillsbrad Foothills')
+    m.music = 'HILLSBRAD'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Tirisfal Glades (the grounds of the Scarlet Monastery)
+# ---------------------------------------------------------------------------------------------
+
+def gen_tirisfal():
+    m = Map('tirisfal', 768, 512,
+            Palette([wg.TERRAIN_TIRISFAL, wg.BUILDINGS_SCARLET, wg.FARM, wg.ROCK_TIRISFAL]),
+            Palette([wg.OVERHEAD_LEAVES_TIRISFAL, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    rock = wg.corners(m, 'rock')
+    rock[0:5, :] = 1
+    rock[0:12, 0:4] = 1
+    rock[0:12, 44:] = 1
+    wg.paint_cliffs(m)
+
+    wg.corners_along(m, 'path', [(400, 470), (400, 400), (432, 320), (432, 240)], 1.1)
+    wg.corners_along(m, 'path', [(420, 330), (300, 320), (200, 300)], 0.9)
+    wg.paint_paths(m)
+    wg.corners_along(m, 'water', [(768, 260), (700, 300), (680, 400), (720, 512)], 1.3)
+    wg.paint_water(m)
+
+    # The Monastery's front: the Library's doors in the middle; the Graveyard's crypt to the west.
+    door = wg.abbey(m, 352, 96)
+    for x in (256, 512):
+        wg.bricks(m, m.ground, x, 160, 96, 64, 'stone_d', 'stone_m', 'stone_l')
+        m.ground[160:163, x:x + 96] = m.g('stone_h')
+        m.ground[223, x:x + 96] = m.g('outline')
+        m.block(x, 160, 96, 64)
+    m.warp(door[0] - 12, door[1] - 14, 24, 8, 'sm_library', 'entry')
+    m.point('library_exit', door[0], door[1] + 14)
+    graveyard(m, 112, 240, 176, 96, seed=21, gaps=[(176, 240, 48, 96)])
+    crypt_door = crypt(m, 160, 144, 80, 80)
+    m.warp(crypt_door[0] - 12, crypt_door[1] - 14, 24, 8, 'sm_graveyard', 'entry')
+    m.point('graveyard_exit', crypt_door[0], crypt_door[1] + 14)
+    m.area(96, 80, 560, 260, 'The Scarlet Monastery')
+
+    # The Argent Dawn's watch on the Monastery.
+    wg.camp(m, 304, 400, 176, 80, tents=[(320, 408)], fire=(392, 432))
+    m.npc('ARGENT_SCOUT', 440, 424)
+    m.npc('GRYPHON_TIRISFAL', 488, 448)
+    m.point('flight', 488, 468)
+    m.point('tirisfal_respawn', 400, 476)
+    m.area(290, 380, 220, 120, 'The Argent Watch')
+
+    m.spawn_group('SCARLET_CONVERT', 560, 300, 3, 40, seed=161)
+    m.spawn('SCARLET_SCOUT', 300, 300)
+    m.spawn('SCARLET_SCOUT', 600, 260)
+    m.spawn('SCARLET_CONVERT', 340, 262)
+    m.spawn('SCARLET_CONVERT', 492, 262)
+    m.spawn('SCARLET_SCOUT', 640, 200)
+
+    wg.forest(m, trees, 592, 360, 96, 120, kinds=('oak',), holes=[(616, 392, 48, 48)],
+              secrets=[(568, 400, 56, 32)])
+    m.chest(39, 640, 432, 31)
+    rng = np.random.default_rng(43)
+    path = wg.corners(m, 'path')
+    placed = 0
+    for _ in range(400):
+        if placed >= 24:
+            break
+        x, y = int(rng.uniform(40, 700)), int(rng.uniform(240, 440))
+        mx, my = (x + 16) // 16, (y + 40) // 16
+        if path[max(0, my - 3):my + 4, max(0, mx - 3):mx + 4].max() == 0 and m.area_free(x, y, 40, 56) \
+                and not (280 <= x <= 520 and 360 <= y <= 512) and not (96 <= x <= 300 and 220 <= y <= 350):
+            wg.tree(m, trees, x, y, placed, kind=('oak', 'small')[placed % 2])
+            placed += 1
+    wg.scatter_props(m, rng, 20, ('tall_grass', 'rock', 'stump', 'log', 'fern'), (40, 240, 680, 220),
+                     avoid=[(290, 380, 220, 120), (96, 220, 220, 140)])
+    m.area(0, 0, 768, 512, 'Tirisfal Glades')
+    m.music = 'DUSKWOOD'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# The Scarlet Monastery: the Graveyard and the Library
+# ---------------------------------------------------------------------------------------------
+
+MONASTERY = [
+    ('outline', (24, 18, 20)), ('top_d', (44, 36, 36)), ('top_m', (62, 52, 50)),
+    ('wall_d', (104, 92, 84)), ('wall_m', (144, 130, 116)), ('wall_l', (184, 170, 150)),
+    ('floor_d', (96, 86, 80)), ('floor_m', (128, 116, 106)), ('floor_l', (160, 148, 134)),
+    ('iron_d', (40, 36, 44)), ('iron_l', (150, 150, 164)), ('straw', (216, 176, 80)),
+    ('wood', (112, 70, 42)), ('flame', (252, 224, 120)), ('red', (160, 28, 36)),
+]
+
+MONASTERY_OVERHEAD = [
+    ('outline', (24, 18, 20)), ('top_d', (44, 36, 36)), ('top_m', (62, 52, 50)),
+    ('wall_d', (104, 92, 84)), ('wall_m', (144, 130, 116)), ('wall_l', (184, 170, 150)),
+]
+
+CRYPT = [
+    ('outline', (14, 14, 20)), ('top_d', (26, 28, 36)), ('top_m', (38, 40, 50)),
+    ('wall_d', (56, 58, 68)), ('wall_m', (80, 82, 94)), ('wall_l', (112, 114, 124)),
+    ('floor_d', (60, 64, 64)), ('floor_m', (78, 78, 86)), ('floor_l', (102, 102, 110)),
+    ('iron_d', (32, 32, 40)), ('iron_l', (140, 144, 156)), ('straw', (200, 196, 176)),
+    ('wood', (88, 60, 40)), ('flame', (176, 248, 176)), ('red', (136, 24, 32)),
+]
+
+CRYPT_OVERHEAD = [
+    ('outline', (14, 14, 20)), ('top_d', (26, 28, 36)), ('top_m', (38, 40, 50)),
+    ('wall_d', (56, 58, 68)), ('wall_m', (80, 82, 94)), ('wall_l', (112, 114, 124)),
+]
+
+
+class Monastery(Castle):
+    """The Scarlet Monastery: pale stone halls, crimson carpets and banners, books. The Graveyard's
+    crypts use the same props in cold stone with ghostly green candles ('straw' is bone there)."""
+
+    def __init__(self, name, width, height, crypt=False):
+        self.m = Map(name, width, height, Palette([CRYPT if crypt else MONASTERY]),
+                     Palette([CRYPT_OVERHEAD if crypt else MONASTERY_OVERHEAD]))
+        self.floor = np.zeros((height // 8, width // 8), dtype=bool)
+        self.face = np.zeros_like(self.floor)
+
+    def bookshelf(self, x, y, w):
+        """Shelves of books along a wall face (y is the face's top, 24 px tall)."""
+        g, m = self.m.ground, self.m
+        g[y + 2:y + 24, x:x + w] = m.g('wood')
+        g[y + 2:y + 24, x] = m.g('outline')
+        g[y + 2:y + 24, x + w - 1] = m.g('outline')
+        books = ('red', 'straw', 'iron_l', 'wall_l', 'red', 'top_m')
+        for shelf in (y + 4, y + 13):
+            for bx in range(x + 1, x + w - 1):
+                kind = (bx * 7 + shelf * 3) % 11
+                if kind < 9:
+                    g[shelf + (kind % 2):shelf + 8, bx] = m.g(books[kind % len(books)])
+            g[shelf + 8, x:x + w] = m.g('outline')
+        self.m.block(x, y + 8, w, 16)
+
+    def slab(self, x, y):
+        """A grave slab set in the floor, 16x24."""
+        g, m = self.m.ground, self.m
+        g[y:y + 24, x:x + 16] = m.g('outline')
+        g[y + 1:y + 23, x + 1:x + 15] = m.g('wall_m')
+        g[y + 1:y + 3, x + 1:x + 15] = m.g('wall_l')
+        g[y + 6:y + 16, x + 7:x + 9] = m.g('wall_d')
+        g[y + 9:y + 11, x + 4:x + 12] = m.g('wall_d')
+
+    def bones(self, x, y):
+        """A heap of bones and a skull on the floor, 16x8."""
+        g, m = self.m.ground, self.m
+        g[y + 4, x:x + 16] = m.g('straw')
+        g[y + 6, x + 2:x + 12] = m.g('straw')
+        g[y + 2:y + 5, x + 10:x + 15] = m.g('straw')
+        g[y + 3, x + 11] = g[y + 3, x + 13] = m.g('outline')
+        g[y + 7, x:x + 16] = m.g('floor_d')
+
+    def candles(self, x, y):
+        """A stand of candles, 8x16."""
+        g, m = self.m.ground, self.m
+        g[y + 6:y + 16, x + 3:x + 5] = m.g('iron_d')
+        g[y + 14:y + 16, x + 1:x + 7] = m.g('iron_d')
+        for cx in (x + 1, x + 3, x + 5):
+            g[y + 3:y + 6, cx:cx + 2] = m.g('wall_l')
+            g[y + 1:y + 3, cx:cx + 2] = m.g('flame')
+        self.m.block(x, y + 10, 8, 6)
+
+    def altar(self, x, y, w=64, h=24):
+        """A stone altar with a crimson cloth."""
+        g, m = self.m.ground, self.m
+        g[y:y + h, x:x + w] = m.g('outline')
+        g[y + 1:y + h - 1, x + 1:x + w - 1] = m.g('wall_l')
+        g[y + 4:y + h - 4, x + 4:x + w - 4] = m.g('red')
+        g[y + h - 5:y + h - 1, x + 1:x + w - 1] = m.g('wall_d')
+        g[y + 6:y + 10, x + w // 2 - 2:x + w // 2 + 2] = m.g('straw')
+        self.m.block(x, y + 4, w, h - 4)
+
+
+def gen_sm_graveyard():
+    c = Monastery('sm_graveyard', 1024, 512, crypt=True)
+    m = c.m
+    c.rect(448, 400, 128, 88)       # the crypt's door hall
+    c.rect(488, 488, 48, 24)        # the steps up to the cemetery
+    c.rect(320, 416, 128, 48)       # corridor west
+    c.rect(96, 352, 224, 136)       # the torture chamber, Vishas's
+    c.rect(128, 296, 48, 56)        # a hidden niche behind the racks
+    c.rect(488, 304, 48, 96)        # corridor north
+    c.rect(320, 224, 384, 80)       # the hall of the dead, Azshir's
+    c.rect(704, 232, 64, 48)        # corridor east
+    c.rect(768, 160, 208, 208)      # the chapel, Thalnos's
+    c.rect(488, 184, 48, 40)        # corridor north
+    c.rect(336, 32, 352, 152)       # the ossuary, Ironspine's
+    c.render()
+    c.exit(488, 504, 'tirisfal', 'graveyard_exit')
+
+    # The torture chamber: cells, racks and chains.
+    for x in (112, 176, 240):
+        c.chains(x, 360)
+    c.rack(200, 356)
+    c.bars(232, 352, 72)
+    c.secret(128, 296, 48, 56)
+    m.chest(40, 152, 340, 32)
+    for x, y in ((136, 440), (264, 400)):
+        c.straw(x, y)
+    # The hall of the dead: grave slabs in rows.
+    for x in range(344, 690, 40):
+        c.slab(x, 260)
+    for x in (336, 680):
+        c.candles(x, 236)
+    # The chapel: an altar, candles and pews.
+    c.altar(840, 176)
+    for y in (232, 272, 312):
+        c.table(792, y, 56, 16)
+        c.table(896, y, 56, 16)
+    for x in (800, 944):
+        c.candles(x, 176)
+    # The ossuary: bones everywhere.
+    for x, y in ((360, 80), (420, 140), (600, 70), (640, 150), (500, 110), (380, 160), (660, 110)):
+        c.bones(x, y)
+    for x in (360, 512, 664):
+        c.torch(x, 36)
+
+    m.spawn('SCARLET_TORTURER', 464, 424)
+    m.spawn('SCARLET_TORTURER', 560, 424)
+    m.spawn('SCARLET_TORTURER', 160, 430)
+    m.spawn('SCARLET_TORTURER', 260, 450)
+    m.spawn('INTERROGATOR_VISHAS', 208, 404)
+    m.spawn('HAUNTING_PHANTASM', 512, 330)
+    for x, y in ((360, 280), (440, 250), (600, 250), (660, 286)):
+        m.spawn('HAUNTING_PHANTASM' if x in (360, 600) else 'UNFETTERED_SPIRIT', x, y)
+    m.spawn('AZSHIR_THE_SLEEPLESS', 512, 248)
+    for x, y in ((800, 340), (940, 340), (870, 290)):
+        m.spawn('SCARLET_TORTURER' if x == 870 else 'UNFETTERED_SPIRIT', x, y)
+    m.spawn('BLOODMAGE_THALNOS', 872, 216)
+    for x, y in ((400, 120), (624, 120), (512, 160)):
+        m.spawn('HAUNTING_PHANTASM' if x == 512 else 'UNFETTERED_SPIRIT', x, y)
+    m.spawn('IRONSPINE', 512, 72)
+    m.area(0, 0, 1024, 512, 'Scarlet Monastery: Graveyard')
+    m.area(96, 352, 224, 136, 'The Torture Chamber')
+    m.area(320, 224, 384, 80, 'The Hall of the Dead')
+    m.area(768, 160, 208, 208, 'The Chapel of the Dead')
+    m.area(336, 32, 352, 152, 'The Ossuary')
+    m.music = 'MONASTERY'
+    m.save()
+    return m
+
+
+def gen_sm_library():
+    c = Monastery('sm_library', 1024, 512)
+    m = c.m
+    c.rect(448, 400, 128, 88)       # the vestibule
+    c.rect(488, 488, 48, 24)        # the doors out
+    c.rect(488, 320, 48, 80)        # corridor north
+    c.rect(288, 216, 448, 104)      # the Gallery
+    c.rect(264, 232, 24, 56)        # the kennel door
+    c.rect(64, 184, 200, 176)       # the kennels, Loksey's
+    c.rect(736, 232, 24, 56)        # the stacks' door
+    c.rect(760, 184, 224, 192)      # the stacks
+    c.rect(912, 376, 48, 24)        # a hidden reading room
+    c.rect(896, 400, 80, 64)
+    c.rect(488, 168, 48, 48)        # corridor north
+    c.rect(304, 24, 416, 144)       # the Athenaeum, Doan's
+    c.render()
+    c.exit(488, 504, 'tirisfal', 'library_exit')
+
+    c.rug(496, 216, 32, 184)
+    c.rug(312, 248, 400, 40)
+    for x in (296, 360, 632, 696):
+        c.bookshelf(x, 216, 40)
+    for x in (456, 552):
+        c.banner(x, 220)
+    for x in (72, 216):
+        c.straw(x, 320)
+    c.bucket(120, 320)
+    for x in (768, 840, 920):
+        c.bookshelf(x, 184, 56)
+    for y in (264, 320):
+        c.table(784, y, 64, 20)
+        c.table(888, y, 64, 20)
+    c.secret(912, 376, 48, 0)
+    c.desk(900, 440, 32, 20)
+    m.chest(41, 952, 452, 34)
+    for x in (320, 392, 464, 560, 632, 680):
+        c.bookshelf(x, 24, 40 if x != 680 else 32)
+    c.rug(472, 72, 80, 96)
+    c.desk(488, 40, 48, 24)
+    for x in (336, 680):
+        c.candles(x, 120)
+
+    m.spawn('SCARLET_GALLANT', 464, 424)
+    m.spawn('SCARLET_ADEPT', 560, 424)
+    for x, y in ((340, 300), (420, 296), (600, 296), (690, 300), (512, 250)):
+        m.spawn(('SCARLET_MONK', 'SCARLET_GALLANT', 'SCARLET_ADEPT', 'SCARLET_GALLANT', 'SCARLET_MONK')[
+            (x // 80) % 5], x, y)
+    m.spawn('SCARLET_BEASTMASTER', 200, 320)
+    for x, y in ((120, 240), (200, 240)):
+        m.spawn('SCARLET_TRACKING_HOUND', x, y)
+    m.spawn('HOUNDMASTER_LOKSEY', 160, 270)
+    for x, y in ((800, 240), (940, 240), (820, 350), (930, 350)):
+        m.spawn('SCARLET_DIVINER' if x in (800, 930) else 'SCARLET_CHAPLAIN', x, y)
+    m.spawn('SCARLET_MONK', 512, 192)
+    for x, y in ((360, 100), (664, 100)):
+        m.spawn('SCARLET_CHAPLAIN' if x < 512 else 'SCARLET_DIVINER', x, y)
+    m.spawn('ARCANIST_DOAN', 512, 84)
+    m.area(0, 0, 1024, 512, 'Scarlet Monastery: Library')
+    m.area(288, 216, 448, 104, 'The Gallery')
+    m.area(64, 184, 200, 176, 'The Kennels')
+    m.area(760, 184, 224, 192, 'The Stacks', 'THE_STACKS')
+    m.area(304, 24, 416, 144, 'The Athenaeum')
+    m.music = 'MONASTERY'
+    m.save()
+    return m
+
+
 GENERATORS = {
     'abbey': gen_abbey,
     'inn': gen_inn,
@@ -3501,6 +3977,10 @@ GENERATORS = {
     'darkshore': gen_darkshore,
     'blackfathom_deeps': gen_blackfathom_deeps,
     'gnomeregan': gen_gnomeregan,
+    'hillsbrad': gen_hillsbrad,
+    'tirisfal': gen_tirisfal,
+    'sm_graveyard': gen_sm_graveyard,
+    'sm_library': gen_sm_library,
 }
 
 
@@ -3512,7 +3992,8 @@ def main():
     print(f'{len(ids)} treasure chests')
     starts = {'elwynn': 'start', 'westfall': 'from_elwynn', 'stormwind': 'from_elwynn', 'redridge': 'from_elwynn',
               'duskwood': 'from_elwynn', 'silverpine': 'flight', 'dun_morogh': 'from_ironforge',
-              'wetlands': 'from_dun_morogh', 'darkshore': 'from_menethil'}
+              'wetlands': 'from_dun_morogh', 'darkshore': 'from_menethil', 'hillsbrad': 'from_wetlands',
+              'tirisfal': 'flight'}
     for name, m in maps.items():
         m.check_reachable(starts.get(name, 'entry'))
     write_minimaps(maps)
@@ -3521,8 +4002,8 @@ def main():
 # Maps with a picture on the world map page, in the order D-pad left and right go through them.
 # Interiors show the map their door leads to.
 MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'duskwood', 'silverpine', 'ironforge', 'dun_morogh',
-            'wetlands', 'darkshore', 'echo_ridge', 'fargodeep', 'deadmines', 'stockade', 'shadowfang',
-            'blackfathom_deeps', 'gnomeregan']
+            'wetlands', 'darkshore', 'hillsbrad', 'tirisfal', 'echo_ridge', 'fargodeep', 'deadmines', 'stockade',
+            'shadowfang', 'blackfathom_deeps', 'gnomeregan', 'sm_graveyard', 'sm_library']
 
 
 def write_minimaps(maps):

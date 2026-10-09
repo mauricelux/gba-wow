@@ -49,6 +49,12 @@ namespace
         case music_id::WETLANDS:
             return bn::music_items::wetlands;
 
+        case music_id::HILLSBRAD:
+            return bn::music_items::hillsbrad;
+
+        case music_id::MONASTERY:
+            return bn::music_items::monastery;
+
         default:
             return bn::nullopt;
         }

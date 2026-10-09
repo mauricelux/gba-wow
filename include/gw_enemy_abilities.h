@@ -66,6 +66,12 @@ enum class enemy_ability_id : uint8_t
     TOXIC_VOLLEY,
     CROWD_PUMMEL,
     THROW_DYNAMITE,
+    // Added with Hillsbrad and the Scarlet Monastery
+    FLAME_SPIKE,
+    DETONATION,         // a huge circle with a long cast: run out of it
+    ARCANE_EXPLOSION,
+    PSYCHIC_SCREAM,
+    POISON_CLOUD,
     COUNT
 };
 
@@ -97,7 +103,9 @@ enum class enemy_family : uint8_t
     DWARF,
     CULTIST,
     GNOME,
-    OOZE
+    OOZE,
+    SYNDICATE,
+    SCARLET
 };
 
 enum class enemy_effect : uint8_t

@@ -19,6 +19,7 @@ enum class home_id : uint8_t
     IRONFORGE,
     MENETHIL,
     AUBERDINE,
+    SOUTHSHORE,
     COUNT
 };
 

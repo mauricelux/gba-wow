@@ -181,6 +181,33 @@ jobs:
             hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
             hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
             hold:A:2 wait:90 hold:U:16 wait:10 shot:screenshots/42_sealed_door.ppm
+          # She teleports to Southshore in the Hillsbrad Foothills and learns the flight path from Darla Harris.
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 shot:screenshots/43_southshore.ppm hold:R:150 hold:U:16 hold:A:2 wait:20 \
+            shot:screenshots/44_darla_harris.ppm hold:B:2 wait:10 hold:S:2 wait:10 hold:A:2 wait:10 hold:S:2 wait:10
+          python3 tools/headless/check_save.py bars.sav map=21
+          # Then she looks into the two wings of the Scarlet Monastery: the Graveyard and the Library.
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 \
+            hold:A:2 wait:90 shot:screenshots/45_sm_graveyard.ppm
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 shot:screenshots/46_sm_library.ppm
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm
 
