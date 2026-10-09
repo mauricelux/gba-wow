@@ -25,8 +25,10 @@ public:
     player(look_id look, const bn::fixed_point& feet_position, const bn::camera_ptr& camera);
 
     // Reads the keypad and moves the player. With input disabled the player stands still.
-    // speed_percent scales walking and running (aspects, dazes).
-    void update(bool input_enabled = true, bool can_run = true, int speed_percent = 100);
+    // speed_percent scales walking and running (aspects, dazes). With flee_from, fear takes over: the
+    // player walks away from that point whatever the keypad says.
+    void update(bool input_enabled = true, bool can_run = true, int speed_percent = 100,
+                const bn::fixed_point* flee_from = nullptr);
 
     [[nodiscard]] const bn::fixed_point& position() const
     {

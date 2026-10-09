@@ -502,9 +502,13 @@ The shared list (about 40 abilities, each with a short example):
 | Support | Call for Help (murlocs, quilboar), Enrage at 30% (wolves, worgen), Battle Shout (orc packs), Shield Wall (guards), Summon Skeleton (necromancers), Flee at 15% (murlocs, gnolls, kobolds) |
 | Defense | Shield Block (Scarlet defenders), Evasion (rogue-like Defias), Stoneskin (golems), Mana Shield (casters) |
 
-Existing enemies that get one in the first pass: Kobold Tunneler (Candle Throw, a small fire
-hit), Murloc (Call for Help, Flee), Riverpaw Gnoll (Thrash), Defias Trapper (Net), Defias Thug (Rend),
-Forest Spider (Poison), Gnoll Brute (Enrage), Defias Pirate (Cleave).
+Existing enemies that get one in the first pass: Kobold Tunneler (Candle Throw, a small fire hit),
+Murloc (Call for Help, Flee), Riverpaw Gnoll (Thrash), Defias Trapper (Net), Defias Thug (Rend),
+Forest Spider (Poison), Gnoll Brute (Enrage), Defias Pirate (Cleave). M15 also gave Rockhide Boars
+Charge, and the elites two each: Princess (Charge, Enrage), Hogger (Thrash, Knockdown), Targorr
+(Charge, Mortal Strike) and Kam Deepfury (Knockdown, Shield Wall). Kobolds, murlocs and gnolls flee.
+Sneed, VanCleef and Bazil keep only their scripted phases for now. Summon Skeleton waits for
+Duskwood's skeletons, and Knockback is War Stomp's stun until the game has a way to push the player.
 
 ---
 

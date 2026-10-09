@@ -54,7 +54,8 @@ private:
     bool _rested = false;
     int _level = -1;
     int _cast = -1;
-    uint32_t _buff_mask = 0xFFFFFFFF;
+    uint64_t _buff_mask = ~uint64_t(0);
+    int _target_cast = -1;              // the enemy_ability_id the target casts
     struct line
     {
         bn::string<30> text;
@@ -72,11 +73,13 @@ private:
     int _frame = 0;
     bn::vector<bn::sprite_ptr, 8> _icons;
     bn::vector<bn::sprite_ptr, 8> _buff_icons;
+    bn::vector<bn::sprite_ptr, 6> _debuff_icons;
     bn::optional<bn::sprite_ptr> _reminder;
     bn::optional<bn::sprite_affine_mat_ptr> _small;
 
     void _draw_player();
     void _draw_target(const combat& combat_ref, const enemies& enemies_ref);
+    void _draw_target_cast(const combat& combat_ref, const enemies& enemies_ref);
     void _draw_xp();
     void _draw_cast(const combat& combat_ref);
     void _draw_message();

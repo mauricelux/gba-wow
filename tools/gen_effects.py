@@ -163,7 +163,20 @@ def burst(frame, dark, mid, light):
     return c.img
 
 
+def bolt(flicker):
+    c = Canvas(16)
+    c.fill(c.poly([(10.5, 1), (4.5, 8), (8, 8.5), (5, 15), (12, 6.5), (8.5, 6.5), (12.5, 1)]), P['frost_l'],
+           P['frost_d'])
+    c.fill(c.line(10, 2.5, 7, 7, 1), P['white'])
+    if flicker:
+        for x, y in ((3, 4), (13, 10), (2, 12)):
+            c.px(x, y, P['white'])
+    return c.img
+
+
 def projectiles():
+    # Fire, frost, arcane, arrows, slash and bursts, then the enemies' shadow, lightning and holy spells
+    # (flight frames, then bursts).
     return [orb('fire_d', 'fire', 'fire_l', False), orb('fire_d', 'fire', 'fire_l', True),
             shard(False), shard(True),
             orb('arc_d', 'arc', 'arc_l', False), orb('arc_d', 'arc', 'arc_l', True),
@@ -171,7 +184,13 @@ def projectiles():
             slash(0), slash(1), slash(2),
             burst(0, 'fire_d', 'fire', 'fire_l'), burst(1, 'fire_d', 'fire', 'fire_l'),
             burst(0, 'frost_d', 'frost', 'frost_l'), burst(1, 'frost_d', 'frost', 'frost_l'),
-            burst(0, 'arc_d', 'arc', 'arc_l'), burst(1, 'arc_d', 'arc', 'arc_l')]
+            burst(0, 'arc_d', 'arc', 'arc_l'), burst(1, 'arc_d', 'arc', 'arc_l'),
+            orb('out', 'arc_d', 'arc', False), orb('out', 'arc_d', 'arc', True),
+            bolt(False), bolt(True),
+            orb('fire', 'fire_l', 'white', False), orb('fire', 'fire_l', 'white', True),
+            burst(0, 'out', 'arc_d', 'arc'), burst(1, 'out', 'arc_d', 'arc'),
+            burst(0, 'frost_d', 'frost_l', 'white'), burst(1, 'frost_d', 'frost_l', 'white'),
+            burst(0, 'fire', 'fire_l', 'white'), burst(1, 'fire', 'fire_l', 'white')]
 
 
 # --- markers (16x16): quest marks above heads, loot sparkle -----------------------------------------
@@ -301,6 +320,29 @@ def map_marks():
     c.img[3:5, 3:5] = M['white']
     frames.append(c.img)
     return frames
+
+
+# --- enemy cast bar (32x8): 17 fills that can be interrupted, then 17 gray ones that can't ----------
+
+CB = {'out': 1, 'bg': 2, 'fill': 3, 'light': 4, 'gray': 5, 'gray_l': 6}
+CASTBAR_PALETTE = [(255, 0, 255), (16, 12, 16), (56, 44, 64), (232, 160, 32), (248, 232, 120), (136, 136, 152),
+                   (208, 208, 216)] + [(0, 0, 0)] * 9
+CASTBAR_STEPS = 16
+
+
+def castbar(step, shielded):
+    img = np.zeros((8, 32), dtype=np.uint8)
+    img[1:7, 0:32] = CB['out']
+    img[2:6, 1:31] = CB['bg']
+    width = round(30 * step / CASTBAR_STEPS)
+    if width:
+        img[2:6, 1:1 + width] = CB['gray' if shielded else 'fill']
+        img[2, 1:1 + width] = CB['gray_l' if shielded else 'light']
+    return img
+
+
+def castbars():
+    return [castbar(step, shielded) for shielded in (False, True) for step in range(CASTBAR_STEPS + 1)]
 
 
 # --- area circle (64x64): telegraphed boss attacks and frost nova -------------------------------------
@@ -497,6 +539,7 @@ def icons():
     out['drink'] = c
 
     subclass_icons(out)
+    debuff_icons(out)
     return out
 
 
@@ -744,11 +787,46 @@ def subclass_icons(out):
     out['dpad'] = c
 
 
+def debuff_icons(out):
+    # What enemies put on the player, shown on the row under the buffs.
+    c = icon_base('dgray')
+    for x in (4, 8, 12):
+        c.fill(c.line(x, 2, x, 14, 1), I['brown'])
+    for y in (4, 8, 12):
+        c.fill(c.line(2, y, 14, y, 1), I['brown'])
+    for x in (4, 8, 12):
+        for y in (4, 8, 12):
+            c.px(x, y, I['orange'])
+    out['net'] = c
+    c = icon_base('blue_d')
+
+    def star(x, y, r):
+        c.fill(c.poly([(x, y - r), (x + r * 0.3, y - r * 0.3), (x + r, y), (x + r * 0.3, y + r * 0.3), (x, y + r),
+                       (x - r * 0.3, y + r * 0.3), (x - r, y), (x - r * 0.3, y - r * 0.3)]), I['yellow'], I['out'])
+
+    star(8, 8, 5.5)
+    star(3.5, 3.5, 2.5)
+    star(12.5, 12, 2.5)
+    out['stun'] = c
+    c = icon_base('blue_d')
+    c.fill(c.line(3, 6, 9, 6, 1.5) | c.line(9, 6, 3, 12, 1.5) | c.line(3, 12, 9, 12, 1.5), I['white'])
+    c.fill(c.line(10, 2.5, 13, 2.5, 1) | c.line(13, 2.5, 10, 5.5, 1) | c.line(10, 5.5, 13, 5.5, 1), I['blue_l'])
+    out['sleep'] = c
+    c = icon_base('purple_d'); skull(c, 'purple_l'); out['curse'] = c
+    c = icon_base('dgray'); drop(c, 'green_l', 'white'); out['poison'] = c
+    c = icon_base('green_d'); skull(c, 'green_l')
+    for x, y in ((3, 3), (13, 4), (12, 13)):
+        c.px(x, y, I['yellow'])
+    out['disease'] = c
+    c = icon_base('red_d'); flame(c, 'red', 'orange'); out['burning'] = c
+
+
 def main():
     write('target', target_ring(), TARGET_PALETTE, 16)
     write('projectiles', projectiles(), PROJECTILE_PALETTE, 16)
     write('markers', markers(), MARKER_PALETTE, 16)
     write('circle', circle(), CIRCLE_PALETTE, 64)
+    write('castbar', castbars(), CASTBAR_PALETTE, 8)
     write('chest', [chest(False), chest(True)], CHEST_PALETTE, 16)
     write('map_marks', map_marks(), MARKER_PALETTE, 8)
     icon_map = icons()

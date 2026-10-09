@@ -108,6 +108,13 @@ enum class icon_id : uint8_t
     BESTIAL_WRATH,
     HEARTHSTONE,
     DPAD,
+    NET,
+    STUN,
+    SLEEP,
+    CURSE,
+    POISON,
+    DISEASE,
+    BURNING,
     COUNT
 };
 

@@ -121,7 +121,8 @@ void game::update()
     }
 
     int speed = _combat.speed_percent();
-    _player.update(input && ! abilities_held && speed > 0, ! _combat.in_combat(), speed);
+    const bn::fixed_point* fear = speed > 0 ? _combat.fear_source() : nullptr;
+    _player.update(input && ! abilities_held && speed > 0, ! _combat.in_combat(), speed, fear);
     _enemies.update(_player.position(), ! dead);
     _npcs.update(_player.position());
     _chests.update(_player.position());
@@ -157,6 +158,13 @@ void game::update()
     play_music(_enemies.elite_in_combat() && ! _combat.dead() ? music_id::BOSS : world::map().music);
     _follow_camera();
     _texts.update();
+
+    // In a fight the row under the frames is the target's cast and the player's buffs.
+    if(_combat.in_combat())
+    {
+        _banner.hide();
+    }
+
     _banner.update();
     _hud.update(_combat, _enemies);
     ui::commit();

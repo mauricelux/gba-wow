@@ -81,6 +81,12 @@ jobs:
             hold:A:2 wait:4 hold:U:2 wait:3 hold:U:2 wait:3 hold:U:2 wait:3 hold:U:2 wait:3 hold:U:2 wait:3 \
             hold:U:2 wait:3 hold:A:2 wait:10 hold:r:2 wait:4 hold:r:2 wait:6 shot:screenshots/16_bags.ppm
           python3 tools/headless/check_save.py bars.sav level=20 combat=4 utility=2 buffs=5 sort=Type
+          # The hunter teleports to Fargodeep Mine and shoots a Kobold Tunneler, who throws its candle: a cast
+          # bar over its head and the cast's name under the target frame, then the fire hit.
+          MGBA_SAVE=old.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:A:2 wait:90 \
+            hold:A:2 wait:80 shot:screenshots/17_enemy_cast.ppm wait:60 shot:screenshots/18_enemy_cast_hit.ppm
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm
 

@@ -8,17 +8,24 @@
 #include "bn_vector.h"
 
 #include "gw_abilities.h"
+#include "gw_enemy_abilities.h"
 
 namespace gw
 {
 
-// A spell or arrow on its way to an enemy. When it arrives the game applies its payload.
+// The target of an enemy's projectile.
+constexpr int player_target = -2;
+
+// A spell or arrow on its way to an enemy, or an enemy's spell on its way to the player (target
+// player_target). When it arrives the game applies its payload.
 struct projectile_hit
 {
     int target;
     int damage;
     bool crit;
     ability_id ability;
+    enemy_ability_id enemy_ability = enemy_ability_id::NONE;
+    int caster = -1;    // the enemy that cast it
 };
 
 // Area circle colors.

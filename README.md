@@ -31,6 +31,11 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![The Items bar, held with Select](docs/screenshots/m14_items_bar.png)
 ![Bags sorted by type, with an item's actions](docs/screenshots/m14_bags.png)
 ![Placing a spell on a bar in the spellbook](docs/screenshots/m14_spellbook.png)
+![A Kobold Tunneler throws its candle, with a cast bar over its head](docs/screenshots/m15_candle_throw.png)
+![Defias Trappers casting Net](docs/screenshots/m15_net.png)
+![Princess charges and stuns a hunter](docs/screenshots/m15_charge_stun.png)
+![A Riverpaw Brute becomes enraged](docs/screenshots/m15_enrage.png)
+![A murloc calls for help](docs/screenshots/m15_call_for_help.png)
 
 ## Status
 
@@ -68,7 +73,7 @@ Stockade, without grinding. The level cap is 60: the road there is planned in
 | M12 Systems for 60 | Level cap 60, XP curve to 60, rested XP, 16-bit ids, save version 4 | Done |
 | M13 Subclasses and ranks | Subclass choice, 9 kits, ability ranks, 18-talent trees | Done |
 | M14 Keybinds and bags | Utility, Buffs and Items bars, buff reminder, unlimited sorted bags | Done |
-| M15 Enemy abilities | Shared enemy ability table, cast bars, interrupts, flee and call for help | Planned |
+| M15 Enemy abilities | Shared enemy ability table, cast bars, interrupts, flee and call for help | Done |
 | M16 Travel and the pet | Flight masters, boats, tram, mount, two-level world map, hunter pet | Planned |
 | M17 to M26 | Redridge to the Plaguelands, 18 new dungeons, Onyxia and the new ending | Planned |
 
@@ -131,6 +136,18 @@ trunks). Walk up to a chest and press A to open it for money, an item and someti
 chest opens once per hero. The world map (Start, then the World Map page) shows where you are, quest
 givers with a `!` or `?`, the chests you have already opened, and how many of the 17 you have found;
 left and right show the other zones. Brann Bronzebeard in Stormwind pays for five opened chests.
+
+Enemies: many of them now do more than swing. Defias Thugs open wounds that bleed, Forest Spiders
+poison, Kobold Tunnelers throw the candles off their helmets, Defias Trappers throw nets that root
+you, Riverpaw Gnolls thrash, Defias Pirates cleave, Riverpaw Brutes enrage at 30% health, and
+Rockhide Boars and Princess charge in from range and stun you for a moment. Murlocs call for help,
+and murlocs, gnolls and kobolds run off at 15% health to bring a friend back with them. Elites have
+two abilities: Hogger thrashes and knocks you down, Targorr charges and his Mortal Strike halves
+your healing, and Kam Deepfury knocks you down and raises Shield Wall. A cast shows a bar over the
+enemy's head and its name under the target's frame: yellow when an interrupt (Pummel, Shield Bash,
+Counterspell or Scatter Shot) can stop it, gray when not; a stun, Polymorph or Wyvern Sting stops
+any cast. What enemies put on you (rooted, stunned, bleeding, poisoned and the like) shows on its
+own row under your buffs.
 
 Bosses: Sneed calls an engineer at two thirds of his health and, from half health, throws saw blades
 at the spot marked on the ground under you. Edwin VanCleef calls a Blackguard at 70% and 30% and, from

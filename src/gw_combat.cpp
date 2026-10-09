@@ -229,7 +229,18 @@ void combat::refresh_stats()
         bonus.ranged_attack_power += value(buff_id::TRUESHOT_AURA);
     }
 
+    if(active(buff_id::WEAKENED))
+    {
+        bonus.damage_percent -= value(buff_id::WEAKENED);
+    }
+
     _stats = compute_stats(bonus);
+
+    if(active(buff_id::SUNDERED))
+    {
+        _stats.armor = _stats.armor * (100 - value(buff_id::SUNDERED)) / 100;
+    }
+
     character_data& data = character();
     data.health = bn::min(int(data.health), _stats.max_health);
     data.power = bn::min(int(data.power), _stats.max_power);
@@ -313,6 +324,11 @@ const char* combat::_unusable_reason(ability_id ability) const
         return "You are encased in ice";
     }
 
+    if(const char* reason = _control_reason(ability))
+    {
+        return reason;
+    }
+
     if((def.flags & ability_flag::SHIELD) && ! has_shield())
     {
         return "Requires a shield";
@@ -378,7 +394,8 @@ bool combat::usable(ability_id ability) const
 
 int combat::speed_percent() const
 {
-    if(_buffs[int(buff_id::ICE_BLOCK)])
+    if(_buffs[int(buff_id::ICE_BLOCK)] || _buffs[int(buff_id::ROOTED)] || _buffs[int(buff_id::STUNNED)] ||
+       player_incapacitated())
     {
         return 0;
     }
@@ -393,6 +410,11 @@ int combat::speed_percent() const
     if(_buffs[int(buff_id::DAZED)])
     {
         percent /= 2;
+    }
+
+    if(_buffs[int(buff_id::CHILLED)])
+    {
+        percent = percent * (100 - _buff_values[int(buff_id::CHILLED)]) / 100;
     }
 
     return percent;
@@ -1013,8 +1035,15 @@ int combat::_roll_spell(ability_id ability, bool& crit) const
 
 bool combat::_roll_miss(int index) const
 {
-    int difference = int(_enemies.at(index).level) - int(character().level);
+    const enemy& target = _enemies.at(index);
+    int difference = int(target.level) - int(character().level);
     int chance = 5 + bn::max(0, difference) * 2;
+
+    if(target.ai.evasion_frames > 0)
+    {
+        chance += target.ai.evasion_percent;
+    }
+
     return random_chance(chance);
 }
 
@@ -1053,6 +1082,30 @@ bool combat::damage_enemy(int index, int amount, bool crit, bool periodic, schoo
     if(crit && ! periodic)
     {
         amount = amount * _stats.crit_percent / 100;
+    }
+
+    // Its own defenses: Shield Wall and the like take a share off, Mana Shield soaks the rest.
+    enemy_ability_state& ai = target.ai;
+
+    if(ai.guard_frames > 0 && (! ai.guard_physical || damage_school == school::PHYSICAL))
+    {
+        amount = bn::max(1, amount * (100 - ai.guard_percent) / 100);
+    }
+
+    if(ai.absorb > 0)
+    {
+        int absorbed = bn::min(int(ai.absorb), amount);
+        ai.absorb -= absorbed;
+        amount -= absorbed;
+
+        if(amount <= 0)
+        {
+            _combat_frames = 0;
+            _texts.show(_head(target.position, target.sprite ? target.sprite->height() : 24), "Absorb",
+                        floating_texts::style::INFO);
+            _enemies.damage(index, 0);
+            return false;
+        }
     }
 
     _combat_frames = 0;
@@ -1214,7 +1267,7 @@ void combat::_update_auto_attack()
     }
 
     if(! _auto_attack || ! _target_valid() || _cast_ability != ability_id::NONE || _player.dashing() ||
-       _buffs[int(buff_id::ICE_BLOCK)])
+       _buffs[int(buff_id::ICE_BLOCK)] || _controlled())
     {
         return;
     }
@@ -1275,6 +1328,11 @@ void combat::_update_projectiles()
     _arrived.clear();
     _effects.update([this](int index) -> const bn::fixed_point*
     {
+        if(index == player_target)
+        {
+            return _dead ? nullptr : &_player.position();
+        }
+
         if(index < 0 || index >= _enemies.count() || ! _enemies.at(index).alive())
         {
             return nullptr;
@@ -1291,6 +1349,13 @@ void combat::_update_projectiles()
 
 void combat::_apply_hit(const projectile_hit& hit)
 {
+    // An enemy's spell reaching the player.
+    if(hit.target == player_target)
+    {
+        _enemy_ability_lands(hit.caster, hit.enemy_ability, hit.damage, _player.position());
+        return;
+    }
+
     if(hit.target < 0 || hit.target >= _enemies.count() || ! _enemies.at(hit.target).alive())
     {
         return;
@@ -1736,6 +1801,12 @@ void combat::_interrupt(int index)
 {
     enemy& target = _enemies.at(index);
 
+    if(target.casting() && (get_enemy_ability(target.ai.casting).flags & enemy_ability_flag::INTERRUPTIBLE))
+    {
+        stop_enemy_cast(index, true);
+        return;
+    }
+
     // For now only the bosses' heavy blows can be stopped while they wind up.
     if((target.id == enemy_id::PRINCESS || target.id == enemy_id::KAM_DEEPFURY) && target.phase == 2 &&
        target.special_timer > 0)
@@ -1831,6 +1902,7 @@ void combat::_apply_ability(ability_id ability, int target_index)
     character_data& data = character();
     bn::fixed_point from = _head(_player.position(), 8);
     play_sound(sound_id::SPELL);
+    _break_free(ability);
 
     // Plain buffs.
     buff_id buff = buff_of(ability);
@@ -2303,9 +2375,24 @@ void combat::_update_buffs()
 {
     bool changed = false;
 
-    for(int& frames : _buffs)
+    for(int index = 0; index < int(buff_id::COUNT); ++index)
     {
-        if(frames > 0 && frames != permanent_buff && --frames == 0)
+        int& frames = _buffs[index];
+
+        if(frames <= 0 || frames == permanent_buff)
+        {
+            continue;
+        }
+
+        --frames;
+
+        // Bleeding, poison, disease and burning hurt every three seconds, the last one as they end.
+        if(is_periodic(buff_id(index)) && frames % dot_interval == 0)
+        {
+            _periodic_tick(buff_id(index));
+        }
+
+        if(frames == 0)
         {
             changed = true;
         }
@@ -2376,6 +2463,11 @@ bool combat::use_item(item_id item, const char** error)
     if(_dead || item_count(item) == 0)
     {
         return false;
+    }
+
+    if(_controlled())
+    {
+        return fail("You can't do that now");
     }
 
     if(data.level < def.level)
@@ -2614,13 +2706,13 @@ void combat::_gain_rage(int damage, bool dealt)
     data.power = bn::min(100, int(data.power) + bn::max(1, rage));
 }
 
-void combat::enemy_attacks(int index, int percent)
+bool combat::enemy_attacks(int index, int percent)
 {
     enemy& attacker = _enemies.at(index);
 
     if(_dead)
     {
-        return;
+        return false;
     }
 
     _combat_frames = 0;
@@ -2637,7 +2729,7 @@ void combat::enemy_attacks(int index, int percent)
     if(_buffs[int(buff_id::ICE_BLOCK)])
     {
         _texts.show(head, "Immune", floating_texts::style::INFO);
-        return;
+        return false;
     }
 
     // Retaliation strikes back at every swing, whether it lands or not.
@@ -2647,7 +2739,7 @@ void combat::enemy_attacks(int index, int percent)
 
         if(! attacker.alive())
         {
-            return;
+            return false;
         }
     }
 
@@ -2655,16 +2747,17 @@ void combat::enemy_attacks(int index, int percent)
     {
         _texts.show(head, "Dodge", floating_texts::style::INFO);
         _dodged_frames = reactive_frames;
-        return;
+        return false;
     }
 
     if(random_chance(5))
     {
         _texts.show(head, "Miss", floating_texts::style::INFO);
-        return;
+        return false;
     }
 
-    int damage = random_range(attacker.damage * 3 / 4, attacker.damage * 5 / 4) * percent / 100;
+    int swing = _enemy_swing(attacker);
+    int damage = random_range(swing * 3 / 4, swing * 5 / 4) * percent / 100;
 
     if(attacker.weaken_frames > 0)
     {
@@ -2713,6 +2806,7 @@ void combat::enemy_attacks(int index, int percent)
     }
 
     damage_player(damage, attacker.position);
+    return true;
 }
 
 void combat::damage_player(int amount, const bn::fixed_point& from, school damage_school)
@@ -2776,6 +2870,13 @@ void combat::damage_player(int amount, const bn::fixed_point& from, school damag
         return;
     }
 
+    // Damage wakes the player from sleep and polymorph.
+    if(player_incapacitated())
+    {
+        _end_buff(buff_id::ASLEEP);
+        _end_buff(buff_id::POLYMORPHED);
+    }
+
     _gain_rage(amount, false);
     _player.sprite().flash();
     play_sound(sound_id::HIT);
@@ -2800,6 +2901,12 @@ void combat::damage_player(int amount, const bn::fixed_point& from, school damag
 void combat::heal_player(int amount)
 {
     character_data& data = character();
+
+    if(_buffs[int(buff_id::WOUNDED)])
+    {
+        amount = amount * (100 - _buff_values[int(buff_id::WOUNDED)]) / 100;
+    }
+
     int healed = bn::min(amount, _stats.max_health - int(data.health));
 
     if(healed > 0)

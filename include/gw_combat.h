@@ -6,6 +6,7 @@
 #include "bn_vector.h"
 
 #include "gw_abilities.h"
+#include "gw_buffs.h"
 #include "gw_character.h"
 #include "gw_effects.h"
 
@@ -18,44 +19,6 @@ class floating_texts;
 class hud;
 struct enemy;
 
-enum class buff_id : uint8_t
-{
-    BATTLE_SHOUT,
-    FROST_ARMOR,
-    LAST_STAND,
-    ICE_BARRIER,
-    ARCANE_POWER,
-    ASPECT_OF_THE_HAWK,
-    BESTIAL_WRATH,
-    WELL_FED,       // eating or drinking: restores health and mana quickly
-    ARCANE_INTELLECT,
-    MOLTEN_ARMOR,
-    MAGE_ARMOR,
-    FIRE_WARD,
-    MANA_SHIELD,
-    ARCANE_BLAST,   // value: stacks
-    PRESENCE_OF_MIND,
-    COMBUSTION,     // value: extra critical chance for the next fire spell
-    ICE_BLOCK,
-    RETALIATION,
-    SWEEPING_STRIKES,   // value: hits left
-    WHIRLING_BLADES,
-    BERSERKER_RAGE,
-    RECKLESSNESS,
-    DEATH_WISH,
-    SHIELD_BLOCK,
-    SHIELD_WALL,
-    ASPECT_OF_THE_MONKEY,
-    ASPECT_OF_THE_CHEETAH,
-    RAPID_FIRE,
-    DETERRENCE,
-    TRUESHOT_AURA,
-    DAZED,          // slowed after being hit while running with the Cheetah
-    COUNT
-};
-
-static_assert(int(buff_id::COUNT) <= 32, "the hud keeps a bit per buff");
-
 // The bar whose button is held, which the hud shows around its cross.
 enum class held_bar : uint8_t
 {
@@ -65,9 +28,6 @@ enum class held_bar : uint8_t
     BUFFS,      // L and R
     ITEMS       // Select
 };
-
-// Lasts until death or until replaced (aspects).
-constexpr int permanent_buff = 0x7FFFFFFF;
 
 // Where a spell or a trap acts on the ground, for a while.
 struct ground_zone
@@ -141,13 +101,34 @@ public:
         return _buffs[int(buff)];
     }
 
-    // Called by enemies. percent scales the hit (special attacks).
-    void enemy_attacks(int index, int percent = 100);
+    // Called by enemies. percent scales the hit (special attacks). Returns true if it landed.
+    bool enemy_attacks(int index, int percent = 100);
     void enemy_killed(int index);
 
     // Special abilities of elites and bosses, every frame while they fight. Returns true when the
     // enemy is busy and skips its normal movement and swings this frame.
     bool boss_update(int index);
+
+    // Table abilities of an enemy fighting the player, every frame (gw_enemy_ai.cpp): casts, strikes,
+    // charges, buffs and running for help. Returns true while the enemy is busy and skips its normal
+    // movement and swings this frame.
+    bool enemy_ai_update(int index);
+
+    // Stops what the enemy is casting. Interrupted, the ability waits a few seconds and the player
+    // sees it.
+    void stop_enemy_cast(int index, bool interrupted);
+
+    // Asleep or polymorphed: enemies hold their swings so they don't wake the player.
+    [[nodiscard]] bool player_incapacitated() const
+    {
+        return _buffs[int(buff_id::ASLEEP)] || _buffs[int(buff_id::POLYMORPHED)];
+    }
+
+    // While feared, where the player runs from; nullptr otherwise.
+    [[nodiscard]] const bn::fixed_point* fear_source() const
+    {
+        return _buffs[int(buff_id::FEARED)] ? &_fear_from : nullptr;
+    }
 
     // Deals damage to an enemy with floating text. Returns true if it died.
     bool damage_enemy(int index, int amount, bool crit, bool periodic = false,
@@ -248,6 +229,7 @@ private:
     bool _l_used = true;                     // L did something while held, so releasing it doesn't target
     bool _select_used = true;                // the same for Select and its quick use
     bn::string<24> _hearth_text;             // "Ready in N minutes", kept for use_item's error
+    bn::fixed_point _fear_from;              // who feared the player
 
     void _read_input();
     void _cycle_target();
@@ -296,6 +278,29 @@ private:
     void _set_aspect(buff_id aspect, ability_id ability);
     void _conjure(ability_id ability);
     void _counter_hit(int index);
+
+    // Enemy abilities (gw_enemy_ai.cpp)
+    [[nodiscard]] bool _enemy_can_use(int index, int slot, int distance_squared) const;
+    bool _start_enemy_ability(int index, int slot);
+    void _enemy_ability_goes_off(int index, enemy_ability_id ability);
+    void _enemy_ability_lands(int caster, enemy_ability_id ability, int damage, const bn::fixed_point& from);
+    void _enemy_strike(int index, enemy_ability_id ability);
+    void _enemy_debuff(int caster, enemy_ability_id ability, const bn::fixed_point& from);
+    void _update_enemy_charge(int index);
+    void _start_flee(int index);
+    void _update_flee(int index);
+    void _call_for_help(int index, int radius);
+    void _enemy_blink(int index, int distance);
+    [[nodiscard]] int _hurt_friend(int index, int range, int below) const;
+    [[nodiscard]] int _enemy_swing(const enemy& item) const;
+    [[nodiscard]] bool _enemy_sees_player(const enemy& item) const;
+
+    // The player's debuffs
+    void _apply_debuff(buff_id debuff, int frames, int value, const bn::fixed_point& from);
+    [[nodiscard]] bool _controlled() const;
+    [[nodiscard]] const char* _control_reason(ability_id ability) const;
+    void _break_free(ability_id ability);
+    void _periodic_tick(buff_id debuff);
 };
 
 }

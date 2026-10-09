@@ -16,6 +16,7 @@ namespace
 {
     constexpr int message_frames = 150;
     constexpr int message_row = 3;      // the first of the message lines
+    constexpr int target_cast_row = 2;  // what the target casts, under its frame
     constexpr int cast_row = 13;
     constexpr int xp_row = 19;
 
@@ -78,7 +79,10 @@ namespace
         icon_id::ICE_BLOCK, icon_id::RETALIATION, icon_id::SWEEPING_STRIKES, icon_id::WHIRLING_BLADES,
         icon_id::BERSERKER_RAGE, icon_id::RECKLESSNESS, icon_id::DEATH_WISH, icon_id::SHIELD_BLOCK,
         icon_id::SHIELD_WALL, icon_id::ASPECT_MONKEY, icon_id::ASPECT_CHEETAH, icon_id::RAPID_FIRE,
-        icon_id::DETERRENCE, icon_id::TRUESHOT_AURA, icon_id::CONCUSSIVE_SHOT
+        icon_id::DETERRENCE, icon_id::TRUESHOT_AURA, icon_id::CONCUSSIVE_SHOT, icon_id::FROSTBOLT, icon_id::NET,
+        icon_id::STUN, icon_id::SLEEP, icon_id::POLYMORPH, icon_id::INTIMIDATING_SHOUT, icon_id::CURSE,
+        icon_id::SUNDER_ARMOR, icon_id::MORTAL_STRIKE, icon_id::REND, icon_id::POISON, icon_id::DISEASE,
+        icon_id::BURNING
     };
 
     static_assert(sizeof(buff_icons) / sizeof(buff_icons[0]) == int(buff_id::COUNT), "an icon per buff");
@@ -130,6 +134,7 @@ void hud::set_visible(bool visible)
     {
         _icons.clear();
         _buff_icons.clear();
+        _debuff_icons.clear();
         _reminder.reset();
         _bar_shown = 0;
     }
@@ -150,7 +155,8 @@ void hud::update(const combat& combat_ref, const enemies& enemies_ref)
         _target = -2;
         _xp = -1;
         _cast = -1;
-        _buff_mask = -1;
+        _target_cast = -1;
+        _buff_mask = ~uint64_t(0);
         _message_dirty = true;
         _bar_shown = 0;
         _icons.clear();
@@ -172,6 +178,7 @@ void hud::update(const combat& combat_ref, const enemies& enemies_ref)
     }
 
     _draw_target(combat_ref, enemies_ref);
+    _draw_target_cast(combat_ref, enemies_ref);
 
     if(data.xp != _xp || data.level != _level || (data.rest_xp > 0) != _rested)
     {
@@ -259,6 +266,28 @@ void hud::_draw_target(const combat& combat_ref, const enemies& enemies_ref)
     }
 
     ui::bar(20, 1, 10, item.health, item.max_health, ui::bar_color::RAGE);
+}
+
+void hud::_draw_target_cast(const combat& combat_ref, const enemies& enemies_ref)
+{
+    // The name of what the target casts, so there's time to interrupt it.
+    int target = combat_ref.target();
+    int casting = target >= 0 ? int(enemies_ref.at(target).ai.casting) : 0;
+
+    if(casting == _target_cast)
+    {
+        return;
+    }
+
+    _target_cast = casting;
+    ui::clear_rect(14, target_cast_row, 16, 1);
+
+    if(casting)
+    {
+        const enemy_ability_def& def = get_enemy_ability(enemy_ability_id(casting));
+        bool interruptible = def.flags & enemy_ability_flag::INTERRUPTIBLE;
+        ui::text_right(29, target_cast_row, def.name, interruptible ? ui::color::YELLOW : ui::color::GRAY);
+    }
 }
 
 void hud::_draw_xp()
@@ -470,7 +499,7 @@ void hud::_update_reminder(const combat& combat_ref)
     {
         _reminder_ability = int(missing);
         _reminder.reset();
-        _buff_mask = 0xFFFFFFFF;    // the buffs move over to make room
+        _buff_mask = ~uint64_t(0);  // the buffs move over to make room
 
         if(missing != ability_id::NONE)
         {
@@ -495,13 +524,13 @@ void hud::_update_reminder(const combat& combat_ref)
 
 void hud::_update_buffs(const combat& combat_ref)
 {
-    uint32_t mask = 0;
+    uint64_t mask = 0;
 
     for(int index = 0; index < int(buff_id::COUNT); ++index)
     {
         if(combat_ref.buff_frames(buff_id(index)) > 0)
         {
-            mask |= uint32_t(1) << index;
+            mask |= uint64_t(1) << index;
         }
     }
 
@@ -512,6 +541,7 @@ void hud::_update_buffs(const combat& combat_ref)
 
     _buff_mask = mask;
     _buff_icons.clear();
+    _debuff_icons.clear();
 
     if(! _small)
     {
@@ -520,19 +550,33 @@ void hud::_update_buffs(const combat& combat_ref)
         _small = bn::sprite_affine_mat_ptr::create(attributes);
     }
 
-    int x = _reminder ? 1 : 0;
+    // Buffs in a row beside the reminder, debuffs in a row under them.
+    int buff_x = _reminder ? 1 : 0;
+    int debuff_x = 0;
 
-    for(int index = 0; index < int(buff_id::COUNT) && ! _buff_icons.full(); ++index)
+    for(int index = 0; index < int(buff_id::COUNT); ++index)
     {
-        if(mask & (uint32_t(1) << index))
+        if(! (mask & (uint64_t(1) << index)))
         {
-            bn::sprite_ptr icon = bn::sprite_items::fx_icons.create_sprite(-120 + 4 + x * 10, -80 + 20,
-                                                                           int(buff_icons[index]));
-            icon.set_bg_priority(0);
-            icon.set_affine_mat(*_small);
-            _buff_icons.push_back(bn::move(icon));
-            ++x;
+            continue;
         }
+
+        bool debuff = is_debuff(buff_id(index));
+        bn::ivector<bn::sprite_ptr>& icons = debuff ? static_cast<bn::ivector<bn::sprite_ptr>&>(_debuff_icons) :
+                                                      static_cast<bn::ivector<bn::sprite_ptr>&>(_buff_icons);
+
+        if(icons.full())
+        {
+            continue;
+        }
+
+        int& x = debuff ? debuff_x : buff_x;
+        bn::sprite_ptr icon = bn::sprite_items::fx_icons.create_sprite(-120 + 4 + x * 10, debuff ? -52 : -60,
+                                                                       int(buff_icons[index]));
+        icon.set_bg_priority(0);
+        icon.set_affine_mat(*_small);
+        icons.push_back(bn::move(icon));
+        ++x;
     }
 }
 

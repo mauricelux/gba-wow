@@ -134,7 +134,9 @@ enum class school : uint8_t
     FIRE,
     FROST,
     ARCANE,
-    NATURE
+    NATURE,
+    SHADOW,
+    HOLY
 };
 
 enum class projectile_kind : uint8_t
@@ -143,7 +145,10 @@ enum class projectile_kind : uint8_t
     FIRE,
     FROST,
     ARCANE,
-    ARROW
+    ARROW,
+    SHADOW,
+    NATURE,     // lightning
+    HOLY
 };
 
 // How an ability's value grows.

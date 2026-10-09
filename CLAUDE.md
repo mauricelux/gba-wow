@@ -37,3 +37,8 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
   for the player go through `bag_view` (sorted, with headings).
 - Menus and the HUD share the UI layer (BG priority 0); HUD icons are sprites at priority 1 so text
   can sit on top of them.
+- Enemy abilities are data: `src/gw_enemy_abilities.cpp` is the shared table (ids append-only) and an
+  `enemy_def` names its family, AI style and up to two of them. `src/gw_enemy_ai.cpp` runs them for
+  every enemy in a fight (casts, strikes, charges, fleeing, calls for help) and puts debuffs on the
+  player; elites' scripted moves stay in `combat::boss_update`. A new debuff goes at the end of
+  `buff_id` (`gw_buffs.h`) with an icon in `buff_icons` (`gw_hud.cpp`).

@@ -27,6 +27,12 @@ namespace
     constexpr int fire_burst = 12;
     constexpr int frost_burst = 14;
     constexpr int arcane_burst = 16;
+    constexpr int shadow_frames = 18;
+    constexpr int nature_frames = 20;
+    constexpr int holy_frames = 22;
+    constexpr int shadow_burst = 24;
+    constexpr int nature_burst = 26;
+    constexpr int holy_burst = 28;
 
     constexpr bn::fixed projectile_speed = 3;
 
@@ -79,8 +85,43 @@ namespace
         case projectile_kind::ARCANE:
             return arcane_burst;
 
+        case projectile_kind::SHADOW:
+            return shadow_burst;
+
+        case projectile_kind::NATURE:
+            return nature_burst;
+
+        case projectile_kind::HOLY:
+            return holy_burst;
+
         default:
             return slash_frames;
+        }
+    }
+
+    // The first of the two flight frames of a spell.
+    [[nodiscard]] int flight_frame(projectile_kind kind)
+    {
+        switch(kind)
+        {
+
+        case projectile_kind::FIRE:
+            return fire_frames;
+
+        case projectile_kind::FROST:
+            return frost_frames;
+
+        case projectile_kind::SHADOW:
+            return shadow_frames;
+
+        case projectile_kind::NATURE:
+            return nature_frames;
+
+        case projectile_kind::HOLY:
+            return holy_frames;
+
+        default:
+            return arcane_frames;
         }
     }
 }
@@ -222,8 +263,7 @@ void effects::launch(const bn::fixed_point& from, projectile_kind kind, const pr
         return;
     }
 
-    int frame = kind == projectile_kind::FIRE ? fire_frames : kind == projectile_kind::FROST ? frost_frames :
-            kind == projectile_kind::ARCANE ? arcane_frames : arrow_right;
+    int frame = kind == projectile_kind::ARROW ? arrow_right : flight_frame(kind);
     _projectiles.push_back(
         projectile{ bn::sprite_items::fx_projectiles.create_sprite(0, 0, frame), from, kind, hit, 0 });
     projectile& item = _projectiles.back();
@@ -259,9 +299,8 @@ bool effects::_move_projectile(projectile& item, const bn::fixed_point& target)
     }
     else
     {
-        int base = item.kind == projectile_kind::FIRE ? fire_frames : item.kind == projectile_kind::FROST ?
-                frost_frames : arcane_frames;
-        item.sprite.set_tiles(bn::sprite_items::fx_projectiles.tiles_item(), base + ((item.frames / 4) & 1));
+        item.sprite.set_tiles(bn::sprite_items::fx_projectiles.tiles_item(),
+                              flight_frame(item.kind) + ((item.frames / 4) & 1));
     }
 
     _place(item.sprite, item.position);

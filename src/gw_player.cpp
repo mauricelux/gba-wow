@@ -74,7 +74,7 @@ void player::blink(int distance)
     _sprite.update(_position, _facing, false, 0);
 }
 
-void player::update(bool input_enabled, bool can_run, int speed_percent)
+void player::update(bool input_enabled, bool can_run, int speed_percent, const bn::fixed_point* flee_from)
 {
     if(_dashing)
     {
@@ -86,14 +86,27 @@ void player::update(bool input_enabled, bool can_run, int speed_percent)
     int input_x = 0;
     int input_y = 0;
 
-    if(input_enabled)
+    if(flee_from)
+    {
+        bn::fixed dx = _position.x() - flee_from->x();
+        bn::fixed dy = _position.y() - flee_from->y();
+        input_x = dx > 4 ? 1 : dx < -4 ? -1 : 0;
+        input_y = dy > 4 ? 1 : dy < -4 ? -1 : 0;
+
+        if(! input_x && ! input_y)
+        {
+            input_x = _last_x;
+            input_y = _last_y;
+        }
+    }
+    else if(input_enabled)
     {
         input_x = int(bn::keypad::right_held()) - int(bn::keypad::left_held());
         input_y = int(bn::keypad::down_held()) - int(bn::keypad::up_held());
     }
 
     bool moving = input_x || input_y;
-    bool running = can_run && bn::keypad::b_held();
+    bool running = can_run && ! flee_from && bn::keypad::b_held();
     _moving = moving;
 
     if(moving)

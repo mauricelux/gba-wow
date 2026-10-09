@@ -2,6 +2,7 @@
 
 #include "bn_affine_mat_attributes.h"
 #include "bn_math.h"
+#include "bn_sprite_items_fx_castbar.h"
 #include "bn_sprite_items_fx_icons.h"
 #include "bn_sprite_items_fx_markers.h"
 
@@ -24,6 +25,9 @@ namespace
     constexpr int awake_distance = 260;
     constexpr int social_distance = 40;
     constexpr int wander_radius = 40;
+    constexpr int caster_reach = 56;        // casters stop this far from the player
+    constexpr int cast_bar_steps = 16;      // fx_castbar: 17 fills that can be interrupted, then 17 that can't
+    constexpr int first_ability_frames = 60;
 
     constexpr int sprite_margin_x = 150;
     constexpr int sprite_margin_y = 112;
@@ -124,6 +128,7 @@ void enemies::_spawn(enemy& item)
     item.phase = 0;
     item.special_timer = 0;
     item.telegraph_frames = 0;
+    item.ai = enemy_ability_state();
     item.loot_money = 0;
 
     for(loot_slot& slot : item.loot)
@@ -211,7 +216,7 @@ int enemies::_aggro_radius(const enemy& item) const
     return bn::clamp(radius, 16, 76);
 }
 
-bool enemies::_move_towards(enemy& item, const bn::fixed_point& target, bn::fixed speed, int stop_distance)
+bool enemies::move_towards(enemy& item, const bn::fixed_point& target, bn::fixed speed, int stop_distance)
 {
     bn::fixed dx = target.x() - item.position.x();
     bn::fixed dy = target.y() - item.position.y();
@@ -332,6 +337,23 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
         --item.silence_frames;
     }
 
+    enemy_ability_state& ai = item.ai;
+
+    if(ai.rally_frames > 0)
+    {
+        --ai.rally_frames;
+    }
+
+    if(ai.guard_frames > 0)
+    {
+        --ai.guard_frames;
+    }
+
+    if(ai.evasion_frames > 0)
+    {
+        --ai.evasion_frames;
+    }
+
     if(item.sunder_frames > 0 && --item.sunder_frames == 0)
     {
         item.sunder_stacks = 0;
@@ -351,6 +373,14 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
         {
             return;
         }
+    }
+
+    // Stuns, holds and fear stop casts and charges.
+    if((item.stun_frames > 0 || item.incapacitate_frames > 0 || item.fear_frames > 0) &&
+       (item.casting() || ai.charging))
+    {
+        _combat->stop_enemy_cast(index, false);
+        ai.charging = false;
     }
 
     if(item.stun_frames > 0)
@@ -376,7 +406,7 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
         // Runs straight away from the player.
         --item.fear_frames;
         bn::fixed_point away(item.position.x() * 2 - player_feet.x(), item.position.y() * 2 - player_feet.y());
-        _move_towards(item, away, _speed(item, false) * 2, 0);
+        move_towards(item, away, _speed(item, false) * 2, 0);
         return;
     }
 
@@ -397,7 +427,7 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
 
         if(item.wandering)
         {
-            if(_move_towards(item, item.wander_target, _speed(item, false), 1) || item.stuck_frames > 30)
+            if(move_towards(item, item.wander_target, _speed(item, false), 1) || item.stuck_frames > 30)
             {
                 item.wandering = false;
                 item.moving = false;
@@ -427,6 +457,7 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
     {
         if(! player_alive || distance_squared(item.position, item.spawn) > leash_distance * leash_distance)
         {
+            _combat->stop_enemy_cast(index, false);
             item.state = enemy_state::EVADE;
             item.stuck_frames = 0;
             break;
@@ -437,42 +468,44 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
             --item.attack_timer;
         }
 
-        if(item.elite() && _combat->boss_update(index))
-        {
-            break;
-        }
+        bool rooted = item.root_frames > 0;
 
-        bool in_range = player_distance_squared <= (melee_range - 6) * (melee_range - 6);
-
-        if(! in_range && item.root_frames <= 0)
-        {
-            _move_towards(item, player_feet, _speed(item, true), melee_range - 8);
-        }
-        else
-        {
-            item.moving = false;
-        }
-
-        if(item.root_frames > 0)
+        if(rooted)
         {
             --item.root_frames;
         }
 
-        if(player_distance_squared <= melee_range * melee_range)
+        // Casting, charging and running for help come first, then the scripted moves of elites.
+        if(_combat->enemy_ai_update(index) || (item.elite() && _combat->boss_update(index)))
         {
+            break;
+        }
+
+        int reach = _reach(item, player_feet);
+        bool in_range = player_distance_squared <= (reach + 2) * (reach + 2);
+
+        if(! in_range && ! rooted)
+        {
+            move_towards(item, player_feet, _speed(item, true), reach);
+        }
+        else
+        {
+            item.moving = false;
             item.direction = facing_towards(item.position, player_feet);
+        }
 
-            if(item.attack_timer <= 0)
+        // Swings wait while the player is asleep or polymorphed, so they don't wake them.
+        if(player_distance_squared <= melee_range * melee_range && item.attack_timer <= 0 &&
+           ! _combat->player_incapacitated())
+        {
+            item.attack_timer = item.swing_frames();
+
+            if(item.sprite)
             {
-                item.attack_timer = item.def->attack_speed * 6;
-
-                if(item.sprite)
-                {
-                    item.sprite->play_attack();
-                }
-
-                _combat->enemy_attacks(index);
+                item.sprite->play_attack();
             }
+
+            _combat->enemy_attacks(index);
         }
         break;
     }
@@ -492,8 +525,9 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
         item.sunder_stacks = 0;
         item.scorch_frames = 0;
         item.scorch_stacks = 0;
+        item.ai = enemy_ability_state();
 
-        if(_move_towards(item, item.spawn, 2, 2) || item.stuck_frames > 90)
+        if(move_towards(item, item.spawn, 2, 2) || item.stuck_frames > 90)
         {
             item.position = item.spawn;
             item.state = enemy_state::IDLE;
@@ -527,6 +561,7 @@ void enemies::_update_sprite(enemy& item, const bn::fixed_point& player_feet)
         item.sprite.reset();
         item.sparkle.reset();
         item.status.reset();
+        item.cast_bar.reset();
         return;
     }
 
@@ -543,6 +578,7 @@ void enemies::_update_sprite(enemy& item, const bn::fixed_point& player_feet)
     item.sprite->set_dead(item.state == enemy_state::DEAD);
     item.sprite->update(item.position, item.direction, item.moving, item.walk_counter);
     _update_status(item);
+    _update_cast_bar(item, world::to_screen_space(item.position));
 
     if(item.state != enemy_state::DEAD || ! item.has_loot())
     {
@@ -598,6 +634,14 @@ void enemies::_update_status(enemy& item)
     {
         icon = icon_id::INTIMIDATING_SHOUT;
     }
+    else if(item.alive() && ! item.casting())
+    {
+        // Its own buffs, while no cast bar is in the way.
+        const enemy_ability_state& ai = item.ai;
+        icon = ai.enraged ? icon_id::BERSERKER_RAGE : ai.guard_frames > 0 ? icon_id::SHIELD_WALL :
+               ai.evasion_frames > 0 ? icon_id::DETERRENCE : ai.absorb > 0 ? icon_id::MANA_SHIELD :
+               ai.rally_frames > 0 ? icon_id::BATTLE_SHOUT : icon_id::COUNT;
+    }
 
     if(icon == icon_id::COUNT)
     {
@@ -627,6 +671,77 @@ void enemies::_update_status(enemy& item)
 
     bn::fixed_point screen = world::to_screen_space(item.position);
     item.status->set_position(screen.x().floor_integer(), screen.y().floor_integer() - item.sprite->height() - 6);
+}
+
+void enemies::_update_cast_bar(enemy& item, const bn::fixed_point& screen)
+{
+    if(! item.alive() || ! item.casting() || item.ai.cast_total <= 0)
+    {
+        item.cast_bar.reset();
+        return;
+    }
+
+    // Orange while an interrupt can stop it, gray when nothing can.
+    const enemy_ability_state& ai = item.ai;
+    int step = bn::clamp((ai.cast_total - ai.cast_frames) * cast_bar_steps / ai.cast_total, 0, cast_bar_steps);
+    bool interruptible = get_enemy_ability(ai.casting).flags & enemy_ability_flag::INTERRUPTIBLE;
+    int frame = step + (interruptible ? 0 : cast_bar_steps + 1);
+
+    if(! item.cast_bar)
+    {
+        item.cast_bar = bn::sprite_items::fx_castbar.create_sprite(0, 0, frame);
+        item.cast_bar->set_camera(_camera);
+        item.cast_bar->set_bg_priority(sparkle_bg_priority);
+    }
+    else
+    {
+        item.cast_bar->set_tiles(bn::sprite_items::fx_castbar.tiles_item(), frame);
+    }
+
+    item.cast_bar->set_position(screen.x().floor_integer(), screen.y().floor_integer() - item.sprite->height() - 6);
+}
+
+int enemies::_reach(const enemy& item, const bn::fixed_point& player_feet) const
+{
+    // Casters stay at casting range while they can cast and see the player.
+    ai_style style = item.def->style;
+
+    if(style != ai_style::MELEE && style != ai_style::RUNNER && item.silence_frames <= 0 &&
+       world::line_clear(item.position.x().integer(), item.position.y().integer() - 4,
+                         player_feet.x().integer(), player_feet.y().integer() - 4))
+    {
+        return caster_reach;
+    }
+
+    return melee_range - 8;
+}
+
+int enemies::idle_friend(int index, int radius) const
+{
+    const enemy& item = _enemies[index];
+    int best = -1;
+    int best_distance = radius * radius + 1;
+
+    for(int other = 0, limit = _enemies.size(); other < limit; ++other)
+    {
+        const enemy& friend_enemy = _enemies[other];
+
+        if(other == index || friend_enemy.state != enemy_state::IDLE ||
+           friend_enemy.def->family != item.def->family || (friend_enemy.def->flags & enemy_flag::PASSIVE))
+        {
+            continue;
+        }
+
+        int d = distance_squared(friend_enemy.position, item.position);
+
+        if(d < best_distance)
+        {
+            best = other;
+            best_distance = d;
+        }
+    }
+
+    return best;
 }
 
 int enemies::nearest(const bn::fixed_point& from, int max_distance, int exclude, bool fighting_only) const
@@ -691,9 +806,7 @@ void enemies::aggro(int index)
         return;
     }
 
-    item.state = enemy_state::CHASE;
-    item.attack_timer = 24;
-    item.wandering = false;
+    _start_fight(item, 24);
 
     // Humanoids call one friend of the same kind standing close by.
     if(get_look(item.def->look).creature && item.def->look != look_id::KOBOLD_VERMIN &&
@@ -710,11 +823,23 @@ void enemies::aggro(int index)
            ! (friend_enemy.def->flags & enemy_flag::PASSIVE) &&
            distance_squared(friend_enemy.position, item.position) < social_distance * social_distance)
         {
-            friend_enemy.state = enemy_state::CHASE;
-            friend_enemy.attack_timer = 40;
-            friend_enemy.wandering = false;
+            _start_fight(friend_enemy, 40);
             return;
         }
+    }
+}
+
+void enemies::_start_fight(enemy& item, int first_swing)
+{
+    item.state = enemy_state::CHASE;
+    item.attack_timer = first_swing;
+    item.wandering = false;
+    item.ai = enemy_ability_state();
+
+    // Abilities can come within the first second.
+    for(int16_t& cooldown : item.ai.cooldowns)
+    {
+        cooldown = int16_t(random_range(0, first_ability_frames));
     }
 }
 
@@ -798,6 +923,7 @@ void enemies::break_control(int index)
 void enemies::_die(int index)
 {
     enemy& item = _enemies[index];
+    _combat->stop_enemy_cast(index, false);
     item.health = 0;
     item.state = enemy_state::DEAD;
     item.state_timer = corpse_frames;
@@ -887,6 +1013,11 @@ void enemies::reset_combat()
             item.state = enemy_state::EVADE;
             item.stuck_frames = 0;
         }
+    }
+
+    for(int index = 0, limit = _enemies.size(); index < limit; ++index)
+    {
+        _combat->stop_enemy_cast(index, false);
     }
 }
 

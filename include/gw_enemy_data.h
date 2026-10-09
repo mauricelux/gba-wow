@@ -1,6 +1,7 @@
 #ifndef GW_ENEMY_DATA_H
 #define GW_ENEMY_DATA_H
 
+#include "gw_enemy_abilities.h"
 #include "gw_ids.h"
 #include "gw_look_ids.h"
 
@@ -29,6 +30,9 @@ struct enemy_def
     uint8_t scale_percent;      // sprite size
     uint8_t respawn_seconds;
     uint8_t loot_table;         // index into the loot tables (gw_loot)
+    enemy_family family;
+    ai_style style;
+    enemy_ability_id abilities[enemy_ability_slots];
 };
 
 [[nodiscard]] const enemy_def& get_enemy_def(enemy_id enemy);

@@ -92,12 +92,15 @@ struct enemy
     int telegraph_frames = 0;   // a marked area goes off when this reaches zero
     bn::fixed_point special_position;
     bool summoned = false;      // added during a fight, removed when it ends
+    // Table abilities (gw_enemy_abilities): casting, charging, fleeing and its own buffs
+    enemy_ability_state ai;
     // Loot, rolled on death
     loot_slot loot[4];
     int loot_money = 0;
     bn::optional<actor_sprite> sprite;
     bn::optional<bn::sprite_ptr> sparkle;   // over a corpse that still has loot
     bn::optional<bn::sprite_ptr> status;    // over an enemy that can't act: what holds it
+    bn::optional<bn::sprite_ptr> cast_bar;  // over an enemy casting
 
     [[nodiscard]] bool alive() const
     {
@@ -112,6 +115,22 @@ struct enemy
     [[nodiscard]] bool boss() const
     {
         return def->flags & enemy_flag::BOSS;
+    }
+
+    [[nodiscard]] bool casting() const
+    {
+        return ai.casting != enemy_ability_id::NONE;
+    }
+
+    [[nodiscard]] int health_percent() const
+    {
+        return health * 100 / max_health;
+    }
+
+    // Frames between swings; enraged enemies swing faster.
+    [[nodiscard]] int swing_frames() const
+    {
+        return def->attack_speed * (ai.enraged ? 4 : 6);
     }
 
     [[nodiscard]] bool has_loot() const;
@@ -189,6 +208,20 @@ public:
     // Whether an enemy could stand with its feet at the position.
     [[nodiscard]] static bool fits(bn::fixed x, bn::fixed y);
 
+    // Walks the enemy towards target until within stop_distance pixels on both axes. Returns true
+    // when there.
+    bool move_towards(enemy& item, const bn::fixed_point& target, bn::fixed speed, int stop_distance);
+
+    // How fast the enemy runs while fighting, slows included.
+    [[nodiscard]] bn::fixed chase_speed(const enemy& item) const
+    {
+        return _speed(item, true);
+    }
+
+    // The closest enemy of the same family as index standing around (not fighting) within radius
+    // pixels of it; -1 if none.
+    [[nodiscard]] int idle_friend(int index, int radius) const;
+
     // True while any enemy is fighting the player.
     [[nodiscard]] bool any_in_combat() const;
 
@@ -212,7 +245,9 @@ private:
     void _update_enemy(int index, const bn::fixed_point& player_feet, bool player_alive);
     void _update_sprite(enemy& item, const bn::fixed_point& player_feet);
     void _update_status(enemy& item);
-    bool _move_towards(enemy& item, const bn::fixed_point& target, bn::fixed speed, int stop_distance);
+    void _update_cast_bar(enemy& item, const bn::fixed_point& screen);
+    void _start_fight(enemy& item, int first_swing);
+    [[nodiscard]] int _reach(const enemy& item, const bn::fixed_point& player_feet) const;
     [[nodiscard]] bn::fixed _speed(const enemy& item, bool chasing) const;
     [[nodiscard]] int _aggro_radius(const enemy& item) const;
     void _die(int index);
