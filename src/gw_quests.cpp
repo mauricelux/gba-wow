@@ -4,6 +4,7 @@
 #include "bn_string.h"
 
 #include "gw_hud.h"
+#include "gw_travel.h"
 #include "gw_types.h"
 #include "gw_ui.h"
 
@@ -569,6 +570,215 @@ namespace
           "Gath'Ilzogg dead, and the Blackrock driven off! Then you're ready for the Deadmines.",
           n::SOLOMON, n::GRYAN, 18, 18, qid::WANTED_GATH_ILZOGG, { none, none, none }, xp(18, 40),
           money(10), { i::NONE, i::NONE, i::NONE } },
+
+        // --- Duskwood ---------------------------------------------------------------------------------
+
+        { "The Road to Darkshire",
+          "A letter came from Darkshire, in Duskwood. Lord Ello Ebonlocke writes that the dead walk "
+          "out of Raven Hill, worgen hunt in the woods and the night there never lifts.\n\n"
+          "Stormwind has no soldiers to spare. It has you. Take the south road out of Elwynn Forest "
+          "and offer Lord Ebonlocke your sword.",
+          "Report to Lord Ello Ebonlocke in Darkshire, south of Elwynn Forest.",
+          "",
+          "The Highlord sent a champion? Then Stormwind has not forgotten us after all. Welcome to "
+          "Darkshire. Keep to the lamplight.",
+          n::BOLVAR, n::ELLO, 21, 20, qid::BAZIL_THREDD, { none, none, none }, xp(21, 40), money(5),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Wolves at Our Heels",
+          "The dire wolves used to keep to the deep woods. Now they come right up to the palisade, and "
+          "the rabid ones bite anything that moves.\n\n"
+          "My cellar is full of meat I can't salt fast enough, and my guests won't walk the road. "
+          "Thin out the packs.",
+          "Kill 10 Dire Wolves and 6 Rabid Dire Wolves.",
+          "I still hear them at night, scratching at the gate.",
+          "That's the first quiet night in a month. Have a drink on the house.",
+          n::TRELAYNE, n::TRELAYNE, 21, 19, qid::NONE,
+          { kill(e::DIRE_WOLF, 10, "Dire Wolf slain"), kill(e::RABID_DIRE_WOLF, 6, "Rabid Dire Wolf slain"),
+            none }, xp(21), money(21),
+          { i::WOLFHEAD_HELM, i::DUSKWOOD_COWL, i::DIRE_PELT_CAP } },
+
+        { "The Night Watch",
+          "The Night Watch is all that stands between Darkshire and Raven Hill. And there aren't many "
+          "of us left.\n\n"
+          "Skeletons climb out of the cemetery west of here every night. Break as many as you can "
+          "before they reach the road.",
+          "Kill 8 Skeletal Warriors and 6 Skeletal Mages at Raven Hill Cemetery.",
+          "The dead keep coming. Go back to the cemetery.",
+          "Good work. You'd make a fine Watchman, if you ever tire of wandering.",
+          n::ALTHEA, n::ALTHEA, 21, 20, qid::NONE,
+          { kill(e::SKELETAL_WARRIOR, 8, "Skeletal Warrior slain"), kill(e::SKELETAL_MAGE, 6,
+            "Skeletal Mage slain"), none }, xp(21), money(21),
+          { i::NIGHT_WATCH_GAUNTLETS, i::WATCHERS_HANDWRAPS, i::DUSKWOOD_GRIPS } },
+
+        { "Worgen in the Woods",
+          "The Nightbane worgen have taken Brightwood Grove, north of the road. They were men once, "
+          "or so the old tales say.\n\n"
+          "Whatever they were, they hunt us now. Cut them down: the runners, the weavers who cast "
+          "their shadow magic and the tainted ones who lead them.",
+          "Kill 8 Nightbane Dark Runners, 6 Nightbane Shadow Weavers and 4 Nightbane Tainted Ones.",
+          "The worgen still howl in the grove.",
+          "Fewer howls tonight. I'll forge you something for your trouble.",
+          n::CALOR, n::CALOR, 22, 20, qid::NONE,
+          { kill(e::NIGHTBANE_DARK_RUNNER, 8, "Nightbane Dark Runner slain"),
+            kill(e::NIGHTBANE_SHADOW_WEAVER, 6, "Nightbane Shadow Weaver slain"),
+            kill(e::NIGHTBANE_TAINTED_ONE, 4, "Nightbane Tainted One slain") }, xp(22), money(22),
+          { i::BRIGHTWOOD_LEGPLATES, i::WEAVERS_LEGGINGS, i::NIGHTBANE_TROUSERS } },
+
+        { "The Legend of Stalvan",
+          "Let me tell you a story the cards keep showing me. Stalvan Mistmantle was a tutor in a manor "
+          "north of here. He loved a girl he could not have, and it ended in blood.\n\n"
+          "The manor stands empty now. Or it should. Go and look, and tell me what you see.",
+          "Visit Mistmantle Manor, north of the road, and return to Madame Eva.",
+          "You haven't been to the manor yet. The cards know.",
+          "So he walks there still. The cards were right, as they always are.",
+          n::EVA, n::EVA, 22, 21, qid::NONE,
+          { explore(area_id::MISTMANTLE_MANOR, "Mistmantle Manor visited"), none, none }, xp(22, 60),
+          money(10), { i::NONE, i::NONE, i::NONE } },
+
+        { "Stalvan Mistmantle",
+          "Stalvan's spirit will not rest while his body walks. Go back to the manor and put an end to "
+          "him. Be careful: hate keeps the dead strong.",
+          "Kill Stalvan Mistmantle in Mistmantle Manor.",
+          "He still walks. I can feel it.",
+          "It's over, then. Let the poor girl rest too. Take this: it was found in the manor long ago.",
+          n::EVA, n::EVA, 24, 22, qid::THE_LEGEND_OF_STALVAN,
+          { kill(e::STALVAN_MISTMANTLE, 1, "Stalvan Mistmantle slain"), none, none }, xp(24, 150), money(24),
+          { i::MISTMANTLE_BLADE, i::STAFF_OF_THE_MISTS, i::MISTMANTLE_LONGBOW } },
+
+        { "The Night Watch, Part II",
+          "Skeletons were only the start. Ghouls now dig through the Tranquil Gardens Cemetery in the "
+          "south-east, and the plague spreaders among them make the sick worse.\n\n"
+          "Clear the gardens before the sickness reaches Darkshire.",
+          "Kill 8 Rotting Ghouls and 6 Plague Spreaders.",
+          "The gardens are still crawling with them.",
+          "The healers say the fevers are breaking. The Watch owes you again.",
+          n::ALTHEA, n::ALTHEA, 23, 21, qid::THE_NIGHT_WATCH,
+          { kill(e::ROTTING_GHOUL, 8, "Rotting Ghoul slain"), kill(e::PLAGUE_SPREADER, 6,
+            "Plague Spreader slain"), none }, xp(23), money(23),
+          { i::RAVEN_HILL_GREAVES, i::GRAVEDIGGER_SLIPPERS, i::CEMETERY_BOOTS } },
+
+        { "Morbent's Bane",
+          "Morbent Fel, the necromancer who raises the dead of Tranquil Gardens, cannot be hurt by "
+          "steel or spell. Not as he is.\n\n"
+          "I can brew a bane that strips his protection away. I need venom: bring me sacs from the "
+          "spiders of Twilight Grove.",
+          "Bring 6 Venom Web Sacs from the Venom Web Spiders to Sirra Von'Indi.",
+          "The bane needs more venom.",
+          "Enough venom to kill a horse. Now let me work.",
+          n::SIRRA, n::SIRRA, 23, 21, qid::NONE,
+          { collect(e::VENOM_WEB_SPIDER, 6, 50, "Venom Web Sac"), none, none }, xp(23), money(23),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Morbent Fel",
+          "The bane is ready, and I've poured it over your weapon. While you carry this task, his "
+          "dark armor will not hold against you.\n\n"
+          "Find Morbent Fel in the Tranquil Gardens Cemetery and end him.",
+          "Kill Morbent Fel in the Tranquil Gardens Cemetery.",
+          "Morbent Fel still lives. Don't waste the bane.",
+          "You did it! The dead of the gardens will finally lie still.",
+          n::SIRRA, n::SIRRA, 25, 23, qid::MORBENTS_BANE,
+          { kill(e::MORBENT_FEL, 1, "Morbent Fel slain"), none, none }, xp(25, 200), money(25),
+          { i::CRYPTBREAKER, i::STAFF_OF_VON_INDI, i::GRAVEWATCH_LONGBOW } },
+
+        { "The Ogres of Vul'Gol",
+          "Splinter Fist ogres came down from the mountains and took the mound at Vul'Gol, south of "
+          "the road. They raid our supply carts.\n\n"
+          "Darkshire can't hold against the dead and the ogres at once. Drive them out.",
+          "Kill 10 Splinter Fist Ogres and 6 Splinter Fist Taskmasters at Vul'Gol.",
+          "The ogres still hold the mound.",
+          "Our carts reach the town again. Darkshire owes you, champion.",
+          n::ELLO, n::ELLO, 24, 22, qid::THE_ROAD_TO_DARKSHIRE,
+          { kill(e::SPLINTER_FIST_OGRE, 10, "Splinter Fist Ogre slain"), kill(e::SPLINTER_FIST_TASKMASTER, 6,
+            "Splinter Fist Taskmaster slain"), none }, xp(24), money(24),
+          { i::OGRE_CLEAVER, i::MOUND_STAFF, i::SPLINTER_BOW } },
+
+        { "The Hermit's Errand",
+          "Ah, a visitor! Old Abercrombie doesn't get many. I'm working on something, you see. "
+          "Something wonderful.\n\n"
+          "But I need parts. Ribs from the ghouls in the gardens, and finger bones from the skeletons on "
+          "the hill. Fresh ones! Bring them and I'll make it worth your while.",
+          "Bring 6 Ghoul Ribs and 6 Skeleton Fingers to Abercrombie.",
+          "Ribs! Fingers! I can't finish without them.",
+          "Perfect, perfect! Now off with you. Old Abercrombie has work to do.",
+          n::ABERCROMBIE, n::ABERCROMBIE, 23, 21, qid::NONE,
+          { collect(e::ROTTING_GHOUL, 6, 50, "Ghoul Rib", e::PLAGUE_SPREADER),
+            collect(e::SKELETAL_WARRIOR, 6, 50, "Skeleton Finger", e::SKELETAL_MAGE), none }, xp(23), money(15),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "Stitches",
+          "The hermit on the west road was building a monster! The Watch saw it: a thing stitched "
+          "together from the dead, as big as a house, and it's walking this way.\n\n"
+          "If it reaches the gate, Darkshire falls. Stop it on the road.",
+          "Kill Stitches before it reaches Darkshire. It walks the road from Abercrombie's hut.",
+          "Stitches is still out there. I can hear the ground shake.",
+          "The beast is dead, and the hermit has fled into the night. You saved this town. Darkshire "
+          "will not forget it.",
+          n::ELLO, n::ELLO, 26, 23, qid::THE_HERMITS_ERRAND,
+          { kill(e::STITCHES, 1, "Stitches slain"), none, none }, xp(26, 200), money(26),
+          { i::NIGHT_WATCH_SHORTSWORD, i::DARKSHIRE_ROBE, i::GLOOMWOOD_LONGBOW } },
+
+        { "Mor'Ladim",
+          "Morgan Ladimore was a hero of the Second War. He came home, found his wife with another man "
+          "and killed them both. Then himself.\n\n"
+          "He rises from his grave on Raven Hill as Mor'Ladim and cuts down anyone he meets. Bring me "
+          "his skull, and Raven Hill can rest.",
+          "Bring Mor'Ladim's Skull to Sven Yorgen.",
+          "Mor'Ladim still walks the hill.",
+          "So he's at peace at last. And so am I, I think. Take this, it was his.",
+          n::SVEN, n::SVEN, 25, 23, qid::NONE,
+          { collect(e::MOR_LADIM, 1, 100, "Mor'Ladim's Skull"), none, none }, xp(25, 200), money(25),
+          { i::LADIMORE_HAUBERK, i::SEXTONS_ROBE, i::RAVEN_HILL_JERKIN } },
+
+        // --- Shadowfang Keep ----------------------------------------------------------------------------
+
+        { "Into Shadowfang",
+          "The worgen did not come from nowhere. Archmage Arugal of Dalaran called them into this "
+          "world, from his keep in Silverpine Forest. Shadowfang Keep.\n\n"
+          "There's no road to it from here. Felicia will fly you to the scouts' camp below the keep. "
+          "Find Ranger Valdan there.",
+          "Fly from Darkshire to the Scouts' Camp in Silverpine Forest and find Ranger Valdan.",
+          "",
+          "Ello sent you? Good. I've been watching that keep for weeks, and I could use a blade.",
+          n::ELLO, n::VALDAN, 24, 22, qid::WORGEN_IN_THE_WOODS, { none, none, none }, xp(24, 40), money(10),
+          { i::NONE, i::NONE, i::NONE } },
+
+        { "The Butchers of Shadowfang",
+          "Two of Arugal's beasts run the lower halls. Rethilgore keeps the dungeon where they lock "
+          "up prisoners, and Razorclaw the Butcher works the kitchen. I won't say what he cooks.\n\n"
+          "Kill them both.",
+          "Kill Rethilgore and Razorclaw the Butcher in Shadowfang Keep.",
+          "Those two still guard the lower halls.",
+          "Good riddance. Take these, the camp can spare them.",
+          n::VALDAN, n::VALDAN, 24, 22, qid::INTO_SHADOWFANG,
+          { kill(e::RETHILGORE, 1, "Rethilgore slain"), kill(e::RAZORCLAW_THE_BUTCHER, 1,
+            "Razorclaw the Butcher slain"), none }, xp(24, 150), money(24),
+          { i::SHADOWFANG_GAUNTLETS, i::DALARAN_WRAPS, i::SCOUTS_GLOVES } },
+
+        { "The Fallen Guard",
+          "The keep's own guard didn't die when Arugal took it. Baron Silverlaine still holds his hall, "
+          "Commander Springvale prays in the chapel to a Light that left him, and Odo the Blindwatcher "
+          "keeps the tower stairs.\n\n"
+          "Give them the death they were denied.",
+          "Kill Baron Silverlaine, Commander Springvale and Odo the Blindwatcher.",
+          "The fallen guard still stands.",
+          "Silverlaine, Springvale and Odo. I knew them, once. Thank you.",
+          n::VALDAN, n::VALDAN, 25, 23, qid::INTO_SHADOWFANG,
+          { kill(e::BARON_SILVERLAINE, 1, "Baron Silverlaine slain"), kill(e::COMMANDER_SPRINGVALE, 1,
+            "Commander Springvale slain"), kill(e::ODO_THE_BLINDWATCHER, 1, "Odo the Blindwatcher slain") },
+          xp(25, 150), money(25), { i::SPRINGVALES_SABATONS, i::CHAPEL_SANDALS, i::BLINDWATCHER_BOOTS } },
+
+        { "Arugal Must Die",
+          "Arugal waits at the top of the keep, behind the ramparts. He blinks from ledge to ledge "
+          "and calls his worgen to him when he's hurt.\n\n"
+          "Bring me his head, and Duskwood's nights will be a little less dark.",
+          "Bring the Head of Arugal to Ranger Valdan.",
+          "Arugal lives, and his worgen still howl.",
+          "It's done. The worgen have lost their master. Darkshire will hear of this tonight, and "
+          "Stormwind soon after. Take my bow: you've earned it more than I have.",
+          n::VALDAN, n::VALDAN, 26, 23, qid::INTO_SHADOWFANG,
+          { collect(e::ARUGAL, 1, 100, "Head of Arugal"), none, none }, xp(26, 250), money(26),
+          { i::MOONSTEEL_GREATSWORD, i::STAFF_OF_DALARAN, i::VALDANS_LONGBOW } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));
@@ -692,6 +902,12 @@ void accept_quest(quest_id quest)
     if(quest == quest_id::TAMING_THE_BEAST)
     {
         learn_ability(ability_id::TAME_BEAST);
+    }
+
+    // No road leads to Silverpine: Into Shadowfang marks the scouts' camp on the gryphon masters' maps.
+    if(quest == quest_id::INTO_SHADOWFANG)
+    {
+        (void) discover_flight(flight_id::SCOUTS_CAMP);
     }
 
     (void) complete_if_done(quest);
@@ -898,6 +1114,35 @@ bool quests_on_kill(enemy_id enemy, hud& hud_ref)
     }
 
     return changed;
+}
+
+bool quest_wants_kill(enemy_id enemy)
+{
+    for(int index = 1; index < int(quest_id::COUNT); ++index)
+    {
+        quest_id quest = quest_id(index);
+        const quest_progress& progress = quest_state(quest);
+
+        if(progress.status != quest_status::ACTIVE)
+        {
+            continue;
+        }
+
+        const quest_def& def = get_quest(quest);
+
+        for(int objective_index = 0; objective_index < quest_objectives; ++objective_index)
+        {
+            const objective_def& objective = def.objectives[objective_index];
+
+            if(objective.type == objective_type::KILL && objective.enemy == enemy &&
+               progress.counts[objective_index] < objective.count)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 bool quests_on_explore(const map_info& map, int x, int y, hud& hud_ref)

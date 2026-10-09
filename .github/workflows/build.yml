@@ -133,6 +133,26 @@ jobs:
             hold:U:130 hold:R:134 hold:U:12 wait:4 hold:A:2 wait:30 shot:screenshots/33_lakeshire_flight.ppm \
             hold:B:2 wait:10 hold:S:2 wait:10 hold:A:2 wait:10 hold:S:2 wait:10
           python3 tools/headless/check_save.py bars.sav map=11 flights=1
+          # The mage teleports to Darkshire in Duskwood, where it is always night outside a circle of light
+          # around the hero, and learns the Darkshire flight path from Felicia Maline.
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 shot:screenshots/34_darkshire.ppm \
+            hold:R:100 wait:4 hold:A:2 wait:30 shot:screenshots/35_darkshire_flight.ppm \
+            hold:B:2 wait:10 hold:S:2 wait:10 hold:A:2 wait:10 hold:S:2 wait:10
+          python3 tools/headless/check_save.py bars.sav map=12 flights=2
+          # Then she steps into Shadowfang Keep.
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 shot:screenshots/36_shadowfang_keep.ppm \
+            hold:S:2 wait:10 hold:A:2 wait:10 hold:S:2 wait:10
+          python3 tools/headless/check_save.py bars.sav map=14
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm
 

@@ -6,6 +6,8 @@
 #include "bn_regular_bg_items_map_deeprun_tram_overhead.h"
 #include "bn_regular_bg_items_map_deadmines_ground.h"
 #include "bn_regular_bg_items_map_deadmines_overhead.h"
+#include "bn_regular_bg_items_map_duskwood_ground.h"
+#include "bn_regular_bg_items_map_duskwood_overhead.h"
 #include "bn_regular_bg_items_map_echo_ridge_ground.h"
 #include "bn_regular_bg_items_map_echo_ridge_overhead.h"
 #include "bn_regular_bg_items_map_elwynn_ground.h"
@@ -16,6 +18,10 @@
 #include "bn_regular_bg_items_map_inn_overhead.h"
 #include "bn_regular_bg_items_map_redridge_ground.h"
 #include "bn_regular_bg_items_map_redridge_overhead.h"
+#include "bn_regular_bg_items_map_shadowfang_ground.h"
+#include "bn_regular_bg_items_map_shadowfang_overhead.h"
+#include "bn_regular_bg_items_map_silverpine_ground.h"
+#include "bn_regular_bg_items_map_silverpine_overhead.h"
 #include "bn_regular_bg_items_map_stockade_ground.h"
 #include "bn_regular_bg_items_map_stockade_overhead.h"
 #include "bn_regular_bg_items_map_stormwind_ground.h"
@@ -26,11 +32,14 @@
 #include "gw_map_abbey.h"
 #include "gw_map_deadmines.h"
 #include "gw_map_deeprun_tram.h"
+#include "gw_map_duskwood.h"
 #include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
 #include "gw_map_inn.h"
 #include "gw_map_redridge.h"
+#include "gw_map_shadowfang.h"
+#include "gw_map_silverpine.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
@@ -59,6 +68,10 @@ namespace
     constexpr point_def stockade_graveyards[] = { map_data::stockade::respawn };
     constexpr point_def deeprun_tram_graveyards[] = { map_data::deeprun_tram::respawn };
     constexpr point_def redridge_graveyards[] = { map_data::redridge::lakeshire_respawn };
+    constexpr point_def duskwood_graveyards[] = { map_data::duskwood::darkshire_respawn,
+                                                  map_data::duskwood::raven_hill_respawn };
+    constexpr point_def silverpine_graveyards[] = { map_data::silverpine::silverpine_respawn };
+    constexpr point_def shadowfang_graveyards[] = { map_data::shadowfang::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
@@ -73,12 +86,14 @@ namespace
         map_data::NAME::music, \
         DUNGEON, \
         INDOORS, \
+        map_data::NAME::night, \
         list(map_data::NAME::warps, map_data::NAME::warps[0].target == map_id::NONE), \
         list(map_data::NAME::npcs, map_data::NAME::npcs[0].npc == npc_id::NONE), \
         list(map_data::NAME::spawns, map_data::NAME::spawns[0].enemy == enemy_id::NONE), \
         list(map_data::NAME::areas, map_data::NAME::areas[0].width == 0), \
         bn::span<const point_def>(NAME##_graveyards), \
-        list(map_data::NAME::chests, map_data::NAME::chests[0].id == chest_def::none) \
+        list(map_data::NAME::chests, map_data::NAME::chests[0].id == chest_def::none), \
+        list(map_data::NAME::patrol, map_data::NAME::patrol[0].x < 0) \
     }
 
     const map_info maps[] = {
@@ -93,6 +108,9 @@ namespace
         GW_MAP_INFO(STOCKADE, stockade, true, true),
         GW_MAP_INFO(DEEPRUN_TRAM, deeprun_tram, false, true),
         GW_MAP_INFO(REDRIDGE, redridge, false, false),
+        GW_MAP_INFO(DUSKWOOD, duskwood, false, false),
+        GW_MAP_INFO(SILVERPINE, silverpine, false, false),
+        GW_MAP_INFO(SHADOWFANG, shadowfang, true, true),
     };
 
     [[nodiscard]] int count_chests()

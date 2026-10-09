@@ -196,6 +196,8 @@ def gen_elwynn():
     wg.corners_along(m, 'path', [(1024, 320), (1024, 560), (1008, 720), (1024, 900), (1064, 980),
                                 (1080, 1040), (1080, 1180)], 1.2)
     wg.corners_along(m, 'path', [(1024, 1240), (1000, 1400), (980, 1560), (976, 1700)], 1.1)
+    # On past the mine and south through the woods to Duskwood.
+    wg.corners_along(m, 'path', [(976, 1700), (1000, 1800), (1040, 1900), (1056, 2048)], 1.1)
     wg.corners_along(m, 'path', [(960, 1220), (760, 1260), (560, 1330), (340, 1420), (120, 1440),
                                 (0, 1440)], 1.1)
     wg.corners_along(m, 'path', [(1090, 1220), (1300, 1240), (1500, 1270), (1650, 1240),
@@ -214,7 +216,8 @@ def gen_elwynn():
     # --- forest borders and the valley walls -------------------------------------------------
     border = 64
     wg.forest(m, trees, 0, 0, m.width, border)
-    wg.forest(m, trees, 0, m.height - border, m.width, border)
+    wg.forest(m, trees, 0, m.height - border, 1024, border)
+    wg.forest(m, trees, 1088, m.height - border, m.width - 1088, border)
     wg.forest(m, trees, 0, 0, border, 928)
     wg.forest(m, trees, 0, 1008, border, 392)
     wg.forest(m, trees, 0, 1480, border, m.height - 1480)
@@ -374,6 +377,10 @@ def gen_elwynn():
     # The road east, past Stonefield, leads to Redridge.
     m.warp(2040, 1208, 8, 64, 'redridge', 'from_elwynn')
     m.point('from_redridge', 2020, 1240)
+
+    # The road south leads to Duskwood.
+    m.warp(1032, 2040, 48, 8, 'duskwood', 'from_elwynn')
+    m.point('from_duskwood', 1056, 2016)
 
     # Road west leads to the Westfall bridge.
     m.warp(0, 1416, 8, 48, 'westfall', 'from_elwynn')
@@ -707,9 +714,10 @@ def gen_redridge():
     m.area(64, 720, 380, 260, 'Three Corners')
     m.area(400, 740, 120, 284, 'Lakeridge Highway')
 
-    # The road to Duskwood is closed by the Night Watch.
-    wg.fence(m, 400, 960, 96)
-    m.npc('GUARD_LAKERIDGE', 444, 944)
+    # The Lakeridge Highway leads south to Duskwood, watched by Lakeshire's guard.
+    m.npc('GUARD_LAKERIDGE', 472, 944)
+    m.warp(416, 1016, 64, 8, 'duskwood', 'from_redridge')
+    m.point('from_duskwood', 440, 992)
 
     rng = np.random.default_rng(17)
     path = wg.corners(m, 'path')
@@ -735,6 +743,341 @@ def gen_redridge():
     m.warp(0, 672, 8, 64, 'elwynn', 'from_redridge')
     m.area(0, 0, 1280, 1024, 'Redridge Mountains')
     m.music = 'REDRIDGE'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Duskwood
+# ---------------------------------------------------------------------------------------------
+
+DUSKWOOD_PROPS = ('fern', 'tall_grass', 'rock', 'bush', 'stump', 'log', 'fern', 'big_rock', 'tall_grass')
+
+
+def gravestone(m, x, y, kind=0):
+    """A gravestone on the grass, 16x16, drawn in the rock bank: harmonize_rock turns the grass
+    around it into the bank's twins. kind 0 is a headstone, 1 a cross, 2 a slab on the ground."""
+    x, y, t = wg._prop(m, x, y, 16, 16)
+    o, d, mid, lit, hi = m.g('rock_0'), m.g('rock_1'), m.g('rock_2'), m.g('rock_3'), m.g('rock_4')
+    if kind == 0:
+        t[4:14, 4:12] = mid
+        t[3, 5:11] = mid
+        t[2, 6:10] = mid
+        t[4:13, 4] = lit
+        t[3, 5] = lit
+        t[4:14, 11] = d
+        t[6, 6:10] = d
+        t[8, 6:10] = d
+        t[1, 6:10] = o
+        t[2, 5] = t[2, 10] = o
+        t[3, 4] = t[3, 11] = o
+        t[4:14, 3] = o
+        t[4:14, 12] = o
+        t[14, 3:13] = d
+        t[15, 2:14] = m.g('shadow')
+        m.block(x + 4, y + 8, 8, 8)
+    elif kind == 1:
+        t[2:14, 7:9] = mid
+        t[5:7, 4:12] = mid
+        t[2:14, 7] = lit
+        t[5, 4:12] = hi
+        t[1, 7:9] = o
+        t[2:5, 6] = t[2:5, 9] = o
+        t[7:14, 6] = t[7:14, 9] = o
+        t[4, 3:7] = t[4, 9:13] = o
+        t[7, 3:7] = t[7, 9:13] = o
+        t[5:7, 3] = t[5:7, 12] = o
+        t[14, 4:12] = d
+        t[15, 4:12] = m.g('shadow')
+        m.block(x + 6, y + 10, 4, 6)
+    else:
+        t[7:14, 2:14] = mid
+        t[7:9, 2:14] = lit
+        t[13, 2:14] = d
+        t[6, 2:14] = o
+        t[14, 2:14] = o
+        t[6:15, 1] = t[6:15, 14] = o
+        t[9:12, 7:9] = hi
+        t[10, 5:11] = hi
+        t[15, 2:15] = m.g('shadow')
+        m.block(x + 2, y + 8, 12, 6)
+
+
+def graveyard(m, x, y, w, h, seed, gaps=()):
+    """Rows of gravestones every 32x32 px inside the rectangle, a few missing; gaps are rectangles left
+    clear for paths and the dead."""
+    local = np.random.default_rng(seed)
+    for gy in range(y, y + h - 15, 32):
+        for gx in range(x + (gy // 32 % 2) * 16, x + w - 15, 32):
+            if local.random() < 0.2 or any(wg.overlaps((gx, gy, 16, 16), g) for g in gaps):
+                continue
+            gravestone(m, gx, gy, int(local.choice([0, 0, 0, 1, 1, 2])))
+
+
+def ns_bridge(m, x, y, w, h):
+    """A plank bridge running north-south over a river: planks across, rails along both sides."""
+    for py in range(y, y + h):
+        for px in range(x, x + w):
+            c = m.g('trunk_m') if (py % 8) not in (0, 7) else m.g('trunk_d')
+            if px in (x, x + 1, x + w - 2, x + w - 1):
+                c = m.g('trunk_d')
+            m.ground[py, px] = c
+    for py in range(y + 4, y + h, 16):
+        m.ground[py:py + 4, x:x + 3] = m.g('shadow')
+        m.ground[py:py + 4, x + w - 3:x + w] = m.g('shadow')
+    m.unblock(x + 4, y, w - 8, h)
+    m.block(x, y, 4, h)
+    m.block(x + w - 4, y, 4, h)
+
+
+def crypt(m, x, y, w=80, h=80):
+    """A stone crypt with a slate roof and its door broken open. Returns the doorway's bottom-center."""
+    door = wg.house(m, x, y, w, h, style='stone', roof_colors=('roof_d', 'roof_m', 'roof_l'),
+                    roof_ridge='roof_h', roof_outline='outline', windows=False)
+    g = m.ground
+    dx = door[0] - 8
+    dy = y + h - 24
+    g[dy + 2:dy + 24, dx + 2:dx + 14] = m.g('outline')
+    g[dy:dy + 2, dx - 2:dx + 18] = m.g('stone_h')
+    for bx in (x + 8, x + w - 16):
+        g[y + h // 2 + 8:y + h - 4, bx:bx + 8] = m.g('stone_l')
+        g[y + h // 2 + 8:y + h - 4, bx + 7] = m.g('stone_d')
+    return door
+
+
+def dusk_lamp(m, x, y):
+    """A Darkshire lamp post, 8x32, on cobbles (building bank)."""
+    g = m.ground
+    g[y + 8:y + 30, x + 3:x + 5] = m.g('outline')
+    g[y + 29:y + 31, x + 1:x + 7] = m.g('stone_d')
+    g[y:y + 9, x + 1:x + 7] = m.g('outline')
+    g[y + 2:y + 7, x + 2:x + 6] = m.g('glass_l')
+    g[y, x + 3:x + 5] = m.g('stone_d')
+    m.block(x + 1, y + 24, 6, 8)
+
+
+def gen_duskwood():
+    m = Map('duskwood', 1536, 1024,
+            Palette([wg.TERRAIN_DUSKWOOD, wg.BUILDINGS_DUSK, wg.FARM, wg.ROCK_DUSK]),
+            Palette([wg.OVERHEAD_LEAVES_DUSK, wg.OVERHEAD_ROOFS_DUSK]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+    dead = wg.Trees(m, dead=True)
+
+    # --- mountains: Redridge's foothills to the north-east, Deadwind's to the east and south-east ----
+    rock = wg.corners(m, 'rock')
+    rock[0:10, 70:] = 1
+    rock[:, 93:] = 1
+    rock[59:, 66:] = 1
+    rock[0:10, 81:86] = 0                   # the pass north to Redridge
+    wg.corners_along(m, 'rock', [(1536, 700), (1504, 760), (1480, 860), (1420, 960)], 1.6)
+    wg.corners_ellipse(m, 'rock', 824, 792, 104, 52)    # Vul'Gol Ogre Mound
+    wg.paint_cliffs(m)
+
+    # --- roads -------------------------------------------------------------------------------------
+    roads = [
+        [(568, 0), (568, 170), (588, 270), (616, 400), (640, 548)],                     # north to Elwynn
+        [(120, 616), (260, 600), (420, 580), (640, 548), (840, 530), (1000, 500), (1096, 470),
+         (1200, 464)],                                                                   # Raven Hill Road
+        [(1336, 0), (1332, 100), (1290, 170), (1212, 250), (1208, 340), (1208, 440)],   # north to Redridge
+        [(1228, 496), (1228, 660), (1232, 748)],                                         # to Tranquil Gardens
+        [(840, 530), (836, 640), (820, 740), (820, 880)],                               # to Vul'Gol
+        [(260, 600), (280, 690), (300, 760)],                                            # Raven Hill
+        [(252, 598), (232, 544), (224, 500)],                                            # cemetery gate
+        [(120, 616), (112, 700), (120, 790)],                                            # Sven's camp
+        [(420, 580), (440, 700), (470, 860)],                                            # Yorgen Farmstead
+        [(1000, 500), (1020, 380), (1040, 300)],                                         # Mistmantle Manor
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.1)
+    wg.paint_paths(m)
+
+    # --- the Darkened Bank: the river along the north --------------------------------------------
+    wg.corners_along(m, 'water', [(0, 96), (300, 104), (560, 96), (820, 108), (1060, 100), (1130, 112)], 1.5)
+    wg.paint_water(m)
+    ns_bridge(m, 552, 56, 32, 88)
+    m.area(0, 56, 1140, 96, 'The Darkened Bank')
+
+    # --- forest borders ---------------------------------------------------------------------------
+    border = 48
+    wg.forest(m, trees, 0, 0, 544, border)
+    wg.forest(m, trees, 592, 0, 528, border)
+    wg.forest(m, trees, 0, 0, border, m.height)
+    wg.forest(m, trees, 0, m.height - border, 1056, border)
+    # Old woods between the zones, with hidden clearings.
+    wg.forest(m, trees, 48, 144, 224, 112, kinds=('pine', 'oak'), holes=[(128, 168, 64, 48)],
+              secrets=[(144, 208, 32, 56)])
+    m.chest(21, 160, 196, 22)
+    wg.forest(m, trees, 1040, 600, 48, 160, kinds=('pine', 'oak'))
+    wg.forest(m, trees, 560, 880, 160, 96, kinds=('pine', 'oak'), holes=[(600, 904, 64, 40)],
+              secrets=[(616, 864, 32, 48)])
+    m.chest(22, 632, 932, 23)
+    # The deep woods between the roads.
+    wg.forest(m, trees, 872, 296, 112, 144, kinds=('pine', 'oak'))
+    wg.forest(m, trees, 560, 612, 112, 96, kinds=('oak', 'pine'))
+    wg.forest(m, trees, 880, 576, 192, 160, kinds=('pine', 'oak'), holes=[(864, 600, 176, 112)])
+    wg.forest(m, trees, 280, 520, 88, 48, kinds=('oak', 'small'))
+
+    # --- Darkshire ----------------------------------------------------------------------------------
+    wg.cobbles(m, 1192, 432, 256, 64)
+    smithy = wg.house(m, 1112, 344, 80, 80, style='stone', roof_colors=('roof_d', 'roof_m', 'roof_l'),
+                      roof_ridge='roof_h', roof_outline='outline')
+    hall = wg.house(m, 1224, 296, 128, 128, style='stone', roof_colors=('red_d', 'red_m', 'red_l'),
+                    roof_ridge='red_l', roof_outline='o2')
+    inn = wg.house(m, 1368, 320, 112, 112, roof_colors=('red_d', 'red_m', 'red_l'), roof_ridge='red_l',
+                   roof_outline='o2', door_x=40)
+    eva = wg.house(m, 1128, 528, 80, 80, roof_colors=('roof_d', 'roof_m', 'roof_l'), roof_ridge='roof_h',
+                   roof_outline='outline')
+    sirra = wg.house(m, 1248, 528, 80, 80, roof_colors=('red_d', 'red_m', 'red_l'), roof_ridge='red_l',
+                     roof_outline='o2')
+    barracks = wg.house(m, 1352, 520, 112, 96, style='stone', roof_colors=('roof_d', 'roof_m', 'roof_l'),
+                        roof_ridge='roof_h', roof_outline='outline')
+    wg.anvil(m, 1200, 440)
+    for lx in (1192, 1336, 1440):
+        dusk_lamp(m, lx, 432)
+    # The town gate: a palisade along the west side, guarded by the Night Watch.
+    wg.fence(m, 1096, 280, 160, vertical=True)
+    wg.fence(m, 1096, 496, 176, vertical=True)
+    m.npc('ELLO', hall[0] + 14, hall[1] + 12)
+    m.npc('TRELAYNE', inn[0] - 18, inn[1] + 10)
+    m.npc('CALOR', smithy[0] + 16, smithy[1] + 10)
+    m.npc('EVA', eva[0] + 20, eva[1] + 10)
+    m.npc('SIRRA', sirra[0] + 20, sirra[1] + 10)
+    m.npc('ALTHEA', barracks[0] - 20, barracks[1] + 10)
+    m.npc('FELICIA', 1440, 476)
+    m.point('flight', 1440, 496)
+    m.npc('NIGHT_WATCH_GATE', 1116, 452)
+    m.npc('NIGHT_WATCH_SQUARE', 1328, 476)
+    m.npc('DARKSHIRE_VENDOR', 1376, 456)
+    m.point('darkshire_respawn', 1300, 480)
+    m.area(1096, 260, 400, 420, 'Darkshire')
+
+    # --- Mistmantle Manor (Nightbane worgen, Stalvan) ---------------------------------------------
+    wg.house(m, 976, 152, 112, 96, style='stone', roof_colors=('dead_0', 'dead_1', 'dead_2'),
+             roof_ridge='dead_3', roof_outline='o2')
+    wg.grove(m, dead, [(920, 168), (1104, 176), (936, 264), (1096, 280)], seed=2, kinds=('oak', 'small'))
+    m.spawn('STALVAN_MISTMANTLE', 1040, 284)
+    m.spawn_group('NIGHTBANE_TAINTED_ONE', 1010, 320, 5, 60, seed=51)
+    m.area(900, 140, 220, 220, 'Mistmantle Manor', 'MISTMANTLE_MANOR')
+
+    # --- Brightwood Grove (Nightbane worgen) --------------------------------------------------------
+    wg.forest(m, trees, 352, 152, 64, 96, kinds=('pine', 'oak'))
+    wg.forest(m, trees, 688, 152, 96, 64, kinds=('pine', 'oak'))
+    wg.camp(m, 448, 192, 96, 64, tents=[], fire=(480, 216))
+    m.spawn_group('NIGHTBANE_DARK_RUNNER', 480, 260, 6, 90, seed=52)
+    m.spawn_group('NIGHTBANE_SHADOW_WEAVER', 520, 200, 4, 60, seed=53)
+    m.area(340, 140, 460, 220, 'Brightwood Grove')
+
+    # --- Twilight Grove (spiders) -----------------------------------------------------------------
+    # A ring of old trees around a clearing, open to the road on its south side.
+    wg.forest(m, trees, 664, 280, 192, 176, kinds=('oak', 'pine'), holes=[(704, 320, 112, 104), (736, 424, 48, 40)])
+    wg.big_rock(m, 744, 352)
+    m.spawn_group('VENOM_WEB_SPIDER', 760, 370, 4, 36, seed=54)
+    m.spawn_group('VENOM_WEB_SPIDER', 900, 400, 4, 60, seed=55)
+    m.area(650, 260, 300, 220, 'Twilight Grove')
+
+    # --- Raven Hill Cemetery (skeletons, Mor'Ladim) -----------------------------------------------
+    wg.fence(m, 80, 288, 304)
+    wg.fence(m, 80, 288, 216, vertical=True)
+    wg.fence(m, 376, 288, 216, vertical=True)
+    wg.fence(m, 80, 496, 112)
+    wg.fence(m, 256, 496, 128)
+    crypt(m, 192, 296, 80, 64)
+    graveyard(m, 104, 360, 264, 128, seed=61, gaps=[(208, 360, 48, 140)])
+    wg.grove(m, dead, [(96, 296), (320, 296), (104, 440)], seed=4, kinds=('oak', 'small'))
+    m.spawn_group('SKELETAL_WARRIOR', 236, 420, 7, 90, seed=56)
+    m.spawn_group('SKELETAL_MAGE', 236, 390, 4, 70, seed=57)
+    m.spawn('MOR_LADIM', 232, 380)
+    m.area(80, 280, 304, 224, 'Raven Hill Cemetery')
+
+    # --- Raven Hill (ghouls) ---------------------------------------------------------------------------
+    wg.house(m, 192, 640, 80, 80, roof_colors=('dead_0', 'dead_1', 'dead_2'), roof_ridge='dead_3',
+             roof_outline='o2')
+    wg.house(m, 320, 664, 80, 80, style='stone', roof_colors=('dead_0', 'dead_1', 'dead_2'),
+             roof_ridge='dead_3', roof_outline='o2')
+    wg.house(m, 224, 776, 80, 80, roof_colors=('dead_0', 'dead_1', 'dead_2'), roof_ridge='dead_3',
+             roof_outline='o2')
+    m.chest(23, 360, 758, 22)
+    m.spawn_group('ROTTING_GHOUL', 300, 740, 7, 100, seed=58)
+    m.area(170, 620, 260, 260, 'Raven Hill')
+
+    # --- Sven's camp -----------------------------------------------------------------------------------
+    wg.camp(m, 64, 768, 112, 80, tents=[(72, 776)], fire=(128, 808))
+    m.npc('SVEN', 152, 788)
+    m.point('raven_hill_respawn', 116, 836)
+    m.area(56, 750, 140, 110, "Sven's Camp")
+
+    # --- Abercrombie's hut, where Stitches begins his walk to Darkshire ------------------------------
+    hut = wg.house(m, 472, 616, 72, 80, roof_colors=('thatch_d', 'thatch_m', 'thatch_l'), roof_ridge='thatch_l')
+    m.npc('ABERCROMBIE', hut[0] + 16, hut[1] + 8)
+    m.spawn('STITCHES', 536, 720)
+    m.patrol = [(536, 720), (448, 722), (444, 600), (520, 574), (700, 545), (860, 528), (1000, 500), (1072, 472)]
+    m.area(450, 600, 130, 140, "Addle's Stead")
+
+    # --- Yorgen Farmstead (rabid wolves) -----------------------------------------------------------------
+    wg.house(m, 392, 824, 96, 96, roof_colors=('dead_0', 'dead_1', 'dead_2'), roof_ridge='dead_3',
+             roof_outline='o2')
+    wg.crop_field(m, 504, 856, 64, 72)
+    wg.fence(m, 496, 848, 80)
+    m.spawn_group('RABID_DIRE_WOLF', 470, 950, 4, 40, seed=59)
+    m.spawn_group('RABID_DIRE_WOLF', 600, 820, 3, 40, seed=60)
+    m.area(380, 800, 260, 180, 'Yorgen Farmstead')
+
+    # --- Vul'Gol Ogre Mound ------------------------------------------------------------------------------
+    cave = wg.mine_entrance(m, 792, 808, 64, 48)
+    wg.camp(m, 736, 872, 176, 80, tents=[(744, 880), (872, 880)], fire=(808, 912))
+    m.spawn_group('SPLINTER_FIST_OGRE', 820, 920, 6, 80, seed=62)
+    m.spawn_group('SPLINTER_FIST_TASKMASTER', 824, 880, 3, 40, seed=63)
+    m.chest(24, cave[0], cave[1] - 2, 24)
+    m.area(700, 720, 260, 260, "Vul'Gol Ogre Mound")
+
+    # --- Tranquil Gardens Cemetery (Morbent Fel) ---------------------------------------------------------
+    wg.fence(m, 1104, 744, 112)
+    wg.fence(m, 1256, 744, 120)
+    wg.fence(m, 1104, 744, 208, vertical=True)
+    door = crypt(m, 1272, 760, 80, 80)
+    graveyard(m, 1128, 776, 232, 160, seed=64, gaps=[(1208, 744, 56, 220), (1264, 744, 96, 120)])
+    wg.grove(m, dead, [(1112, 896), (1352, 880)], seed=6, kinds=('small', 'oak'))
+    m.spawn('MORBENT_FEL', door[0], door[1] + 18)
+    m.spawn_group('PLAGUE_SPREADER', 1180, 860, 6, 80, seed=65)
+    m.area(1100, 730, 290, 240, 'Tranquil Gardens Cemetery')
+
+    # --- the wolves of the woods --------------------------------------------------------------------------
+    m.spawn_group('DIRE_WOLF', 950, 656, 6, 60, seed=66)
+    m.spawn_group('DIRE_WOLF', 420, 470, 4, 50, seed=67)
+    m.spawn_group('DIRE_WOLF', 640, 700, 4, 60, seed=68)
+
+    rng = np.random.default_rng(23)
+    path = wg.corners(m, 'path')
+    water = wg.corners(m, 'water')
+    clear = [(1080, 260, 420, 420), (80, 280, 304, 224), (170, 620, 260, 260), (56, 750, 140, 110),
+             (450, 600, 130, 140), (380, 800, 260, 180), (700, 720, 260, 260), (1100, 730, 290, 240),
+             (900, 140, 220, 220), (440, 180, 120, 100), (690, 300, 140, 140)]
+    placed = 0
+    for i in range(3000):
+        if placed >= 400:
+            break
+        x, y = int(rng.uniform(40, 1460)), int(rng.uniform(120, 960))
+        mx, my = (x + 16) // 16, (y + 40) // 16
+        near = path[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max() + \
+            water[max(0, my - 2):my + 3, max(0, mx - 2):mx + 3].max()
+        if near == 0 and m.area_free(x, y, 40, 56) and \
+                not any(cx - 40 <= x <= cx + cw and cy - 56 <= y <= cy + ch for cx, cy, cw, ch in clear):
+            if placed % 7 == 3:
+                wg.tree(m, dead, x, y, int(rng.integers(0, 3)), kind='small')
+            else:
+                wg.tree(m, trees, x, y, int(rng.integers(0, 3)), kind=('oak', 'pine', 'oak', 'small')[placed % 4])
+            placed += 1
+    wg.scatter_props(m, rng, 90, DUSKWOOD_PROPS, (56, 120, 1400, 840),
+                     avoid=[(1080, 260, 420, 420), (80, 280, 304, 224)])
+
+    m.point('from_elwynn', 568, 24)
+    m.warp(544, 0, 48, 8, 'elwynn', 'from_duskwood')
+    m.point('from_redridge', 1336, 24)
+    m.warp(1312, 0, 48, 8, 'redridge', 'from_duskwood')
+    m.area(0, 0, 1536, 1024, 'Duskwood')
+    m.music = 'DUSKWOOD'
+    m.night = True
     m.save()
     return m
 
@@ -1991,6 +2334,264 @@ def gen_deeprun_tram():
     return m
 
 
+# ---------------------------------------------------------------------------------------------
+# Silverpine Forest (the way to Shadowfang Keep)
+# ---------------------------------------------------------------------------------------------
+
+def keep_wall(m, x, y, w, h, gate_w=48):
+    """Shadowfang Keep's outer wall seen from the south: a tall brick face with towers at both ends and
+    a dark gate in the middle. Returns the gate's bottom-center."""
+    g = m.ground
+    wg.bricks(m, g, x, y, w, h, 'stone_d', 'stone_m', 'stone_l')
+    g[y:y + 3, x:x + w] = m.g('stone_h')
+    g[y + h - 1, x:x + w] = m.g('outline')
+    for tx in (x, x + w - 48):
+        wg.bricks(m, g, tx, y - 24, 48, h + 24, 'stone_d', 'stone_m', 'stone_l')
+        g[y - 24:y + h, tx] = m.g('outline')
+        g[y - 24:y + h, tx + 47] = m.g('outline')
+        wg.window(m, tx + 20, y + 8)
+        wg.roof(m, tx - 8, y - 64, 64, 48, ('roof_d', 'roof_m', 'roof_l'), 'roof_h', 'outline')
+    gx = x + w // 2 - gate_w // 2
+    g[y + h - 40:y + h, gx:gx + gate_w] = m.g('outline')
+    g[y + h - 44:y + h - 40, gx - 4:gx + gate_w + 4] = m.g('stone_h')
+    for bx in range(gx + 4, gx + gate_w - 2, 6):
+        g[y + h - 40:y + h - 16, bx] = m.g('stone_d')
+    for bx in (gx - 24, gx + gate_w + 16):
+        g[y + 8:y + 40, bx:bx + 8] = m.g('banner')
+        g[y + 8:y + 40, bx] = m.g('banner_d')
+        g[y + 18:y + 24, bx + 2:bx + 6] = m.g('stone_h')
+    m.block(x, y - 24, w, h + 24)
+    m.unblock(gx, y + h - 16, gate_w, 16)
+    return (gx + gate_w // 2, y + h)
+
+
+def gen_silverpine():
+    m = Map('silverpine', 768, 512,
+            Palette([wg.TERRAIN_SILVERPINE, wg.BUILDINGS, wg.FARM, wg.ROCK_SILVERPINE]),
+            Palette([wg.OVERHEAD_LEAVES_SILVERPINE, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    rock = wg.corners(m, 'rock')
+    rock[0:7, :] = 1
+    rock[0:13, 0:10] = 1
+    rock[0:13, 38:] = 1
+    wg.paint_cliffs(m)
+
+    wg.corners_along(m, 'path', [(384, 470), (380, 420), (360, 330), (384, 240), (384, 176)], 1.1)
+    wg.corners_along(m, 'path', [(380, 420), (250, 430), (180, 440)], 0.9)
+    wg.paint_paths(m)
+    wg.corners_along(m, 'water', [(768, 300), (680, 330), (640, 420), (660, 512)], 1.4)
+    wg.paint_water(m)
+
+    gate = keep_wall(m, 224, 104, 320, 72)
+    m.warp(gate[0] - 16, gate[1] - 12, 32, 8, 'shadowfang', 'entry')
+    m.point('shadowfang_exit', gate[0], gate[1] + 18)
+    m.area(200, 40, 368, 200, 'Shadowfang Keep')
+
+    border = 48
+    wg.forest(m, trees, 0, 160, border, 352, kinds=('pine',))
+    wg.forest(m, trees, 0, m.height - border, m.width, border, kinds=('pine',))
+    wg.forest(m, trees, 560, 200, 64, 96, kinds=('pine',))
+    wg.forest(m, trees, 48, 224, 96, 112, kinds=('pine',), holes=[(64, 256, 56, 48)], secrets=[(112, 264, 40, 32)])
+    m.chest(25, 92, 284, 23)
+
+    # The Alliance scouts' camp below the keep.
+    wg.camp(m, 152, 376, 112, 80, tents=[(160, 384)], fire=(216, 416))
+    m.npc('VALDAN', 240, 398)
+    m.npc('GRYPHON_SILVERPINE', 316, 420)
+    m.point('flight', 316, 440)
+    m.point('silverpine_respawn', 236, 446)
+    m.area(140, 360, 200, 104, "Scouts' Camp")
+
+    m.spawn_group('BLEAK_WORG', 520, 360, 3, 50, seed=71)
+    m.spawn_group('BLEAK_WORG', 280, 280, 2, 30, seed=72)
+
+    rng = np.random.default_rng(29)
+    path = wg.corners(m, 'path')
+    placed = 0
+    for _ in range(300):
+        if placed >= 26:
+            break
+        x, y = int(rng.uniform(40, 700)), int(rng.uniform(180, 440))
+        mx, my = (x + 16) // 16, (y + 40) // 16
+        if path[max(0, my - 3):my + 4, max(0, mx - 3):mx + 4].max() == 0 and m.area_free(x, y, 40, 56) \
+                and not (120 <= x <= 340 and 320 <= y <= 500):
+            wg.tree(m, trees, x, y, placed, kind='pine')
+            placed += 1
+    wg.scatter_props(m, rng, 24, ('fern', 'rock', 'tall_grass', 'stump'), (48, 200, 660, 280),
+                     avoid=[(140, 360, 200, 104)])
+    m.area(0, 0, 768, 512, 'Silverpine Forest')
+    m.music = 'DUSKWOOD'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Shadowfang Keep
+# ---------------------------------------------------------------------------------------------
+
+CASTLE = [
+    ('outline', (14, 14, 20)), ('top_d', (28, 30, 36)), ('top_m', (42, 46, 52)),
+    ('wall_d', (54, 60, 64)), ('wall_m', (82, 90, 92)), ('wall_l', (116, 124, 124)),
+    ('floor_d', (62, 62, 66)), ('floor_m', (88, 86, 90)), ('floor_l', (114, 112, 114)),
+    ('iron_d', (32, 34, 42)), ('iron_l', (140, 144, 160)), ('straw', (144, 120, 64)),
+    ('wood', (96, 62, 40)), ('flame', (232, 220, 120)), ('red', (88, 40, 112)),
+]
+
+CASTLE_OVERHEAD = [
+    ('outline', (14, 14, 20)), ('top_d', (28, 30, 36)), ('top_m', (42, 46, 52)),
+    ('wall_d', (54, 60, 64)), ('wall_m', (82, 90, 92)), ('wall_l', (116, 124, 124)),
+]
+
+
+class Castle(Prison):
+    """Shadowfang Keep: the prison's walls and flagstones in colder stone, with Arugal's violet banners."""
+
+    def __init__(self, name, width, height):
+        self.m = Map(name, width, height, Palette([CASTLE]), Palette([CASTLE_OVERHEAD]))
+        self.floor = np.zeros((height // 8, width // 8), dtype=bool)
+        self.face = np.zeros_like(self.floor)
+
+    def rug(self, x, y, w, h):
+        """A long violet carpet with an iron-grey border."""
+        g, m = self.m.ground, self.m
+        g[y:y + h, x:x + w] = m.g('red')
+        g[y:y + h, x] = m.g('iron_d')
+        g[y:y + h, x + w - 1] = m.g('iron_d')
+        g[y, x:x + w] = m.g('iron_d')
+        g[y + h - 1, x:x + w] = m.g('iron_d')
+        g[y + 2:y + h - 2:6, x + 2:x + w - 2] = m.g('outline')
+
+    def ledge(self, x, y, w, h):
+        """A raised stone platform; its steps face south."""
+        g, m = self.m.ground, self.m
+        g[y:y + h, x:x + w] = m.g('wall_l')
+        g[y:y + h:8, x:x + w] = m.g('wall_m')
+        g[y + h - 6:y + h - 3, x:x + w] = m.g('wall_m')
+        g[y + h - 3:y + h, x:x + w] = m.g('wall_d')
+        g[y:y + h, x] = m.g('outline')
+        g[y:y + h, x + w - 1] = m.g('outline')
+
+    def table(self, x, y, w=64, h=24):
+        g, m = self.m.ground, self.m
+        g[y:y + h, x:x + w] = m.g('outline')
+        g[y + 1:y + h - 4, x + 1:x + w - 1] = m.g('wood')
+        g[y + h - 4:y + h - 1, x + 1:x + w - 1] = m.g('top_m')
+        for px in range(x + 6, x + w - 6, 14):
+            g[y + 4:y + 8, px:px + 6] = m.g('iron_l')
+        self.m.block(x, y + 4, w, h - 4)
+
+
+def gen_shadowfang():
+    c = Castle('shadowfang', 1024, 768)
+    m = c.m
+    c.rect(448, 600, 128, 128)      # entry hall
+    c.rect(488, 728, 48, 32)        # the stairs down to the gate
+    c.rect(256, 640, 192, 48)       # corridor west
+    c.rect(96, 568, 160, 152)       # the dungeon, Rethilgore's
+    for x in (104, 152, 200):
+        c.rect(x, 504, 40, 64)      # cells
+    c.rect(488, 520, 48, 80)        # corridor north
+    c.rect(400, 392, 224, 128)      # the dining hall, Silverlaine's
+    c.rect(224, 400, 160, 104)      # the kitchen, Razorclaw's
+    c.rect(384, 448, 16, 40)        # kitchen door
+    c.rect(624, 448, 80, 48)        # corridor east
+    c.rect(704, 360, 224, 200)      # the courtyard chapel, Springvale's
+    c.rect(840, 200, 48, 160)       # stairs up to the ramparts
+    c.rect(560, 152, 368, 48)       # the ramparts, Odo's
+    c.rect(512, 152, 48, 48)        # the tower door
+    c.rect(256, 40, 256, 176)       # Arugal's chamber
+    c.rect(720, 256, 72, 64)        # a hidden room above the chapel
+    c.rect(736, 320, 32, 40)
+    c.render()
+    c.exit(488, 760, 'silverpine', 'shadowfang_exit')
+
+    # The dungeon and its cells.
+    for x in (104, 152, 200):
+        c.bars(x, 568, 40, 116 if x == 104 else None)
+        c.straw(x + 8, 528)
+        c.chains(x + 16, 508)
+    for x, y in ((112, 576), (224, 576), (448, 608), (544, 608), (272, 648), (416, 648)):
+        c.torch(x, y)
+    # The kitchen: tables, barrels and a butcher's rack.
+    c.table(248, 440, 48, 24)
+    c.barrel(232, 480)
+    c.barrel(352, 408)
+    c.rack(320, 404)
+    # The dining hall: a long table on a carpet, banners on the north face.
+    c.rug(432, 424, 160, 72)
+    c.table(448, 448, 128, 24)
+    for x in (408, 600):
+        c.torch(x, 396)
+    for x in (456, 552):
+        c.banner(x, 396)
+    # The chapel: pews, an altar on a dais.
+    c.ledge(768, 368, 96, 32)
+    for y in (432, 472, 512):
+        c.table(728, y, 56, 16)
+        c.table(848, y, 56, 16)
+    c.banner(744, 364)
+    c.banner(880, 364)
+    # The ramparts.
+    for x in (600, 712, 824):
+        c.torch(x, 156)
+    # Arugal's chamber: three ledges he steps between, and his carpet.
+    c.ledge(272, 56, 64, 40)
+    c.ledge(432, 56, 64, 40)
+    c.ledge(352, 48, 64, 32)
+    c.rug(360, 104, 48, 104)
+    for x in (264, 496):
+        c.banner(x, 44)
+    for x in (320, 448):
+        c.torch(x, 44)
+    # The hidden room.
+    c.secret(736, 320, 32, 40)
+    c.crate(728, 288)
+    m.chest(26, 776, 292, 24)
+
+    # The entry hall's guards stand at the far end, so the hero steps in safely.
+    for x, y in ((480, 628), (548, 636)):
+        m.spawn('SHADOWFANG_MOONWALKER', x, y)
+    m.spawn('HAUNTED_SERVITOR', 512, 616)
+    m.spawn('SHADOWFANG_DARKCASTER', 336, 668)
+    for x, y in ((136, 680), (224, 640)):
+        m.spawn('SHADOWFANG_WOLFGUARD', x, y)
+    m.spawn('RETHILGORE', 176, 616)
+    m.spawn('HAUNTED_SERVITOR', 512, 556)
+    for x, y in ((432, 500), (592, 500)):
+        m.spawn('WAILING_GUARDSMAN', x, y)
+    m.spawn('SHADOWFANG_DARKCASTER', 600, 420)
+    m.spawn('BARON_SILVERLAINE', 512, 416)
+    m.spawn('HAUNTED_SERVITOR', 340, 480)
+    m.spawn('RAZORCLAW_THE_BUTCHER', 288, 424)
+    for x, y in ((648, 472), (680, 476)):
+        m.spawn('BLEAK_WORG', x, y)
+    for x, y in ((736, 420), (896, 420), (816, 540)):
+        m.spawn('SHADOWFANG_WOLFGUARD' if x != 816 else 'SHADOWFANG_DARKCASTER', x, y)
+    for x, y in ((744, 540), (896, 540)):
+        m.spawn('WAILING_GUARDSMAN', x, y)
+    m.spawn('COMMANDER_SPRINGVALE', 816, 412)
+    for x, y in ((864, 300), (864, 230)):
+        m.spawn('BLEAK_WORG', x, y)
+    m.spawn('ODO_THE_BLINDWATCHER', 664, 180)
+    for x, y in ((760, 180), (588, 184)):
+        m.spawn('SHADOWFANG_MOONWALKER', x, y)
+    for x, y in ((300, 180), (468, 180)):
+        m.spawn('SHADOWFANG_DARKCASTER' if x < 400 else 'SHADOWFANG_MOONWALKER', x, y)
+    m.spawn('ARUGAL', 384, 74)
+    # Where Arugal blinks to: the west, middle and east ledges, and the floor in front of them.
+    m.patrol = [(304, 82), (384, 72), (464, 82), (384, 150)]
+    m.area(0, 0, 1024, 768, 'Shadowfang Keep')
+    m.area(256, 40, 256, 176, "Arugal's Chamber")
+    m.area(400, 392, 224, 128, 'The Dining Hall')
+    m.area(704, 360, 224, 200, 'The Chapel')
+    m.area(560, 152, 368, 48, 'The Ramparts')
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
 GENERATORS = {
     'abbey': gen_abbey,
     'inn': gen_inn,
@@ -2003,6 +2604,9 @@ GENERATORS = {
     'stormwind': gen_stormwind,
     'stockade': gen_stockade,
     'deeprun_tram': gen_deeprun_tram,
+    'duskwood': gen_duskwood,
+    'silverpine': gen_silverpine,
+    'shadowfang': gen_shadowfang,
 }
 
 
@@ -2012,7 +2616,8 @@ def main():
     if len(ids) != len(set(ids)) or max(ids) >= 256:
         raise SystemExit(f'chest ids must be unique and below 256: {sorted(ids)}')
     print(f'{len(ids)} treasure chests')
-    starts = {'elwynn': 'start', 'westfall': 'from_elwynn', 'stormwind': 'from_elwynn', 'redridge': 'from_elwynn'}
+    starts = {'elwynn': 'start', 'westfall': 'from_elwynn', 'stormwind': 'from_elwynn', 'redridge': 'from_elwynn',
+              'duskwood': 'from_elwynn', 'silverpine': 'flight'}
     for name, m in maps.items():
         m.check_reachable(starts.get(name, 'entry'))
     write_minimaps(maps)
@@ -2020,7 +2625,8 @@ def main():
 
 # Maps with a picture on the world map page, in the order D-pad left and right go through them.
 # Interiors show the map their door leads to.
-MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'echo_ridge', 'fargodeep', 'deadmines', 'stockade']
+MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'duskwood', 'silverpine', 'echo_ridge', 'fargodeep',
+            'deadmines', 'stockade', 'shadowfang']
 
 
 def write_minimaps(maps):

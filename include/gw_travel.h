@@ -13,6 +13,8 @@ enum class flight_id : uint8_t
     STORMWIND,
     SENTINEL_HILL,
     LAKESHIRE,
+    DARKSHIRE,
+    SCOUTS_CAMP,
     COUNT
 };
 

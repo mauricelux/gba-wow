@@ -13,6 +13,7 @@
 #include "gw_loot.h"
 #include "gw_types.h"
 #include "gw_ui.h"
+#include "gw_night.h"
 #include "gw_world.h"
 
 namespace gw
@@ -187,6 +188,7 @@ void chests::_update_sprite(chest& item, const bn::fixed_point& player_feet)
         item.sprite->set_camera(_camera);
         item.sprite->set_bg_priority(chest_bg_priority);
         item.sprite->set_z_order(-item.position.y().floor_integer());
+        item.sprite->set_blending_enabled(night::enabled());
     }
 
     // A short twinkle every couple of seconds, offset per chest so they don't blink together.

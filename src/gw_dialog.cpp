@@ -426,7 +426,7 @@ void dialog::_complete()
     _combat.gain_xp(def.xp);
     save_game();
 
-    if(_quest == quest_id::BAZIL_THREDD)
+    if(_quest == quest_id::BAZIL_THREDD || _quest == quest_id::ARUGAL_MUST_DIE)
     {
         ending_requested = true;
     }

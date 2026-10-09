@@ -6,6 +6,7 @@
 #include "bn_sprite_items_mount_ram.h"
 #include "bn_sprite_items_mount_saber.h"
 
+#include "gw_night.h"
 #include "gw_world.h"
 
 namespace gw
@@ -115,6 +116,7 @@ void player::_update_sprites(bool moving)
 
     // In front of the rider, who is drawn at the same feet.
     _mount->set_z_order(-_position.y().floor_integer() - 1);
+    _mount->set_blending_enabled(night::enabled());
 }
 
 void player::face(const bn::fixed_point& target)

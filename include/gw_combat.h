@@ -297,6 +297,8 @@ private:
     bool _update_telegraph(enemy& boss, bool around_boss, int radius, const char* name, projectile_kind kind);
     bool _update_wind_up(int index, bool in_melee, const char* name, const char* message);
     void _update_frenzy(enemy& boss, int health_percent, int below, int phase, const char* name);
+    void _shadow_port(int index);
+    void _boss_greeting(enemy& boss, const char* message);
     void _gain_rage(int damage, bool dealt);
     void _spend(int cost);
     [[nodiscard]] int _power() const;

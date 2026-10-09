@@ -75,6 +75,9 @@ enum class map_id : uint16_t
     STOCKADE,
     DEEPRUN_TRAM,
     REDRIDGE,
+    DUSKWOOD,
+    SILVERPINE,
+    SHADOWFANG,
     COUNT
 };
 
@@ -87,7 +90,8 @@ enum class music_id : uint8_t
     WESTFALL,
     DUNGEON,
     BOSS,
-    REDRIDGE
+    REDRIDGE,
+    DUSKWOOD
 };
 
 enum class area_id : uint8_t
@@ -97,7 +101,8 @@ enum class area_id : uint8_t
     IRONCLAD_COVE,
     ECHO_RIDGE,
     MOONBROOK,
-    LAKE_EVERSTILL      // fishing waters
+    LAKE_EVERSTILL,     // fishing waters
+    MISTMANTLE_MANOR
 };
 
 enum class npc_id : uint16_t
@@ -160,6 +165,22 @@ enum class npc_id : uint16_t
     ARIENA,
     KAREN,
     GUARD_LAKERIDGE,
+    // Duskwood
+    ELLO,
+    ALTHEA,
+    EVA,
+    SIRRA,
+    CALOR,
+    TRELAYNE,
+    FELICIA,
+    NIGHT_WATCH_GATE,
+    NIGHT_WATCH_SQUARE,
+    DARKSHIRE_VENDOR,
+    SVEN,
+    ABERCROMBIE,
+    // Silverpine Forest
+    VALDAN,
+    GRYPHON_SILVERPINE,
     COUNT
 };
 
@@ -209,6 +230,38 @@ enum class enemy_id : uint16_t
     BLACKROCK_RENEGADE,
     BLACKROCK_SUMMONER,
     GATH_ILZOGG,
+    // Duskwood
+    DIRE_WOLF,
+    RABID_DIRE_WOLF,
+    VENOM_WEB_SPIDER,
+    NIGHTBANE_DARK_RUNNER,
+    NIGHTBANE_SHADOW_WEAVER,
+    NIGHTBANE_TAINTED_ONE,
+    SKELETAL_WARRIOR,
+    SKELETAL_MAGE,
+    SKELETAL_SERVANT,
+    ROTTING_GHOUL,
+    PLAGUE_SPREADER,
+    SPLINTER_FIST_OGRE,
+    SPLINTER_FIST_TASKMASTER,
+    MOR_LADIM,
+    STALVAN_MISTMANTLE,
+    MORBENT_FEL,
+    STITCHES,
+    // Silverpine Forest and Shadowfang Keep
+    BLEAK_WORG,
+    SHADOWFANG_MOONWALKER,
+    SHADOWFANG_DARKCASTER,
+    SHADOWFANG_WOLFGUARD,
+    HAUNTED_SERVITOR,
+    WAILING_GUARDSMAN,
+    RETHILGORE,
+    RAZORCLAW_THE_BUTCHER,
+    BARON_SILVERLAINE,
+    COMMANDER_SPRINGVALE,
+    ODO_THE_BLINDWATCHER,
+    ARUGAL,
+    LUPINE_HORROR,
     COUNT
 };
 

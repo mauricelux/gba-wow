@@ -99,6 +99,59 @@ namespace
         // 25 Redridge gnolls
         { { { i::GNOLL_PELT, 45, 1, 1 }, { i::WOOL_CLOTH, 25, 1, 1 }, { i::HEALING_POTION, 4, 1, 1 } }, true,
           { i::NONE, i::NONE, i::NONE } },
+        // 26 dire wolves and worgs
+        { { { i::DIRE_WOLF_PELT, 50, 1, 1 }, none, none }, false,
+          { i::NONE, i::NONE, i::NONE } },
+        // 27 venom web spiders
+        { { { i::SPIDER_SILK, 50, 1, 2 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 28 Nightbane worgen
+        { { { i::WORGEN_FANG, 45, 1, 1 }, { i::SILK_CLOTH, 25, 1, 1 }, { i::HEALING_POTION, 4, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 29 skeletons
+        { { { i::BONE_FRAGMENTS, 45, 1, 2 }, { i::SILK_CLOTH, 20, 1, 1 }, { i::HEALING_POTION, 4, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 30 ghouls
+        { { { i::PUTRID_CLAW, 45, 1, 1 }, { i::BONE_FRAGMENTS, 20, 1, 1 }, { i::HEALING_POTION, 4, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 31 Splinter Fist ogres
+        { { { i::OGRE_TOOTH, 45, 1, 1 }, { i::SILK_CLOTH, 25, 1, 2 }, { i::WILD_HOG_SHANK, 8, 1, 1 } }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 32 Mor'Ladim
+        { { { i::BONE_FRAGMENTS, 100, 2, 3 }, { i::GREATER_HEALING_POTION, 60, 1, 2 }, none }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 33 Stalvan Mistmantle
+        { { { i::SILK_CLOTH, 100, 2, 3 }, { i::GREATER_HEALING_POTION, 60, 1, 2 }, none }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 34 Morbent Fel
+        { { { i::BONE_FRAGMENTS, 100, 2, 3 }, { i::GREATER_HEALING_POTION, 100, 1, 2 }, none }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 35 Stitches
+        { { { i::PUTRID_CLAW, 100, 2, 3 }, { i::GREATER_HEALING_POTION, 100, 2, 2 }, none }, true,
+          { i::NONE, i::NONE, i::NONE } },
+        // 36 Shadowfang worgen
+        { { { i::WORGEN_FANG, 45, 1, 1 }, { i::SILK_CLOTH, 30, 1, 2 }, { i::GREATER_HEALING_POTION, 4, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 37 Shadowfang undead
+        { { { i::BONE_FRAGMENTS, 40, 1, 2 }, { i::SILK_CLOTH, 30, 1, 2 }, { i::GREATER_HEALING_POTION, 4, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 38 Rethilgore
+        { { { i::GREATER_HEALING_POTION, 60, 1, 2 }, none, none }, true,
+          { i::WOLFGUARD_GAUNTLETS, i::SOUL_DRAIN_WRAPS, i::RETHILGORES_GRIPS } },
+        // 39 Razorclaw the Butcher
+        { { { i::GREATER_HEALING_POTION, 60, 1, 2 }, none, none }, true,
+          { i::BUTCHERS_SLICER, i::BUTCHERS_APRON, i::RAZORCLAW_LEGGINGS } },
+        // 40 Baron Silverlaine
+        { { { i::GREATER_HEALING_POTION, 60, 1, 2 }, none, none }, true,
+          { i::SILVERLAINES_HELM, i::BARONS_CIRCLET, i::MOONRAGE_HOOD } },
+        // 41 Commander Springvale
+        { { { i::GREATER_HEALING_POTION, 60, 1, 2 }, none, none }, true,
+          { i::COMMANDERS_CREST, i::CHAPLAINS_VESTMENTS, i::WOLFSKIN_JERKIN } },
+        // 42 Odo the Blindwatcher
+        { { { i::GREATER_HEALING_POTION, 60, 1, 2 }, none, none }, true,
+          { i::BLINDWATCHER_GREATAXE, i::ODOS_LEY_STAFF, i::BLINDSIGHT_BOW } },
+        // 43 Archmage Arugal
+        { { { i::GREATER_HEALING_POTION, 100, 2, 3 }, none, none }, true,
+          { i::SHADOWFANG, i::ROBE_OF_ARUGAL, i::WORGEN_HIDE_LEGGINGS } },
     };
 
     // Uncommon items any enemy of a level band may drop.

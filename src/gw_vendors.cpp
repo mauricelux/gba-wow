@@ -57,6 +57,11 @@ namespace
         i::HAUNCH_OF_MEAT, i::MUTTON_CHOP, i::ICE_COLD_MILK, i::MELON_JUICE, i::LESSER_HEALING_POTION,
         i::HEALING_POTION, i::TELEPORTATION_RUNE
     };
+
+    constexpr item_id darkshire[] = {
+        i::MUTTON_CHOP, i::WILD_HOG_SHANK, i::MELON_JUICE, i::SWEET_NECTAR, i::HEALING_POTION,
+        i::GREATER_HEALING_POTION, i::TELEPORTATION_RUNE
+    };
 }
 
 bn::span<const item_id> vendor_stock(int vendor)
@@ -87,6 +92,9 @@ bn::span<const item_id> vendor_stock(int vendor)
 
     case 8:
         return lakeshire;
+
+    case 9:
+        return darkshire;
 
     default:
         return general_goods;

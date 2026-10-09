@@ -64,7 +64,7 @@ endgame. Each zone is one streamed outdoor map, about the size of Westfall (1024
 | 2 | 5–10 | Elwynn Forest ✓ | Goldshire, **Stormwind** ✓ | Defias in the farms, Hogger, Princess | Fargodeep Mine (cave) ✓ |
 | 3 | 10–15 | Westfall ✓ | Sentinel Hill | The People's Militia vs the Defias | (Deadmines entrance is here) |
 | 4 | 15–20 | Redridge Mountains ✓ | Lakeshire ✓ | Blackrock orcs and the Redridge gnolls | **Deadmines** ✓, **Stockade** ✓ |
-| 5 | 20–25 | Duskwood | Darkshire | Worgen, Stitches, Morbent Fel, the Night Watch | **Shadowfang Keep** |
+| 5 | 20–25 | Duskwood ✓ | Darkshire ✓ | Worgen, Stitches, Morbent Fel, the Night Watch | **Shadowfang Keep** ✓ |
 | 6 | 25–30 | Wetlands | Menethil Harbor, **Ironforge** | Dark Iron dwarves, Dragonmaw orcs, Grim Batol | **Blackfathom Deeps**, **Gnomeregan** |
 | 7 | 30–35 | Hillsbrad Foothills | Southshore | Syndicate, Forsaken, Alterac ogres | **SM Graveyard**, **SM Library** |
 | 8 | 35–40 | Stranglethorn Vale | Rebel Camp, Booty Bay | The tiger and raptor hunts, Bloodsail pirates, trolls | **SM Armory**, **SM Cathedral** |
@@ -163,7 +163,7 @@ telegraph their big attacks (red circles, cast bars) so a solo player can dodge 
 | --- | --- | --- | --- | --- | --- |
 | 1 | The Deadmines ✓ | 16–19 | Westfall | Sneed ✓, **Edwin VanCleef** ✓; new: Rhahk'Zor, Gilnid, Mr. Smite | Shredder phase, VanCleef calls his guards |
 | 2 | The Stockade ✓ | 19–21 | Stormwind | Targorr ✓, Kam Deepfury ✓, **Bazil Thredd** ✓; new: Hamhock | Smoke bombs, adds, frenzy |
-| 3 | Shadowfang Keep | 21–24 | Silverpine (flight from Darkshire) | Rethilgore, Razorclaw the Butcher, Baron Silverlaine, Commander Springvale, Odo the Blindwatcher, **Archmage Arugal** | Arugal teleports between ledges and turns his worgen loose; Springvale heals himself and must be interrupted |
+| 3 | Shadowfang Keep | 22–26 | Silverpine (flight from Darkshire) | Rethilgore, Razorclaw the Butcher, Baron Silverlaine, Commander Springvale, Odo the Blindwatcher, **Archmage Arugal** | Arugal teleports between ledges and turns his worgen loose; Springvale heals himself and must be interrupted |
 | 4 | Blackfathom Deeps | 24–27 | Ashenvale coast (boat to Auberdine) | Ghamoo-ra, Lady Sarevess, Gelihast, Twilight Lord Kelris, **Aku'mai** | Light the four braziers to open Aku'mai's door; Sarevess's Forked Lightning |
 | 5 | Gnomeregan | 27–30 | Dun Morogh (from Ironforge) | Grubbis, Viscous Fallout, Electrocutioner 6000, Crowd Pummeler 9-60, **Mekgineer Thermaplugg** | Radiation pools hurt over time; Thermaplugg's bomb bots must be dodged or stopped at the wall buttons |
 | 6 | Scarlet Monastery: Graveyard | 30–33 | Tirisfal (from Southshore) | Interrogator Vishas, Azshir the Sleepless, Bloodmage Thalnos, **Ironspine** | Short wing; Thalnos casts Flame Spike circles |
@@ -616,7 +616,7 @@ are one bracket each so they can be played and tuned one at a time.
 | **M15 Enemy abilities** ✓ | Shared enemy ability table, cast bars, interrupts, flee and call for help; abilities on the existing Elwynn and Westfall enemies | M12 |
 | **M16 Travel and the pet** ✓ | Flight masters, boats, Deeprun Tram, mount at 30, two-level world map; Beast Mastery pet and taming | M12 |
 | **M17 Redridge** (15–20) ✓ | Lakeshire, about 12 quests, retuned Westfall, Deadmines and Stockade; the old ending becomes the end of the chapter | M13–M16 |
-| **M18 Duskwood and Shadowfang Keep** (20–25) | Night palette, Darkshire, Stitches, Silverpine entrance, SFK. Optional new gear slots | M17 |
+| **M18 Duskwood and Shadowfang Keep** (20–25) ✓ | Night palette, Darkshire, Stitches, Silverpine entrance, SFK. Optional new gear slots (left out for now) | M17 |
 | **M19 Wetlands, Ironforge, BFD, Gnomeregan** (25–30) | Second capital, two dungeons | M18 |
 | **M20 Hillsbrad and Scarlet Monastery 1** (30–35) | Southshore, Graveyard, Library, mount | M19 |
 | **M21 Stranglethorn and Scarlet Monastery 2** (35–40) | Booty Bay, Nesingwary, Armory, Cathedral | M20 |

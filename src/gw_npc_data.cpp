@@ -25,6 +25,7 @@ namespace
     constexpr uint8_t stormwind_weapons = 6;
     constexpr uint8_t stormwind_armor = 7;
     constexpr uint8_t lakeshire = 8;
+    constexpr uint8_t darkshire = 9;
 
     constexpr npc_info npcs[] = {
         { "", "", l::PEASANT, 0, c::WARRIOR, 0, "" },
@@ -139,7 +140,37 @@ namespace
         { "Karen Taylor", "General Goods", l::MERCHANT, vendor, c::WARRIOR, lakeshire,
           "Food, drink and potions for the road. The orcs won't sell you any." },
         { "Lakeridge Guard", "", l::GUARD, 0, c::WARRIOR, 0,
-          "The road to Duskwood is closed. Orders from Lakeshire until the orcs are dealt with." },
+          "This road runs south to Duskwood. It's always night down there. Keep to the road." },
+        // Duskwood
+        { "Lord Ello Ebonlocke", "Darkshire", l::ELLO_EBONLOCKE, 0, c::WARRIOR, 0,
+          "Darkshire has not seen the sun in years. We have learned to fight in the dark." },
+        { "Commander Althea", "The Night Watch", l::ALTHEA_EBONLOCKE, 0, c::WARRIOR, 0,
+          "The Night Watch holds the gate. Every night the dead come a little closer." },
+        { "Madame Eva", "Fortune Teller", l::MADAME_EVA, 0, c::WARRIOR, 0,
+          "The cards speak of a mist, a ring and a broken heart. Sit, child. Listen." },
+        { "Sirra Von'Indi", "Scholar", l::SIRRA_VON_INDI, 0, c::WARRIOR, 0,
+          "The undead of Duskwood answer to someone. I mean to find out who." },
+        { "Calor", "Weaponsmith", l::CALOR, vendor, c::WARRIOR, stormwind_weapons,
+          "Silver would be better against the worgen. Steel will have to do." },
+        { "Innkeeper Trelayne", "Innkeeper", l::TRELAYNE, innkeeper, c::WARRIOR, darkshire,
+          "The Scarlet Raven Tavern. Light, warmth and a locked door. What more could you want?" },
+        { "Felicia Maline", "Gryphon Master", l::FELICIA_MALINE, flight_master, c::WARRIOR, 0,
+          "My gryphons fly north to Silverpine, where the worgen first came from." },
+        { "Night Watch Guard", "", l::NIGHT_WATCH, 0, c::WARRIOR, 0,
+          "Something big walks the road from Raven Hill some nights. We hear it before we see it." },
+        { "Night Watch Guard", "", l::NIGHT_WATCH, 0, c::WARRIOR, 0,
+          "Stay near the lamps. Whatever is out there doesn't like the light." },
+        { "Viktori Prism'Antras", "General Goods", l::MERCHANT, vendor, c::WARRIOR, darkshire,
+          "Candles, bread, bandages. Darkshire runs on all three." },
+        { "Sven Yorgen", "", l::SVEN_YORGEN, 0, c::WARRIOR, 0,
+          "Raven Hill was my home. Now the dead live there, and I live in a tent." },
+        { "Abercrombie", "", l::ABERCROMBIE, 0, c::WARRIOR, 0,
+          "Go away! Can't an old man work in peace? Don't touch anything in the shed." },
+        // Silverpine Forest
+        { "Ranger Valdan", "Alliance Scout", l::RANGER_VALDAN, 0, c::WARRIOR, 0,
+          "Shadowfang Keep. Arugal's worgen pour out of it every night. Somebody has to go in." },
+        { "Gryphon Rider Hask", "Gryphon Master", l::GRYPHON_MASTER, flight_master, c::WARRIOR, 0,
+          "One gryphon, one rider, and the fastest way out of this forest." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

@@ -3,6 +3,7 @@
 #ifndef GW_LOOKS_DATA_H
 #define GW_LOOKS_DATA_H
 
+#include "bn_sprite_items_char_abomination.h"
 #include "bn_sprite_items_char_boar.h"
 #include "bn_sprite_items_char_dwarf_bow.h"
 #include "bn_sprite_items_char_dwarf_sword.h"
@@ -10,6 +11,7 @@
 #include "bn_sprite_items_char_elf_sword.h"
 #include "bn_sprite_items_char_fem_robe.h"
 #include "bn_sprite_items_char_fem_sword.h"
+#include "bn_sprite_items_char_ghoul.h"
 #include "bn_sprite_items_char_gnoll.h"
 #include "bn_sprite_items_char_goblin.h"
 #include "bn_sprite_items_char_hum_plain.h"
@@ -19,12 +21,17 @@
 #include "bn_sprite_items_char_kobold.h"
 #include "bn_sprite_items_char_kobold_candle.h"
 #include "bn_sprite_items_char_murloc.h"
+#include "bn_sprite_items_char_ogre.h"
 #include "bn_sprite_items_char_orc_staff.h"
 #include "bn_sprite_items_char_orc_sword.h"
+#include "bn_sprite_items_char_skeleton.h"
+#include "bn_sprite_items_char_skeleton_mage.h"
 #include "bn_sprite_items_char_spider.h"
 #include "bn_sprite_items_char_watcher.h"
 #include "bn_sprite_items_char_water_elemental.h"
 #include "bn_sprite_items_char_wolf.h"
+#include "bn_sprite_items_char_worgen.h"
+#include "bn_sprite_items_char_worgen_caster.h"
 
 #include "gw_looks.h"
 #include "gw_palettes.h"
@@ -87,6 +94,25 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_orc_sword, palettes::blackrock_renegade, false },
     { bn::sprite_items::char_orc_staff, palettes::blackrock_summoner, false },
     { bn::sprite_items::char_orc_sword, palettes::gath_ilzogg, false },
+    { bn::sprite_items::char_hum_sword, palettes::ello_ebonlocke, false },
+    { bn::sprite_items::char_fem_sword, palettes::althea_ebonlocke, false },
+    { bn::sprite_items::char_hum_sword, palettes::night_watch, false },
+    { bn::sprite_items::char_fem_robe, palettes::madame_eva, false },
+    { bn::sprite_items::char_fem_robe, palettes::sirra_von_indi, false },
+    { bn::sprite_items::char_hum_plain, palettes::sven_yorgen, false },
+    { bn::sprite_items::char_hum_plain, palettes::calor, false },
+    { bn::sprite_items::char_hum_robe, palettes::abercrombie, false },
+    { bn::sprite_items::char_hum_robe, palettes::trelayne, false },
+    { bn::sprite_items::char_fem_robe, palettes::felicia_maline, false },
+    { bn::sprite_items::char_elf_bow, palettes::ranger_valdan, false },
+    { bn::sprite_items::char_hum_robe, palettes::stalvan_mistmantle, false },
+    { bn::sprite_items::char_hum_robe, palettes::morbent_fel, false },
+    { bn::sprite_items::char_hum_plain, palettes::haunted_servitor, false },
+    { bn::sprite_items::char_hum_sword, palettes::wailing_guardsman, false },
+    { bn::sprite_items::char_hum_sword, palettes::razorclaw_the_butcher, false },
+    { bn::sprite_items::char_hum_sword, palettes::baron_silverlaine, false },
+    { bn::sprite_items::char_hum_sword, palettes::commander_springvale, false },
+    { bn::sprite_items::char_hum_staff, palettes::archmage_arugal, false },
     { bn::sprite_items::char_wolf, palettes::young_wolf, true },
     { bn::sprite_items::char_wolf, palettes::timber_wolf, true },
     { bn::sprite_items::char_boar, palettes::boar, true },
@@ -110,6 +136,27 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_boar, palettes::great_goretusk, true },
     { bn::sprite_items::char_boar, palettes::bellygrub, true },
     { bn::sprite_items::char_spider, palettes::tarantula, true },
+    { bn::sprite_items::char_wolf, palettes::dire_wolf, true },
+    { bn::sprite_items::char_wolf, palettes::rabid_dire_wolf, true },
+    { bn::sprite_items::char_spider, palettes::venom_web_spider, true },
+    { bn::sprite_items::char_wolf, palettes::bleak_worg, true },
+    { bn::sprite_items::char_worgen, palettes::nightbane_dark_runner, true },
+    { bn::sprite_items::char_worgen_caster, palettes::nightbane_shadow_weaver, true },
+    { bn::sprite_items::char_worgen, palettes::nightbane_tainted_one, true },
+    { bn::sprite_items::char_worgen, palettes::shadowfang_moonwalker, true },
+    { bn::sprite_items::char_worgen_caster, palettes::shadowfang_darkcaster, true },
+    { bn::sprite_items::char_worgen, palettes::shadowfang_wolfguard, true },
+    { bn::sprite_items::char_worgen, palettes::rethilgore, true },
+    { bn::sprite_items::char_worgen, palettes::odo_the_blindwatcher, true },
+    { bn::sprite_items::char_skeleton, palettes::skeletal_warrior, true },
+    { bn::sprite_items::char_skeleton_mage, palettes::skeletal_mage, true },
+    { bn::sprite_items::char_skeleton, palettes::skeletal_servant, true },
+    { bn::sprite_items::char_skeleton, palettes::mor_ladim, true },
+    { bn::sprite_items::char_ghoul, palettes::rotting_ghoul, true },
+    { bn::sprite_items::char_ghoul, palettes::plague_spreader, true },
+    { bn::sprite_items::char_ogre, palettes::splinter_fist_ogre, true },
+    { bn::sprite_items::char_ogre, palettes::splinter_fist_taskmaster, true },
+    { bn::sprite_items::char_abomination, palettes::stitches, true },
 };
 
 static_assert(sizeof(look_table) / sizeof(look_table[0]) == int(look_id::COUNT));

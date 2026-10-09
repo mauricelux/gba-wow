@@ -265,7 +265,74 @@
     X(RIBCHASERS_LONGBOW, weapon("Ribchaser's Longbow", R, BOW, 18, 28, 0, 6, 2, 0, 0)) \
     X(GATHS_WARMAUL, weapon("Gath'Ilzogg's Warmaul", R, TWO_HANDED, 20, 36, 7, 0, 6, 0, 0)) \
     X(SHADOWCASTER_ROBE, armor("Shadowcaster Robe", R, CLOTH, CHEST, 20, 0, 0, 4, 8, 4)) \
-    X(BLACKROCK_HUNTING_BOW, weapon("Blackrock Hunting Bow", R, BOW, 20, 28, 0, 7, 3, 0, 0))
+    X(BLACKROCK_HUNTING_BOW, weapon("Blackrock Hunting Bow", R, BOW, 20, 28, 0, 7, 3, 0, 0)) \
+    /* Duskwood: supplies and what its creatures carry */ \
+    X(WILD_HOG_SHANK, consumable("Wild Hog Shank", FOOD, 25, 700, 180, 20)) \
+    X(SWEET_NECTAR, consumable("Sweet Nectar", DRINK, 25, 1300, 180, 20)) \
+    X(GREATER_HEALING_POTION, consumable("Greater Healing Potion", POTION, 21, 560, 250, 5)) \
+    X(SILK_CLOTH, junk("Silk Cloth", 25, 20)) \
+    X(BONE_FRAGMENTS, junk("Bone Fragments", 30, 20)) \
+    X(PUTRID_CLAW, junk("Putrid Claw", 40, 20)) \
+    X(WORGEN_FANG, junk("Worgen Fang", 45, 20)) \
+    X(OGRE_TOOTH, junk("Ogre Tooth", 50, 20)) \
+    X(DIRE_WOLF_PELT, junk("Dire Wolf Pelt", 35, 20)) \
+    /* Duskwood: quest rewards */ \
+    X(NIGHT_WATCH_GAUNTLETS, armor("Night Watch Gauntlets", U, MAIL, HANDS, 21, 4, 0, 3, 0, 0)) \
+    X(WATCHERS_HANDWRAPS, armor("Watcher's Handwraps", U, CLOTH, HANDS, 21, 0, 0, 2, 4, 3)) \
+    X(DUSKWOOD_GRIPS, armor("Duskwood Grips", U, LEATHER, HANDS, 21, 0, 4, 3, 0, 0)) \
+    X(WOLFHEAD_HELM, armor("Wolfhead Helm", U, MAIL, HEAD, 21, 4, 0, 4, 0, 0)) \
+    X(DUSKWOOD_COWL, armor("Duskwood Cowl", U, CLOTH, HEAD, 21, 0, 0, 2, 5, 3)) \
+    X(DIRE_PELT_CAP, armor("Dire Pelt Cap", U, LEATHER, HEAD, 21, 0, 5, 3, 0, 0)) \
+    X(RAVEN_HILL_GREAVES, armor("Raven Hill Greaves", U, MAIL, FEET, 22, 4, 0, 4, 0, 0)) \
+    X(GRAVEDIGGER_SLIPPERS, armor("Gravedigger's Slippers", U, CLOTH, FEET, 22, 0, 0, 2, 5, 3)) \
+    X(CEMETERY_BOOTS, armor("Cemetery Boots", U, LEATHER, FEET, 22, 0, 5, 3, 0, 0)) \
+    X(BRIGHTWOOD_LEGPLATES, armor("Brightwood Legplates", U, MAIL, LEGS, 22, 5, 0, 4, 0, 0)) \
+    X(WEAVERS_LEGGINGS, armor("Weaver's Leggings", U, CLOTH, LEGS, 22, 0, 0, 3, 6, 3)) \
+    X(NIGHTBANE_TROUSERS, armor("Nightbane Trousers", U, LEATHER, LEGS, 22, 0, 5, 4, 0, 0)) \
+    X(OGRE_CLEAVER, weapon("Splinter Fist Cleaver", U, AXE, 23, 27, 5, 0, 3, 0, 0)) \
+    X(MOUND_STAFF, weapon("Vul'Gol Staff", U, STAFF, 23, 32, 0, 0, 3, 6, 4)) \
+    X(SPLINTER_BOW, weapon("Splinter Bow", U, BOW, 23, 28, 0, 5, 3, 0, 0)) \
+    X(MISTMANTLE_BLADE, weapon("Mistmantle Blade", U, SWORD, 24, 27, 5, 0, 4, 0, 0)) \
+    X(STAFF_OF_THE_MISTS, weapon("Staff of the Mists", U, STAFF, 24, 32, 0, 0, 3, 7, 4)) \
+    X(MISTMANTLE_LONGBOW, weapon("Mistmantle Longbow", U, BOW, 24, 28, 0, 6, 3, 0, 0)) \
+    X(LADIMORE_HAUBERK, armor("Ladimore Hauberk", U, MAIL, CHEST, 24, 6, 0, 5, 0, 0)) \
+    X(SEXTONS_ROBE, armor("Sexton's Robe", U, CLOTH, CHEST, 24, 0, 0, 4, 7, 4)) \
+    X(RAVEN_HILL_JERKIN, armor("Raven Hill Jerkin", U, LEATHER, CHEST, 24, 0, 6, 5, 0, 0)) \
+    X(CRYPTBREAKER, weapon("Cryptbreaker", R, TWO_HANDED, 25, 36, 9, 0, 6, 0, 0)) \
+    X(STAFF_OF_VON_INDI, weapon("Staff of Von'Indi", R, STAFF, 25, 32, 0, 0, 4, 10, 6)) \
+    X(GRAVEWATCH_LONGBOW, weapon("Gravewatch Longbow", R, BOW, 25, 28, 0, 8, 4, 0, 0)) \
+    X(NIGHT_WATCH_SHORTSWORD, weapon("Night Watch Shortsword", R, SWORD, 25, 26, 6, 1, 4, 0, 0)) \
+    X(DARKSHIRE_ROBE, armor("Darkshire Robe", R, CLOTH, CHEST, 25, 0, 0, 5, 9, 5)) \
+    X(GLOOMWOOD_LONGBOW, weapon("Gloomwood Longbow", R, BOW, 25, 28, 0, 8, 4, 0, 0)) \
+    /* Shadowfang Keep: quest rewards */ \
+    X(SHADOWFANG_GAUNTLETS, armor("Shadowfang Gauntlets", R, MAIL, HANDS, 23, 5, 0, 4, 0, 0)) \
+    X(DALARAN_WRAPS, armor("Dalaran Wraps", R, CLOTH, HANDS, 23, 0, 0, 3, 6, 3)) \
+    X(SCOUTS_GLOVES, armor("Scout's Gloves", R, LEATHER, HANDS, 23, 0, 6, 3, 0, 0)) \
+    X(SPRINGVALES_SABATONS, armor("Springvale's Sabatons", R, MAIL, FEET, 24, 6, 0, 4, 0, 0)) \
+    X(CHAPEL_SANDALS, armor("Chapel Sandals", R, CLOTH, FEET, 24, 0, 0, 3, 7, 4)) \
+    X(BLINDWATCHER_BOOTS, armor("Blindwatcher Boots", R, LEATHER, FEET, 24, 0, 7, 3, 0, 0)) \
+    X(MOONSTEEL_GREATSWORD, weapon("Moonsteel Greatsword", E, TWO_HANDED, 25, 36, 11, 0, 8, 0, 0)) \
+    X(STAFF_OF_DALARAN, weapon("Staff of Dalaran", E, STAFF, 25, 32, 0, 0, 6, 13, 7)) \
+    X(VALDANS_LONGBOW, weapon("Valdan's Longbow", E, BOW, 25, 28, 0, 10, 5, 0, 0)) \
+    /* Shadowfang Keep: boss drops */ \
+    X(WOLFGUARD_GAUNTLETS, armor("Wolfguard Gauntlets", R, MAIL, HANDS, 22, 5, 0, 3, 0, 0)) \
+    X(SOUL_DRAIN_WRAPS, armor("Soul-Drain Wraps", R, CLOTH, HANDS, 22, 0, 0, 3, 5, 3)) \
+    X(RETHILGORES_GRIPS, armor("Rethilgore's Grips", R, LEATHER, HANDS, 22, 0, 5, 3, 0, 0)) \
+    X(BUTCHERS_SLICER, weapon("Butcher's Slicer", R, SWORD, 22, 26, 5, 1, 3, 0, 0)) \
+    X(BUTCHERS_APRON, armor("Butcher's Apron", R, CLOTH, CHEST, 22, 0, 0, 4, 8, 4)) \
+    X(RAZORCLAW_LEGGINGS, armor("Razorclaw Leggings", R, LEATHER, LEGS, 22, 0, 7, 4, 0, 0)) \
+    X(SILVERLAINES_HELM, armor("Silverlaine's Helm", R, MAIL, HEAD, 23, 6, 0, 4, 0, 0)) \
+    X(BARONS_CIRCLET, armor("Baron's Circlet", R, CLOTH, HEAD, 23, 0, 0, 4, 8, 4)) \
+    X(MOONRAGE_HOOD, armor("Moonrage Hood", R, LEATHER, HEAD, 23, 0, 7, 4, 0, 0)) \
+    X(COMMANDERS_CREST, shield("Commander's Crest", R, 23, 4, 0, 6, 0, 0)) \
+    X(CHAPLAINS_VESTMENTS, armor("Chaplain's Vestments", R, CLOTH, CHEST, 23, 0, 0, 5, 9, 5)) \
+    X(WOLFSKIN_JERKIN, armor("Wolfskin Jerkin", R, LEATHER, CHEST, 23, 0, 8, 5, 0, 0)) \
+    X(BLINDWATCHER_GREATAXE, weapon("Blindwatcher Greataxe", R, TWO_HANDED, 24, 36, 9, 0, 6, 0, 0)) \
+    X(ODOS_LEY_STAFF, weapon("Odo's Ley Staff", R, STAFF, 24, 32, 0, 0, 4, 10, 6)) \
+    X(BLINDSIGHT_BOW, weapon("Blindsight Bow", R, BOW, 24, 28, 0, 8, 4, 0, 0)) \
+    X(SHADOWFANG, weapon("Shadowfang", R, SWORD, 25, 26, 7, 2, 5, 0, 0)) \
+    X(ROBE_OF_ARUGAL, armor("Robe of Arugal", R, CLOTH, CHEST, 25, 0, 0, 6, 11, 6)) \
+    X(WORGEN_HIDE_LEGGINGS, armor("Worgen Hide Leggings", R, LEATHER, LEGS, 25, 0, 9, 6, 0, 0))
 
 namespace gw
 {

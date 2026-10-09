@@ -22,12 +22,14 @@ struct map_info
     music_id music;
     bool dungeon;
     bool indoors;       // no mounts
+    bool night;         // dark outside a circle of light around the hero
     bn::span<const warp_def> warps;
     bn::span<const npc_def> npcs;
     bn::span<const spawn_def> spawns;
     bn::span<const area_def> areas;
     bn::span<const point_def> graveyards;   // where the player comes back to life after dying
     bn::span<const chest_def> chests;
+    bn::span<const point_def> patrol;       // the road a patrolling enemy walks, or a boss's blink spots
 };
 
 // Every map, in map_id order (without NONE).

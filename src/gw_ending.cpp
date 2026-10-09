@@ -39,9 +39,17 @@ namespace
           quest_id::NONE },
         { "The Road South",
           "But Bolvar's letters speak of darker roads. In Duskwood the dead walk and the night never "
-          "ends, and Darkshire begs for help. The road is closed for now. When it opens, it will "
-          "need a champion.",
+          "ends, and Darkshire begs for help. Lord Ello Ebonlocke waits for a champion on the south "
+          "road.",
           quest_id::NONE },
+        { "Darkshire Holds",
+          "Stitches lies dead on the road to Darkshire, and Abercrombie's hut stands empty. The Night "
+          "Watch hangs its lamps a little farther out each night.",
+          quest_id::STITCHES },
+        { "Shadowfang Falls",
+          "Archmage Arugal is dead and his worgen scatter into the hills of Silverpine. Ranger Valdan "
+          "rides for Darkshire with the news, and north of the mountains the Wetlands wait.",
+          quest_id::ARUGAL_MUST_DIE },
     };
 
     constexpr int story_page_total = sizeof(story_pages) / sizeof(story_pages[0]);

@@ -502,6 +502,16 @@ CREATURE_ROLES = ['transparent', 'outline', 'dark', 'main', 'light', 'second_dar
                   'weapon']
 C = {name: index for index, name in enumerate(CREATURE_ROLES)}
 
+# Keys for creature parts drawn as text (Canvas.sticker); lower case is the darker shade of a pair.
+CKEYS = {'.': 0, 'o': 1, 'd': 2, 'm': 3, 'l': 4, 's': 5, 'S': 6, 'e': 7, 't': 8, 'T': 9, 'X': 10, 'x': 11,
+         'F': 12, 'f': 13, 'w': 14, 'W': 15}
+
+# Limbs on the far side of the body are drawn a shade darker.
+FAR_SHADE = np.arange(16, dtype=np.uint8)
+for _near, _far in (('main', 'dark'), ('light', 'main'), ('second', 'second_dark'), ('tooth', 'tooth_dark'),
+                    ('extra', 'extra_dark'), ('weapon', 'weapon_dark')):
+    FAR_SHADE[C[_near]] = C[_far]
+
 
 class Canvas:
     """Draws creatures out of simple shaded shapes. Later parts are drawn in front."""
@@ -571,6 +581,29 @@ class Canvas:
     def px(self, x, y, key):
         if 0 <= x < FRAME and 0 <= y < FRAME:
             self.img[y, x] = C[key]
+
+    def sticker(self, rows, x, y, shift=None, far=False, edge=True):
+        """A part drawn as text (CKEYS) with its top-left at (x, y). shift moves each row sideways (strides,
+        swings), far shades it as a limb on the far side, and edge borders it in the outline color over what
+        is behind (a number of rows leaves the top without a border, where the part joins the body)."""
+        width = max(len(row) for row in rows)
+        rows = [row.ljust(width, '.') for row in rows]
+        if shift:
+            pad = max(abs(s) for s in shift)
+            rows = ['.' * (pad + s) + row + '.' * (pad - s) for row, s in zip(rows, shift)]
+            x -= pad
+        part = to_array(rows, CKEYS)
+        if far:
+            part = FAR_SHADE[part]
+        full = np.zeros((FRAME, FRAME), dtype=np.uint8)
+        blit(full, part, x, y)
+        mask = full != 0
+        if edge:
+            ring = neighbors(mask) & ~mask
+            if edge is not True:
+                ring[:y + edge, :] = False          # no border over the first rows, where the part joins on
+            self.img[ring] = C['outline']
+        self.img[mask] = full[mask]
 
     def done(self, dx=0, dy=0):
         img = np.roll(np.roll(self.img, dx, axis=1), dy, axis=0)
@@ -792,6 +825,587 @@ def water_elemental(step, pose):
     return c.done()
 
 
+def leg_stride(stride, rows=12, hip=3):
+    """Row shifts for a leg drawn as text: the hip stays put, the knee moves half the stride, the rest all of it."""
+    return [0] * hip + [stride // 2] * 2 + [stride] * (rows - hip - 2)
+
+
+def sway(swing, rows):
+    """Row shifts for a hanging limb drawn as text: fixed at the top, swinging pixels sideways at the bottom."""
+    return [round(swing * i / (rows - 1)) for i in range(rows)]
+
+
+def glow(c, x, y, r):
+    """A glowing orb or flame (spells in hand, staff tops): a bright core in a darker halo."""
+    c.ellipse(x, y, r, r, 'flame_dark')
+    c.ellipse(x, y, max(r - 1, 0.5), max(r - 1, 0.5), 'flame', edge=False)
+
+
+WORGEN_HEAD = [
+    '.......l...d..',
+    '.......ll..dd.',
+    '......llm.ddd.',
+    '......lmm.ddd.',
+    '.....lmmmmmdd.',
+    '...llmmmmmmmd.',
+    '.llmmmoemmmmm.',
+    'ommmmmmmmmmmm.',
+    '.mmmmmmmmmmmd.',
+    '.ooToSSmmmmdd.',
+    '..SSSSSSmmdd..',
+    '...ooooodd....',
+]
+WORGEN_SNARL = [
+    '.......l...d..',
+    '.......ll..dd.',
+    '......llm.ddd.',
+    '......lmm.ddd.',
+    '.....lmmmmmdd.',
+    '.lllmmmmmmmmd.',
+    'olmmmmoemmmmm.',
+    '.mmmmmmmmmmmm.',
+    '.TToTTmmmmmmd.',
+    '.o...ommmmmdd.',
+    '..TToSSmmmdd..',
+    '...SSSSSddd...',
+    '....ooooo.....',
+]
+WORGEN_BODY = [
+    '......l........',
+    '.....lm..l.....',
+    '....lmm.lm..l..',
+    '...lmmdlmm.lm..',
+    '...mmmmmmdlmml.',
+    '..mmmmdmmmmmdm.',
+    '.mmmmmmmmdmmmd.',
+    'mmmmmmmmmmmdmm.',
+    'mmmmmmmmmmmmmd.',
+    'lmmmmmmmmmmmd..',
+    '.lmmmmmmmmmd...',
+    '..lmmmmmmmd....',
+    '...lmmmmmmd....',
+    '....mmmmmmd....',
+    '....xxxxxxx....',
+]
+WORGEN_BODY_UPRIGHT = [
+    '.....l..l....',
+    '....lm.lm..l.',
+    '...lmmlmm.lm.',
+    '..lmmmmmmdmm.',
+    '.lmmmmmmmmmdl',
+    '.mmmmmmmmmdm.',
+    'lmmmmmmmmmmd.',
+    'lmmmmmmmmmd..',
+    '.lmmmmmmmmd..',
+    '..lmmmmmmmd..',
+    '..lmmmmmmd...',
+    '...mmmmmmd...',
+    '...xxxxxxx...',
+]
+WORGEN_LEG = [
+    '..XXXXXX.',
+    '..XXXXXXx',
+    '.XXXXXXx.',
+    'XXXXXxx..',
+    'XoXxo....',
+    '.mmd.....',
+    '..mmd....',
+    '...mmd...',
+    '....mmd..',
+    '....mmd..',
+    '.lmmmmd..',
+    'Tmmmmmd..',
+]
+WORGEN_ARM = [
+    '......lm.',
+    '.....lmm.',
+    '.....mmd.',
+    '....lmmd.',
+    '....mmd..',
+    '...lmmd..',
+    '...mmd...',
+    '..lmmd...',
+    '..mmd....',
+    '.lmmd....',
+    '.mmmd....',
+    'mmmmd....',
+    'T.T.T....',
+]
+WORGEN_ARM_BENT = [
+    '......lm.',
+    '.....lmmd',
+    '.....mmmd',
+    '.....lmmd',
+    '..lmmmmmd',
+    '.mmmmmmd.',
+    'mmdddddd.',
+]
+WORGEN_ARM_THRUST = [
+    '.........lm.',
+    '..lmmmmmmmmm',
+    '.lmmmmmmmmmd',
+    '.mmdddddddd.',
+]
+WORGEN_ARM_SWIPE = [
+    'T...........',
+    '.T.......lm.',
+    'T.lmmmmmmmmm',
+    '.lmmmmmmmmmd',
+    'T.mdddddddd.',
+    '.T..........',
+]
+
+
+def worgen(step, pose, caster=False):
+    """A worgen: a tall hunched wolf-man on digitigrade legs, with a shaggy mane and long clawed arms.
+    The caster stands more upright and holds a glowing orb in both hands."""
+    c = Canvas()
+    d = STRIDE[step]
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    u = -2 if attack else 0                     # the upper body lunges forward
+    c.sticker(WORGEN_LEG, 15, 17 + b, leg_stride(-d), far=True)                       # far leg
+    if caster:
+        # Upright, the head further back, both hands holding a glowing orb in front of the chest.
+        c.sticker(WORGEN_ARM_THRUST if attack else WORGEN_ARM_BENT, 7 if attack else 10, 9 + b, far=True)
+        c.sticker(WORGEN_BODY_UPRIGHT, 11 + u // 2, 4 + b)
+        c.sticker(WORGEN_LEG, 13, 17 + b, leg_stride(d), edge=2)
+        c.sticker(WORGEN_HEAD, 4 + u, 1 + b, edge=False)
+        if attack:
+            c.sticker(WORGEN_ARM_THRUST, 5, 10 + b)
+            glow(c, 3, 11 + b, 3)
+            for x, y in ((3, 6), (0, 8), (6, 7), (0, 14), (3, 16), (6, 15)):
+                c.px(x, y + b, 'flame')
+        else:
+            c.sticker(WORGEN_ARM_BENT, 8, 9 + b)
+            glow(c, 6, 14 + b, 2.5 if step in (1, 3) else 2)
+        return c.done()
+    if not attack:
+        c.sticker(WORGEN_ARM, 11, 9 + b, sway(d, 13), far=True)                      # far arm
+    c.sticker(WORGEN_BODY, 10 + u, 2 + b)
+    c.sticker(WORGEN_LEG, 13, 17 + b, leg_stride(d), edge=2)                         # near leg
+    c.sticker(WORGEN_SNARL if attack else WORGEN_HEAD, 1 + u, 1 + b, edge=False)
+    if attack:
+        c.sticker(WORGEN_ARM_SWIPE, 1 + u, 9 + b)
+    else:
+        c.sticker(WORGEN_ARM, 8, 9 + b, sway(-d, 13))
+    return c.done()
+
+
+SKULL = [
+    '..llll..',
+    '.lmmmmm.',
+    'lmmmmmmd',
+    'ooommmmd',
+    'oeommmmd',
+    '.mmmmmd.',
+    'omomomd.',
+    '.mmmmd..',
+]
+RIBCAGE = [
+    '.lmmmd.',
+    'mmmmmmd',
+    'oooooom',
+    'mmmmmmd',
+    'oooooom',
+    '.mmmmmd',
+    '..ooomd',
+    '.....m.',
+]
+
+
+def sword(c, x, y, dx, dy, length=8):
+    """A sword with its grip at (x, y), the blade running along (dx, dy) (one of the 8 directions)."""
+    c.line(x - dy, y + dx, x + dy, y - dx, 'weapon_dark')                            # cross-guard
+    c.px(x - dx, y - dy, 'weapon_dark')                                               # pommel
+    tip = (x + dx * length, y + dy * length)
+    c.line(x + dx, y + dy, tip[0], tip[1], 'weapon')
+    side = (-dy, dx) if dy >= 0 else (dy, -dx)
+    c.line(x + dx + side[0], y + dy + side[1], tip[0] - dx + side[0], tip[1] - dy + side[1], 'weapon_dark',
+           edge=False)
+
+
+def skeleton(step, pose, robe=False):
+    """A skeleton warrior with a rusty sword, or (robe) a skeletal mage in a tattered hood with a glowing staff."""
+    c = Canvas()
+    s = STRIDE[step] // 2
+    bob = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    u = -1 if attack else 0
+    if robe:
+        sx = 8 if not attack else 6
+        if not attack:
+            c.line(sx, 5 + bob, sx, 28, 'weapon')                                      # staff behind the arm
+        c.poly([(12, 11 + bob), (19, 11 + bob), (22, 28), (8, 28)], 'extra', dark='extra_dark')
+        for x in range(9, 23, 3):
+            c.img[28, x + step % 2] = 0                                                  # tattered hem
+        c.img[27, 13 + step % 2] = 0
+        c.img[27, 19 + step % 2] = 0
+        c.line(17, 19 + bob, 18, 21 + bob, 'outline', edge=False)                       # rips
+        c.line(12, 23, 13, 24, 'outline', edge=False)
+        if step in (1, 3):
+            c.rect(9 - (s > 0), 28, 11 - (s > 0), 28, 'main')                           # a bony foot
+        c.ellipse(14.5 + u, 8 + bob, 4.5, 4.5, 'extra', dark='extra_dark')             # hood
+        c.poly([(16 + u, 4 + bob), (21 + u, 6 + bob), (19 + u, 10 + bob)], 'extra', dark='extra_dark')
+        c.ellipse(12.5 + u, 9 + bob, 2.5, 3, 'main', light='light', edge=False)       # skull in the hood
+        c.rect(10 + u, 8 + bob, 11 + u, 9 + bob, 'outline', edge=False)
+        c.px(10 + u, 8 + bob, 'eye')
+        c.px(11 + u, 11 + bob, 'outline')
+        if attack:
+            c.line(3, 4 + bob, 12, 27, 'weapon')
+            c.line(15, 14 + bob, 8, 15 + bob, 'extra', width=2)                        # sleeve
+            c.px(7, 15 + bob, 'main')
+            glow(c, 3, 4 + bob, 3)
+            for x, y in ((3, 0), (0, 3), (7, 3), (0, 7), (6, 7)):
+                c.px(x, y + bob, 'flame')
+        else:
+            c.line(15, 13 + bob, 10, 16 + bob, 'extra', width=2)                       # sleeve
+            c.px(sx, 16 + bob, 'main')
+            c.px(sx + 1, 16 + bob, 'main')
+            glow(c, sx, 3 + bob, 2 if step in (1, 3) else 1.5)
+        return c.done()
+
+    b = bob
+
+    def leg(x, sw, key):
+        knee = (x - 1 + sw, 24)
+        foot = (x + 2 * sw, 27)
+        c.line(x, 20 + b, knee[0], knee[1], key)
+        c.line(knee[0], knee[1], foot[0], foot[1], key)
+        c.rect(foot[0] - 2, 28, foot[0], 28, key)
+        c.px(knee[0], knee[1], 'light' if key == 'main' else 'main')
+    leg(17, s, 'dark')
+    if not attack:
+        c.line(17, 13 + b, 18, 17 + b, 'dark')                                         # far arm
+        c.line(18, 17 + b, 18 + s, 20 + b, 'dark')
+    c.sticker(RIBCAGE, 11 + u, 12 + b)
+    c.rect(14, 19 + b, 18, 20 + b, 'extra', dark='extra_dark')                          # belt
+    c.poly([(13, 20 + b), (17, 20 + b), (16, 24 + b), (14, 23 + b)], 'extra', dark='extra_dark')
+    leg(15, -s, 'main')
+    c.sticker(SKULL, 9 + u, 4 + b)
+    c.ellipse(16.5 + u, 12.5 + b, 2, 1.5, 'extra', dark='extra_dark', light='light')   # pauldron
+    if attack:
+        c.line(16 + u, 14 + b, 13, 13 + b, 'main')
+        c.line(13, 13 + b, 11, 11 + b, 'main')
+        sword(c, 10, 10 + b, -1, -1, 7)                                                # raised forward
+    else:
+        hand = (12 - s, 19 + b)
+        c.line(16, 13 + b, 14, 17 + b, 'main')
+        c.line(14, 17 + b, hand[0], hand[1], 'main')
+        sword(c, hand[0] - 1, hand[1] + 1, -1, 1, 6)                                   # held low, pointing ahead
+    return c.done()
+
+
+GHOUL_HEAD = [
+    '....lll...',
+    '..llmmmml.',
+    '.lmmmmmmmd',
+    '.oemmmmmmd',
+    '.mmmmmmmdd',
+    '..ommmmmd.',
+    'T.T.Tomd..',
+    'mmmmmmmd..',
+    '.mmmmmd...',
+    '..ddd.....',
+]
+GHOUL_GAPE = [
+    '....lll...',
+    '..llmmmml.',
+    '.lmmmmmmmd',
+    'loemmmmmmd',
+    'mmmmmmmmdd',
+    'TTToommmd.',
+    '.....omd..',
+    'T.T.Tomd..',
+    'mmmmmmmd..',
+    '.mmmmmd...',
+    '..ddd.....',
+]
+GHOUL_BODY = [
+    '.......l.l....',
+    '.....lmlmlml..',
+    '...llmmmmmmmd.',
+    '..lmmmSmmmmmmd',
+    '.lmmmmmmmmmSmd',
+    'lmmmmmmmmmmmmd',
+    'mmmlolololommd',
+    '.mmlolololomd.',
+    '..mlolololomd.',
+    '...dmmmmmmmd..',
+    '....ddmmmmd...',
+]
+GHOUL_ARM = [
+    '....lmm',
+    '....mmd',
+    '...lmmd',
+    '...mmd.',
+    '...mmd.',
+    '...mmd.',
+    '...mmd.',
+    '..lmd..',
+    '..mmd..',
+    '..mmd..',
+    '.lmd...',
+    '.mmd...',
+    '.mmd...',
+    'lmmd...',
+    'mmmd...',
+    'T.T....',
+    '.T.T...',
+]
+GHOUL_ARM_LUNGE = [
+    'T..........',
+    '.T.....lmm.',
+    'T.lmmmmmmmd',
+    '.lmmmmmmdd.',
+    'T.mddddd...',
+    '.T.........',
+]
+GHOUL_LEG = [
+    '...XXXX',
+    '..XXXXx',
+    '.mmmXx.',
+    'mmmmd..',
+    'mmmd...',
+    '.mmd...',
+    '..mmd..',
+    '...mmd.',
+    '...mmd.',
+    '...mmd.',
+    '.lmmmd.',
+    'Tmmmmd.',
+]
+
+
+def ghoul(step, pose):
+    """A ghoul: a hunched, bald undead with a heavy jaw, showing ribs, its long arms dragging low."""
+    c = Canvas()
+    d = STRIDE[step]
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    u = -2 if attack else 0
+    c.sticker(GHOUL_LEG, 19, 17 + b, leg_stride(-d), far=True)
+    if attack:
+        c.sticker(GHOUL_ARM_LUNGE, 3, 13 + b, far=True)
+    else:
+        c.sticker(GHOUL_ARM, 10, 11 + b, sway(d // 2, 17), far=True)
+    c.sticker(GHOUL_BODY, 10 + u // 2, 7 + b - (1 if attack else 0))
+    c.sticker(GHOUL_LEG, 17, 17 + b, leg_stride(d), edge=3)
+    c.sticker(GHOUL_GAPE if attack else GHOUL_HEAD, 3 + u, 8 + b - (2 if attack else 0), edge=False)
+    if attack:
+        c.sticker(GHOUL_ARM_LUNGE, 1, 15 + b)
+    else:
+        c.sticker(GHOUL_ARM, 7, 11 + b, sway(-(d // 2), 17))
+    return c.done()
+
+
+OGRE_HEAD = [
+    '....S....',
+    '...sS....',
+    '..lllll..',
+    '.lmmmmmmd',
+    '.oooommmd',
+    '.meeommmd',
+    'ommmmmmmd',
+    'T.ooommd.',
+    'Tmmmmmmd.',
+    '.mmmmmd..',
+    '..dddd...',
+]
+OGRE_BODY = [
+    '.........llllll.......',
+    '.......llmmmmmmll.....',
+    '......lmmmmmmmmmmml...',
+    '.....lmmmmmmmmmmmmmd..',
+    '....lmmmmmmmmmmmmmmmd.',
+    '....mmmmmmmmmmmmmmmmd.',
+    '...lmmmmmmmmmmmmmmmmmd',
+    '...mmmmmmmmmmmmmmmmmmd',
+    '..lmmmmdmmmmmmmmmmmmmd',
+    '.lmmmmmmdmmmmmmmmmmmdd',
+    'lmmmmmmmmdmmmmmmmmmmd.',
+    'lllmmmmmmmmmmmmmmmmdd.',
+    'llmmmmmmmmmmmmmmmmmd..',
+    'lmmmmmmmmmmmmmmmmmdd..',
+    'mmmmmmmmmmmmmmmmmmd...',
+    'dmmmmmmmmmmmmmmmmdd...',
+    '.ddmmmmmmmmmmmmmdd....',
+    '..XXXXXXXXXXXXXXX.....',
+    '..xXXXXXXXXXXXXXx.....',
+]
+OGRE_LEG = [
+    '.lmmmd',
+    '.mmmmd',
+    '.mmmmd',
+    '.mmmmd',
+    '.mmmmd',
+    'lmmmmd',
+    'mmmmmd',
+]
+OGRE_ARM_DOWN = [
+    '.lmml.',
+    'lmmmmd',
+    'lmmmmd',
+    'mmmmmd',
+    'mmmmmd',
+    '.mmmmd',
+    '.mmmmd',
+    '.mmmmd',
+    '.lmmmd',
+    '.mmmmd',
+    'lmmmmd',
+    'mmmmmd',
+    '.dddd.',
+]
+OGRE_ARM_SMASH = [
+    '...........lm',
+    '.........lmmmd',
+    '.......lmmmmd.',
+    '.....lmmmmmd..',
+    '...lmmmmmd....',
+    '..mmmmmdd.....',
+    '.lmmmd........',
+    '.mmmd.........',
+]
+
+
+def club(c, x0, y0, x1, y1):
+    """A wooden club from the grip (x0, y0) to its heavy end around (x1, y1)."""
+    c.line(x0, y0, x1, y1, 'weapon', width=2)
+    c.ellipse(x1, y1, 2.5, 2.5, 'weapon', dark='weapon_dark', light='light')
+    c.px(x1, y1, 'weapon_dark')
+
+
+def ogre(step, pose):
+    """An ogre: a huge brute with a belly, a small tusked head and a wooden club."""
+    c = Canvas()
+    d = STRIDE[step]
+    s = d // 2
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    u = -1 if attack else 0
+    c.sticker(OGRE_LEG, 17 + d, 22, far=True)
+    c.sticker(OGRE_BODY, 5 + u, 3 + b)
+    c.poly([(9, 22 + b), (14, 22 + b), (13, 25 + b), (10, 25 + b)], 'extra', dark='extra_dark')    # loincloth
+    c.sticker(OGRE_LEG, 9 - d, 22)
+    c.sticker(OGRE_HEAD, 3 + u * 2, 2 + b)
+    c.ellipse(19 + u, 7 + b, 3.5, 2.5, 'extra', dark='extra_dark', light='light')    # shoulder pad
+    if attack:
+        club(c, 5, 15 + b, 3, 24)                                                      # smashed down in front
+        c.sticker(OGRE_ARM_SMASH, 4, 8 + b)
+        for x, y in ((0, 28), (7, 28), (8, 26), (0, 20)):
+            c.px(x, y, 'light')
+    else:
+        club(c, 21, 19 + b, 26 - s, 25)                                                # dragged behind
+        c.sticker(OGRE_ARM_DOWN, 17, 7 + b, sway(-s, 13))
+    return c.done()
+
+
+ABOMINATION_BODY = [
+    '........lllllll........',
+    '......llmmmmmmmll......',
+    '.....lmmmmmmmmmmml.....',
+    '....lmmmmmmmmmXmmml....',
+    '...lmmmmmmmmmXmXmmmd...',
+    '..lmmmmmmmmmXmmmXmmmd..',
+    '..mmmmmmmmmXmmmmmXmmd..',
+    '.lmmmmmmmmXmmmmmmmmmmd.',
+    '.mmmmmmmmXXXmmmmmmmmmd.',
+    'lmmmmmmmmmXmmmXmXmXmmmd',
+    'lmmmmmmmmXXXmXSSSSSXmmd',
+    'lmmmmmmmmmXmmmSSSSSmmmd',
+    'mmmmmmmmmXXXmXSsSSSXmmd',
+    'mmmmmmmmmmXmmmSSSSSmmmd',
+    'mmmmmmmmmXXXmmXmXmXmmdd',
+    'dmmmmmmmmmXmmmmmmmmmmd.',
+    'dmmmmmmmmXXXmmmmmmmmdd.',
+    '.dmmmmmmmmmmmmmmmmmdd..',
+    '..ddmmmmmmmmmmmmmddd...',
+    '....dddddddddddddd.....',
+]
+ABOMINATION_HEAD = [
+    '..lll..',
+    '.lmmmd.',
+    'lemmmmd',
+    'mXXXmmd',
+    '.mmmmd.',
+]
+ABOMINATION_ARM = [
+    '.......lmml',
+    '......lmmmmd',
+    '.....lmmmmmd',
+    '....lmmmmmd.',
+    '...lmmmmmd..',
+    '..lmmmmmd...',
+    '..mmmmmd....',
+    '.lmmmmd.....',
+    '.mmmmmd.....',
+    'lmmmmmd.....',
+    'mmmmmmd.....',
+    '.dddd.......',
+]
+ABOMINATION_ARM_SWING = [
+    '.........lmm',
+    '.lmmmmmmmmmmd',
+    'lmmmmmmmmmmd.',
+    'mmmmddddddd..',
+    '.ddd.........',
+]
+ABOMINATION_FAR_ARM = [
+    'SSS....',
+    '.SSSS..',
+    '...SSS.',
+    '....SSs',
+    '....SSs',
+    '....SSs',
+    '...SSs.',
+    '...SSs.',
+    '..SSSs.',
+    '..T.T..',
+]
+MEAT_HOOK = [
+    '...w',
+    '...w',
+    '...W',
+    '...W',
+    'W..W',
+    'W..W',
+    '.WW.',
+]
+MEAT_HOOK_SWUNG = [
+    '.WW.',
+    'W..W',
+    'W..W',
+    '...W',
+    '...W',
+    '...w',
+    '...w',
+]
+
+
+def abomination(step, pose):
+    """An abomination: a huge stitched-together flesh golem with a tiny head, a stitched-on patch of other
+    flesh, a smaller mismatched arm and a meat hook."""
+    c = Canvas()
+    d = STRIDE[step]
+    s = d // 2
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    u = -1 if attack else 0
+    c.rect(18 + d, 23, 22 + d, 28, 'dark')                                              # far leg
+    c.sticker(ABOMINATION_FAR_ARM, 24, 9 + b, sway(s, 10))                             # smaller, other flesh
+    c.sticker(ABOMINATION_BODY, 5 + u, 4 + b)
+    c.rect(10 - d, 24, 14 - d, 28, 'main', dark='dark')                                # near leg
+    c.sticker(ABOMINATION_HEAD, 10 + u, 1 + b)
+    if attack:
+        c.sticker(MEAT_HOOK_SWUNG, 1, 1 + b)
+        c.sticker(ABOMINATION_ARM_SWING, 3, 8 + b)
+    else:
+        c.sticker(MEAT_HOOK, 4 - s, 20 + b)
+        c.sticker(ABOMINATION_ARM, 4, 8 + b, sway(-s, 12))
+    return c.done()
+
+
 CREATURES = {
     'water_elemental': water_elemental,
     'wolf': wolf,
@@ -803,13 +1417,27 @@ CREATURES = {
     'goblin': lambda step, pose: small_humanoid(step, pose, 'goblin'),
     'gnoll': gnoll,
     'watcher': watcher,
+    'worgen': worgen,
+    'worgen_caster': lambda step, pose: worgen(step, pose, caster=True),
+    'skeleton': skeleton,
+    'skeleton_mage': lambda step, pose: skeleton(step, pose, robe=True),
+    'ghoul': ghoul,
+    'ogre': ogre,
+    'abomination': abomination,
 }
 
 
-def creature_sheet(draw):
+# Upright creatures fall on their back instead of turning over like beasts.
+LYING_DEAD = {'worgen', 'worgen_caster', 'skeleton', 'skeleton_mage'}
+
+
+def creature_sheet(draw, lying=False):
     frames = [draw(step, 'walk') for step in range(4)]
     frames.append(draw(0, 'attack'))
     stand = frames[0]
+    if lying:
+        frames.append(dead_frame(stand))
+        return frames
     dead = np.zeros_like(stand)
     flipped = stand[::-1, :]
     rows = np.where(flipped.any(axis=1))[0]
@@ -817,6 +1445,10 @@ def creature_sheet(draw):
     dead[FEET_Y + 1 - part.shape[0]:FEET_Y + 1, :] = part
     frames.append(dead)
     return frames
+
+
+def creature_sheet_options(name):
+    return {'lying': name in LYING_DEAD}
 
 
 # --- mounts -----------------------------------------------------------------------------------------
@@ -980,13 +1612,13 @@ def humanoid_palette(skin=(232, 168, 128), hair=(144, 88, 40), armor=(144, 152, 
 
 
 def creature_palette(main, second, eye=(232, 40, 24), extra=(120, 80, 48), flame=(248, 224, 96),
-                     weapon=(120, 120, 128), tooth=(240, 236, 216), dark=None, light=None):
+                     weapon=(120, 120, 128), tooth=(240, 236, 216), dark=None, light=None, flame_dark=None):
     def shade(c, f):
         return tuple(max(0, min(255, int(v * f))) for v in c)
     return [
         (255, 0, 255), (24, 20, 28), dark or shade(main, 0.62), main, light or shade(main, 1.3),
         shade(second, 0.7), second, eye, shade(tooth, 0.7), tooth, extra, shade(extra, 0.6),
-        flame, (232, 128, 40), shade(weapon, 0.6), weapon,
+        flame, flame_dark or (232, 128, 40), shade(weapon, 0.6), weapon,
     ]
 
 
@@ -1148,6 +1780,56 @@ HUMANOID_LOOKS = {
     'blackrock_summoner': ('orc_staff', orc_palette(armor=(144, 40, 32), tabard=(56, 40, 40))),
     'gath_ilzogg': ('orc_sword', orc_palette(armor=(64, 64, 72), tabard=(176, 40, 32), hair=(24, 20, 24),
                                              skin=(88, 128, 56))),
+    # Duskwood: Darkshire and the Night Watch
+    'ello_ebonlocke': ('hum_sword', humanoid_palette(hair=(96, 60, 32), armor=(88, 92, 112), tabard=(136, 36, 56),
+                                                     trim=(216, 176, 72), armor_light=(136, 140, 160))),
+    'althea_ebonlocke': ('fem_sword', humanoid_palette(hair=(40, 36, 44), armor=(136, 140, 152),
+                                                       tabard=(48, 96, 56), trim=(184, 184, 192),
+                                                       hair_dark=(24, 20, 28))),
+    'night_watch': ('hum_sword', humanoid_palette(hair=(104, 84, 64), armor=(128, 136, 152), tabard=(48, 96, 56),
+                                                  trim=(184, 184, 192))),
+    'madame_eva': ('fem_robe', humanoid_palette(hair=(176, 176, 184), armor=(112, 56, 144), tabard=(80, 40, 104),
+                                                trim=(232, 192, 72), armor_light=(152, 96, 184))),
+    'sirra_von_indi': ('fem_robe', humanoid_palette(hair=(40, 36, 44), armor=(48, 64, 152), tabard=(32, 40, 104),
+                                                    trim=(192, 200, 232), hair_dark=(24, 20, 28))),
+    'sven_yorgen': ('hum_plain', humanoid_palette(hair=(208, 176, 104), armor=(128, 88, 56), tabard=(136, 40, 40),
+                                                  trim=(184, 152, 96))),
+    'calor': ('hum_plain', humanoid_palette(hair=(56, 40, 32), armor=(152, 136, 112), tabard=(104, 68, 40),
+                                            trim=(160, 160, 168), leather=(104, 68, 40))),
+    'abercrombie': ('hum_robe', humanoid_palette(hair=(224, 224, 224), armor=(112, 88, 64), tabard=(88, 72, 56),
+                                                 trim=(152, 136, 104), lower_face=(224, 224, 224))),
+    'trelayne': ('hum_robe', humanoid_palette(hair=(112, 72, 40), armor=(184, 40, 40), tabard=(144, 32, 32),
+                                              trim=(232, 184, 64))),
+    'felicia_maline': ('fem_robe', humanoid_palette(hair=(224, 176, 88), armor=(136, 96, 56), tabard=(104, 72, 48),
+                                                    trim=(200, 168, 96))),
+    'ranger_valdan': ('elf_bow', humanoid_palette(skin=(232, 184, 152), hair=(232, 200, 96),
+                                                  armor=(64, 112, 56), tabard=(40, 80, 40), trim=(184, 160, 104),
+                                                  armor_light=(104, 152, 88))),
+    'stalvan_mistmantle': ('hum_robe', humanoid_palette(skin=(176, 200, 216), hair=(208, 224, 232),
+                                                        armor=(112, 128, 160), tabard=(88, 100, 128),
+                                                        trim=(184, 200, 216))),
+    'morbent_fel': ('hum_robe', humanoid_palette(skin=(208, 200, 192), hair=(32, 28, 36), armor=(56, 52, 64),
+                                                 tabard=(104, 40, 136), trim=(160, 136, 192),
+                                                 armor_light=(88, 84, 100))),
+    # Shadowfang Keep
+    'haunted_servitor': ('hum_plain', humanoid_palette(skin=(168, 208, 200), hair=(184, 216, 208),
+                                                       armor=(120, 160, 160), tabard=(96, 136, 136),
+                                                       trim=(176, 208, 200), leather=(96, 128, 128))),
+    'wailing_guardsman': ('hum_sword', humanoid_palette(skin=(168, 192, 216), hair=(184, 200, 224),
+                                                        armor=(168, 184, 208), tabard=(96, 112, 152),
+                                                        trim=(200, 216, 232), leather=(112, 128, 152))),
+    'razorclaw_the_butcher': ('hum_sword', humanoid_palette(hair=SKIN, hair_dark=(176, 128, 96),
+                                                            armor=(224, 220, 208), tabard=(152, 24, 32),
+                                                            trim=(120, 80, 48))),
+    'baron_silverlaine': ('hum_sword', humanoid_palette(skin=(208, 216, 224), hair=(232, 236, 240),
+                                                        armor=(200, 208, 224), tabard=(40, 48, 104),
+                                                        trim=(232, 232, 240), leather=(128, 136, 160))),
+    'commander_springvale': ('hum_sword', humanoid_palette(hair=(32, 28, 32), armor=(48, 46, 56),
+                                                           tabard=(72, 20, 28), tabard_dark=(32, 16, 20),
+                                                           trim=(216, 176, 72), armor_light=(104, 104, 120))),
+    'archmage_arugal': ('hum_staff', humanoid_palette(hair=(232, 232, 232), armor=(112, 56, 152),
+                                                      tabard=(72, 32, 104), trim=(200, 200, 216),
+                                                      armor_light=(160, 104, 200))),
 }
 
 CREATURE_LOOKS = {
@@ -1191,6 +1873,49 @@ CREATURE_LOOKS = {
     'great_goretusk': ('boar', creature_palette((96, 64, 56), (168, 128, 112), eye=(232, 64, 32))),
     'bellygrub': ('boar', creature_palette((216, 152, 144), (240, 200, 184), eye=(40, 24, 24))),
     'tarantula': ('spider', creature_palette((120, 80, 48), (216, 136, 48), eye=(232, 48, 32))),
+    # Duskwood
+    'dire_wolf': ('wolf', creature_palette((80, 72, 68), (144, 136, 128), eye=(248, 200, 64))),
+    'rabid_dire_wolf': ('wolf', creature_palette((104, 76, 64), (168, 128, 112), eye=(248, 40, 24))),
+    'venom_web_spider': ('spider', creature_palette((40, 56, 40), (120, 176, 56), eye=(152, 240, 72),
+                                                    light=(72, 96, 64))),
+    'bleak_worg': ('wolf', creature_palette((60, 60, 84), (120, 120, 152), eye=(176, 224, 248))),
+    'nightbane_dark_runner': ('worgen', creature_palette((96, 84, 72), (136, 124, 108), eye=(248, 208, 64),
+                                                         extra=(72, 80, 104))),
+    'nightbane_shadow_weaver': ('worgen_caster', creature_palette((72, 60, 80), (112, 100, 120),
+                                                                  eye=(224, 168, 248), extra=(88, 56, 64),
+                                                                  flame=(232, 200, 255), flame_dark=(144, 72, 216))),
+    'nightbane_tainted_one': ('worgen', creature_palette((52, 48, 56), (88, 80, 92), eye=(248, 40, 24),
+                                                         extra=(96, 72, 56), light=(96, 88, 104))),
+    'shadowfang_moonwalker': ('worgen', creature_palette((120, 116, 128), (168, 164, 176), eye=(224, 236, 248),
+                                                         extra=(64, 64, 88))),
+    'shadowfang_darkcaster': ('worgen_caster', creature_palette((56, 48, 64), (96, 88, 104), eye=(176, 248, 176),
+                                                                extra=(72, 64, 96), light=(96, 88, 112),
+                                                                flame=(232, 255, 224), flame_dark=(96, 200, 104))),
+    'shadowfang_wolfguard': ('worgen', creature_palette((104, 76, 56), (152, 120, 96), eye=(248, 208, 64),
+                                                        extra=(128, 132, 144))),
+    'rethilgore': ('worgen', creature_palette((120, 72, 52), (168, 120, 96), eye=(248, 40, 24),
+                                              extra=(64, 56, 56))),
+    'odo_the_blindwatcher': ('worgen', creature_palette((104, 104, 112), (152, 152, 160), eye=(232, 232, 224),
+                                                        extra=(88, 64, 48))),
+    'skeletal_warrior': ('skeleton', creature_palette((216, 208, 184), (176, 168, 144), eye=(184, 40, 32),
+                                                      extra=(112, 80, 56), weapon=(176, 140, 112))),
+    'skeletal_mage': ('skeleton_mage', creature_palette((216, 208, 184), (176, 168, 144), eye=(200, 160, 255),
+                                                        extra=(80, 48, 104), weapon=(112, 80, 56),
+                                                        flame=(224, 216, 255), flame_dark=(136, 104, 232))),
+    'skeletal_servant': ('skeleton', creature_palette((176, 164, 128), (144, 132, 104), eye=(184, 40, 32),
+                                                      extra=(96, 88, 72), weapon=(144, 104, 72))),
+    'mor_ladim': ('skeleton', creature_palette((176, 184, 200), (136, 144, 160), eye=(96, 200, 255),
+                                               extra=(72, 76, 88), weapon=(152, 160, 176))),
+    'rotting_ghoul': ('ghoul', creature_palette((120, 136, 104), (112, 64, 80), eye=(232, 216, 64),
+                                                extra=(96, 80, 64))),
+    'plague_spreader': ('ghoul', creature_palette((144, 140, 88), (152, 232, 72), eye=(216, 248, 96),
+                                                  extra=(88, 72, 56))),
+    'splinter_fist_ogre': ('ogre', creature_palette((168, 128, 96), (64, 48, 40), eye=(240, 216, 96),
+                                                    extra=(88, 60, 40), weapon=(120, 84, 48))),
+    'splinter_fist_taskmaster': ('ogre', creature_palette((136, 104, 80), (48, 40, 36), eye=(248, 72, 40),
+                                                          extra=(128, 132, 144), weapon=(104, 72, 44))),
+    'stitches': ('abomination', creature_palette((192, 176, 168), (152, 160, 136), eye=(232, 216, 64),
+                                                 extra=(136, 32, 40), weapon=(144, 144, 152))),
 }
 
 
@@ -1291,7 +2016,7 @@ def main():
         sheets[name] = write_sheet(name, humanoid.sheet(), base_palette)
     base_creature = CREATURE_LOOKS['young_wolf'][1]
     for name, draw in CREATURES.items():
-        sheets[name] = write_sheet(name, creature_sheet(draw), base_creature)
+        sheets[name] = write_sheet(name, creature_sheet(draw, **creature_sheet_options(name)), base_creature)
     write_palettes()
     write_looks()
     mount_frames = []

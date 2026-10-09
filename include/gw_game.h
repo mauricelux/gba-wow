@@ -67,6 +67,7 @@ private:
 
     void _load_map(map_id map, const bn::fixed_point& position);
     void _follow_camera();
+    void _update_night();
     void _check_warps();
     void _update_warp();
     void _update_rest();

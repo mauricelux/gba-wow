@@ -11,6 +11,7 @@ namespace gw::map_data::stockade
     constexpr int collision_columns = 128;
     constexpr int collision_rows = 64;
     constexpr music_id music = music_id::DUNGEON;
+    constexpr bool night = false;
 
     alignas(4) constexpr uint8_t collision[] = {
         0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -188,6 +189,11 @@ namespace gw::map_data::stockade
     constexpr area_def areas[] = {
         { 0, 0, 1024, 512, area_id::NONE, "The Stockade" },
         { 344, 16, 328, 104, area_id::NONE, "The Warden's Hall" },
+    };
+
+    // The road a patrolling enemy walks, from its spawn to where it stops.
+    constexpr point_def patrol[] = {
+        { -1, -1 },
     };
 
     constexpr chest_def chests[] = {

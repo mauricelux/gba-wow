@@ -3,7 +3,9 @@
 #include "bn_math.h"
 
 #include "gw_character.h"
+#include "gw_map_duskwood.h"
 #include "gw_map_redridge.h"
+#include "gw_map_silverpine.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
 
@@ -16,6 +18,8 @@ namespace
         { "Stormwind", npc_id::DUNGAR, map_id::STORMWIND, map_data::stormwind::flight, 0, 41, 87 },
         { "Sentinel Hill", npc_id::THOR, map_id::WESTFALL, map_data::westfall::flight, 0, 37, 100 },
         { "Lakeshire", npc_id::ARIENA, map_id::REDRIDGE, map_data::redridge::flight, 0, 67, 92 },
+        { "Darkshire", npc_id::FELICIA, map_id::DUSKWOOD, map_data::duskwood::flight, 0, 55, 102 },
+        { "Scouts' Camp", npc_id::GRYPHON_SILVERPINE, map_id::SILVERPINE, map_data::silverpine::flight, 0, 34, 43 },
     };
 
     static_assert(sizeof(flights) / sizeof(flights[0]) == int(flight_id::COUNT));

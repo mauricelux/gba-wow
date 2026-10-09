@@ -11,6 +11,7 @@ namespace gw::map_data::stormwind
     constexpr int collision_columns = 128;
     constexpr int collision_rows = 128;
     constexpr music_id music = music_id::TOWN;
+    constexpr bool night = false;
 
     alignas(4) constexpr uint8_t collision[] = {
         0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -323,6 +324,11 @@ namespace gw::map_data::stormwind
         { 720, 48, 272, 352, area_id::NONE, "Dwarven District" },
         { 720, 624, 272, 368, area_id::NONE, "Old Town" },
         { 0, 0, 1024, 1024, area_id::NONE, "Stormwind City" },
+    };
+
+    // The road a patrolling enemy walks, from its spawn to where it stops.
+    constexpr point_def patrol[] = {
+        { -1, -1 },
     };
 
     constexpr chest_def chests[] = {

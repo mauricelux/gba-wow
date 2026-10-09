@@ -11,6 +11,7 @@ namespace gw::map_data::inn
     constexpr int collision_columns = 32;
     constexpr int collision_rows = 32;
     constexpr music_id music = music_id::TOWN;
+    constexpr bool night = false;
 
     alignas(4) constexpr uint8_t collision[] = {
         0xff,0xff,0xff,0xff,
@@ -101,6 +102,11 @@ namespace gw::map_data::inn
 
     constexpr area_def areas[] = {
         { 0, 0, 256, 256, area_id::NONE, "Lion's Pride Inn" },
+    };
+
+    // The road a patrolling enemy walks, from its spawn to where it stops.
+    constexpr point_def patrol[] = {
+        { -1, -1 },
     };
 
     constexpr chest_def chests[] = {

@@ -30,6 +30,8 @@ namespace
     constexpr int saw_radius = 28;
     constexpr int flurry_radius = 40;
     constexpr int smoke_radius = 32;
+    constexpr int shadow_port_interval = 9 * seconds;
+    constexpr int bane_guard_percent = 90;     // Morbent Fel without Sirra's bane
     constexpr int lose_target_range = 220;
     constexpr int combat_timeout = 5 * seconds;
     constexpr int potion_cooldown_frames = 60 * seconds;
@@ -3556,6 +3558,51 @@ void combat::_update_frenzy(enemy& boss, int health_percent, int below, int phas
     }
 }
 
+void combat::_shadow_port(int index)
+{
+    // Steps out on the ledge of the map's patrol list farthest from the player.
+    enemy& boss = _enemies.at(index);
+    const point_def* best = nullptr;
+    int best_distance = -1;
+
+    for(const point_def& point : world::map().patrol)
+    {
+        bn::fixed_point position(point.x, point.y);
+        int player_distance = distance_squared(position, _player.position());
+
+        if(distance_squared(position, boss.position) > 16 * 16 && player_distance > best_distance)
+        {
+            best = &point;
+            best_distance = player_distance;
+        }
+    }
+
+    if(! best)
+    {
+        return;
+    }
+
+    if(boss.casting())
+    {
+        stop_enemy_cast(index, false);
+    }
+
+    _effects.burst(boss.position, projectile_kind::SHADOW);
+    boss.position = bn::fixed_point(best->x, best->y);
+    boss.moving = false;
+    _effects.burst(boss.position, projectile_kind::SHADOW);
+    _texts.show(_head(boss.position, 44), "Shadow Port", floating_texts::style::DAMAGE_TAKEN);
+}
+
+void combat::_boss_greeting(enemy& boss, const char* message)
+{
+    if(boss.phase == 0)
+    {
+        boss.phase = 1;
+        _hud.message(message, ui::color::RED);
+    }
+}
+
 bool combat::boss_update(int index)
 {
     enemy& boss = _enemies.at(index);
@@ -3684,6 +3731,129 @@ bool combat::boss_update(int index)
         if(_update_telegraph(boss, false, smoke_radius, "Smoke Bomb", projectile_kind::ARCANE))
         {
             return true;
+        }
+        break;
+
+    // --- Duskwood ----------------------------------------------------------------------------------
+
+    case enemy_id::MOR_LADIM:
+        _boss_greeting(boss, "Mor'Ladim: Who disturbs my rest?");
+        _update_frenzy(boss, health_percent, 30, 2, "Mor'Ladim");
+        break;
+
+    case enemy_id::STALVAN_MISTMANTLE:
+        _boss_greeting(boss, "Stalvan: You will not take her from me!");
+        _update_frenzy(boss, health_percent, 30, 2, "Stalvan");
+        break;
+
+    case enemy_id::MORBENT_FEL:
+        // Steel and spells barely scratch him unless the player carries Sirra's bane (the quest to
+        // kill him is in the log).
+        if(boss.phase == 0)
+        {
+            boss.phase = 1;
+            _hud.message(quest_wants_kill(enemy_id::MORBENT_FEL) ? "Morbent Fel: That smell... the bane!" :
+                                                                   "Morbent Fel: Your weapons cannot harm me!",
+                         ui::color::RED);
+        }
+
+        if(! quest_wants_kill(enemy_id::MORBENT_FEL))
+        {
+            boss.ai.guard_frames = 2;
+            boss.ai.guard_percent = bane_guard_percent;
+            boss.ai.guard_physical = false;
+        }
+        break;
+
+    case enemy_id::STITCHES:
+        _boss_greeting(boss, "Stitches roars and lumbers at you!");
+        _update_frenzy(boss, health_percent, 25, 2, "Stitches");
+        break;
+
+    // --- Shadowfang Keep ---------------------------------------------------------------------------
+
+    case enemy_id::RETHILGORE:
+        // Maul: rears up for a moment, then a hit for more than double.
+        if(_update_wind_up(index, in_melee, "Maul", "Rethilgore mauls you!"))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::RAZORCLAW_THE_BUTCHER:
+        // From half health, spins his cleavers around him; a frenzy near the end.
+        _boss_greeting(boss, "Razorclaw: More meat for the larder!");
+        _update_frenzy(boss, health_percent, 25, 2, "Razorclaw");
+
+        if(health_percent <= 50 &&
+           _update_telegraph(boss, true, flurry_radius, "Cleaver Spin", projectile_kind::ARCANE))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::BARON_SILVERLAINE:
+        // Veil of Shadow lands where the player stood, from the start.
+        if(boss.phase == 0)
+        {
+            boss.phase = 1;
+            boss.special_timer = 4 * seconds;
+            _hud.message("Silverlaine: My keep... You will not have it!", ui::color::RED);
+        }
+
+        if(_update_telegraph(boss, false, smoke_radius, "Veil of Shadow", projectile_kind::SHADOW))
+        {
+            return true;
+        }
+        break;
+
+    case enemy_id::COMMANDER_SPRINGVALE:
+        // Heals himself under half health (interrupt it); Divine Protection once, near the end.
+        _boss_greeting(boss, "Springvale: The Light left me. I serve another now!");
+
+        if(boss.phase == 1 && health_percent <= 25)
+        {
+            boss.phase = 2;
+            boss.ai.guard_frames = 6 * seconds;
+            boss.ai.guard_percent = 50;
+            boss.ai.guard_physical = false;
+            _texts.show(_head(boss.position, 44), "Divine Protection", floating_texts::style::DAMAGE_TAKEN);
+        }
+        break;
+
+    case enemy_id::ODO_THE_BLINDWATCHER:
+        _boss_greeting(boss, "Odo the Blindwatcher howls!");
+        _update_frenzy(boss, health_percent, 40, 2, "Odo");
+        break;
+
+    case enemy_id::ARUGAL:
+        // Shadow Port: every few seconds he vanishes and steps out on another ledge of his chamber;
+        // a Lupine Horror at two thirds and one third of his health.
+        if(boss.phase == 0)
+        {
+            boss.phase = 1;
+            boss.special_timer = shadow_port_interval;
+            _hud.message("Arugal: Who dares enter my keep?", ui::color::RED);
+        }
+
+        if(boss.phase == 1 && health_percent <= 66)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::LUPINE_HORROR);
+            _hud.message("Arugal: Children of the night, to me!", ui::color::RED);
+        }
+
+        if(boss.phase == 2 && health_percent <= 33)
+        {
+            boss.phase = 3;
+            _summon_add(boss, enemy_id::LUPINE_HORROR);
+            _hud.message("Arugal: You will be one of them!", ui::color::RED);
+        }
+
+        if(boss.special_timer == 0)
+        {
+            _shadow_port(index);
+            boss.special_timer = shadow_port_interval;
         }
         break;
 

@@ -47,7 +47,8 @@ struct enemy
 {
     enemy_id id = enemy_id::NONE;
     const enemy_def* def = nullptr;
-    bn::fixed_point spawn;
+    bn::fixed_point origin;     // where it comes back after dying
+    bn::fixed_point spawn;      // where it goes home to: the origin, or how far it walked its patrol road
     bn::fixed_point position;
     bn::fixed_point wander_target;
     int health = 0;
@@ -59,6 +60,7 @@ struct enemy
     bool moving = false;
     bool wandering = false;
     bool tapped = false;        // the player damaged it, so it gives experience and loot
+    uint8_t patrol_index = 0;   // the next point of the map's patrol road
     int walk_counter = 0;
     int attack_timer = 0;
     int state_timer = 0;
@@ -251,10 +253,13 @@ private:
     bn::camera_ptr _camera;
     combat* _combat = nullptr;
     bn::vector<enemy, max_enemies> _enemies;
+    bn::span<const point_def> _patrol;
     bn::optional<bn::sprite_affine_mat_ptr> _small;
     int _frame = 0;
 
     void _spawn(enemy& item);
+    [[nodiscard]] bool _patrolling(const enemy& item) const;
+    void _patrol_step(enemy& item);
     void _update_enemy(int index, const bn::fixed_point& player_feet, bool player_alive,
                        const bn::fixed_point* pet_feet);
     void _pick_victim(int index, const bn::fixed_point* pet_feet);

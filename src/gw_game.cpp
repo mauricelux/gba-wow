@@ -12,6 +12,7 @@
 #include "gw_audio.h"
 #include "gw_character.h"
 #include "gw_fade.h"
+#include "gw_night.h"
 #include "gw_homes.h"
 #include "gw_input.h"
 #include "gw_npc_data.h"
@@ -165,6 +166,7 @@ void game::update()
 
     play_music(_enemies.elite_in_combat() && ! _combat.dead() ? music_id::BOSS : world::map().music);
     _follow_camera();
+    _update_night();
     _texts.update();
 
     // In a fight the row under the frames is the target's cast and the player's buffs.
@@ -567,13 +569,17 @@ void game::_load_map(map_id map, const bn::fixed_point& position)
         _combat.dismount();
     }
 
+    night::set_enabled(info.night);
+
     _ground = info.ground.create_bg(0, 0);
     _ground->set_priority(ground_priority);
     _ground->set_camera(_camera);
+    _ground->set_blending_enabled(info.night);
 
     _overhead = info.overhead.create_bg(0, 0);
     _overhead->set_priority(overhead_priority);
     _overhead->set_camera(_camera);
+    _overhead->set_blending_enabled(info.night);
 
     _enemies.load(info);
     _npcs.load(info);
@@ -585,6 +591,18 @@ void game::_load_map(map_id map, const bn::fixed_point& position)
     _area = nullptr;
     _check_area(true);
     save_game();
+}
+
+void game::_update_night()
+{
+    // The light hangs around the hero's chest, not their feet.
+    constexpr int light_lift = 12;
+
+    if(night::enabled())
+    {
+        bn::fixed_point center = world::to_screen_space(_player.position()) - _camera.position();
+        night::update(bn::fixed_point(center.x(), center.y() - light_lift));
+    }
 }
 
 void game::_save_position()

@@ -16,6 +16,8 @@ namespace enemy_flag
     constexpr uint8_t FAST = 8;         // runs faster than the player walks
     constexpr uint8_t NO_RESPAWN = 16;  // stays dead until the map is reloaded
     constexpr uint8_t RARE = 32;        // a named wanderer: tougher, better loot, slow to come back
+    constexpr uint8_t PATROL = 64;      // walks its map's patrol road from its spawn, then stays there
+    constexpr uint8_t QUEST = 128;      // only there while a quest in the log still asks for its death
 }
 
 struct enemy_def

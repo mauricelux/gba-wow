@@ -5,6 +5,7 @@
 #include "bn_sprite_palettes.h"
 #include "bn_sprite_tiles_ptr.h"
 
+#include "gw_night.h"
 #include "gw_world.h"
 
 namespace gw
@@ -161,6 +162,9 @@ void actor_sprite::update(const bn::fixed_point& feet, facing direction, bool mo
 
     // Characters lower on the map are drawn in front.
     _sprite.set_z_order(-feet.y().floor_integer());
+
+    // At night characters dim with the ground outside the light.
+    _sprite.set_blending_enabled(night::enabled());
 }
 
 void actor_sprite::play_attack()

@@ -85,9 +85,8 @@ namespace
           none },
         { "Shield Wall", e::GUARD, t::PLAYER, b::COUNT, s::PHYSICAL, p::NONE, ONCE, 0, 0, 0, 0, 10, 50, 0, 30, 1,
           none },
-        // Skeletons arrive with Duskwood; until then nobody casts it.
         { "Summon Skeleton", e::SUMMON, t::PLAYER, b::COUNT, s::SHADOW, p::NONE, CAST, 0, 0, 20, 20, 0, 0, 0, 0, 1,
-          none },
+          enemy_id::SKELETAL_SERVANT },
 
         // Defense
         { "Shield Block", e::GUARD, t::PLAYER, b::COUNT, s::PHYSICAL, p::NONE, PHYSICAL, melee, 0, 0, 15, 6, 40, 0,

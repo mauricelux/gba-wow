@@ -52,6 +52,12 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Fighting Gath'Ilzogg at the door of the keep](docs/screenshots/m17_gath.png)
 ![A Blackrock war party in Render's Valley](docs/screenshots/m17_renders_valley.png)
 ![Ariena Stormfeather's flight paths in Lakeshire](docs/screenshots/m17_lakeshire_flight.png)
+![Night in Darkshire, lit only around the hero](docs/screenshots/m18_darkshire.png)
+![Skeletons at the gate of Raven Hill Cemetery](docs/screenshots/m18_raven_hill.png)
+![Stitches reaches the gate of Darkshire](docs/screenshots/m18_stitches.png)
+![Flying from Darkshire to the scouts' camp in Silverpine Forest](docs/screenshots/m18_silverpine_flight.png)
+![The gate of Shadowfang Keep](docs/screenshots/m18_shadowfang_gate.png)
+![Archmage Arugal calls a Lupine Horror](docs/screenshots/m18_arugal.png)
 
 ## Status
 
@@ -59,20 +65,23 @@ Every milestone of the roadmap is in. From the title screen, continue your saved
 Human Warrior or Mage, a Dwarf Warrior or Hunter, or a Night Elf Warrior or Hunter in one of three
 subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Marksmanship or Survival),
 then walk freely from Northshire Abbey down to Goldshire, west to the city of Stormwind, south to
-Westfall and east to the Redridge Mountains, take on 42 quests from Northshire to the Stockade, fight
-with auto-attack and your subclass's abilities, loot and equip about 210 items, buy and sell at
+Westfall, east to the Redridge Mountains and south to Duskwood, take on 59 quests from Northshire to
+Shadowfang Keep, fight with auto-attack and your subclass's abilities, loot and equip about 290 items,
+buy and sell at
 vendors, carry as much as you like in bags sorted by type, quality, level or age, use 19 ability
 slots on three bars and 4 item slots, buy new abilities and ranks from your class trainer, spend
-talent points from level 10, face the elites Princess, Hogger and Gath'Ilzogg, clear the kobolds out
-of Echo Ridge and Fargodeep mines, hunt for 20 hidden treasure chests, fish in Lake Everstill, hearth
-home to an inn, ride from level 30, fly by gryphon between Stormwind, Sentinel Hill and Lakeshire,
-take the Deeprun Tram, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
-Edwin VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, reach the end
-of the first chapter, and save to the cartridge. Every zone has its own music, and elite fights
-switch to a boss tune.
+talent points from level 10, face the elites Princess, Hogger, Gath'Ilzogg, Mor'Ladim and Stitches,
+clear the kobolds out of Echo Ridge and Fargodeep mines, hunt for 26 hidden treasure chests, fish in
+Lake Everstill, hearth home to an inn, ride from level 30, fly by gryphon between Stormwind, Sentinel
+Hill, Lakeshire, Darkshire and Silverpine Forest, take the Deeprun Tram, tame a pet as a Beast Mastery
+hunter, fight through the Deadmines to Sneed and Edwin VanCleef, put down the riot in Stormwind's
+Stockade and its leader Bazil Thredd, keep the night off Darkshire, climb Shadowfang Keep to
+Archmage Arugal, and save to the cartridge. Every zone has its own music, and elite fights switch to
+a boss tune.
 
 Following the quests in order takes a hero to level 15 at the end of Westfall, about 19 after
-Redridge, 20 after the Deadmines and 21 in the Stockade, without grinding. The level cap is 60: the
+Redridge, 20 after the Deadmines, 21 in the Stockade, about 25 at the door of Shadowfang Keep and 26
+after Arugal, without grinding. The level cap is 60: the
 road there is planned in [docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12 to M26).
 
 | Milestone | What it adds | State |
@@ -95,7 +104,8 @@ road there is planned in [docs/level-60-roadmap.md](docs/level-60-roadmap.md) (m
 | M15 Enemy abilities | Shared enemy ability table, cast bars, interrupts, flee and call for help | Done |
 | M16 Travel and the pet | Flight masters, boats, tram, mount, two-level world map, hunter pet | Done |
 | M17 Redridge | Redridge Mountains and Lakeshire (15 to 20), 13 quests, fishing, the orcs of Stonewatch Keep, retuned Deadmines, end of chapter one | Done |
-| M18 to M26 | Duskwood to the Plaguelands, 18 new dungeons, Onyxia and the new ending | Planned |
+| M18 Duskwood | Duskwood at night and Darkshire (20 to 25), 17 quests, Stitches walking to town, Silverpine Forest and Shadowfang Keep with six bosses | Done |
+| M19 to M26 | The Wetlands to the Plaguelands, 17 new dungeons, Onyxia and the new ending | Planned |
 
 ## Controls
 
@@ -140,7 +150,8 @@ in seven tiers; the next tier opens every five points, and some talents teach an
 Strike, Pyroblast, Wyvern Sting and others). Class trainers unlearn talents for 10 silver.
 
 The hearthstone in your bags takes you back to your home inn every ten minutes; innkeepers in
-Goldshire, Stormwind's Trade District, at Sentinel Hill and in Lakeshire can make their inn your home.
+Goldshire, Stormwind's Trade District, at Sentinel Hill, in Lakeshire and in Darkshire can make their inn
+your home.
 
 Rested experience: ask an innkeeper to let you rest a while (or save and switch off inside an inn).
 Every six minutes played since your last rest becomes 5% of a level of rested experience, up to a
@@ -155,7 +166,7 @@ tunnels, and in clearings reached by secret paths through the forests (look for 
 trunks). Walk up to a chest and press A to open it for money, an item and sometimes a potion. Each
 chest opens once per hero. The world map (Start, then the World Map page) shows where you are, quest
 givers with a `!` or `?`, the chests you have already opened, the flight masters you know, and how
-many of the 20 you have found; left and right show the other zones. B steps out to the whole
+many of the 26 you have found; left and right show the other zones. B steps out to the whole
 continent: the D-pad picks a zone (its levels, or "Coming later" for zones of later chapters), A
 opens its map, and Select turns to Kalimdor. Brann Bronzebeard in Stormwind pays for five opened
 chests.
@@ -164,8 +175,9 @@ Getting around: from level 30, Randal Hunter in Stormwind's Valley of Heroes tea
 gold. Mount (on the Buffs bar) puts a Human on a horse, a Dwarf on a ram and a Night Elf on a
 nightsaber, 60% faster out of combat; a blow, any other ability, eating, the hearthstone or going
 indoors gets you off. Gryphon masters (Dungar Longdrink in the Valley of Heroes, Thor at Sentinel
-Hill, Ariena Stormfeather in Lakeshire) remember you the first time you talk to them and fly you to any other one you have met, for a
-price that grows with the distance: the gryphon crosses the continent while the map scrolls under it.
+Hill, Ariena Stormfeather in Lakeshire, Felicia Maline in Darkshire, Gryphon Rider Hask at the scouts'
+camp in Silverpine) remember you the first time you talk to them and fly you to any other one you have
+met, for a price that grows with the distance: the gryphon crosses the continent while the map scrolls under it.
 The Deeprun Tram leaves from the station house in Stormwind's Dwarven District. Its far end is
 Ironforge Station, where the lift up to Ironforge stays shut until the Ironforge chapter. Boats work
 the same way and arrive with the harbors of later chapters.
@@ -213,10 +225,32 @@ says Rare, and he drops like an elite. To fish, stand at the edge of any lake or
 face the water and press A: the line takes three seconds, and moving or a blow scares the fish. Bray
 the Fisherman's contest wants six Redridge Goldfin from Lake Everstill, with his lucky hat as the
 prize. Afterwards Solomon sends you back to Westfall for the Deadmines, which are now level 16 to 20;
-the Stockade stays at 20. The road south to Duskwood is closed until the next chapter.
+the Stockade stays at 20.
 
 The end of the first chapter: after Bazil Thredd, the epilogue tells what became of Westfall, of
 Lakeshire if you freed it, and of the Stockade, then where the story goes next.
+
+Duskwood: after Bazil Thredd, Highlord Bolvar sends you down the south road out of Elwynn, over the
+Darkened Bank, to Lord Ello Ebonlocke in Darkshire (a second road comes down from Redridge). It is
+always night in Duskwood: the world is dark outside a lantern-sized circle of light around you, which
+flickers a little. Darkshire has an inn, a smith, a vendor, the Night Watch and a gryphon master, and
+17 quests for levels 20 to 26: dire wolves on the roads, skeletons in Raven Hill Cemetery, ghouls in
+the Tranquil Gardens, the Nightbane worgen of Brightwood Grove, spiders in Twilight Grove and the
+Splinter Fist ogres of Vul'Gol. Madame Eva tells the legend of Stalvan Mistmantle, Sven Yorgen wants
+the skull of the elite Mor'Ladim, and Sirra Von'Indi brews a bane for Morbent Fel, whom weapons barely
+scratch until you carry it. Old Abercrombie's errand on Raven Hill ends with Stitches: once Ello
+sends you after it, the abomination walks the road from the hermit's hut to Darkshire's gate, resting
+at each bend, and waits there for you.
+
+Shadowfang Keep: there is no road to Silverpine Forest. Once the worgen of Brightwood Grove are dealt
+with, Ello's *Into Shadowfang* marks the scouts' camp on the gryphon masters' maps, and Felicia flies
+you there; Ranger Valdan waits below the keep.
+Inside, Rethilgore rears up before a heavy maul, Razorclaw the Butcher spins his cleavers from half
+health, Baron Silverlaine drops a Veil of Shadow where you stand, Commander Springvale heals himself
+(interrupt him) and shields himself near the end, Odo the Blindwatcher howls and frenzies, and
+Archmage Arugal steps from ledge to ledge of his chamber with a Shadow Port every few seconds and calls
+a Lupine Horror at two thirds and one third of his health. Bringing his head to Valdan ends the
+chapter with a new page of the epilogue.
 
 Auto-attack keeps going after a kill if another enemy is on you, and turns to whoever is hitting you
 when your target is out of reach.

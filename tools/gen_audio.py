@@ -496,6 +496,29 @@ def song_redridge():
     return s
 
 
+def song_duskwood():
+    """Duskwood's endless night: a slow, hollow waltz-like lament in D minor."""
+    s = Song('duskwood', 11)
+    drums = 'k...............|....h.......h...'
+    a = arrange(['Dm', 'Bb', 'Gm', 'A'],
+                'D5 - - - - - F5 - E5 - D5 - - - - - '
+                'F5 - - - - - D5 - Bb4 - - - - - - - '
+                'G4 - - - Bb4 - D5 - G5 - F5 - D5 - - - '
+                'E5 - - - - - - - C#5 - - - - - - - ',
+                lead='soft', lead_volume=40, harmony='pad', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=22, bass='roots', drums=drums)
+    b = arrange(['Dm', 'C', 'Bb', 'A'],
+                'A5 - - - - - G5 - F5 - - - E5 - - - '
+                'G5 - - - - - E5 - C5 - - - - - - - '
+                'F5 - - - D5 - - - Bb4 - D5 - F5 - - - '
+                'E5 - - - - - - - A4 - - - - - - - ',
+                lead='soft', lead_volume=40, harmony='arp', harmony_sample='bell', harmony_volume=22,
+                bass='root_fifth', drums=drums)
+    s.add(a)
+    s.add(b)
+    return s
+
+
 def song_dungeon():
     s = Song('dungeon', 10)
     drums = 'k...............|k.......k.......'
@@ -600,7 +623,7 @@ def write_sounds():
 def main():
     os.makedirs(OUT, exist_ok=True)
     for song in (song_title(), song_elwynn(), song_town(), song_westfall(), song_dungeon(), song_boss(),
-                 song_redridge()):
+                 song_redridge(), song_duskwood()):
         write_mod(song)
         print(f'{song.name}.mod: {len(song.patterns)} patterns, {len(song.order)} in order')
     write_sounds()

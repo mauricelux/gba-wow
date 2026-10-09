@@ -10,6 +10,7 @@
 #include "gw_character.h"
 #include "gw_combat.h"
 #include "gw_loot.h"
+#include "gw_quests.h"
 #include "gw_world.h"
 
 namespace gw
@@ -25,6 +26,7 @@ namespace
     constexpr int awake_distance = 260;
     constexpr int social_distance = 40;
     constexpr int wander_radius = 40;
+    constexpr int patrol_rest = 2 * seconds;  // at each point of a patrol road
     constexpr int caster_reach = 56;        // casters stop this far from the player
     constexpr int cast_bar_steps = 16;      // fx_castbar: 17 fills that can be interrupted, then 17 that can't
     constexpr int first_ability_frames = 60;
@@ -78,6 +80,7 @@ enemies::enemies(const bn::camera_ptr& camera) :
 void enemies::load(const map_info& map)
 {
     _enemies.clear();
+    _patrol = map.patrol;
 
     for(const spawn_def& spawn : map.spawns)
     {
@@ -89,8 +92,14 @@ void enemies::load(const map_info& map)
         enemy& item = _enemies.emplace_back();
         item.id = spawn.enemy;
         item.def = &get_enemy_def(spawn.enemy);
-        item.spawn = bn::fixed_point(spawn.x, spawn.y);
+        item.origin = bn::fixed_point(spawn.x, spawn.y);
         _spawn(item);
+
+        if((item.def->flags & enemy_flag::QUEST) && ! quest_wants_kill(item.id))
+        {
+            item.state = enemy_state::GONE;
+            item.state_timer = 0;
+        }
     }
 }
 
@@ -101,6 +110,8 @@ void enemies::_spawn(enemy& item)
     item.max_health = enemy_base_health(item.level) * def.health_percent / 100;
     item.health = item.max_health;
     item.damage = enemy_base_damage(item.level) * def.damage_percent / 100;
+    item.spawn = item.origin;
+    item.patrol_index = 1;
     item.position = item.spawn;
     item.wander_target = item.spawn;
     item.state = enemy_state::IDLE;
@@ -219,6 +230,33 @@ int enemies::_aggro_radius(const enemy& item) const
     return bn::clamp(radius, 16, 76);
 }
 
+bool enemies::_patrolling(const enemy& item) const
+{
+    return (item.def->flags & enemy_flag::PATROL) && item.patrol_index < _patrol.size();
+}
+
+void enemies::_patrol_step(enemy& item)
+{
+    // A point at a time, resting at each; its home moves along with it, so it leashes back onto the road.
+    if(item.state_timer > 0)
+    {
+        --item.state_timer;
+        return;
+    }
+
+    const point_def& point = _patrol[item.patrol_index];
+
+    if(move_towards(item, bn::fixed_point(point.x, point.y), _speed(item, false), 1) || item.stuck_frames > 90)
+    {
+        ++item.patrol_index;
+        item.moving = false;
+        item.stuck_frames = 0;
+        item.state_timer = patrol_rest;
+    }
+
+    item.spawn = item.position;
+}
+
 bool enemies::move_towards(enemy& item, const bn::fixed_point& target, bn::fixed speed, int stop_distance)
 {
     bn::fixed dx = target.x() - item.position.x();
@@ -320,6 +358,11 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
             return;
         }
 
+        if((item.def->flags & enemy_flag::QUEST) && ! quest_wants_kill(item.id))
+        {
+            return;
+        }
+
         if(--item.state_timer <= 0 && distance_squared(item.spawn, player_feet) > 200 * 200)
         {
             _spawn(item);
@@ -341,7 +384,17 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
 
     int player_distance_squared = distance_squared(item.position, player_feet);
 
-    if(item.state == enemy_state::IDLE && player_distance_squared > awake_distance * awake_distance)
+    if(item.state == enemy_state::IDLE && (item.def->flags & enemy_flag::QUEST) &&
+       player_distance_squared > awake_distance * awake_distance && ! quest_wants_kill(item.id))
+    {
+        // The quest that called it is done or dropped: it goes away while nobody looks.
+        item.state = enemy_state::GONE;
+        item.state_timer = 0;
+        return;
+    }
+
+    if(item.state == enemy_state::IDLE && player_distance_squared > awake_distance * awake_distance &&
+       ! _patrolling(item))
     {
         return;
     }
@@ -460,7 +513,11 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
             break;
         }
 
-        if(item.wandering)
+        if(_patrolling(item))
+        {
+            _patrol_step(item);
+        }
+        else if(item.wandering)
         {
             if(move_towards(item, item.wander_target, _speed(item, false), 1) || item.stuck_frames > 30)
             {
@@ -512,8 +569,16 @@ void enemies::_update_enemy(int index, const bn::fixed_point& player_feet, bool 
 
         _pick_victim(index, pet_feet);
 
-        // Casting, charging and running for help come first, then the scripted moves of elites.
-        if(_combat->enemy_ai_update(index) || (item.elite() && _combat->boss_update(index)))
+        // Casting, charging and running for help, then the scripted moves of elites, whose clocks keep
+        // going while they cast.
+        bool busy = _combat->enemy_ai_update(index);
+
+        if(item.elite() && _combat->boss_update(index))
+        {
+            busy = true;
+        }
+
+        if(busy)
         {
             break;
         }
@@ -1035,7 +1100,7 @@ int enemies::summon(enemy_id id, const bn::fixed_point& position)
     enemy& item = _enemies[slot];
     item.id = id;
     item.def = &get_enemy_def(id);
-    item.spawn = position;
+    item.origin = position;
     item.summoned = true;
     item.sprite.reset();
     _spawn(item);

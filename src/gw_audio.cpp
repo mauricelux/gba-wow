@@ -40,6 +40,9 @@ namespace
         case music_id::REDRIDGE:
             return bn::music_items::redridge;
 
+        case music_id::DUSKWOOD:
+            return bn::music_items::duskwood;
+
         default:
             return bn::nullopt;
         }

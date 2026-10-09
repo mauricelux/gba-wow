@@ -10,10 +10,13 @@
 #include "gw_input.h"
 #include "gw_map_deadmines.h"
 #include "gw_map_deeprun_tram.h"
+#include "gw_map_duskwood.h"
 #include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
 #include "gw_map_redridge.h"
+#include "gw_map_shadowfang.h"
+#include "gw_map_silverpine.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_westfall.h"
@@ -62,6 +65,11 @@ namespace
         { "Deeprun Tram", map_id::DEEPRUN_TRAM, map_data::deeprun_tram::entry },
         { "Lakeshire", map_id::REDRIDGE, map_data::redridge::lakeshire_respawn },
         { "Stonewatch Keep", map_id::REDRIDGE, { 896, 384 } },
+        { "Darkshire", map_id::DUSKWOOD, map_data::duskwood::darkshire_respawn },
+        { "Sven's Camp", map_id::DUSKWOOD, map_data::duskwood::raven_hill_respawn },
+        { "Scouts' Camp", map_id::SILVERPINE, map_data::silverpine::silverpine_respawn },
+        { "Shadowfang Keep", map_id::SHADOWFANG, map_data::shadowfang::entry },
+        { "Arugal's Chamber", map_id::SHADOWFANG, { 384, 160 } },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);

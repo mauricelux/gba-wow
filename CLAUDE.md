@@ -62,3 +62,14 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
   (`game::_water_ahead`), and `quests_on_fish` rolls the `objective_type::FISH` objectives whose area
   id surrounds the player.
 - `enemy_flag::RARE` marks rare spawns: the target frame says Rare, and they drop like elites.
+- Night (`src/gw_night.cpp`): a map with `m.night = True` in `gen_world.py` is dark outside a circle of
+  light around the hero. The black fade dims every layer with blending enabled (the map BGs, actor
+  sprites, the mount, chests); the internal rect window, whose left and right edges an HBE moves per
+  scanline, hides the fade inside the circle. New world sprites on a night map need
+  `set_blending_enabled(night::enabled())`; UI sprites stay undimmed.
+- `Map.patrol` (`m.patrol` in `gen_world.py`, `map_info::patrol`) is a list of points: the road an
+  `enemy_flag::PATROL` enemy walks from its spawn, resting at each point (Stitches), or the spots a
+  boss script picks from (Arugal's Shadow Port). One list per map.
+- `enemy_flag::QUEST` enemies only exist while a quest in the log still asks for their death
+  (`quest_wants_kill`). `combat::boss_update` runs for elites every frame of a fight, also while they
+  cast, so its timers keep going.

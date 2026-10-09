@@ -85,6 +85,27 @@ TERRAIN_REDRIDGE = [
     ('flower', (232, 200, 88)),
 ]
 
+# Duskwood: always night. Cold, dark greens and grey-blue water; the screen dims further outside the
+# hero's light, so these are the colors right next to them.
+TERRAIN_DUSKWOOD = [
+    ('shadow', (16, 28, 32)), ('grass_d', (32, 56, 48)), ('grass_m', (44, 76, 60)),
+    ('grass_l', (64, 96, 72)), ('grass_h', (96, 124, 92)),
+    ('dirt_d', (64, 52, 48)), ('dirt_m', (92, 78, 66)), ('dirt_l', (124, 108, 92)),
+    ('water_d', (24, 40, 64)), ('water_m', (40, 64, 96)), ('water_l', (72, 100, 136)),
+    ('foam', (168, 184, 200)), ('trunk_d', (40, 32, 32)), ('trunk_m', (72, 56, 48)),
+    ('flower', (152, 136, 184)),
+]
+
+# Silverpine: grey-green pines and cold mud under a grey sky.
+TERRAIN_SILVERPINE = [
+    ('shadow', (32, 40, 40)), ('grass_d', (56, 76, 64)), ('grass_m', (76, 100, 80)),
+    ('grass_l', (100, 124, 96)), ('grass_h', (136, 156, 124)),
+    ('dirt_d', (84, 72, 60)), ('dirt_m', (116, 100, 84)), ('dirt_l', (148, 132, 112)),
+    ('water_d', (40, 60, 80)), ('water_m', (60, 88, 112)), ('water_l', (100, 128, 152)),
+    ('foam', (200, 208, 208)), ('trunk_d', (56, 44, 36)), ('trunk_m', (96, 76, 60)),
+    ('flower', (200, 200, 168)),
+]
+
 BUILDINGS = [
     ('outline', (32, 32, 48)), ('stone_d', (88, 88, 104)), ('stone_m', (128, 128, 144)),
     ('stone_l', (168, 168, 176)), ('stone_h', (208, 208, 200)),
@@ -92,6 +113,16 @@ BUILDINGS = [
     ('glass_l', (240, 200, 96)), ('banner_d', (32, 48, 128)), ('banner', (56, 88, 184)),
     ('gold', (232, 184, 64)), ('cobble_d', (112, 104, 96)), ('cobble_l', (184, 176, 160)),
     ('plaster', (232, 224, 200)),
+]
+
+# Darkshire's buildings: dark timber and stone, windows lit against the night.
+BUILDINGS_DUSK = [
+    ('outline', (20, 20, 28)), ('stone_d', (60, 60, 76)), ('stone_m', (88, 88, 104)),
+    ('stone_l', (120, 120, 132)), ('stone_h', (152, 152, 160)),
+    ('wood_d', (60, 40, 32)), ('wood_l', (100, 72, 52)), ('glass_d', (28, 32, 52)),
+    ('glass_l', (248, 200, 96)), ('banner_d', (64, 24, 32)), ('banner', (108, 40, 48)),
+    ('gold', (200, 160, 64)), ('cobble_d', (64, 62, 68)), ('cobble_l', (108, 104, 104)),
+    ('plaster', (160, 152, 136)),
 ]
 
 FARM = [
@@ -108,6 +139,30 @@ OVERHEAD_LEAVES = [
     ('roof_d', (48, 56, 96)), ('roof_m', (72, 88, 136)), ('roof_l', (104, 128, 176)),
     ('stone_d', (88, 88, 104)), ('stone_m', (128, 128, 144)), ('stone_l', (168, 168, 176)),
     ('gold', (232, 184, 64)), ('glass', (40, 48, 80)), ('roof_h', (144, 168, 208)),
+]
+
+OVERHEAD_LEAVES_DUSK = [
+    ('outline', (8, 16, 20)), ('leaf_0', (16, 36, 36)), ('leaf_1', (28, 54, 48)),
+    ('leaf_2', (42, 74, 60)), ('leaf_3', (62, 98, 74)), ('leaf_4', (92, 126, 90)),
+    ('roof_d', (40, 40, 56)), ('roof_m', (60, 60, 80)), ('roof_l', (84, 84, 104)),
+    ('stone_d', (60, 60, 76)), ('stone_m', (88, 88, 104)), ('stone_l', (120, 120, 132)),
+    ('gold', (200, 160, 64)), ('glass', (28, 32, 52)), ('roof_h', (108, 108, 128)),
+]
+
+OVERHEAD_ROOFS_DUSK = [
+    ('red_d', (72, 32, 40)), ('red_m', (100, 44, 52)), ('red_l', (132, 64, 68)),
+    ('thatch_d', (88, 72, 48)), ('thatch_m', (120, 100, 64)), ('thatch_l', (148, 128, 88)),
+    ('o2', (16, 16, 24)), ('timber', (64, 40, 32)), ('plaster', (160, 152, 136)),
+    ('canvas', (152, 144, 120)), ('canvas_d', (112, 104, 88)), ('dead_0', (44, 38, 38)),
+    ('dead_1', (70, 60, 56)), ('dead_2', (98, 84, 74)), ('dead_3', (126, 108, 94)),
+]
+
+OVERHEAD_LEAVES_SILVERPINE = [
+    ('outline', (20, 28, 28)), ('leaf_0', (36, 56, 52)), ('leaf_1', (52, 76, 64)),
+    ('leaf_2', (72, 98, 80)), ('leaf_3', (96, 122, 98)), ('leaf_4', (132, 152, 124)),
+    ('roof_d', (48, 52, 64)), ('roof_m', (72, 76, 92)), ('roof_l', (100, 104, 120)),
+    ('stone_d', (80, 84, 92)), ('stone_m', (112, 116, 124)), ('stone_l', (148, 152, 156)),
+    ('gold', (208, 168, 72)), ('glass', (36, 44, 60)), ('roof_h', (128, 132, 148)),
 ]
 
 OVERHEAD_ROOFS = [
@@ -142,6 +197,8 @@ class Map:
         self.warps, self.npcs, self.spawns, self.areas, self.points = [], [], [], [], {}
         self.chests = []
         self.music = 'NONE'
+        self.night = False
+        self.patrol = []    # the road a patrolling enemy (Stitches) walks, start to end
 
     # --- helpers -------------------------------------------------------------------------------
 
@@ -319,6 +376,7 @@ class Map:
             f'    constexpr int collision_columns = {cols};',
             f'    constexpr int collision_rows = {rows};',
             f'    constexpr music_id music = music_id::{self.music};',
+            f'    constexpr bool night = {"true" if self.night else "false"};',
             '',
             '    alignas(4) constexpr uint8_t collision[] = {',
             *lines,
@@ -361,6 +419,14 @@ class Map:
             out.append(f'        {{ {x}, {y}, {w}, {h}, area_id::{area_id}, "{name}" }},')
         if not self.areas:
             out.append('        { 0, 0, 0, 0, area_id::NONE, "" },')
+        out.append('    };')
+        out.append('')
+        out.append('    // The road a patrolling enemy walks, from its spawn to where it stops.')
+        out.append('    constexpr point_def patrol[] = {')
+        for x, y in self.patrol:
+            out.append(f'        {{ {x}, {y} }},')
+        if not self.patrol:
+            out.append('        { -1, -1 },')
         out.append('    };')
         out.append('')
         out.append('    constexpr chest_def chests[] = {')
@@ -580,6 +646,23 @@ ROCK = [
     ('r_grass_l', (128, 168, 88)), ('r_grass_h', (176, 200, 112)),
     ('rock_0', (72, 32, 32)), ('rock_1', (120, 48, 40)), ('rock_2', (160, 72, 48)),
     ('rock_3', (192, 104, 64)), ('rock_4', (224, 144, 96)), ('rock_5', (240, 184, 136)),
+]
+
+# Grey rock for Duskwood's mountains, with twins of TERRAIN_DUSKWOOD's grass. The gravestones of its
+# cemeteries are drawn in this bank too.
+ROCK_DUSK = [
+    ('r_shadow', (16, 28, 40)), ('r_grass_d', (32, 56, 56)), ('r_grass_m', (44, 76, 68)),
+    ('r_grass_l', (64, 96, 80)), ('r_grass_h', (96, 124, 100)),
+    ('rock_0', (28, 28, 36)), ('rock_1', (52, 52, 62)), ('rock_2', (76, 76, 88)),
+    ('rock_3', (104, 104, 116)), ('rock_4', (136, 136, 146)), ('rock_5', (172, 172, 180)),
+]
+
+# The same for Silverpine's grey cliffs.
+ROCK_SILVERPINE = [
+    ('r_shadow', (32, 40, 48)), ('r_grass_d', (56, 76, 72)), ('r_grass_m', (76, 100, 88)),
+    ('r_grass_l', (100, 124, 104)), ('r_grass_h', (136, 156, 132)),
+    ('rock_0', (40, 40, 48)), ('rock_1', (68, 68, 78)), ('rock_2', (96, 96, 106)),
+    ('rock_3', (124, 124, 134)), ('rock_4', (156, 156, 164)), ('rock_5', (192, 192, 196)),
 ]
 
 # Terrain colors as the rock bank draws them.

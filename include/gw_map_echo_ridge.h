@@ -11,6 +11,7 @@ namespace gw::map_data::echo_ridge
     constexpr int collision_columns = 64;
     constexpr int collision_rows = 64;
     constexpr music_id music = music_id::DUNGEON;
+    constexpr bool night = false;
 
     alignas(4) constexpr uint8_t collision[] = {
         0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -175,6 +176,11 @@ namespace gw::map_data::echo_ridge
 
     constexpr area_def areas[] = {
         { 0, 0, 512, 512, area_id::ECHO_RIDGE, "Echo Ridge Mine" },
+    };
+
+    // The road a patrolling enemy walks, from its spawn to where it stops.
+    constexpr point_def patrol[] = {
+        { -1, -1 },
     };
 
     constexpr chest_def chests[] = {

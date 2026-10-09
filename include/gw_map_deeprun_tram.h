@@ -11,6 +11,7 @@ namespace gw::map_data::deeprun_tram
     constexpr int collision_columns = 96;
     constexpr int collision_rows = 32;
     constexpr music_id music = music_id::TOWN;
+    constexpr bool night = false;
 
     alignas(4) constexpr uint8_t collision[] = {
         0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
@@ -106,6 +107,11 @@ namespace gw::map_data::deeprun_tram
         { 0, 0, 768, 256, area_id::NONE, "Deeprun Tram" },
         { 32, 32, 320, 224, area_id::NONE, "Stormwind Station" },
         { 416, 32, 320, 224, area_id::NONE, "Ironforge Station" },
+    };
+
+    // The road a patrolling enemy walks, from its spawn to where it stops.
+    constexpr point_def patrol[] = {
+        { -1, -1 },
     };
 
     constexpr chest_def chests[] = {

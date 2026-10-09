@@ -102,6 +102,9 @@ int npc_quests(npc_id npc, quest_id* out, int max_count);
 // Events. Each returns true if a quest changed, writing progress messages to the hud.
 bool quests_on_kill(enemy_id enemy, hud& hud_ref);
 
+// A quest in the log still needs the enemy killed (enemy_flag::QUEST enemies only show up then).
+[[nodiscard]] bool quest_wants_kill(enemy_id enemy);
+
 bool quests_on_explore(const map_info& map, int x, int y, hud& hud_ref);
 
 bool quests_on_chest(hud& hud_ref);

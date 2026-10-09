@@ -82,7 +82,10 @@ enum class enemy_family : uint8_t
     GNOLL,
     DEFIAS,
     CONSTRUCT,
-    ORC
+    ORC,
+    UNDEAD,
+    WORGEN,
+    OGRE
 };
 
 enum class enemy_effect : uint8_t
