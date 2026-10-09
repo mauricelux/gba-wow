@@ -71,7 +71,7 @@ public:
     }
 
     // Whether L, R or Select hold the buttons for a bar, so they don't move or talk.
-    [[nodiscard]] static bool bar_keys_held();
+    [[nodiscard]] bool bar_keys_held() const;
 
     // A: target the nearest enemy and start attacking it.
     void engage();
@@ -271,6 +271,23 @@ private:
     bn::vector<ground_zone, 4> _zones;
 
     held_bar _held_bar = held_bar::NONE;
+
+    // L, R and Select as the bars read them: a key stays down for a few frames after the hardware
+    // says it was let go, so a shoulder button that drops out for a frame (worn or light presses on
+    // handhelds) doesn't close and reopen the bar.
+    struct bar_key
+    {
+        int8_t up_frames = 0;                // frames since the hardware last saw it held
+        bool down = false;
+        bool pressed = false;
+        bool released = false;
+
+        void update(bool held);
+    };
+
+    bar_key _l_key;
+    bar_key _r_key;
+    bar_key _select_key;
     int _r_frames = 0;                       // frames R has been held
     int _l_frames = 0;                       // the same for L and Select
     int _select_frames = 0;

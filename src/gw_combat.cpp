@@ -600,6 +600,9 @@ void combat::_cycle_target()
 void combat::update(bool input_enabled)
 {
     character_data& data = character();
+    _l_key.update(bn::keypad::l_held());
+    _r_key.update(bn::keypad::r_held());
+    _select_key.update(bn::keypad::select_held());
 
     if(! input_enabled || _dead)
     {
@@ -736,15 +739,28 @@ void combat::update(bool input_enabled)
     }
 }
 
-bool combat::bar_keys_held()
+bool combat::bar_keys_held() const
 {
-    return bn::keypad::l_held() || bn::keypad::r_held() || bn::keypad::select_held();
+    // Also the raw keys: the game asks before this frame's update reads them.
+    return _l_key.down || _r_key.down || _select_key.down ||
+           bn::keypad::l_held() || bn::keypad::r_held() || bn::keypad::select_held();
+}
+
+void combat::bar_key::update(bool held)
+{
+    // A real let go is longer than this; a dropout of up to this many frames keeps the key down.
+    constexpr int release_frames = 4;
+    bool was_down = down;
+    up_frames = held ? 0 : int8_t(bn::min(int(up_frames) + 1, release_frames + 1));
+    down = held || (was_down && up_frames <= release_frames);
+    pressed = down && ! was_down;
+    released = ! down && was_down;
 }
 
 void combat::_read_input()
 {
-    bool l = bn::keypad::l_held();
-    bool r = bn::keypad::r_held();
+    bool l = _l_key.down;
+    bool r = _r_key.down;
 
     // L within a few frames of R is the two pressed together, not R's L slot. L and Select only
     // count as taps when let go quickly: holding them to look at their bar does nothing.
@@ -752,9 +768,9 @@ void combat::_read_input()
     constexpr int tap_frames = 20;
     _r_frames = r ? _r_frames + 1 : 0;
     _l_frames = l ? _l_frames + 1 : _l_frames;
-    _select_frames = bn::keypad::select_held() ? _select_frames + 1 : _select_frames;
+    _select_frames = _select_key.down ? _select_frames + 1 : _select_frames;
 
-    if(bn::keypad::l_pressed())
+    if(_l_key.pressed)
     {
         _l_used = r;
         _l_frames = 1;
@@ -769,7 +785,7 @@ void combat::_read_input()
         }
     }
 
-    if(bn::keypad::r_pressed() && l)
+    if(_r_key.pressed && l)
     {
         _chord = true;
         _l_used = true;
@@ -780,19 +796,19 @@ void combat::_read_input()
         _chord = false;
     }
 
-    if(bn::keypad::l_released() && ! _l_used && ! r && _l_frames <= tap_frames)
+    if(_l_key.released && ! _l_used && ! r && _l_frames <= tap_frames)
     {
         _cycle_target();
     }
 
     // Select: an Items bar on its own, a quick use when tapped.
-    if(bn::keypad::select_pressed())
+    if(_select_key.pressed)
     {
         _select_used = l || r;
         _select_frames = 1;
     }
 
-    if(bn::keypad::select_held() && ! l && ! r)
+    if(_select_key.down && ! l && ! r)
     {
         _held_bar = held_bar::ITEMS;
         int slot = bn::keypad::up_pressed() ? 0 : bn::keypad::right_pressed() ? 1 :
@@ -807,7 +823,7 @@ void combat::_read_input()
         return;
     }
 
-    if(bn::keypad::select_released() && ! _select_used && ! l && ! r && _select_frames <= tap_frames)
+    if(_select_key.released && ! _select_used && ! l && ! r && _select_frames <= tap_frames)
     {
         quick_use();
     }
