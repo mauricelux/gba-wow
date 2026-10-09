@@ -87,6 +87,7 @@ struct character_data
     int32_t rest_xp = 0;            // kills give this much extra experience before it runs out
     uint32_t last_rest = 0;         // play_frames at the last rest at an inn
     bag_sort sort = bag_sort::TYPE;
+    uint32_t flights = 0;           // bit per flight_id discovered
 };
 
 // One-off story events. Saves store them by value: only append.

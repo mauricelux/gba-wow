@@ -49,7 +49,8 @@ namespace
         STORY_FLAGS,
         CHESTS,
         TALENT_TREE,    // the subclass's tree
-        ITEM_BAR
+        ITEM_BAR,
+        TRAVEL          // flight paths
     };
 
     BN_DATA_EWRAM_BSS uint8_t payload[max_payload];
@@ -273,6 +274,10 @@ namespace
 
         out.end();
 
+        out.begin(chunk::TRAVEL);
+        out.put32(data.flights);
+        out.end();
+
         out.begin(chunk::TALENT_TREE);
 
         for(uint8_t rank : data.talents)
@@ -405,6 +410,10 @@ namespace
                 int value = in.get16();
                 item = value < int(item_id::COUNT) ? item_id(value) : item_id::NONE;
             }
+            break;
+
+        case chunk::TRAVEL:
+            data.flights = in.get32();
             break;
 
         case chunk::TALENTS:

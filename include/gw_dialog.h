@@ -6,6 +6,7 @@
 #include "gw_ids.h"
 #include "gw_quest_ids.h"
 #include "gw_text_page.h"
+#include "gw_travel.h"
 #include "gw_trainer_screen.h"
 #include "gw_vendor_screen.h"
 
@@ -40,6 +41,10 @@ public:
     // Set when the player chose to rest at an inn; the game fades out and in once the dialog closes.
     bool rest_requested = false;
 
+    // Set when the player paid for a flight; the game flies them once the dialog closes.
+    flight_id flight_from = flight_id::COUNT;
+    flight_id flight_requested = flight_id::COUNT;
+
 private:
     enum class state : uint8_t
     {
@@ -60,6 +65,7 @@ private:
         UNLEARN,
         REST,
         HOME,
+        FLIGHT,
         GOODBYE
     };
 
@@ -67,11 +73,12 @@ private:
     {
         option_kind kind;
         quest_id quest;
+        flight_id flight = flight_id::COUNT;
     };
 
-    // Up to seven quests, then rest, home, vendor, trainer, unlearn and goodbye.
+    // Up to seven quests, then rest, home, vendor, trainer, unlearn, flights and goodbye.
     static constexpr int max_quest_options = 7;
-    static constexpr int max_options = max_quest_options + 6;
+    static constexpr int max_options = max_quest_options + 6 + int(flight_id::COUNT);
 
     combat& _combat;
     hud& _hud;
@@ -82,6 +89,7 @@ private:
     int _cursor = 0;
     int _option_scroll = 0;
     bool _confirm_unlearn = false;
+    bool _discovered = false;           // talking to a gryphon master found a new flight path
     quest_id _quest = quest_id::NONE;
     text_page _page;
     int _scroll = 0;

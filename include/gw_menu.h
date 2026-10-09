@@ -82,11 +82,20 @@ private:
     int _assign_bar = 0;                // spellbook: the bar_id it goes on
     bool _teleport_list = false;        // system: choosing a destination
 
-    // World map page: the picture, its markers and the blinking player dot.
+    // World map page: the picture, its markers and the blinking player dot. B on a zone's map goes up
+    // to its continent, where the D-pad picks a zone.
     int _map_zone = -1;                 // index in gw::minimaps, -1 until the page is first drawn
+    int _map_continent = -1;            // the continent shown, -1 while a zone's map is
+    int _map_pick = 0;                  // the zone_id under the continent's cursor
     int _map_frame = 0;
     bn::vector<bn::sprite_ptr, 40> _map_sprites;
     bn::optional<bn::sprite_ptr> _map_player;
+    bn::optional<bn::sprite_ptr> _map_cursor;
+
+    [[nodiscard]] bool _map_goes_up() const
+    {
+        return _tab == tab::MAP && _map_continent < 0;
+    }
 
     [[nodiscard]] bool _in_submode() const;
     void _switch_tab(int direction);
@@ -115,6 +124,7 @@ private:
 
     void _update_map();
     void _draw_map();
+    void _draw_continent();
     void _clear_map();
 
     void _update_system();

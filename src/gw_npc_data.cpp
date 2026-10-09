@@ -108,9 +108,9 @@ namespace
         { "Stormwind City Guard", "", l::STORMWIND_GUARD, 0, c::WARRIOR, 0,
           "That's the Stockade. Riot or no riot, whatever comes out of that gate doesn't get past me." },
         { "Dungar Longdrink", "Gryphon Master", l::GRYPHON_MASTER, flight_master, c::WARRIOR, 0,
-          "My gryphons fly to any flight master you've met on the road, for a few coins." },
+          "My gryphons fly to every flight master you've met." },
         { "Thor", "Gryphon Master", l::GRYPHON_MASTER, flight_master, c::WARRIOR, 0,
-          "Sentinel Hill's gryphons are fed and saddled. Where to, friend?" },
+          "Sentinel Hill's gryphons are saddled. Where to?" },
         { "Randal Hunter", "Riding Trainer", l::RIDING_TRAINER, trainer, any_class, 0,
           "Reach level 30, bring 5 gold, and I'll teach you to ride." },
     };

@@ -50,6 +50,14 @@ void dialog::open(npc_id npc)
     _npc = npc;
     _cursor = 0;
     _option_scroll = 0;
+    _discovered = discover_flight(master_flight(npc));
+
+    if(_discovered)
+    {
+        play_sound(sound_id::QUEST);
+        save_game();
+    }
+
     _show_gossip();
 }
 
@@ -143,6 +151,23 @@ void dialog::_build_options()
         if(talent_points_total() > 0 && info.trainer_class != any_class)
         {
             _options.push_back(option{ option_kind::UNLEARN, quest_id::NONE });
+        }
+    }
+
+    // Flights to every path the player knows on this continent.
+    flight_id here = master_flight(_npc);
+
+    if(here != flight_id::COUNT)
+    {
+        for(int index = 0; index < int(flight_id::COUNT); ++index)
+        {
+            flight_id flight = flight_id(index);
+
+            if(flight != here && flight_known(flight) &&
+               get_flight(flight).continent == get_flight(here).continent)
+            {
+                _options.push_back(option{ option_kind::FLIGHT, quest_id::NONE, flight });
+            }
         }
     }
 
@@ -266,6 +291,22 @@ void dialog::_update_gossip()
             rest_requested = true;
             _close();
             break;
+
+        case option_kind::FLIGHT:
+        {
+            flight_id here = master_flight(_npc);
+            int cost = flight_cost(here, selected.flight);
+
+            if(character().money >= cost)
+            {
+                character().money -= cost;
+                play_sound(sound_id::COIN);
+                flight_from = here;
+                flight_requested = selected.flight;
+                _close();
+            }
+            break;
+        }
 
         case option_kind::HOME:
             character().home = uint8_t(innkeeper_home(_npc));
@@ -463,7 +504,14 @@ void dialog::_draw_gossip()
         ++row;
     }
 
-    ui::text_wrapped(2, row, 26, options_top - 1 - row, info.gossip, ui::color::WHITE, true);
+    int gossip_rows = options_top - 1 - row - (_discovered ? 1 : 0);
+    ui::text_wrapped(2, row, 26, gossip_rows, info.gossip, ui::color::WHITE, true);
+
+    if(_discovered)
+    {
+        ui::text(2, options_top - 2, "New flight path discovered!", ui::color::GREEN, true);
+    }
+
     ui::divider(1, options_top - 1, ui::columns - 2);
 
     for(int line = 0; line < visible_options; ++line)
@@ -507,6 +555,13 @@ void dialog::_draw_gossip()
         else if(item.kind == option_kind::HOME)
         {
             ui::text(6, y, "Make this inn your home", ui::color::WHITE, true);
+        }
+        else if(item.kind == option_kind::FLIGHT)
+        {
+            int cost = flight_cost(master_flight(_npc), item.flight);
+            bool afford = character().money >= cost;
+            ui::text(6, y, get_flight(item.flight).name, afford ? ui::color::WHITE : ui::color::GRAY, true);
+            ui::money_right(27, y, cost);
         }
         else if(item.kind == option_kind::UNLEARN)
         {

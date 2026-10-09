@@ -143,6 +143,7 @@ namespace gw::map_data::stormwind
         0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
     };
 
+    constexpr point_def flight = { 808, 462 };
     constexpr point_def from_elwynn = { 990, 512 };
     constexpr point_def inn = { 128, 470 };
     constexpr point_def respawn = { 504, 248 };

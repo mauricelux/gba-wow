@@ -59,7 +59,8 @@ game::game() :
     _chests(_camera),
     _combat(_player, _enemies, _texts, _effects, _hud),
     _dialog(_combat, _hud, _npcs),
-    _menu(_combat, _hud, _npcs)
+    _menu(_combat, _hud, _npcs),
+    _flight(_text_generator)
 {
     // The UI layer goes first so it owns the first palette banks and tile block.
     ui::init();
@@ -189,9 +190,27 @@ bool game::_update_overlays()
                 _dialog.rest_requested = false;
                 _rest_frames = 1;
             }
+            else if(_dialog.flight_requested != flight_id::COUNT)
+            {
+                _set_paused(true);
+                _combat.dismount();
+                _combat.clear_target();
+                _flight.open(_dialog.flight_from, _dialog.flight_requested);
+                _dialog.flight_requested = flight_id::COUNT;
+            }
 
             // Training can clear the trainer's marker.
             _npcs.refresh_markers();
+        }
+
+        return true;
+    }
+
+    if(_flight.is_open())
+    {
+        if(! _flight.update())
+        {
+            _land();
         }
 
         return true;
@@ -235,6 +254,18 @@ void game::_start_teleport(map_id map, int x, int y)
     _warp = &_teleport;
     _warp_frames = 0;
     _combat.clear_target();
+}
+
+void game::_land()
+{
+    // The flight ended on a black screen: load the destination and fade in like after a door.
+    flight_id destination = _flight.destination();
+    const flight_def& def = get_flight(destination);
+    _set_paused(false);
+    _load_map(def.map, bn::fixed_point(def.landing.x, def.landing.y));
+    _teleport = warp_def{ 0, 0, 0, 0, def.map, def.landing.x, def.landing.y };
+    _warp = &_teleport;
+    _warp_frames = warp_fade_frames;
 }
 
 void game::_set_paused(bool paused)

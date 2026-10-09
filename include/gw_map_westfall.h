@@ -144,6 +144,7 @@ namespace gw::map_data::westfall
     };
 
     constexpr point_def deadmines_exit = { 440, 960 };
+    constexpr point_def flight = { 604, 322 };
     constexpr point_def from_elwynn = { 1000, 448 };
     constexpr point_def sentinel_respawn = { 512, 370 };
 

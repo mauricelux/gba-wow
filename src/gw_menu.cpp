@@ -54,9 +54,9 @@ namespace
         { "Ironclad Cove", map_id::DEADMINES, { 744, 200 } },
         { "The Stockade", map_id::STOCKADE, map_data::stockade::entry },
         { "Warden's Hall", map_id::STOCKADE, { 680, 88 } },
+        { "Stormwind Gryphons", map_id::STORMWIND, map_data::stormwind::flight },
+        { "Sentinel Gryphons", map_id::WESTFALL, map_data::westfall::flight },
     };
-
-    static_assert(sizeof(destinations) / sizeof(destinations[0]) <= content_rows);
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);
 
@@ -188,6 +188,7 @@ void menu::open()
     _status = status_line();
     teleport = teleport_request();
     _map_zone = -1;
+    _map_continent = -1;
     ui::clear();
 }
 
@@ -201,7 +202,7 @@ bool menu::update()
 {
     if(! _in_submode())
     {
-        if(bn::keypad::start_pressed() || bn::keypad::b_pressed())
+        if(bn::keypad::start_pressed() || (bn::keypad::b_pressed() && ! _map_goes_up()))
         {
             _open = false;
             _clear_map();
@@ -320,6 +321,7 @@ void menu::_switch_tab(int direction)
     _cursor = list_cursor();
     _bags.rebuild();
     _map_zone = -1;
+    _map_continent = -1;
     _dirty = true;
 }
 
@@ -559,9 +561,12 @@ void menu::_draw_system()
 {
     if(_teleport_list)
     {
-        for(int row = 0; row < destination_count; ++row)
+        int rows = bn::min(destination_count - _cursor.scroll, content_rows);
+
+        for(int line = 0; line < rows; ++line)
         {
-            int y = content_top + row;
+            int row = _cursor.scroll + line;
+            int y = content_top + line;
 
             if(row == _cursor.index)
             {
@@ -569,6 +574,16 @@ void menu::_draw_system()
             }
 
             ui::text(4, y, destinations[row].name, ui::color::WHITE, true);
+        }
+
+        if(_cursor.scroll > 0)
+        {
+            ui::scroll_arrow(28, content_top, true);
+        }
+
+        if(_cursor.scroll + content_rows < destination_count)
+        {
+            ui::scroll_arrow(28, content_top + content_rows - 1, false);
         }
 
         ui::text(page_x, hint_row, "A Go", ui::color::WHITE, true);

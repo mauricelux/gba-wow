@@ -12,6 +12,7 @@
 #include "gw_effects.h"
 #include "gw_enemies.h"
 #include "gw_ending.h"
+#include "gw_flight.h"
 #include "gw_floating_text.h"
 #include "gw_hud.h"
 #include "gw_maps.h"
@@ -50,6 +51,7 @@ private:
     dialog _dialog;
     menu _menu;
     ending _ending;
+    flight _flight;
     const area_def* _area = nullptr;
     const warp_def* _warp = nullptr;
     warp_def _teleport = {};
@@ -72,6 +74,7 @@ private:
     static void _on_kill(void* context, int index);
     static void _on_level_up(void* context);
     void _start_teleport(map_id map, int x, int y);
+    void _land();
     void _loot(int index);
     void _update_death();
     void _save_position();

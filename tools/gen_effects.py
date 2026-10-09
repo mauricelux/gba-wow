@@ -319,6 +319,36 @@ def map_marks():
     c.img[6, 1:7] = M['out']
     c.img[3:5, 3:5] = M['white']
     frames.append(c.img)
+    # Flight master: a gryphon with its wings spread.
+    c = Canvas(8)
+    for x, y in ((0, 2), (1, 2), (1, 3), (2, 3), (2, 4), (3, 4), (4, 4), (5, 3), (5, 4), (6, 2), (6, 3), (7, 2)):
+        c.px(x, y, M['b_l'])
+    c.img[4:6, 3:5] = M['y']
+    c.px(3, 3, M['white'])
+    frames.append(c.img)
+    # Continent zones: in the game (gold) and arriving later (gray).
+    for color, light in (('y', 'y_l'), ('g', 'g_l')):
+        c = Canvas(8)
+        c.img[3:6, 3:6] = M[color]
+        c.px(3, 3, M[light])
+        frames.append(c.img)
+    for img in frames[5:]:
+        mask = img > 0
+        img[neighbors(mask) & ~mask] = M['out']
+    # The continent cursor: corner brackets around a zone, white and yellow to blink.
+    for color in ('white', 'y_l'):
+        c = Canvas(8)
+        for x, y in ((0, 0), (1, 0), (0, 1), (6, 0), (7, 0), (7, 1), (0, 6), (0, 7), (1, 7), (7, 6), (6, 7), (7, 7)):
+            c.px(x, y, M[color])
+        mask = c.img > 0
+        c.img[neighbors(mask) & ~mask] = M['out']
+        frames.append(c.img)
+    # A dot of a flight's route.
+    c = Canvas(8)
+    c.img[3:5, 3:5] = M['y_l']
+    mask = c.img > 0
+    c.img[neighbors(mask) & ~mask] = M['out']
+    frames.append(c.img)
     return frames
 
 
