@@ -85,8 +85,8 @@ constexpr zone_def zones[] = {
     { "Ashenvale", 1, 60, 39, 20, 30, map_id::NONE },
     { "Desolace", 1, 41, 57, 45, 50, map_id::NONE },
     { "Feralas", 1, 40, 76, 45, 50, map_id::NONE },
-    { "Thousand Needles", 1, 64, 82, 40, 45, map_id::NONE },
-    { "Tanaris", 1, 69, 99, 40, 45, map_id::NONE },
+    { "Thousand Needles", 1, 64, 82, 40, 45, map_id::THOUSAND_NEEDLES },
+    { "Tanaris", 1, 69, 99, 40, 45, map_id::TANARIS },
 };
 
 static_assert(sizeof(zones) / sizeof(zones[0]) == int(zone_id::COUNT));

@@ -634,6 +634,29 @@ def song_stranglethorn():
     return s
 
 
+def song_tanaris():
+    """Tanaris: hot wind over the dunes, a snaking tune in E Phrygian dominant over hand drums."""
+    s = Song('tanaris', 8)
+    drums = 'k..t.tk.k..t.t..|k..t.tk.k.t.t.h.'
+    a = arrange(['E', 'F', 'E', 'Dm'],
+                'E5 - - - F5 - G#5 - A5 - - - G#5 - F5 - '
+                'F5 - - - A5 - - - C6 - B5 - A5 - - - '
+                'G#5 - - - B5 - - - E5 - - - G#5 - - - '
+                'A5 - - - F5 - - - D5 - - - - - - - ',
+                lead='soft', lead_volume=42, harmony='arp_up_down', harmony_sample='bell', harmony_volume=18,
+                bass='root_fifth', drums=drums)
+    b = arrange(['Am', 'Dm', 'F', 'E'],
+                'C6 - - - B5 - A5 - E5 - - - A5 - - - '
+                'D6 - - - C6 - A5 - F5 - - - D5 - - - '
+                'F5 - A5 - C6 - - - B5 - A5 - G#5 - - - '
+                'G#5 - - - - - F5 - E5 - - - - - - - ',
+                lead='soft', lead_volume=42, harmony='pad', harmony_sample='pad', harmony_octave=3,
+                harmony_volume=20, bass='roots', drums=drums)
+    s.add(a)
+    s.add(b)
+    return s
+
+
 def song_dungeon():
     s = Song('dungeon', 10)
     drums = 'k...............|k.......k.......'
@@ -739,7 +762,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     for song in (song_title(), song_elwynn(), song_town(), song_westfall(), song_dungeon(), song_boss(),
                  song_redridge(), song_duskwood(), song_ironforge(), song_wetlands(), song_hillsbrad(),
-                 song_monastery(), song_stranglethorn()):
+                 song_monastery(), song_stranglethorn(), song_tanaris()):
         write_mod(song)
         print(f'{song.name}.mod: {len(song.patterns)} patterns, {len(song.order)} in order')
     write_sounds()

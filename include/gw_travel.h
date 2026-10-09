@@ -21,6 +21,7 @@ enum class flight_id : uint8_t
     SOUTHSHORE,
     ARGENT_WATCH,
     BOOTY_BAY,
+    GADGETZAN,
     COUNT
 };
 

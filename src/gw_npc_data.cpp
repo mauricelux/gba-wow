@@ -33,6 +33,8 @@ namespace
     constexpr uint8_t southshore_smith = 14;
     constexpr uint8_t jungle_goods = 15;
     constexpr uint8_t booty_bay_smith = 16;
+    constexpr uint8_t gadgetzan_goods = 17;
+    constexpr uint8_t gadgetzan_smith = 18;
 
     constexpr npc_info npcs[] = {
         { "", "", l::PEASANT, 0, c::WARRIOR, 0, "" },
@@ -300,6 +302,38 @@ namespace
           "Fruit, rum and bandages. All the jungle asks of you." },
         { "Brikk Keencraft", "Blacksmith", l::BOOTY_BAY_SMITH, vendor, c::WARRIOR, booty_bay_smith,
           "Goblin steel, the sharpest in the south. Guaranteed. Mostly." },
+        // Tanaris
+        { "Engineer Bilgewhizzle", "", l::BILGEWHIZZLE, 0, c::WARRIOR, 0,
+          "Gadgetzan runs on water and coin. The bandits steal the one and owe us the other." },
+        { "Innkeeper Fizzgrimble", "Innkeeper", l::INNKEEPER_FIZZGRIMBLE, innkeeper, c::WARRIOR, gadgetzan_goods,
+          "Cold water, warm beds. The sand gets in either way." },
+        { "Blizrik Buckshot", "General Goods", l::BLIZRIK_BUCKSHOT, vendor, c::WARRIOR, gadgetzan_goods,
+          "Quail, desert water and potions. The desert takes the rest." },
+        { "Krinkle Goodsteel", "Blacksmith", l::KRINKLE_GOODSTEEL, vendor, c::WARRIOR, gadgetzan_smith,
+          "Goodsteel by name, good steel by trade. Have a look." },
+        { "Trenton Lighthammer", "", l::TRENTON_LIGHTHAMMER, 0, c::WARRIOR, 0,
+          "The Dunemaul ogres raid our caravans from their compound in the south." },
+        { "Fizzledowser", "", l::FIZZLEDOWSER, 0, c::WARRIOR, 0,
+          "There's water under all this sand. Getting it out before the bandits do is the trick." },
+        { "Tran'rek", "", l::TRANREK, 0, c::WARRIOR, 0,
+          "The Sandfury trolls of Zul'Farrak watch the west. Their city is older than the sand." },
+        { "Bera Stonehammer", "Gryphon Master", l::BERA_STONEHAMMER, flight_master, c::WARRIOR, 0,
+          "First roost in Kalimdor. More to come." },
+        { "Gadgetzan Bruiser", "", l::GADGETZAN_BRUISER, 0, c::WARRIOR, 0,
+          "No brawling in Gadgetzan. Take it out to the dunes, pal." },
+        { "Stoley", "", l::STOLEY, 0, c::WARRIOR, 0,
+          "Southsea pirates squat at Lost Rigger Cove. Bad for business, worse for the port." },
+        // Thousand Needles
+        { "Pozzik", "", l::POZZIK, 0, c::WARRIOR, 0,
+          "The Mirage Raceway! Fastest track in Kalimdor, when the engines hold together." },
+        { "Kravel Koalbeard", "", l::KRAVEL_KOALBEARD, 0, c::WARRIOR, 0,
+          "The Galak centaurs raid the track and the basilisks eat the rest. Bad season." },
+        { "Fizzle Brassbolts", "", l::FIZZLE_BRASSBOLTS, 0, c::WARRIOR, 0,
+          "The quilboar nest in thorns to the north-west. Razorfen Kraul, they call it." },
+        { "Wizzle Brassbolts", "", l::WIZZLE_BRASSBOLTS, 0, c::WARRIOR, 0,
+          "A hydra in Zul'Farrak's pool! Its scales would make a fine racing engine." },
+        { "Argent Guard Dalen", "The Argent Dawn", l::ARGENT_GUARD_DALEN, 0, c::WARRIOR, 0,
+          "The Scourge took the Razorfen Downs. Now the quilboar dead walk." },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

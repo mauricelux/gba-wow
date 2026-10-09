@@ -680,7 +680,160 @@
     X(CRUSADERS_LONGBOW, weapon("Crusader's Longbow", R, BOW, 40, 28, 0, 14, 7, 0, 0)) \
     X(GAUNTLETS_OF_DIVINITY, armor("Gauntlets of Divinity", R, MAIL, HANDS, 40, 10, 0, 7, 0, 0)) \
     X(WHITEMANES_GLOVES, armor("Whitemane's Gloves", R, CLOTH, HANDS, 40, 0, 0, 6, 12, 7)) \
-    X(GRIPS_OF_RESURRECTION, armor("Grips of Resurrection", R, LEATHER, HANDS, 40, 0, 12, 7, 0, 0))
+    X(GRIPS_OF_RESURRECTION, armor("Grips of Resurrection", R, LEATHER, HANDS, 40, 0, 12, 7, 0, 0)) \
+    /* Tanaris and Thousand Needles: what its people and creatures carry */ \
+    X(SCORPID_STINGER, junk("Scorpid Stinger", 90, 20)) \
+    X(QUILBOAR_TUSK, junk("Quilboar Tusk", 85, 20)) \
+    X(RUNECLOTH, junk("Runecloth", 120, 20)) \
+    X(ROASTED_QUAIL, consumable("Roasted Quail", FOOD, 45, 1400, 350, 20)) \
+    X(SPARKLING_DESERT_WATER, consumable("Sparkling Desert Water", DRINK, 45, 2600, 350, 20)) \
+    X(MAJOR_HEALING_POTION, consumable("Major Healing Potion", POTION, 41, 1300, 600, 5)) \
+    /* Gadgetzan's smith */ \
+    X(GADGETZAN_SABER, weapon("Gadgetzan Saber", C, SWORD, 40, 26)) \
+    X(STEAMWHEEDLE_CLEAVER, weapon("Steamwheedle Cleaver", C, AXE, 40, 25)) \
+    X(DESERT_MAUL, weapon("Desert Maul", C, MACE, 40, 27)) \
+    X(SANDWALKER_STAFF, weapon("Sandwalker Staff", C, STAFF, 40, 31)) \
+    X(GADGETZAN_GREATAXE, weapon("Gadgetzan Greataxe", C, TWO_HANDED, 40, 35)) \
+    X(DESERT_LONGBOW, weapon("Desert Longbow", C, BOW, 40, 28)) \
+    X(STEAMWHEEDLE_RIFLE, weapon("Steamwheedle Rifle", C, GUN, 40, 29)) \
+    X(GADGETZAN_KITE_SHIELD, shield("Gadgetzan Kite Shield", C, 40)) \
+    X(DESERT_CHAIN_HELM, armor("Desert Chain Helm", C, MAIL, HEAD, 40)) \
+    X(DESERT_CHAIN_HAUBERK, armor("Desert Chain Hauberk", C, MAIL, CHEST, 40)) \
+    X(DESERT_CHAIN_GAUNTLETS, armor("Desert Chain Gauntlets", C, MAIL, HANDS, 40)) \
+    X(DESERT_CHAIN_LEGGINGS, armor("Desert Chain Leggings", C, MAIL, LEGS, 40)) \
+    X(DESERT_CHAIN_BOOTS, armor("Desert Chain Boots", C, MAIL, FEET, 40)) \
+    X(DUNEWALKER_CAP, armor("Dunewalker Cap", C, LEATHER, HEAD, 40)) \
+    X(DUNEWALKER_VEST, armor("Dunewalker Vest", C, LEATHER, CHEST, 40)) \
+    X(DUNEWALKER_GLOVES, armor("Dunewalker Gloves", C, LEATHER, HANDS, 40)) \
+    X(DUNEWALKER_PANTS, armor("Dunewalker Pants", C, LEATHER, LEGS, 40)) \
+    X(DUNEWALKER_BOOTS, armor("Dunewalker Boots", C, LEATHER, FEET, 40)) \
+    X(SANDSILK_HOOD, armor("Sandsilk Hood", C, CLOTH, HEAD, 40)) \
+    X(SANDSILK_ROBE, armor("Sandsilk Robe", C, CLOTH, CHEST, 40)) \
+    X(SANDSILK_GLOVES, armor("Sandsilk Gloves", C, CLOTH, HANDS, 40)) \
+    X(SANDSILK_PANTS, armor("Sandsilk Pants", C, CLOTH, LEGS, 40)) \
+    X(SANDSILK_BOOTS, armor("Sandsilk Boots", C, CLOTH, FEET, 40)) \
+    /* Tanaris and Thousand Needles: quest rewards */ \
+    X(BANDIT_HUNTER_GAUNTLETS, armor("Bandit Hunter Gauntlets", U, MAIL, HANDS, 41, 8, 0, 5, 0, 0)) \
+    X(OASIS_WRAPS, armor("Oasis Wraps", U, CLOTH, HANDS, 41, 0, 0, 4, 9, 5)) \
+    X(WASTEWANDER_GRIPS, armor("Wastewander Grips", U, LEATHER, HANDS, 41, 0, 9, 5, 0, 0)) \
+    X(WATERSPRING_SABATONS, armor("Waterspring Sabatons", U, MAIL, FEET, 41, 8, 0, 5, 0, 0)) \
+    X(OASIS_SANDALS, armor("Oasis Sandals", U, CLOTH, FEET, 41, 0, 0, 4, 9, 5)) \
+    X(DUNE_TREADS, armor("Dune Treads", U, LEATHER, FEET, 41, 0, 9, 5, 0, 0)) \
+    X(GALAK_HELM, armor("Galak Helm", U, MAIL, HEAD, 41, 9, 0, 5, 0, 0)) \
+    X(WINDCHASER_HOOD, armor("Windchaser Hood", U, CLOTH, HEAD, 41, 0, 0, 4, 10, 6)) \
+    X(GALAK_HIDE_CAP, armor("Galak Hide Cap", U, LEATHER, HEAD, 41, 0, 10, 5, 0, 0)) \
+    X(QUILGUARD_LEGGUARDS, armor("Quilguard Legguards", U, MAIL, LEGS, 41, 9, 0, 6, 0, 0)) \
+    X(BRAMBLECLOTH_PANTS, armor("Bramblecloth Pants", U, CLOTH, LEGS, 41, 0, 0, 5, 10, 6)) \
+    X(THORNHIDE_PANTS, armor("Thornhide Pants", U, LEATHER, LEGS, 41, 0, 10, 6, 0, 0)) \
+    X(BONELINK_GAUNTLETS, armor("Bonelink Gauntlets", U, MAIL, HANDS, 41, 8, 0, 5, 0, 0)) \
+    X(BARROWCLOTH_GLOVES, armor("Barrowcloth Gloves", U, CLOTH, HANDS, 41, 0, 0, 4, 9, 5)) \
+    X(DEATHSHEAD_GRIPS, armor("Deathshead Grips", U, LEATHER, HANDS, 41, 0, 9, 5, 0, 0)) \
+    X(SHAKEDOWN_LEGGUARDS, armor("Shakedown Legguards", U, MAIL, LEGS, 42, 9, 0, 7, 0, 0)) \
+    X(STEAMWHEEDLE_TROUSERS, armor("Steamwheedle Trousers", U, CLOTH, LEGS, 42, 0, 0, 6, 10, 6)) \
+    X(SMUGGLER_BREECHES, armor("Smuggler Breeches", U, LEATHER, LEGS, 42, 0, 10, 7, 0, 0)) \
+    X(SANDSORROW_GAUNTLETS, armor("Sandsorrow Gauntlets", U, MAIL, HANDS, 42, 8, 0, 6, 0, 0)) \
+    X(SANDSORROW_WRAPS, armor("Sandsorrow Wraps", U, CLOTH, HANDS, 42, 0, 0, 5, 9, 5)) \
+    X(SANDSORROW_GRIPS, armor("Sandsorrow Grips", U, LEATHER, HANDS, 42, 0, 9, 6, 0, 0)) \
+    X(RACEWAY_WRENCH, weapon("Raceway Wrench", U, MACE, 42, 27, 8, 1, 6, 0, 0)) \
+    X(SALT_FLATS_STAFF, weapon("Salt Flats Staff", U, STAFF, 42, 32, 0, 0, 6, 13, 7)) \
+    X(RACERS_RIFLE, weapon("Racer's Rifle", U, GUN, 42, 29, 0, 13, 6, 0, 0)) \
+    X(RAZORFLANK_BLADE, weapon("Razorflank Blade", R, SWORD, 42, 26, 10, 2, 7, 0, 0)) \
+    X(CRONES_STAFF, weapon("Crone's Staff", R, STAFF, 42, 32, 0, 0, 7, 16, 9)) \
+    X(THORNWEAVE_BOW, weapon("Thornweave Bow", R, BOW, 42, 28, 0, 15, 7, 0, 0)) \
+    X(CARAPACE_HAUBERK, armor("Carapace Hauberk", R, MAIL, CHEST, 42, 12, 0, 9, 0, 0)) \
+    X(WEBSPINNER_ROBE, armor("Webspinner Robe", R, CLOTH, CHEST, 42, 0, 0, 8, 14, 9)) \
+    X(TOMB_FIEND_JERKIN, armor("Tomb Fiend Jerkin", R, LEATHER, CHEST, 42, 0, 13, 9, 0, 0)) \
+    X(OGRESLAYER_HAUBERK, armor("Ogreslayer Hauberk", U, MAIL, CHEST, 43, 10, 0, 7, 0, 0)) \
+    X(DUNEMAUL_ROBE, armor("Dunemaul Robe", U, CLOTH, CHEST, 43, 0, 0, 6, 11, 7)) \
+    X(OGREHIDE_JERKIN, armor("Ogrehide Jerkin", U, LEATHER, CHEST, 43, 0, 11, 7, 0, 0)) \
+    X(CALIPHS_SCIMITAR, weapon("Caliph's Scimitar", R, SWORD, 43, 26, 11, 2, 7, 0, 0)) \
+    X(SCORPIDSTING_STAFF, weapon("Scorpidsting Staff", R, STAFF, 43, 32, 0, 0, 7, 17, 9)) \
+    X(STINGER_LONGBOW, weapon("Stinger Longbow", R, BOW, 43, 28, 0, 15, 7, 0, 0)) \
+    X(LIGHTFORGED_BLADE, weapon("Lightforged Blade", R, SWORD, 43, 26, 11, 2, 7, 0, 0)) \
+    X(STAFF_OF_THE_DAWN, weapon("Staff of the Dawn", R, STAFF, 43, 32, 0, 0, 7, 17, 9)) \
+    X(ARGENT_LONGBOW, weapon("Argent Longbow", R, BOW, 43, 28, 0, 15, 7, 0, 0)) \
+    X(FIREBEARDS_HELM, armor("Firebeard's Helm", R, MAIL, HEAD, 44, 12, 0, 8, 0, 0)) \
+    X(CORSAIRS_TRICORN, armor("Corsair's Tricorn", R, CLOTH, HEAD, 44, 0, 0, 7, 14, 9)) \
+    X(PIRATE_BANDANA, armor("Pirate Bandana", R, LEATHER, HEAD, 44, 0, 13, 8, 0, 0)) \
+    X(TEMPERED_TROLL_BLADE, weapon("Tempered Troll Blade", U, SWORD, 44, 26, 9, 1, 6, 0, 0)) \
+    X(JUJU_STAFF, weapon("Juju Staff", U, STAFF, 44, 32, 0, 0, 6, 14, 7)) \
+    X(TROLL_HUNTERS_BOW, weapon("Troll Hunter's Bow", U, BOW, 44, 28, 0, 14, 6, 0, 0)) \
+    X(SCARAB_PLATED_BOOTS, armor("Scarab Plated Boots", U, MAIL, FEET, 44, 9, 0, 6, 0, 0)) \
+    X(SCARAB_SLIPPERS, armor("Scarab Slippers", U, CLOTH, FEET, 44, 0, 0, 5, 10, 6)) \
+    X(CARAPACE_BOOTS, armor("Carapace Boots", U, LEATHER, FEET, 44, 0, 10, 6, 0, 0)) \
+    X(HYDRASCALE_LEGGUARDS, armor("Hydrascale Legguards", R, MAIL, LEGS, 45, 12, 0, 8, 0, 0)) \
+    X(TIDEWEAVE_LEGGINGS, armor("Tideweave Leggings", R, CLOTH, LEGS, 45, 0, 0, 7, 14, 9)) \
+    X(SCALED_LEGGINGS, armor("Scaled Leggings", R, LEATHER, LEGS, 45, 0, 13, 8, 0, 0)) \
+    X(UKORZS_GREATAXE, weapon("Ukorz's Greataxe", E, TWO_HANDED, 45, 36, 19, 0, 13, 0, 0)) \
+    X(STAFF_OF_THE_SANDFURY, weapon("Staff of the Sandfury", E, STAFF, 45, 32, 0, 0, 9, 20, 10)) \
+    X(ZUL_FARRAK_LONGBOW, weapon("Zul'Farrak Longbow", E, BOW, 45, 28, 0, 18, 9, 0, 0)) \
+    /* Tanaris's elites and rare */ \
+    X(SCORPIDSTING_GAUNTLETS, armor("Scorpidsting Gauntlets", R, MAIL, HANDS, 43, 10, 0, 7, 0, 0)) \
+    X(CALIPHS_GLOVES, armor("Caliph's Gloves", R, CLOTH, HANDS, 43, 0, 0, 6, 12, 7)) \
+    X(SANDSTALKER_GRIPS, armor("Sandstalker Grips", R, LEATHER, HANDS, 43, 0, 11, 7, 0, 0)) \
+    X(ANDRES_SABATONS, armor("Andre's Sabatons", R, MAIL, FEET, 44, 11, 0, 7, 0, 0)) \
+    X(CAPTAINS_SLIPPERS, armor("Captain's Slippers", R, CLOTH, FEET, 44, 0, 0, 6, 13, 8)) \
+    X(FIREBEARD_BOOTS, armor("Firebeard Boots", R, LEATHER, FEET, 44, 0, 12, 7, 0, 0)) \
+    X(OMGORNS_LEGPLATES, armor("Omgorn's Legplates", R, MAIL, LEGS, 44, 12, 0, 8, 0, 0)) \
+    X(LEGGINGS_OF_THE_LOST, armor("Leggings of the Lost", R, CLOTH, LEGS, 44, 0, 0, 7, 14, 9)) \
+    X(OGRE_HIDE_BREECHES, armor("Ogre-Hide Breeches", R, LEATHER, LEGS, 44, 0, 13, 8, 0, 0)) \
+    /* Razorfen Kraul, Razorfen Downs and Zul'Farrak: boss drops */ \
+    X(THORNCURSE_GAUNTLETS, armor("Thorncurse Gauntlets", R, MAIL, HANDS, 40, 10, 0, 6, 0, 0)) \
+    X(THORNWEAVE_GLOVES, armor("Thornweave Gloves", R, CLOTH, HANDS, 40, 0, 0, 5, 12, 7)) \
+    X(BRAMBLEHIDE_GRIPS, armor("Bramblehide Grips", R, LEATHER, HANDS, 40, 0, 11, 6, 0, 0)) \
+    X(DEATH_SPEAKER_HELM, armor("Death Speaker Helm", R, MAIL, HEAD, 40, 11, 0, 7, 0, 0)) \
+    X(JARGBAS_COWL, armor("Jargba's Cowl", R, CLOTH, HEAD, 40, 0, 0, 6, 13, 8)) \
+    X(SPEAKERS_MASK, armor("Speaker's Mask", R, LEATHER, HEAD, 40, 0, 12, 7, 0, 0)) \
+    X(RAMTUSKS_CLEAVER, weapon("Ramtusk's Cleaver", R, AXE, 41, 25, 10, 2, 6, 0, 0)) \
+    X(RAMSTAFF, weapon("Ramstaff", R, STAFF, 41, 32, 0, 0, 6, 16, 9)) \
+    X(TUSKER_LONGBOW, weapon("Tusker Longbow", R, BOW, 41, 28, 0, 15, 6, 0, 0)) \
+    X(STAMPEDE_SABATONS, armor("Stampede Sabatons", R, MAIL, FEET, 41, 10, 0, 6, 0, 0)) \
+    X(AGAM_AR_SLIPPERS, armor("Agam'ar Slippers", R, CLOTH, FEET, 41, 0, 0, 5, 12, 7)) \
+    X(BOARHIDE_BOOTS, armor("Boarhide Boots", R, LEATHER, FEET, 41, 0, 11, 6, 0, 0)) \
+    X(RAZORFLANK_HAUBERK, armor("Razorflank Hauberk", R, MAIL, CHEST, 42, 12, 0, 9, 0, 0)) \
+    X(CHARLGAS_ROBE, armor("Charlga's Robe", R, CLOTH, CHEST, 42, 0, 0, 8, 14, 9)) \
+    X(CRONES_VEST, armor("Crone's Vest", R, LEATHER, CHEST, 42, 0, 13, 9, 0, 0)) \
+    X(SILK_WRAPPED_LEGGUARDS, armor("Silk-Wrapped Legguards", R, MAIL, LEGS, 42, 11, 0, 8, 0, 0)) \
+    X(SPIDERSILK_LEGGINGS, armor("Spidersilk Leggings", R, CLOTH, LEGS, 42, 0, 0, 7, 13, 8)) \
+    X(FIENDHIDE_PANTS, armor("Fiendhide Pants", R, LEATHER, LEGS, 42, 0, 12, 8, 0, 0)) \
+    X(MORDRESHS_BLADE, weapon("Mordresh's Blade", R, SWORD, 42, 26, 10, 2, 7, 0, 0)) \
+    X(STAFF_OF_THE_FIRE_EYE, weapon("Staff of the Fire Eye", R, STAFF, 42, 32, 0, 0, 7, 16, 9)) \
+    X(BONE_LONGBOW, weapon("Bone Longbow", R, BOW, 42, 28, 0, 15, 7, 0, 0)) \
+    X(GLUTTONOUS_SABATONS, armor("Gluttonous Sabatons", R, MAIL, FEET, 42, 10, 0, 7, 0, 0)) \
+    X(LARDER_SLIPPERS, armor("Larder Slippers", R, CLOTH, FEET, 42, 0, 0, 6, 12, 7)) \
+    X(BUTCHERS_BOOTS, armor("Butcher's Boots", R, LEATHER, FEET, 42, 0, 11, 7, 0, 0)) \
+    X(COLDBRINGER_HELM, armor("Coldbringer Helm", R, MAIL, HEAD, 43, 11, 0, 8, 0, 0)) \
+    X(COLDBRINGER_COWL, armor("Coldbringer Cowl", R, CLOTH, HEAD, 43, 0, 0, 7, 13, 8)) \
+    X(FROSTBITTEN_MASK, armor("Frostbitten Mask", R, LEATHER, HEAD, 43, 0, 12, 8, 0, 0)) \
+    X(ANTUSULS_GAUNTLETS, armor("Antu'sul's Gauntlets", R, MAIL, HANDS, 44, 11, 0, 7, 0, 0)) \
+    X(SANDFURY_WRAPS, armor("Sandfury Wraps", R, CLOTH, HANDS, 44, 0, 0, 6, 13, 8)) \
+    X(SCARABSKIN_GRIPS, armor("Scarabskin Grips", R, LEATHER, HANDS, 44, 0, 12, 7, 0, 0)) \
+    X(MARTYRS_BREASTPLATE, armor("Martyr's Breastplate", R, MAIL, CHEST, 44, 13, 0, 9, 0, 0)) \
+    X(THEKAS_ROBE, armor("Theka's Robe", R, CLOTH, CHEST, 44, 0, 0, 8, 15, 10)) \
+    X(MARTYRS_VEST, armor("Martyr's Vest", R, LEATHER, CHEST, 44, 0, 14, 9, 0, 0)) \
+    X(WITCH_DOCTOR_MACHETE, weapon("Witch Doctor Machete", R, SWORD, 44, 26, 11, 2, 7, 0, 0)) \
+    X(WITCH_DOCTOR_STAFF, weapon("Witch Doctor Staff", R, STAFF, 44, 32, 0, 0, 7, 17, 9)) \
+    X(VOODOO_LONGBOW, weapon("Voodoo Longbow", R, BOW, 44, 28, 0, 16, 7, 0, 0)) \
+    X(HYDRA_LEGPLATES, armor("Hydra Legplates", R, MAIL, LEGS, 45, 12, 0, 8, 0, 0)) \
+    X(GAHZ_RILLA_LEGGINGS, armor("Gahz'rilla Leggings", R, CLOTH, LEGS, 45, 0, 0, 7, 14, 9)) \
+    X(HYDRAHIDE_PANTS, armor("Hydrahide Pants", R, LEATHER, LEGS, 45, 0, 13, 8, 0, 0)) \
+    X(GUTCHEWER_SABATONS, armor("Gutchewer Sabatons", R, MAIL, FEET, 45, 11, 0, 7, 0, 0)) \
+    X(SHADOWPRIEST_SLIPPERS, armor("Shadowpriest Slippers", R, CLOTH, FEET, 45, 0, 0, 6, 13, 8)) \
+    X(SEZZ_ZIZS_BOOTS, armor("Sezz'ziz's Boots", R, LEATHER, FEET, 45, 0, 12, 7, 0, 0)) \
+    X(RUUZLUS_AXE, weapon("Ruuzlu's Axe", R, AXE, 45, 25, 11, 2, 7, 0, 0)) \
+    X(SANDFURY_SPIRE, weapon("Sandfury Spire", R, STAFF, 45, 32, 0, 0, 7, 17, 9)) \
+    X(RUUZLUS_RECURVE, weapon("Ruuzlu's Recurve", R, BOW, 45, 28, 0, 16, 7, 0, 0)) \
+    X(SANDSCALP_HELM, armor("Sandscalp Helm", R, MAIL, HEAD, 45, 12, 0, 8, 0, 0)) \
+    X(CHIEFTAINS_HEADDRESS, armor("Chieftain's Headdress", R, CLOTH, HEAD, 45, 0, 0, 7, 14, 9)) \
+    X(SANDSCALP_MASK, armor("Sandscalp Mask", R, LEATHER, HEAD, 45, 0, 13, 8, 0, 0)) \
+    /* World drops, levels 41 to 45 */ \
+    X(SANDSTORM_HELM, armor("Sandstorm Helm", U, MAIL, HEAD, 42, 9, 0, 6, 0, 0)) \
+    X(MIRAGE_ROBE, armor("Mirage Robe", U, CLOTH, CHEST, 43, 0, 0, 6, 11, 7)) \
+    X(DUNESHADOW_LEGGINGS, armor("Duneshadow Leggings", U, LEATHER, LEGS, 43, 0, 10, 7, 0, 0)) \
+    X(SCORCHING_GREATSWORD, weapon("Scorching Greatsword", U, TWO_HANDED, 43, 36, 14, 0, 9, 0, 0)) \
+    X(STAFF_OF_THE_DUNES, weapon("Staff of the Dunes", U, STAFF, 43, 32, 0, 0, 6, 14, 7)) \
+    X(SIROCCO_LONGBOW, weapon("Sirocco Longbow", U, BOW, 43, 28, 0, 13, 6, 0, 0)) \
+    X(SANDSTONE_BULWARK, shield("Sandstone Bulwark", U, 42, 4, 0, 7, 0, 0))
 
 namespace gw
 {

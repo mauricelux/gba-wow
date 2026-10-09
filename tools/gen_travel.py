@@ -89,10 +89,10 @@ KALIMDOR = [
     ('Feralas', 'jungle', [(20, 60), (26, 58), (40, 60), (46, 64), (44, 76), (30, 80), (20, 72)], (45, 50),
      'NONE'),
     ('Thousand Needles', 'tan', [(46, 64), (58, 70), (72, 72), (68, 80), (48, 80), (44, 76)], (40, 45),
-     'NONE'),
+     'THOUSAND_NEEDLES'),
     ("Un'Goro Crater", 'jungle', [(34, 84), (44, 76), (48, 80), (48, 96), (38, 96)], None, 'NONE'),
     ('Silithus', 'sand', [(24, 86), (34, 84), (38, 96), (30, 102), (22, 96)], None, 'NONE'),
-    ('Tanaris', 'sand', [(48, 80), (68, 80), (76, 84), (74, 100), (60, 106), (48, 96)], (40, 45), 'NONE'),
+    ('Tanaris', 'sand', [(48, 80), (68, 80), (76, 84), (74, 100), (60, 106), (48, 96)], (40, 45), 'TANARIS'),
 ]
 
 CONTINENTS = [('eastern', 'Eastern Kingdoms', EASTERN_KINGDOMS), ('kalimdor', 'Kalimdor', KALIMDOR)]

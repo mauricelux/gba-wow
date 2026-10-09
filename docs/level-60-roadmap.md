@@ -68,7 +68,7 @@ endgame. Each zone is one streamed outdoor map, about the size of Westfall (1024
 | 6 | 25–30 | Wetlands ✓ | Menethil Harbor ✓, **Ironforge** ✓ | Dark Iron dwarves, Dragonmaw orcs, Grim Batol | **Blackfathom Deeps** ✓, **Gnomeregan** ✓ |
 | 7 | 30–35 | Hillsbrad Foothills ✓ | Southshore ✓ | Syndicate, Forsaken, Alterac ogres | **SM Graveyard** ✓, **SM Library** ✓ |
 | 8 | 35–40 | Stranglethorn Vale ✓ | Rebel Camp ✓, Booty Bay ✓ | The tiger and raptor hunts, Bloodsail pirates, trolls | **SM Armory** ✓, **SM Cathedral** ✓ |
-| 9 | 40–45 | Tanaris and Thousand Needles | Gadgetzan | Wastewander bandits, Sandfury trolls, the quilboar | **Razorfen Kraul**, **Razorfen Downs**, **Zul'Farrak** |
+| 9 | 40–45 | Tanaris and Thousand Needles ✓ | Gadgetzan ✓ | Wastewander bandits, Sandfury trolls, the quilboar | **Razorfen Kraul** ✓, **Razorfen Downs** ✓, **Zul'Farrak** ✓ |
 | 10 | 45–50 | Feralas | Feathermoon Stronghold | Gordok ogres, the Grimtotem, the Emerald Dream portal | **Maraudon**, **Dire Maul** |
 | 11 | 50–55 | Burning Steppes, with Searing Gorge and the Badlands edge | Morgan's Vigil, Thorium Point | The Dark Iron empire and the Blackrock clan | **Uldaman**, **Sunken Temple**, **Blackrock Depths** |
 | 12 | 55–60 | Western and Eastern Plaguelands | Chillwind Camp, Light's Hope Chapel | The Scourge, the Scarlet Crusade, the Argent Dawn | **Blackrock Spire**, **Scholomance**, **Stratholme** |
@@ -154,6 +154,8 @@ Auberdine, on Kalimdor's continent picture, with its own hippogryph master). M20
 gryphons and the Argent Watch in Tirisfal, which a quest marks on the map like the Scouts' Camp.
 M21 opened the old road south out of Duskwood into Stranglethorn and gave Booty Bay a gryphon
 master; Booty Bay's boat to Kalimdor comes with Tanaris in M22.
+M22 sailed it: Booty Bay's south pier and Steamwheedle Port in Tanaris, and Gadgetzan's gryphon master,
+the first flight path on Kalimdor's continent picture.
 
 ---
 
@@ -175,9 +177,9 @@ telegraph their big attacks (red circles, cast bars) so a solo player can dodge 
 | 7 | Scarlet Monastery: Library ✓ | 33–35 | Tirisfal | Houndmaster Loksey, **Arcanist Doan** | Doan's Detonation: get out of range or it hits hard; Loksey's hounds |
 | 8 | Scarlet Monastery: Armory ✓ | 35–37 | Tirisfal | **Herod** | Whirlwind charge-up, then a wave of trainees when he falls |
 | 9 | Scarlet Monastery: Cathedral ✓ | 37–40 | Tirisfal | High Inquisitor Fairbanks, Scarlet Commander Mograine, **High Inquisitor Whitemane** | Whitemane resurrects Mograine and the fight goes on; Deep Sleep puts the hero to sleep |
-| 10 | Razorfen Kraul | 40–41 | Southern Barrens edge | Aggem Thorncurse, Death Speaker Jargba, Overlord Ramtusk, Agathelos the Raging, **Charlga Razorflank** | Thorn walls shrink the paths; Charlga heals her guards |
-| 11 | Razorfen Downs | 41–43 | Thousand Needles | Tuten'kash, Mordresh Fire Eye, Glutton, **Amnennar the Coldbringer** | The gong event summons spider waves before Tuten'kash; Amnennar's Frost Nova and spectral adds |
-| 12 | Zul'Farrak | 43–45 | Tanaris | Antu'sul, Theka the Martyr, Witch Doctor Zum'rah, Gahz'rilla, Nekrum and Sezz'ziz, **Chief Ukorz Sandscalp** | The pyramid event: waves of trolls climb the stairs; Gahz'rilla is summoned by ringing the gong at her pool |
+| 10 | Razorfen Kraul ✓ | 40–41 | Southern Barrens edge | Aggem Thorncurse, Death Speaker Jargba, Overlord Ramtusk, Agathelos the Raging, **Charlga Razorflank** | Thorn walls shrink the paths; Charlga heals her guards |
+| 11 | Razorfen Downs ✓ | 41–43 | Thousand Needles | Tuten'kash, Mordresh Fire Eye, Glutton, **Amnennar the Coldbringer** | The gong event summons spider waves before Tuten'kash; Amnennar's Frost Nova and spectral adds |
+| 12 | Zul'Farrak ✓ | 43–45 | Tanaris | Antu'sul, Theka the Martyr, Witch Doctor Zum'rah, Gahz'rilla, Nekrum and Sezz'ziz, **Chief Ukorz Sandscalp** | The pyramid event: waves of trolls climb the stairs; Gahz'rilla is summoned by ringing the gong at her pool |
 | 13 | Maraudon | 46–48 | Desolace (from Feralas) | Noxxion, Razorlash, Lord Vyletongue, Celebras the Cursed, Landslide, Tinkerer Gizlock, Rotgrip, **Princess Theradras** | Poison pools; Theradras's Boulder throws and knockback |
 | 14 | Dire Maul | 48–50 | Feralas | Lethtendris, Hydrospawn, Zevrim Thornhoof, Alzzin, Tendris Warpwood, Immol'thar, King Gordok, **Prince Tortheldrin** | Ogre "tribute" option: kill King Gordok and the ogres become friendly; pylons to drop Immol'thar's shield |
 | 15 | Uldaman | 50–51 | Badlands | Revelosh, Ironaya, Obsidian Sentinel, Ancient Stone Keeper, Galgann Firehammer, Grimlok, **Archaedas** | Archaedas wakes his stone guardians in waves; Ironaya knocks you back |
@@ -625,7 +627,7 @@ are one bracket each so they can be played and tuned one at a time.
 | **M19 Wetlands, Ironforge, BFD, Gnomeregan** (25–30) ✓ | Second capital, two dungeons; Dun Morogh and Darkshore as the ways in | M18 |
 | **M20 Hillsbrad and Scarlet Monastery 1** (30–35) ✓ | Southshore, Graveyard, Library, mount | M19 |
 | **M21 Stranglethorn and Scarlet Monastery 2** (35–40) ✓ | Booty Bay, Nesingwary, Armory, Cathedral | M20 |
-| **M22 Tanaris and the Razorfens** (40–45) | Kalimdor by boat, Gadgetzan, Razorfen Kraul, Razorfen Downs, Zul'Farrak | M21 |
+| **M22 Tanaris and the Razorfens** (40–45) ✓ | Kalimdor by boat, Gadgetzan, Razorfen Kraul, Razorfen Downs, Zul'Farrak | M21 |
 | **M23 Feralas** (45–50) | Feathermoon, Maraudon, Dire Maul | M22 |
 | **M24 Burning Steppes** (50–55) | Morgan's Vigil, Uldaman, Sunken Temple, Blackrock Depths | M23 |
 | **M25 Plaguelands** (55–60) | Light's Hope, Blackrock Spire, Scholomance, Stratholme, all talent tiers and top ranks | M24 |

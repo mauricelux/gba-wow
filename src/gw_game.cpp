@@ -399,6 +399,15 @@ void game::_interact()
         return;
     }
 
+    // A gong or a cage starts a dungeon event.
+    area_id event = event_area_at(world::map(), _player.position().x().floor_integer(),
+                                  _player.position().y().floor_integer());
+
+    if(event != area_id::NONE && _combat.start_event(event))
+    {
+        return;
+    }
+
     bn::fixed_point spot;
 
     if(! _combat.in_combat() && _water_ahead(spot))

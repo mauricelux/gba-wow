@@ -9,6 +9,7 @@
 #include "gw_map_redridge.h"
 #include "gw_map_stormwind.h"
 #include "gw_map_stranglethorn.h"
+#include "gw_map_tanaris.h"
 #include "gw_map_westfall.h"
 #include "gw_map_wetlands.h"
 
@@ -29,6 +30,7 @@ namespace
         { "Auberdine", map_id::DARKSHORE, map_data::darkshore::auberdine_respawn },
         { "Southshore", map_id::HILLSBRAD, map_data::hillsbrad::southshore_respawn },
         { "Booty Bay", map_id::STRANGLETHORN, map_data::stranglethorn::booty_bay_respawn },
+        { "Gadgetzan", map_id::TANARIS, map_data::tanaris::gadgetzan_respawn },
     };
 
     static_assert(sizeof(homes) / sizeof(homes[0]) == int(home_id::COUNT));
@@ -73,6 +75,9 @@ home_id innkeeper_home(npc_id npc)
 
     case npc_id::SKINDLE:
         return home_id::BOOTY_BAY;
+
+    case npc_id::FIZZGRIMBLE:
+        return home_id::GADGETZAN;
 
     default:
         return home_id::COUNT;

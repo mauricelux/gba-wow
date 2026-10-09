@@ -96,3 +96,18 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
 - Adding a road through a generated forest changes the RNG stream and so every later tree. Duskwood's
   south road keeps the old stream: trees on the road still draw their numbers but are not placed
   ("ghost" trees), and the road is painted after the loop.
+- Dungeon events (`src/gw_combat_events.cpp`): a gong to ring or a cage to open is an area with the
+  id `GONG` or `CAGE` (`m.area(x, y, w, h, '', 'GONG')`; `event_area_at`, skipped by `area_at`), and A
+  inside it calls `combat::start_event` before attacking, unless an enemy is fighting the hero. The
+  `events` table gives each map's event its waves (from the map's `m.point` spots), its pause and its
+  bosses: a gong sends one wave per ring, a cage (`pause` > 0) sends them all with a breather between.
+  Leaving the area's 360-pixel leash or dying ends the event; killing its bosses marks it done until
+  the map loads again (`_events_done`, a bit per event, not saved).
+- `Temple` in `gen_world.py` is the Monastery builder in another dungeon's colors (Razorfen Kraul,
+  Razorfen Downs, Zul'Farrak), with props for them: thorns, totems, a gong, a cage and idols.
+- `quests[]` in `src/gw_quests.cpp` is indexed by `quest_id`, so a quest goes into the array at the
+  same place as its id. In M21 two ids sat in the wrong place in the enum, so code naming them
+  (prerequisites, the ending) reached other quests; M22 moved the enum entries, not the array, so the
+  numbers in saves keep meaning the same quests.
+- Desert maps: `cactus()` in `gen_world.py` won't plant on or next to a road, and props on a desert
+  map (crates, ruins) must start on a multiple of 8 so no tile mixes two palette banks.

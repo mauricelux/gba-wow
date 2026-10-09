@@ -111,6 +111,20 @@ namespace
         i::HARDENED_LEATHER_BOOTS,
         i::SILK_HOOD, i::SILK_ROBE, i::SILK_GLOVES, i::SILK_PANTS, i::SILK_BOOTS
     };
+
+    constexpr item_id gadgetzan_goods[] = {
+        i::ROASTED_QUAIL, i::GOLDENBARK_APPLE, i::SPARKLING_DESERT_WATER, i::MORNING_GLORY_DEW,
+        i::SUPERIOR_HEALING_POTION, i::MAJOR_HEALING_POTION, i::TELEPORTATION_RUNE
+    };
+
+    constexpr item_id gadgetzan_smith[] = {
+        i::GADGETZAN_SABER, i::STEAMWHEEDLE_CLEAVER, i::DESERT_MAUL, i::SANDWALKER_STAFF, i::GADGETZAN_GREATAXE,
+        i::DESERT_LONGBOW, i::STEAMWHEEDLE_RIFLE, i::GADGETZAN_KITE_SHIELD,
+        i::DESERT_CHAIN_HELM, i::DESERT_CHAIN_HAUBERK, i::DESERT_CHAIN_GAUNTLETS, i::DESERT_CHAIN_LEGGINGS,
+        i::DESERT_CHAIN_BOOTS,
+        i::DUNEWALKER_CAP, i::DUNEWALKER_VEST, i::DUNEWALKER_GLOVES, i::DUNEWALKER_PANTS, i::DUNEWALKER_BOOTS,
+        i::SANDSILK_HOOD, i::SANDSILK_ROBE, i::SANDSILK_GLOVES, i::SANDSILK_PANTS, i::SANDSILK_BOOTS
+    };
 }
 
 bn::span<const item_id> vendor_stock(int vendor)
@@ -165,6 +179,12 @@ bn::span<const item_id> vendor_stock(int vendor)
 
     case 16:
         return booty_bay_smith;
+
+    case 17:
+        return gadgetzan_goods;
+
+    case 18:
+        return gadgetzan_smith;
 
     default:
         return general_goods;

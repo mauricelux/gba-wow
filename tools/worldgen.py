@@ -166,6 +166,26 @@ TERRAIN_STRANGLETHORN = [
     ('flower', (232, 72, 104)),
 ]
 
+# Tanaris: dune sand in the grass roles, packed brown earth for the roads, a deep blue sea.
+TERRAIN_TANARIS = [
+    ('shadow', (112, 76, 44)), ('grass_d', (184, 140, 84)), ('grass_m', (212, 172, 108)),
+    ('grass_l', (228, 196, 132)), ('grass_h', (244, 220, 164)),
+    ('dirt_d', (140, 96, 60)), ('dirt_m', (164, 120, 80)), ('dirt_l', (188, 148, 104)),
+    ('water_d', (32, 96, 136)), ('water_m', (48, 132, 168)), ('water_l', (112, 188, 208)),
+    ('foam', (240, 236, 216)), ('trunk_d', (88, 56, 32)), ('trunk_m', (124, 88, 52)),
+    ('flower', (176, 96, 72)),
+]
+
+# Thousand Needles: orange canyon floor and red roads; 'foam' and 'flower' are the Shimmering Flats' salt.
+TERRAIN_NEEDLES = [
+    ('shadow', (88, 44, 32)), ('grass_d', (152, 92, 56)), ('grass_m', (184, 120, 72)),
+    ('grass_l', (204, 148, 92)), ('grass_h', (224, 180, 120)),
+    ('dirt_d', (112, 60, 40)), ('dirt_m', (140, 80, 52)), ('dirt_l', (164, 104, 68)),
+    ('water_d', (40, 88, 120)), ('water_m', (56, 120, 152)), ('water_l', (112, 168, 192)),
+    ('foam', (240, 236, 224)), ('trunk_d', (80, 52, 32)), ('trunk_m', (120, 84, 48)),
+    ('flower', (212, 204, 188)),
+]
+
 BUILDINGS = [
     ('outline', (32, 32, 48)), ('stone_d', (88, 88, 104)), ('stone_m', (128, 128, 144)),
     ('stone_l', (168, 168, 176)), ('stone_h', (208, 208, 200)),
@@ -203,6 +223,16 @@ BUILDINGS_JUNGLE = [
     ('glass_l', (240, 208, 104)), ('banner_d', (120, 32, 32)), ('banner', (184, 52, 44)),
     ('gold', (232, 184, 64)), ('cobble_d', (116, 100, 80)), ('cobble_l', (184, 168, 136)),
     ('plaster', (224, 208, 168)),
+]
+
+# Gadgetzan: adobe walls, goblin timber and blue Steamwheedle banners.
+BUILDINGS_GADGETZAN = [
+    ('outline', (40, 28, 24)), ('stone_d', (148, 104, 68)), ('stone_m', (188, 144, 100)),
+    ('stone_l', (212, 176, 140)), ('stone_h', (236, 212, 172)),
+    ('wood_d', (96, 60, 36)), ('wood_l', (148, 100, 60)), ('glass_d', (48, 48, 64)),
+    ('glass_l', (240, 200, 96)), ('banner_d', (40, 72, 112)), ('banner', (64, 108, 160)),
+    ('gold', (232, 184, 64)), ('cobble_d', (120, 100, 80)), ('cobble_l', (180, 160, 128)),
+    ('plaster', (232, 212, 176)),
 ]
 
 FARM = [
@@ -287,6 +317,15 @@ OVERHEAD_LEAVES_JUNGLE = [
     ('roof_d', (48, 56, 96)), ('roof_m', (72, 88, 136)), ('roof_l', (104, 128, 176)),
     ('stone_d', (104, 104, 80)), ('stone_m', (144, 140, 104)), ('stone_l', (180, 172, 128)),
     ('gold', (232, 184, 64)), ('glass', (40, 56, 72)), ('roof_h', (144, 168, 208)),
+]
+
+# Desert palms and cactus; Gadgetzan's roofs are rusty sheet iron.
+OVERHEAD_LEAVES_DESERT = [
+    ('outline', (32, 36, 20)), ('leaf_0', (52, 72, 32)), ('leaf_1', (76, 100, 40)),
+    ('leaf_2', (104, 128, 52)), ('leaf_3', (136, 156, 68)), ('leaf_4', (176, 188, 104)),
+    ('roof_d', (96, 60, 44)), ('roof_m', (136, 88, 60)), ('roof_l', (176, 120, 80)),
+    ('stone_d', (148, 104, 68)), ('stone_m', (188, 144, 100)), ('stone_l', (212, 176, 140)),
+    ('gold', (232, 184, 64)), ('glass', (48, 48, 64)), ('roof_h', (204, 152, 104)),
 ]
 
 OVERHEAD_ROOFS = [
@@ -843,6 +882,22 @@ ROCK_STRANGLETHORN = [
     ('r_grass_l', (72, 152, 64)), ('r_grass_h', (120, 188, 88)),
     ('rock_0', (36, 44, 40)), ('rock_1', (64, 76, 64)), ('rock_2', (92, 108, 88)),
     ('rock_3', (124, 140, 112)), ('rock_4', (160, 172, 140)), ('rock_5', (200, 208, 176)),
+]
+
+# Tanaris's sandstone, with twins of TERRAIN_TANARIS's sand.
+ROCK_TANARIS = [
+    ('r_shadow', (112, 76, 52)), ('r_grass_d', (184, 140, 92)), ('r_grass_m', (212, 172, 116)),
+    ('r_grass_l', (228, 196, 140)), ('r_grass_h', (244, 220, 172)),
+    ('rock_0', (88, 52, 36)), ('rock_1', (132, 84, 52)), ('rock_2', (168, 116, 72)),
+    ('rock_3', (196, 148, 96)), ('rock_4', (220, 180, 128)), ('rock_5', (240, 208, 160)),
+]
+
+# The red mesas of Thousand Needles, with twins of TERRAIN_NEEDLES's floor.
+ROCK_NEEDLES = [
+    ('r_shadow', (88, 44, 40)), ('r_grass_d', (152, 92, 64)), ('r_grass_m', (184, 120, 80)),
+    ('r_grass_l', (204, 148, 100)), ('r_grass_h', (224, 180, 128)),
+    ('rock_0', (72, 32, 24)), ('rock_1', (116, 52, 36)), ('rock_2', (156, 76, 48)),
+    ('rock_3', (188, 104, 64)), ('rock_4', (216, 140, 92)), ('rock_5', (236, 184, 136)),
 ]
 
 # Terrain colors as the rock bank draws them.

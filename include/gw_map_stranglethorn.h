@@ -407,9 +407,11 @@ namespace gw::map_data::stranglethorn
     constexpr point_def booty_bay_respawn = { 776, 1396 };
     constexpr point_def flight = { 656, 1416 };
     constexpr point_def from_duskwood = { 304, 28 };
+    constexpr point_def from_tanaris = { 720, 1440 };
     constexpr point_def rebel_camp_respawn = { 312, 236 };
 
     constexpr warp_def warps[] = {
+        { 708, 1488, 24, 8, map_id::TANARIS, 912, 628, vehicle::BOAT },
         { 280, 0, 48, 8, map_id::DUSKWOOD, 168, 996 },
     };
 

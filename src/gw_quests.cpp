@@ -1480,6 +1480,235 @@ namespace
             kill(e::SCARLET_COMMANDER_MOGRAINE, 1, "Mograine slain"),
             kill(e::HIGH_INQUISITOR_WHITEMANE, 1, "Whitemane slain") }, xp(40, 150), money(40),
           { i::SWORD_OF_OMEN, i::STAFF_OF_LORICA, i::BOW_OF_ABSOLUTION } },
+        // --- Tanaris ---------------------------------------------------------------------------------
+
+        { "Steamwheedle Business",
+          "The Steamwheedle Cartel runs a town in the deserts of Tanaris, across the sea in Kalimdor. "
+          "Gadgetzan, they call it. Water, coin and trouble, in that order.\n\n"
+          "Chief Engineer Bilgewhizzle wrote asking for a hero. Take my boat from the south pier.",
+          "Take the boat from Booty Bay to Tanaris and speak with Bilgewhizzle in Gadgetzan.",
+          "",
+          "Revilgaz sent you? Then he owes me a favor, and you're it. Welcome to Gadgetzan.",
+          n::REVILGAZ, n::BILGEWHIZZLE, 40, 38, qid::PASSAGE_TO_BOOTY_BAY, { none, none, none }, xp(40, 25),
+          money(40), { i::NONE, i::NONE, i::NONE } },
+
+        { "Wastewander Justice",
+          "The Wastewander bandits hold the oases east of town. They rob our caravans, poison our "
+          "wells and sell the water back to us.\n\n"
+          "The Cartel wants them gone. Bandits and thieves both.",
+          "Kill 8 Wastewander Bandits and 4 Wastewander Thieves in the oases of Tanaris.",
+          "The bandits still rob our caravans.",
+          "Ha! That'll teach them to steal from goblins. Here's your pay.",
+          n::BILGEWHIZZLE, n::BILGEWHIZZLE, 40, 38, qid::STEAMWHEEDLE_BUSINESS,
+          { kill(e::WASTEWANDER_BANDIT, 8, "Wastewander Bandit slain"),
+            kill(e::WASTEWANDER_THIEF, 4, "Wastewander Thief slain"), none }, xp(40, 75), money(40),
+          { i::BANDIT_HUNTER_GAUNTLETS, i::OASIS_WRAPS, i::WASTEWANDER_GRIPS } },
+
+        { "Water Pouch Bounty",
+          "Every drop the Wastewanders steal ends up in their pouches. My dowsing rod found the water; "
+          "they found my pumps.\n\n"
+          "Bring back their water pouches. The shadow mages carry the most.",
+          "Bring 8 Wastewander Water Pouches to Fizzledowser in Gadgetzan.",
+          "No pouches? The town is thirsty.",
+          "Full ones, too! Gadgetzan drinks tonight.",
+          n::FIZZLEDOWSER, n::FIZZLEDOWSER, 41, 39, qid::STEAMWHEEDLE_BUSINESS,
+          { collect(e::WASTEWANDER_SHADOW_MAGE, 8, 50, "Wastewander Water Pouch", e::WASTEWANDER_BANDIT), none,
+            none }, xp(41, 75), money(41), { i::WATERSPRING_SABATONS, i::OASIS_SANDALS, i::DUNE_TREADS } },
+
+        { "Caliph Scorpidsting",
+          "The Wastewanders answer to one boss: Caliph Scorpidsting, who sits in the ruins of Noonshade "
+          "like a king.\n\n"
+          "He's no common bandit. Take friends, take potions, and take his head.",
+          "Kill Caliph Scorpidsting at Noonshade Ruins.",
+          "The Caliph still rules the oases.",
+          "The Caliph is dead? The Cartel pays well for good news. Pick something.",
+          n::BILGEWHIZZLE, n::BILGEWHIZZLE, 43, 41, qid::WASTEWANDER_JUSTICE,
+          { kill(e::CALIPH_SCORPIDSTING, 1, "Caliph Scorpidsting slain"), none, none }, xp(43, 125), money(43),
+          { i::CALIPHS_SCIMITAR, i::SCORPIDSTING_STAFF, i::STINGER_LONGBOW } },
+
+        { "Southsea Shakedown",
+          "Southsea pirates have dropped anchor at Lost Rigger Cove, down the coast. They board every "
+          "ship that leaves the port.\n\n"
+          "Bad for business. Show them the door, cannoneers and all.",
+          "Kill 6 Southsea Pirates and 3 Southsea Cannoneers at Lost Rigger Cove.",
+          "The pirates still board our ships.",
+          "The ships sail clean again. Stoley thanks you, and so does his ledger.",
+          n::STOLEY, n::STOLEY, 43, 41, qid::STEAMWHEEDLE_BUSINESS,
+          { kill(e::SOUTHSEA_PIRATE, 6, "Southsea Pirate slain"),
+            kill(e::SOUTHSEA_CANNONEER, 3, "Southsea Cannoneer slain"), none }, xp(43, 75), money(43),
+          { i::SHAKEDOWN_LEGGUARDS, i::STEAMWHEEDLE_TROUSERS, i::SMUGGLER_BREECHES } },
+
+        { "Andre Firebeard",
+          "The Southsea captain is Andre Firebeard. Set fire to his own beard once, and liked it.\n\n"
+          "He camps at the end of the cove with his best men. End his career.",
+          "Kill Andre Firebeard at Lost Rigger Cove.",
+          "Firebeard still sails.",
+          "Firebeard is done? Then so are the Southsea. Have a hat, it's on the house.",
+          n::STOLEY, n::STOLEY, 44, 42, qid::SOUTHSEA_SHAKEDOWN,
+          { kill(e::ANDRE_FIREBEARD, 1, "Andre Firebeard slain"), none, none }, xp(44, 125), money(44),
+          { i::FIREBEARDS_HELM, i::CORSAIRS_TRICORN, i::PIRATE_BANDANA } },
+
+        { "Dunemaul Compound",
+          "Ogres of the Dunemaul clan hold a compound in the south of the desert. They ambush our "
+          "caravans and eat the camels. Sometimes the drivers.\n\n"
+          "Break their brutes and their mages.",
+          "Kill 6 Dunemaul Brutes and 3 Dunemaul Ogre Mages at the Dunemaul Compound.",
+          "The ogres still raid the caravans.",
+          "The caravan road is open. My smith made this for whoever did the job.",
+          n::TRENTON, n::TRENTON, 43, 41, qid::STEAMWHEEDLE_BUSINESS,
+          { kill(e::DUNEMAUL_BRUTE, 6, "Dunemaul Brute slain"),
+            kill(e::DUNEMAUL_OGRE_MAGE, 3, "Dunemaul Ogre Mage slain"), none }, xp(43, 75), money(43),
+          { i::OGRESLAYER_HAUBERK, i::DUNEMAUL_ROBE, i::OGREHIDE_JERKIN } },
+
+        { "Sandsorrow Watch",
+          "The Sandfury trolls of Zul'Farrak have a camp north of here: Sandsorrow Watch. Skinners and "
+          "axe throwers, watching our road.\n\n"
+          "Clear it before they cut us off.",
+          "Kill 6 Sandfury Hideskinners and 4 Sandfury Axe Throwers at Sandsorrow Watch.",
+          "The Sandfury still watch the road.",
+          "Good. Now the trolls know we can bite back.",
+          n::TRANREK, n::TRANREK, 42, 40, qid::STEAMWHEEDLE_BUSINESS,
+          { kill(e::SANDFURY_HIDESKINNER, 6, "Sandfury Hideskinner slain"),
+            kill(e::SANDFURY_AXE_THROWER, 4, "Sandfury Axe Thrower slain"), none }, xp(42, 75), money(42),
+          { i::SANDSORROW_GAUNTLETS, i::SANDSORROW_WRAPS, i::SANDSORROW_GRIPS } },
+
+        { "Troll Temper",
+          "The Sandfury of Zul'Farrak brew something they call troll temper. One vial and a troll "
+          "fights through any wound.\n\n"
+          "I want to know how it works. Bring me six vials from the trolls inside the city.",
+          "Bring 6 Vials of Troll Temper from the Sandfury trolls in Zul'Farrak to Trenton Lighthammer.",
+          "No vials yet? The trolls drink them fast.",
+          "Six vials! With these I can temper steel no troll can break. Here, the first of it.",
+          n::TRENTON, n::TRENTON, 44, 42, qid::DUNEMAUL_COMPOUND,
+          { collect(e::SANDFURY_BLOOD_DRINKER, 6, 60, "Vial of Troll Temper", e::SANDFURY_SHADOWCASTER), none,
+            none }, xp(44, 75), money(44), { i::TEMPERED_TROLL_BLADE, i::JUJU_STAFF, i::TROLL_HUNTERS_BOW } },
+
+        { "Scarab Shells",
+          "The scarabs of Zul'Farrak have shells harder than steel. The trolls let them breed in the "
+          "basin west of the pyramid.\n\n"
+          "Bring me four uncracked shells. I know a buyer.",
+          "Bring 4 Uncracked Scarab Shells from the scarabs of Zul'Farrak to Tran'rek.",
+          "Cracked shells are worthless.",
+          "Not a crack on them. My buyer will be happy, and so will you.",
+          n::TRANREK, n::TRANREK, 44, 42, qid::SANDSORROW_WATCH,
+          { collect(e::SCARAB, 4, 60, "Uncracked Scarab Shell"), none, none }, xp(44, 75), money(44),
+          { i::SCARAB_PLATED_BOOTS, i::SCARAB_SLIPPERS, i::CARAPACE_BOOTS } },
+
+        { "Gahz'rilla",
+          "There's a hydra in Zul'Farrak, in a pool by the west wall. Gahz'rilla. The trolls ring a "
+          "gong to call her up.\n\n"
+          "Her scales hold a charge like nothing else. Ring the gong and bring me one!",
+          "Ring the gong at Gahz'rilla's pool in Zul'Farrak and bring her scale to Wizzle Brassbolts.",
+          "Still no scale? Our engine waits!",
+          "It's humming! This will win us every race on the Flats. Take this, partner.",
+          n::WIZZLE_BRASSBOLTS, n::WIZZLE_BRASSBOLTS, 45, 43, qid::THE_MIRAGE_RACEWAY,
+          { collect(e::GAHZ_RILLA, 1, 100, "Gahz'rilla's Scale"), none, none }, xp(45, 125), money(45),
+          { i::HYDRASCALE_LEGGUARDS, i::TIDEWEAVE_LEGGINGS, i::SCALED_LEGGINGS } },
+
+        { "Chief Ukorz Sandscalp",
+          "Every Sandfury raid, every troll at Sandsorrow, answers to Chief Ukorz Sandscalp. He sits "
+          "on a throne at the top of Zul'Farrak with his guard Ruuzlu.\n\n"
+          "Climb past the pyramid and end his reign.",
+          "Kill Chief Ukorz Sandscalp and Ruuzlu at the top of Zul'Farrak, then return to Tran'rek.",
+          "Ukorz still rules the city.",
+          "Ukorz is dead? Then the Sandfury will fight each other for years. Gadgetzan owes you.",
+          n::TRANREK, n::TRANREK, 45, 43, qid::SANDSORROW_WATCH,
+          { kill(e::CHIEF_UKORZ_SANDSCALP, 1, "Chief Ukorz slain"), kill(e::RUUZLU, 1, "Ruuzlu slain"), none },
+          xp(45, 150), money(45), { i::UKORZS_GREATAXE, i::STAFF_OF_THE_SANDFURY, i::ZUL_FARRAK_LONGBOW } },
+
+        // --- Thousand Needles ------------------------------------------------------------------------
+
+        { "The Mirage Raceway",
+          "The Cartel's racing crew is on the salt flats north of here, at the Mirage Raceway. Pozzik "
+          "runs the track, and he's short of hands.\n\n"
+          "Follow the road north into Thousand Needles.",
+          "Travel north to the Mirage Raceway in Thousand Needles and speak with Pozzik.",
+          "",
+          "Bilgewhizzle sent help? About time. The track's a mess.",
+          n::BILGEWHIZZLE, n::POZZIK, 40, 38, qid::STEAMWHEEDLE_BUSINESS, { none, none, none }, xp(40, 25),
+          money(40), { i::NONE, i::NONE, i::NONE } },
+
+        { "Galak Raiders",
+          "The Galak centaurs ride down from Camp E'thok in the north and raid our camp. Scouts with "
+          "bows and windchasers with lightning.\n\n"
+          "Ride them down before they ride us down.",
+          "Kill 8 Galak Scouts and 6 Galak Windchasers in Thousand Needles.",
+          "The centaurs still raid our camp.",
+          "Quiet nights at last. Kravel's grateful, and Kravel pays.",
+          n::KRAVEL, n::KRAVEL, 41, 39, qid::THE_MIRAGE_RACEWAY,
+          { kill(e::GALAK_SCOUT, 8, "Galak Scout slain"), kill(e::GALAK_WINDCHASER, 6, "Galak Windchaser slain"),
+            none }, xp(41, 75), money(41), { i::GALAK_HELM, i::WINDCHASER_HOOD, i::GALAK_HIDE_CAP } },
+
+        { "Saltstone Basilisks",
+          "Basilisks wander onto the track and chew the tires. Saltstone basilisks, skins like rock.\n\n"
+          "Kill eight of them. I'll make it worth your while.",
+          "Kill 8 Saltstone Basilisks on the salt flats of Thousand Needles.",
+          "The basilisks still chew on my tires.",
+          "Clear track, clean wheels! Take a tool from the pit crew.",
+          n::POZZIK, n::POZZIK, 42, 40, qid::THE_MIRAGE_RACEWAY,
+          { kill(e::SALTSTONE_BASILISK, 8, "Saltstone Basilisk slain"), none, none }, xp(42, 75), money(42),
+          { i::RACEWAY_WRENCH, i::SALT_FLATS_STAFF, i::RACERS_RIFLE } },
+
+        // --- Razorfen Kraul ---------------------------------------------------------------------------
+
+        { "Into the Kraul",
+          "The quilboar of the Razorfen live in a maze of thorns north-west of here: Razorfen Kraul. "
+          "They raid the raceway for scrap.\n\n"
+          "Go into the Kraul and thin out their quilguards and geomancers.",
+          "Kill 6 Razorfen Quilguards and 4 Razorfen Geomancers in Razorfen Kraul.",
+          "The quilboar still raid us.",
+          "Fewer quilboar, more scrap for us. Good trade.",
+          n::FIZZLE_BRASSBOLTS, n::FIZZLE_BRASSBOLTS, 41, 39, qid::THE_MIRAGE_RACEWAY,
+          { kill(e::RAZORFEN_QUILGUARD, 6, "Razorfen Quilguard slain"),
+            kill(e::RAZORFEN_GEOMANCER, 4, "Razorfen Geomancer slain"), none }, xp(41, 75), money(41),
+          { i::QUILGUARD_LEGGUARDS, i::BRAMBLECLOTH_PANTS, i::THORNHIDE_PANTS } },
+
+        { "The Crone of the Kraul",
+          "The Kraul's mistress is Charlga Razorflank, an old crone who heals her guards as fast as you "
+          "cut them. She lives in a sanctum at the far end of the thorns.\n\n"
+          "Kill her, and the Kraul falls apart.",
+          "Kill Charlga Razorflank in Razorfen Kraul.",
+          "The crone still lives.",
+          "Charlga's dead? Then the Kraul has no queen. Take this, you earned every thorn.",
+          n::FIZZLE_BRASSBOLTS, n::FIZZLE_BRASSBOLTS, 42, 40, qid::INTO_THE_KRAUL,
+          { kill(e::CHARLGA_RAZORFLANK, 1, "Charlga Razorflank slain"), none, none }, xp(42, 125), money(42),
+          { i::RAZORFLANK_BLADE, i::CRONES_STAFF, i::THORNWEAVE_BOW } },
+
+        // --- Razorfen Downs ---------------------------------------------------------------------------
+
+        { "Downs of the Dead",
+          "The Scourge came to the Razorfen Downs, north of the raceway. Now the quilboar there serve "
+          "a lich, and their dead walk.\n\n"
+          "The Argent Dawn asks you to strike first. Break its quilguards and splinterbone warriors.",
+          "Kill 5 Withered Quilguards and 5 Splinterbone Warriors in Razorfen Downs.",
+          "The Downs still crawl with the dead.",
+          "Good work. The Dawn is in your debt.",
+          n::ARGENT_GUARD_DALEN, n::ARGENT_GUARD_DALEN, 42, 40, qid::NONE,
+          { kill(e::WITHERED_QUILGUARD, 5, "Withered Quilguard slain"),
+            kill(e::SPLINTERBONE_WARRIOR, 5, "Splinterbone Warrior slain"), none }, xp(42, 75), money(42),
+          { i::BONELINK_GAUNTLETS, i::BARROWCLOTH_GLOVES, i::DEATHSHEAD_GRIPS } },
+
+        { "The Gong of the Downs",
+          "In the middle of the Downs hangs a great gong. Ring it, they say, and Tuten'kash comes up "
+          "from below with all her brood.\n\n"
+          "Ring it and kill her before she lays more.",
+          "Ring the gong in Razorfen Downs and kill Tuten'kash.",
+          "Tuten'kash still nests below.",
+          "The brood mother is dead? Then the Downs have one horror fewer.",
+          n::ARGENT_GUARD_DALEN, n::ARGENT_GUARD_DALEN, 42, 40, qid::DOWNS_OF_THE_DEAD,
+          { kill(e::TUTEN_KASH, 1, "Tuten'kash slain"), none, none }, xp(42, 100), money(42),
+          { i::CARAPACE_HAUBERK, i::WEBSPINNER_ROBE, i::TOMB_FIEND_JERKIN } },
+
+        { "Bring the Light",
+          "The lich of the Downs is Amnennar the Coldbringer. His frost holds the quilboar dead "
+          "together, and his spectres guard his crypt.\n\n"
+          "Bring the Light to him. Destroy him, and the Downs may rest.",
+          "Kill Amnennar the Coldbringer in Razorfen Downs.",
+          "Amnennar still rules the Downs.",
+          "The Coldbringer is gone. The Argent Dawn will remember your name.",
+          n::ARGENT_GUARD_DALEN, n::ARGENT_GUARD_DALEN, 43, 41, qid::DOWNS_OF_THE_DEAD,
+          { kill(e::AMNENNAR_THE_COLDBRINGER, 1, "Amnennar slain"), none, none }, xp(43, 150), money(43),
+          { i::LIGHTFORGED_BLADE, i::STAFF_OF_THE_DAWN, i::ARGENT_LONGBOW } },
     };
 
     static_assert(sizeof(quests) / sizeof(quests[0]) == int(quest_id::COUNT));

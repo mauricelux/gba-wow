@@ -91,6 +91,11 @@ enum class map_id : uint16_t
     STRANGLETHORN,
     SM_ARMORY,
     SM_CATHEDRAL,
+    TANARIS,
+    THOUSAND_NEEDLES,
+    RAZORFEN_KRAUL,
+    RAZORFEN_DOWNS,
+    ZUL_FARRAK,
     COUNT
 };
 
@@ -109,7 +114,8 @@ enum class music_id : uint8_t
     WETLANDS,
     HILLSBRAD,
     MONASTERY,
-    STRANGLETHORN
+    STRANGLETHORN,
+    TANARIS
 };
 
 enum class area_id : uint8_t
@@ -123,7 +129,9 @@ enum class area_id : uint8_t
     MISTMANTLE_MANOR,
     THANDOL_SPAN,
     RADIATION,          // fallout that burns whoever stands in it; unnamed, under a named room
-    THE_STACKS
+    THE_STACKS,
+    GONG,               // where A rings a gong that starts an event (combat::start_event); unnamed
+    CAGE                // the same for a cage whose lock is broken
 };
 
 enum class npc_id : uint16_t
@@ -267,6 +275,22 @@ enum class npc_id : uint16_t
     BRUISER,
     BOOTY_BAY_VENDOR,
     BOOTY_BAY_SMITH,
+    // Tanaris and Thousand Needles
+    BILGEWHIZZLE,
+    FIZZGRIMBLE,
+    BLIZRIK,
+    KRINKLE,
+    TRENTON,
+    FIZZLEDOWSER,
+    TRANREK,
+    BERA,
+    GADGETZAN_BRUISER,
+    STOLEY,
+    POZZIK,
+    KRAVEL,
+    FIZZLE_BRASSBOLTS,
+    WIZZLE_BRASSBOLTS,
+    ARGENT_GUARD_DALEN,
     COUNT
 };
 
@@ -458,6 +482,63 @@ enum class enemy_id : uint16_t
     HIGH_INQUISITOR_FAIRBANKS,
     SCARLET_COMMANDER_MOGRAINE,
     HIGH_INQUISITOR_WHITEMANE,
+    // Tanaris
+    WASTEWANDER_BANDIT,
+    WASTEWANDER_THIEF,
+    WASTEWANDER_SHADOW_MAGE,
+    CALIPH_SCORPIDSTING,
+    BLISTERPAW_HYENA,
+    SCORPID_HUNTER,
+    SCORPID_REAVER,
+    DUNEMAUL_BRUTE,
+    DUNEMAUL_OGRE_MAGE,
+    OMGORN_THE_LOST,
+    SOUTHSEA_PIRATE,
+    SOUTHSEA_CANNONEER,
+    ANDRE_FIREBEARD,
+    SANDFURY_HIDESKINNER,
+    SANDFURY_AXE_THROWER,
+    // Thousand Needles
+    GALAK_SCOUT,
+    GALAK_WINDCHASER,
+    SALTSTONE_BASILISK,
+    // Razorfen Kraul
+    RAZORFEN_QUILGUARD,
+    RAZORFEN_GEOMANCER,
+    RAZORFEN_TOTEMIC,
+    RAGING_AGAMAR,
+    AGGEM_THORNCURSE,
+    DEATH_SPEAKER_JARGBA,
+    OVERLORD_RAMTUSK,
+    AGATHELOS_THE_RAGING,
+    CHARLGA_RAZORFLANK,
+    // Razorfen Downs
+    DEATHS_HEAD_ACOLYTE,
+    WITHERED_QUILGUARD,
+    SKELETAL_FROSTWEAVER,
+    SPLINTERBONE_WARRIOR,
+    TOMB_FIEND,
+    TUTEN_KASH,
+    MORDRESH_FIRE_EYE,
+    GLUTTON,
+    FROZEN_SPECTRE,
+    AMNENNAR_THE_COLDBRINGER,
+    // Zul'Farrak
+    SANDFURY_SHADOWCASTER,
+    SANDFURY_BLOOD_DRINKER,
+    ZULFARRAK_ZOMBIE,
+    SCARAB,
+    SULLITHUZ_BROODLING,
+    ANTU_SUL,
+    THEKA_THE_MARTYR,
+    WITCH_DOCTOR_ZUM_RAH,
+    GAHZ_RILLA,
+    NEKRUM_GUTCHEWER,
+    SHADOWPRIEST_SEZZ_ZIZ,
+    RUUZLU,
+    CHIEF_UKORZ_SANDSCALP,
+    SANDFURY_SLAVE,
+    SANDFURY_DRUDGE,
     COUNT
 };
 

@@ -312,6 +312,46 @@ HEAD_PATCHES = {
             '...obBbBo.......',
         ])),
     },
+    # A quilboar: a boar's head on the shared body, with a flat pig snout (the lower face) and its two nostrils,
+    # beady eyes, small pointed ears, two tusks (the trim color) curving up from the jaw and a mane of spiky quills
+    # (the hair) standing up over the head and running down the back of the neck.
+    'quilboar': {
+        'front': dict(enumerate([
+            '.....h.H',
+            '..s..hHH',
+            '..SshHHH',
+            '..oSShHH',
+            '..oSoShH',
+            '..oSSSmm',
+            '..oSgmmm',
+            '..oSgmsm',
+            '...osgmm',
+        ])),
+        'back': dict(enumerate([
+            '.....h.H',
+            '..S..hHH',
+            '..SshHHH',
+            '..oSShHH',
+            '..oSSShH',
+            '..oSShHH',
+            '..oSSShH',
+            '..ossshH',
+            '...osshH',
+            '.ooAAohH',
+        ])),
+        'side': dict(enumerate([
+            '.........h.h....',
+            '.......hhHhHh...',
+            '.....SshHHHHHh..',
+            '....oSSSShHHHHh.',
+            '...oSSSSSShHHh..',
+            '..oSoSSSSSShHHHh',
+            'mmmSSSSSSSShHHh.',
+            'omgSSSSSSSShHHHh',
+            'mmgsSSSSSsohHh..',
+            '..ooooAAoohHHo..',
+        ])),
+    },
 }
 
 # The gnome's cast pose: the arms raised out to the sides, below the ears.
@@ -721,6 +761,8 @@ HUMANOID_SHEETS = {
     'troll_staff': Humanoid('troll', 'robe', 'staff'),
     'goblin_plain': Humanoid('goblin', 'armor', 'none'),
     'goblin_sword': Humanoid('goblin', 'armor', 'sword'),
+    'quilboar_sword': Humanoid('quilboar', 'armor', 'sword'),
+    'quilboar_staff': Humanoid('quilboar', 'robe', 'staff'),
 }
 
 # --- creatures --------------------------------------------------------------------------------------
@@ -2590,6 +2632,176 @@ def spirit(step, pose):
     return wisps(img, (xs >= 26) | (ys >= y0 + 23), keep=step % 2)
 
 
+def hoof_leg(c, x, top, lift, key, dark=None, hoof='extra_dark'):
+    """A slender horse leg from row top to the feet line, lift pixels off the ground mid-stride, with a hoof."""
+    c.rect(x, top, x + 1, 27 - lift, key, dark=dark)
+    c.rect(x - (1 if lift else 0), 28 - lift, x + 1, 28 - lift, hoof)
+
+
+def centaur(step, pose):
+    """A centaur: a horse's body on four slender legs, a long tail and, rising from its chest, a man's bare torso
+    (second) with long hair (extra) and a painted harness (flame). It carries a spear upright and thrusts it to
+    attack, and dies on its side with the legs stiff in the air and the spear dropped."""
+    c = Canvas()
+    if pose == 'dead':
+        for x0, x1 in ((16, 14), (24, 26)):                                               # far legs in the air
+            c.line(x0, 23, x1, 18, 'dark')
+            c.rect(x1, 17, x1 + 1, 17, 'extra_dark')
+        c.part(tube(c, [(27, 25.5), (30, 26.5), (31, 28)], 1.4, 1), 'extra', dark='extra_dark')       # tail
+        body = c.ellipse_mask(20, 25.5, 8, 3.2)
+        c.part(body, 'main', dark='dark', light='light')
+        for x0, x1 in ((18, 17), (22, 23)):                                               # near legs in the air
+            c.line(x0, 23, x1, 18, 'main', width=2, light='light')
+            c.rect(x1, 17, x1 + 1, 17, 'extra_dark', edge=False)
+        c.line(0, 28, 11, 28, 'weapon')                                                   # the dropped spear
+        c.px(0, 28, 'tooth')
+        c.part(tube(c, [(3, 23.5), (7, 23), (11, 23.5)], 1.4, 1), 'extra', dark='extra_dark')  # hair spread out
+        c.rect(6, 25, 13, 27, 'second', dark='second_dark', light='light')                # torso on the ground
+        c.rect(11, 25, 13, 27, 'flame', dark='flame_dark', edge=False)                    # belt
+        c.ellipse(3.5, 25.5, 2.5, 2.5, 'second', light='light', dark='second_dark')
+        c.line(2, 25, 3, 25, 'outline', edge=False)                                       # eyes shut
+        return c.done()
+    s = STRIDE[step]
+    b = 1 if step in (1, 3) else 0
+    attack = pose == 'attack'
+    lift = [(0, 0), (1, 0), (0, 0), (0, 1)][step]                                       # diagonal pairs step
+    u = -1 if attack else 0
+    tail = tube(c, [(27, 16 + b), (29.5, 18 + b), (30.5, 22 + b - step % 2), (30, 25)], 1.6, 1)
+    c.part(tail, 'extra', dark='extra_dark')
+    hoof_leg(c, 13 - s // 2, 21, lift[1], 'dark')                                       # far legs
+    hoof_leg(c, 25 + s // 2, 21, lift[0], 'dark')
+    if attack:
+        c.line(15, 11 + b, 10, 12 + b, 'second_dark', width=2)                         # far arm on the shaft
+    else:
+        c.line(15, 11 + b, 14, 15 + b, 'second_dark', width=2)                         # far arm hanging
+    body = c.ellipse_mask(19.5, 19 + b, 8.5, 4.5)
+    c.part(body, 'main', dark='dark', light='light')
+    hoof_leg(c, 15 + s // 2, 21, lift[0], 'main', dark='dark')                          # near legs
+    hoof_leg(c, 23 - s // 2, 21, lift[1], 'main', dark='dark')
+    torso = c.poly_mask([(11 + u, 9 + b), (17 + u, 9 + b), (17, 17 + b), (11, 18 + b)])
+    c.part(torso, 'second', dark='second_dark', light='light')
+    c.rect(11, 15 + b, 17, 16 + b, 'flame', dark='flame_dark', edge=False)              # belt
+    c.line(12 + u, 10 + b, 16, 15 + b, 'flame', edge=False)                             # strap
+    hx, hy = 13 + u * 2, 5 + b
+    hair = c.poly_mask([(hx - 1, hy - 3.5), (hx + 3, hy - 3.5), (hx + 5.5, hy + 4), (hx + 6, hy + 8),
+                        (hx + 3, hy + 7), (hx + 1, hy + 1)])
+    c.part(hair, 'extra', dark='extra_dark')
+    c.ellipse(hx, hy, 2.5, 3, 'second', light='light', dark='second_dark')             # head
+    c.rect(hx - 1, hy - 3, hx + 2, hy - 2, 'extra', edge=False)                         # fringe
+    c.px(hx - 1, hy - 1, 'eye')
+    c.px(hx - 3, hy + 1, 'second_dark')                                                 # nose
+    if attack:
+        c.line(26, 12 + b, 3, 12 + b, 'weapon')                                         # spear thrust
+        c.line(26, 11 + b, 26, 13 + b, 'weapon_dark', edge=False)
+        c.poly([(3, 10 + b), (3, 14 + b), (-0.6, 12 + b)], 'tooth', dark='tooth_dark')
+        c.line(13 + u, 10 + b, 7, 12 + b, 'second', width=2, light='light')            # near arm thrust out
+        c.px(6, 12 + b, 'second_dark')
+    else:
+        c.line(8, 3, 8, 26, 'weapon')                                                   # spear held upright
+        c.poly([(6.6, 4), (9.4, 4), (8, 0.4)], 'tooth', dark='tooth_dark')
+        c.line(13, 10 + b, 9, 14 + b, 'second', width=2, light='light')                # near arm
+        c.px(8, 14 + b, 'second_dark')
+    return c.done()
+
+
+# A scorpid's pincer facing left: the upper finger over a gap and the lower finger, on a heavy hand.
+SCORPID_CLAW = [
+    '...llll.',
+    '.lmmmmmm',
+    'lmddmmmm',
+    '.....mmd',
+    '.lmmmmmd',
+    '..ddddd.',
+]
+SCORPID_CLAW_OPEN = [
+    'l..llll.',
+    '.lmmmmmm',
+    '..ddmmmm',
+    '.....mmd',
+    '.....mmd',
+    '.lmmmmmd',
+    '..ddddd.',
+]
+
+
+def scorpid_tail(c, path, r0, r1):
+    """A scorpid's tail along path: a tube of armored segments, a dark notch at every joint."""
+    tail = tube(c, path, r0, r1)
+    c.part(tail, 'main', dark='dark', light='light')
+    for (x0, y0), (x1, y1) in zip(path[1:-1], path[2:]):
+        dx, dy = x1 - x0, y1 - y0
+        n = float(np.hypot(dx, dy))
+        px, py = -dy / n, dx / n
+        for t in (-2.5, -1.5, -0.5, 0.5, 1.5, 2.5):
+            x, y = int(round(x0 + px * t)), int(round(y0 + py * t))
+            if 0 <= x < FRAME and 0 <= y < FRAME and tail[y, x]:
+                c.px(x, y, 'dark')
+
+
+def scorpid(step, pose):
+    """A scorpid: a low, wide plated body on eight short legs, two big pincers held out in front and a segmented
+    tail curling up over the back to a stinger (a bulb, second, and its barb, tooth) hanging over its head. It
+    strikes with the tail whipped forward, the stinger driven down in front of the open pincers, and dies on its
+    back, the legs curled up and the tail lying limp."""
+    c = Canvas()
+    if pose == 'dead':
+        for i, x in enumerate((11, 14, 17, 20, 23)):                                     # legs curled up
+            key = 'dark' if i % 2 else 'main'
+            c.line(x, 22, x + (1 if x > 17 else -1), 19, key)
+            c.px(x + (2 if x > 17 else -2), 18, key)
+        scorpid_tail(c, [(23, 26), (26, 27), (28.5, 26.5), (30, 24.5)], 1.9, 1.4)
+        c.px(30, 22, 'tooth')
+        c.px(29, 21, 'tooth_dark')
+        body = c.ellipse_mask(17, 25, 8, 3.4)
+        c.part(body, 'second', dark='second_dark', light='light')                     # belly up
+        for x in (12, 15, 18, 21):
+            c.line(x, 23, x, 27, 'second_dark', edge=False)
+        c.sticker(SCORPID_CLAW, 1, 23)                                                  # pincers slack
+        return c.done()
+    attack = pose == 'attack'
+    w = [0, 1, 0, -1][step]
+    b = 1 if step in (1, 3) else 0
+    lift = [(0, 0), (1, 0), (0, 0), (0, 1)][step]
+    # Far legs and the far pincer.
+    for i, (x, dx) in enumerate(((14, -2), (18, -1), (22, 1), (25, 2))):
+        up = lift[(i + 1) % 2]
+        c.line(x, 22, x + dx + (w if i % 2 else -w), 27 - up, 'dark')
+    claw = SCORPID_CLAW_OPEN if attack else SCORPID_CLAW
+    c.line(12, 21 + b, 9, 18 + b, 'dark', width=2)
+    c.sticker(claw, 3 if attack else 4, 14 + b - (1 if attack else 0), far=True)
+    # The tail, from the back of the body up and over to the stinger.
+    if attack:
+        path = [(23, 20), (26, 15), (25.5, 10), (22, 6), (17, 4.5), (12.5, 6)]
+        bulb, barb = (10.5, 8.5), [(9, 10), (8, 11), (7, 12), (6, 13)]
+    else:
+        path = [(23, 20 + b), (26.5, 16.5 + b), (27.5, 12 + b), (26 + w * 0.5, 8 + b), (22.5 + w, 6 + b),
+                (19 + w, 7 + b)]
+        bulb, barb = (17 + w, 10 + b), [(16 + w, 12 + b), (15.5 + w, 13 + b), (15.5 + w, 14 + b)]
+    scorpid_tail(c, path, 2.1, 1.5)
+    c.ellipse(bulb[0], bulb[1], 2.4, 2, 'second', dark='second_dark', light='light')
+    c.line(int(round(bulb[0])), int(round(bulb[1])), int(round(barb[0][0])), int(round(barb[0][1])), 'second',
+           edge=False)
+    for i, (x, y) in enumerate(barb):
+        c.px(int(round(x)), int(round(y)), 'tooth_dark' if i == len(barb) - 1 else 'tooth')
+    c.img[outline(c.img.copy()) == C['outline']] = C['outline']
+    # Near legs (under the body, which hides their tops).
+    for i, (x, dx) in enumerate(((12, -3), (16, -2), (20, 2), (24, 3))):
+        up = lift[i % 2]
+        c.line(x, 22, x + dx + (-w if i % 2 else w), 27 - up, 'main', light='light')
+    # The body: a wide plated carapace with a pale underside and the head in front.
+    body = c.ellipse_mask(18, 22 + b, 8, 3.4) | c.ellipse_mask(12.5, 22 + b, 3.5, 2.8)
+    c.part(body, 'main', dark='dark', light='light')
+    c.part(body & (c.ys >= 25 + b), 'second', edge=False)
+    for x in (15, 18, 21, 24):
+        c.line(x, 19 + b, x - 1, 23 + b, 'dark', edge=False)                            # plate seams
+    c.px(10, 20 + b, 'eye')
+    c.px(12, 19 + b, 'eye')
+    # The near pincer.
+    c.line(11, 23 + b, 8, 22 + b, 'main', width=2, light='light')
+    c.sticker(claw, 1 if attack else 2, 19 + b - (1 if attack else 0))
+    return c.done()
+
+
 CREATURES = {
     'water_elemental': water_elemental,
     'wolf': wolf,
@@ -2624,6 +2836,8 @@ CREATURES = {
     'spirit': spirit,
     'gorilla': gorilla,
     'tiger': lambda step, pose: cat(step, pose, stripes=True),         # the cat's own sheet stays unstriped
+    'centaur': centaur,
+    'scorpid': scorpid,
 }
 
 
@@ -2631,8 +2845,9 @@ CREATURES = {
 LYING_DEAD = {'worgen', 'worgen_caster', 'skeleton', 'skeleton_mage', 'yeti'}
 
 # Creatures that draw their own dead frame (pose 'dead'): an ooze dies as a puddle, a robot as a wreck, a spirit
-# as a fading wisp, a gorilla sprawled on its belly.
-OWN_DEAD = {'raptor', 'naga', 'naga_caster', 'hydra', 'trogg', 'ooze', 'robot', 'bomb', 'spirit', 'gorilla'}
+# as a fading wisp, a gorilla sprawled on its belly, a centaur on its side and a scorpid on its back.
+OWN_DEAD = {'raptor', 'naga', 'naga_caster', 'hydra', 'trogg', 'ooze', 'robot', 'bomb', 'spirit', 'gorilla',
+            'centaur', 'scorpid'}
 
 
 def creature_sheet(draw, lying=False, own_dead=False):
@@ -2844,6 +3059,7 @@ SKIN_FORSAKEN = (136, 152, 128)
 SKIN_TROLL = (88, 140, 168)
 SKIN_GOBLIN = (120, 176, 72)
 GOBLIN_TEETH = (240, 232, 200)
+SKIN_SANDFURY = (176, 148, 108)
 
 
 def orc_palette(armor, tabard, hair=(40, 32, 32), leather=(96, 64, 40), skin=SKIN_ORC, trim=TUSK):
@@ -2864,10 +3080,11 @@ def gnome_palette(hair, armor, tabard, trim=(232, 184, 64), skin=SKIN_GNOME, bea
                             lower_face=beard or (skin[0], skin[1], min(255, skin[2] + 8)), **kw)
 
 
-def troll_palette(hair, armor, tabard, trim=TUSK, skin=SKIN_TROLL, **kw):
-    """A troll: the mohawk is the hair, the tusks the trim and the long jaw the lower face, a shade off the skin."""
+def troll_palette(hair, armor, tabard, trim=TUSK, skin=SKIN_TROLL, jaw=None, **kw):
+    """A troll: the mohawk is the hair, the tusks the trim and the long jaw the lower face, a shade off the skin
+    unless it is given (a bone mask)."""
     return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=trim,
-                            lower_face=(max(0, skin[0] - 12), max(0, skin[1] - 12), max(0, skin[2] - 4)), **kw)
+                            lower_face=jaw or (max(0, skin[0] - 12), max(0, skin[1] - 12), max(0, skin[2] - 4)), **kw)
 
 
 def goblin_palette(armor, tabard, trim=(232, 184, 64), skin=SKIN_GOBLIN, teeth=GOBLIN_TEETH, hair=None, **kw):
@@ -2875,6 +3092,17 @@ def goblin_palette(armor, tabard, trim=(232, 184, 64), skin=SKIN_GOBLIN, teeth=G
     teeth are the lower face."""
     hair = hair or (int(skin[0] * 0.55), int(skin[1] * 0.55), int(skin[2] * 0.5))
     return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=trim, lower_face=teeth, **kw)
+
+
+SKIN_QUILBOAR = (168, 108, 92)
+QUILBOAR_QUILLS = (72, 52, 44)
+
+
+def quilboar_palette(armor, tabard, hair=QUILBOAR_QUILLS, trim=TUSK, skin=SKIN_QUILBOAR, snout=None, **kw):
+    """A quilboar: the quills are the hair, the tusks the trim and the snout the lower face (a pinker shade of the
+    skin unless it is given)."""
+    snout = snout or (min(255, skin[0] + 56), min(255, skin[1] + 52), min(255, skin[2] + 52))
+    return humanoid_palette(skin=skin, hair=hair, armor=armor, tabard=tabard, trim=trim, lower_face=snout, **kw)
 
 
 # Looks used by the player (race_class) and by NPCs and humanoid enemies. Each is a sheet + palette.
@@ -3316,6 +3544,130 @@ HUMANOID_LOOKS = {
     'high_inquisitor_whitemane': ('fem_robe', humanoid_palette(hair=(240, 240, 236), armor=(232, 228, 220),
                                                                tabard=(176, 32, 36), trim=(232, 192, 72),
                                                                armor_light=(248, 248, 244), hair_dark=(184, 184, 192))),
+    # Tanaris: Gadgetzan's goblins and their guests
+    'bilgewhizzle': ('goblin_plain', goblin_palette(armor=(104, 96, 88), tabard=(124, 84, 48), trim=(216, 172, 64),
+                                                    leather=(88, 60, 40))),
+    'trenton_lighthammer': ('dwarf_plain', dwarf_palette(hair=(48, 42, 46), beard=(68, 58, 58), armor=(140, 132, 124),
+                                                         tabard=(120, 84, 52), trim=(168, 168, 176),
+                                                         hair_dark=(32, 28, 32), leather=(88, 60, 40))),
+    'fizzledowser': ('gnome_plain', gnome_palette(hair=(208, 64, 40), armor=(176, 156, 108), tabard=(136, 116, 76),
+                                                  trim=(216, 180, 80), leather=(104, 72, 44))),
+    'tranrek': ('troll_staff', troll_palette(hair=(176, 64, 48), armor=(104, 60, 136), tabard=(64, 112, 64),
+                                             armor_light=(148, 100, 176))),
+    'bera_stonehammer': ('dwarf_plain', dwarf_palette(hair=(208, 144, 64), beard=(224, 168, 88), armor=(72, 104, 160),
+                                                      tabard=(48, 76, 140), trim=(232, 184, 64),
+                                                      hair_dark=(152, 96, 40))),
+    'innkeeper_fizzgrimble': ('goblin_plain', goblin_palette(armor=(152, 84, 56), tabard=(228, 220, 200),
+                                                             trim=(184, 152, 96), leather=(96, 64, 40))),
+    'blizrik_buckshot': ('goblin_plain', goblin_palette(armor=(96, 80, 64), tabard=(224, 184, 56), trim=(200, 200, 208),
+                                                        leather=(88, 60, 40))),
+    'krinkle_goodsteel': ('goblin_sword', goblin_palette(armor=(112, 108, 108), tabard=(124, 84, 52),
+                                                         trim=(176, 176, 184), leather=(80, 56, 40))),
+    'gadgetzan_bruiser': ('goblin_sword', goblin_palette(armor=(64, 64, 76), tabard=(184, 140, 56), trim=(216, 184, 96),
+                                                         armor_light=(112, 112, 128), leather=(72, 52, 40))),
+    'stoley': ('goblin_plain', goblin_palette(armor=(48, 72, 136), tabard=(40, 56, 104), trim=(232, 228, 216),
+                                              armor_light=(88, 116, 176), leather=(80, 56, 40))),
+    'pozzik': ('goblin_plain', goblin_palette(armor=(184, 48, 40), tabard=(56, 52, 56), trim=(232, 192, 72),
+                                              armor_light=(224, 96, 72), leather=(72, 52, 40))),
+    'kravel_koalbeard': ('gnome_plain', gnome_palette(hair=(176, 176, 180), beard=(200, 200, 204),
+                                                      armor=(176, 152, 112), tabard=(64, 88, 140),
+                                                      trim=(216, 176, 72))),
+    'fizzle_brassbolts': ('gnome_plain', gnome_palette(hair=(240, 128, 184), armor=(120, 72, 160), tabard=(88, 52, 120),
+                                                       trim=(216, 176, 72))),
+    'wizzle_brassbolts': ('gnome_plain', gnome_palette(hair=(240, 128, 184), armor=(80, 152, 80), tabard=(56, 112, 60),
+                                                       trim=(216, 176, 72))),
+    'argent_guard_dalen': ('hum_sword', humanoid_palette(hair=(136, 96, 56), armor=(192, 196, 212),
+                                                         tabard=(236, 236, 236), trim=(232, 192, 72),
+                                                         armor_light=(224, 228, 240))),
+    # Tanaris: the Wastewander bandits and the Southsea pirates
+    'wastewander_bandit': ('hum_sword', humanoid_palette(skin=SKIN_TAN, hair=(208, 184, 136), armor=(184, 160, 112),
+                                                         tabard=(152, 120, 80), trim=(96, 64, 40),
+                                                         lower_face=(56, 48, 48), leather=(104, 76, 48))),
+    'wastewander_thief': ('hum_sword', humanoid_palette(skin=SKIN_TAN, hair=(160, 120, 72), armor=(136, 100, 64),
+                                                        tabard=(104, 76, 48), trim=(184, 160, 112),
+                                                        lower_face=(112, 80, 52), leather=(64, 44, 28))),
+    'wastewander_shadow_mage': ('hum_staff', humanoid_palette(skin=SKIN_TAN, hair=(200, 176, 128), armor=(80, 48, 104),
+                                                              tabard=(56, 36, 72), trim=(208, 184, 128),
+                                                              armor_light=(120, 84, 144))),
+    'caliph_scorpidsting': ('hum_sword', humanoid_palette(skin=SKIN_TAN, hair=(236, 232, 220), hair_dark=(200, 160, 64),
+                                                          armor=(200, 180, 128), tabard=(168, 32, 44),
+                                                          trim=(232, 192, 72), lower_face=(48, 40, 36),
+                                                          leather=(104, 72, 44))),
+    'southsea_pirate': ('hum_sword', humanoid_palette(skin=SKIN_TAN, hair=(184, 40, 36), hair_dark=(120, 28, 24),
+                                                      armor=(224, 220, 208), tabard=(56, 80, 152), trim=(40, 36, 40),
+                                                      leather=(80, 56, 40))),
+    'southsea_cannoneer': ('hum_plain', humanoid_palette(skin=SKIN_TAN, hair=(48, 44, 52), armor=(48, 64, 128),
+                                                         tabard=(216, 208, 192), trim=(200, 168, 96),
+                                                         armor_light=(88, 108, 168), leather=(80, 56, 40))),
+    'andre_firebeard': ('hum_sword', humanoid_palette(hair=(176, 52, 28), armor=(44, 40, 48), tabard=(32, 28, 36),
+                                                      trim=(232, 192, 72), lower_face=(208, 72, 36),
+                                                      armor_light=(96, 88, 104), leather=(72, 52, 40))),
+    # Zul'Farrak: the Sandfury trolls
+    'sandfury_hideskinner': ('troll_sword', troll_palette(skin=SKIN_SANDFURY, hair=(200, 64, 40), armor=(136, 100, 64),
+                                                          tabard=(104, 72, 44), leather=(96, 64, 40))),
+    'sandfury_axe_thrower': ('troll_sword', troll_palette(skin=SKIN_SANDFURY, hair=(232, 120, 40), armor=(104, 80, 56),
+                                                          tabard=(200, 88, 32), leather=(88, 60, 40))),
+    'sandfury_shadowcaster': ('troll_staff', troll_palette(skin=SKIN_SANDFURY, hair=(48, 40, 48), armor=(72, 48, 88),
+                                                           tabard=(48, 36, 56), armor_light=(112, 84, 132))),
+    'sandfury_blood_drinker': ('troll_sword', troll_palette(skin=SKIN_SANDFURY, hair=(48, 36, 32), armor=(144, 32, 36),
+                                                            tabard=(96, 24, 28), armor_light=(192, 64, 60),
+                                                            leather=(88, 40, 36))),
+    'zulfarrak_zombie': ('troll_sword', troll_palette(skin=(136, 148, 120), hair=(96, 96, 88), armor=(104, 96, 80),
+                                                      tabard=(84, 76, 64), trim=(200, 196, 168), leather=(80, 68, 56))),
+    'antu_sul': ('troll_staff', troll_palette(skin=SKIN_SANDFURY, hair=(48, 40, 40), armor=(112, 60, 144),
+                                              tabard=(216, 208, 180), armor_light=(156, 104, 184))),
+    'theka_the_martyr': ('troll_sword', troll_palette(skin=SKIN_SANDFURY, hair=(40, 36, 40), armor=(208, 168, 64),
+                                                      tabard=(40, 136, 136), armor_light=(240, 212, 120),
+                                                      leather=(96, 64, 40))),
+    'witch_doctor_zum_rah': ('troll_staff', troll_palette(skin=SKIN_SANDFURY, hair=(224, 216, 188), jaw=(200, 192, 168),
+                                                          trim=(240, 236, 220), armor=(64, 120, 56),
+                                                          tabard=(48, 88, 44), hair_dark=(160, 148, 120))),
+    'nekrum_gutchewer': ('troll_sword', troll_palette(skin=(152, 184, 136), hair=(200, 200, 184), armor=(144, 92, 56),
+                                                      tabard=(96, 64, 44), armor_light=(184, 128, 80),
+                                                      leather=(80, 60, 44))),
+    'shadowpriest_sezz_ziz': ('troll_staff', troll_palette(skin=SKIN_SANDFURY, hair=(136, 72, 168), armor=(40, 36, 44),
+                                                           tabard=(104, 52, 144), armor_light=(84, 76, 92))),
+    'chief_ukorz_sandscalp': ('troll_sword', troll_palette(skin=SKIN_SANDFURY, hair=(232, 192, 72),
+                                                           hair_dark=(176, 136, 48), armor=(176, 40, 36),
+                                                           tabard=(112, 24, 28), armor_light=(240, 200, 88),
+                                                           leather=(96, 64, 40))),
+    'ruuzlu': ('troll_sword', troll_palette(skin=SKIN_SANDFURY, hair=(56, 44, 36), armor=(104, 72, 44),
+                                            tabard=(152, 112, 64), leather=(80, 56, 36))),
+    # Razorfen Kraul and Razorfen Downs: the quilboar
+    'razorfen_quilguard': ('quilboar_sword', quilboar_palette(armor=(140, 108, 72), tabard=(112, 80, 52),
+                                                              leather=(88, 60, 40))),
+    'razorfen_geomancer': ('quilboar_staff', quilboar_palette(armor=(104, 84, 60), tabard=(128, 92, 52),
+                                                              armor_light=(152, 128, 92))),
+    'razorfen_totemic': ('quilboar_staff', quilboar_palette(armor=(216, 208, 180), tabard=(72, 120, 64),
+                                                            armor_light=(240, 236, 220), trim=(248, 240, 216))),
+    'aggem_thorncurse': ('quilboar_staff', quilboar_palette(armor=(48, 80, 44), tabard=(36, 60, 36),
+                                                            hair=(88, 64, 48), armor_light=(88, 124, 72))),
+    'death_speaker_jargba': ('quilboar_staff', quilboar_palette(armor=(216, 208, 180), tabard=(40, 36, 44),
+                                                                armor_light=(240, 236, 220), trim=(248, 240, 216))),
+    'overlord_ramtusk': ('quilboar_sword', quilboar_palette(armor=(120, 124, 136), tabard=(88, 60, 44),
+                                                            hair=(48, 36, 32), armor_light=(172, 176, 188),
+                                                            leather=(72, 52, 40))),
+    'charlga_razorflank': ('quilboar_staff', quilboar_palette(armor=(112, 60, 140), tabard=(80, 44, 104),
+                                                              hair=(168, 164, 160), armor_light=(152, 100, 180))),
+    'deaths_head_acolyte': ('quilboar_staff', quilboar_palette(armor=(84, 80, 88), tabard=(60, 56, 64),
+                                                               armor_light=(124, 120, 128))),
+    'withered_quilguard': ('quilboar_sword', quilboar_palette(skin=(140, 152, 120), hair=(96, 96, 84),
+                                                              armor=(140, 88, 52), tabard=(88, 64, 48),
+                                                              leather=(72, 56, 44))),
+    'glutton': ('quilboar_sword', quilboar_palette(skin=(172, 196, 148), hair=(112, 116, 96), armor=(120, 108, 84),
+                                                   tabard=(96, 84, 64), leather=(80, 68, 52))),
+    # Razorfen Downs: the Scourge (creature sheets, kept with the dungeon's other enemies)
+    'skeletal_frostweaver': ('skeleton_mage', creature_palette((216, 212, 200), (176, 172, 160), eye=(140, 220, 255),
+                                                               extra=(64, 112, 184), weapon=(120, 100, 80),
+                                                               flame=(232, 248, 255), flame_dark=(112, 192, 248))),
+    'splinterbone_warrior': ('skeleton', creature_palette((192, 180, 144), (152, 140, 112), eye=(232, 64, 40),
+                                                          extra=(152, 84, 44), weapon=(168, 96, 56))),
+    'mordresh_fire_eye': ('skeleton_mage', creature_palette((224, 212, 184), (180, 168, 140), eye=(255, 160, 48),
+                                                            extra=(176, 64, 32), weapon=(96, 64, 44),
+                                                            flame=(255, 224, 120), flame_dark=(240, 96, 32))),
+    'amnennar_the_coldbringer': ('skeleton_mage', creature_palette((232, 236, 240), (176, 184, 200), eye=(96, 200, 255),
+                                                                   extra=(152, 180, 228), weapon=(64, 60, 80),
+                                                                   flame=(224, 248, 255), flame_dark=(96, 168, 240))),
 }
 
 CREATURE_LOOKS = {
@@ -3504,6 +3856,38 @@ CREATURE_LOOKS = {
                                                            light=(136, 136, 148))),
     'mistvale_gorilla': ('gorilla', creature_palette((84, 60, 44), (184, 152, 112), eye=(232, 72, 40),
                                                      light=(120, 92, 68))),
+    # Tanaris and Zul'Farrak
+    'blisterpaw_hyena': ('wolf', creature_palette((208, 176, 96), (120, 88, 52), eye=(232, 48, 32), dark=(152, 120, 64),
+                                                  light=(232, 208, 136))),
+    'scorpid_hunter': ('scorpid', creature_palette((216, 140, 64), (240, 200, 120), eye=(40, 24, 24),
+                                                   tooth=(248, 240, 208))),
+    'scorpid_reaver': ('scorpid', creature_palette((128, 52, 40), (176, 104, 72), eye=(248, 216, 64),
+                                                   light=(168, 80, 60))),
+    'saltstone_basilisk': ('crocolisk', creature_palette((200, 200, 192), (232, 228, 216), eye=(232, 72, 40),
+                                                         light=(240, 240, 232), dark=(136, 136, 132))),
+    'galak_scout': ('centaur', creature_palette((136, 88, 52), (200, 152, 104), eye=(40, 28, 24), extra=(48, 36, 32),
+                                                flame=(176, 64, 48), flame_dark=(112, 40, 32), weapon=(144, 104, 64))),
+    'galak_windchaser': ('centaur', creature_palette((152, 152, 160), (196, 160, 120), eye=(40, 28, 24),
+                                                     extra=(232, 232, 236), flame=(72, 120, 200),
+                                                     flame_dark=(40, 72, 144), weapon=(136, 100, 64))),
+    'dunemaul_brute': ('ogre', creature_palette((200, 144, 88), (96, 64, 40), eye=(240, 216, 96), extra=(136, 96, 56),
+                                                weapon=(112, 80, 48))),
+    'dunemaul_ogre_mage': ('ogre', creature_palette((120, 136, 160), (48, 40, 56), eye=(200, 168, 255),
+                                                    extra=(112, 56, 136), weapon=(96, 72, 104))),
+    'omgorn_the_lost': ('ogre', creature_palette((152, 64, 52), (48, 36, 32), eye=(248, 216, 64), extra=(216, 176, 64),
+                                                 weapon=(104, 72, 44))),
+    # Razorfen Kraul and Razorfen Downs
+    'raging_agamar': ('boar', creature_palette((88, 60, 44), (152, 112, 96), eye=(248, 40, 24))),
+    'agathelos_the_raging': ('boar', creature_palette((152, 36, 32), (56, 40, 40), eye=(255, 200, 64),
+                                                      light=(200, 64, 56))),
+    'tomb_fiend': ('spider', creature_palette((216, 208, 188), (152, 140, 120), eye=(232, 48, 32))),
+    'tuten_kash': ('spider', creature_palette((176, 200, 140), (128, 72, 152), eye=(232, 48, 32))),
+    'frozen_spectre': ('spirit', creature_palette((112, 176, 232), (208, 240, 255), eye=(255, 255, 255),
+                                                  dark=(64, 120, 184), light=(168, 212, 248))),
+    'scarab': ('spider', creature_palette((40, 48, 80), (64, 152, 168), eye=(232, 48, 32), light=(72, 88, 136))),
+    'sullithuz_broodling': ('crocolisk', creature_palette((208, 184, 112), (236, 220, 168), eye=(232, 72, 40))),
+    'gahz_rilla': ('hydra', creature_palette((88, 168, 176), (184, 224, 224), eye=(200, 240, 255), extra=(48, 104, 136),
+                                             light=(136, 208, 212))),
 }
 
 
@@ -3567,7 +3951,7 @@ def write_looks():
     lines += ['', '#include "gw_looks.h"', '#include "gw_palettes.h"', '', 'namespace gw', '{', '',
               'constexpr look_def look_table[] = {']
     for name, (sheet, _) in looks:
-        creature = 'true' if name in CREATURE_LOOKS else 'false'
+        creature = 'true' if sheet in CREATURES else 'false'      # by the sheet: a few humanoid looks are skeletons
         lines.append(f'    {{ bn::sprite_items::char_{sheet}, palettes::{name}, {creature} }},')
     lines += ['};', '', 'static_assert(sizeof(look_table) / sizeof(look_table[0]) == int(look_id::COUNT));', '',
               '}', '', '#endif', '']

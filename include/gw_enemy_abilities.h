@@ -110,7 +110,9 @@ enum class enemy_family : uint8_t
     SYNDICATE,
     SCARLET,
     TROLL,
-    PIRATE
+    PIRATE,
+    QUILBOAR,
+    CENTAUR
 };
 
 enum class enemy_effect : uint8_t

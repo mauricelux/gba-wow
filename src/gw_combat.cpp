@@ -501,6 +501,8 @@ void combat::on_map_change()
     _polymorph_target = -1;
     _effects.clear();
     _texts.clear();
+    _event = -1;
+    _events_done = 0;
 }
 
 void combat::engage()
@@ -606,6 +608,7 @@ void combat::update(bool input_enabled)
 
     ++_combat_frames;
     ++_since_cast;
+    _update_event();
 
     // A blow dealt or taken ends the ride.
     if(_buffs[int(buff_id::MOUNTED)] && _combat_frames <= 1)
@@ -3308,6 +3311,7 @@ void combat::_die()
     }
 
     _zones.clear();
+    _event = -1;
 
     for(int& frames : _buffs)
     {
@@ -4138,6 +4142,161 @@ bool combat::boss_update(int index)
         }
         break;
 
+    // --- Tanaris -----------------------------------------------------------------------------------
+
+    case enemy_id::CALIPH_SCORPIDSTING:
+        _boss_greeting(boss, "Caliph: The desert is mine!");
+        _update_frenzy(boss, health_percent, 30, 2, "Caliph");
+        break;
+
+    case enemy_id::ANDRE_FIREBEARD:
+        _boss_greeting(boss, "Firebeard: Light 'em up, boys!");
+        _update_frenzy(boss, health_percent, 30, 2, "Firebeard");
+        break;
+
+    // --- Razorfen Kraul ----------------------------------------------------------------------------
+
+    case enemy_id::AGGEM_THORNCURSE:
+        // A boar comes out of the pens at half health.
+        _boss_greeting(boss, "Aggem: The thorns will drink!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::RAGING_AGAMAR);
+            _hud.message("Aggem calls a boar!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::DEATH_SPEAKER_JARGBA:
+        _boss_greeting(boss, "Jargba: Your soul is mine!");
+        _update_frenzy(boss, health_percent, 25, 2, "Jargba");
+        break;
+
+    case enemy_id::OVERLORD_RAMTUSK:
+        _boss_greeting(boss, "Ramtusk: Intruders! Kill them!");
+        _update_frenzy(boss, health_percent, 30, 2, "Ramtusk");
+        break;
+
+    case enemy_id::AGATHELOS_THE_RAGING:
+        _boss_greeting(boss, "Agathelos bellows!");
+        _update_frenzy(boss, health_percent, 30, 2, "Agathelos");
+        break;
+
+    case enemy_id::CHARLGA_RAZORFLANK:
+        // Heals herself and her guards (her HEALER table); a quilguard runs in at half health.
+        _boss_greeting(boss, "Charlga: The thorns shield us!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::RAZORFEN_QUILGUARD);
+            _hud.message("Charlga: Guards, to me!", ui::color::RED);
+        }
+        break;
+
+    // --- Razorfen Downs ----------------------------------------------------------------------------
+
+    case enemy_id::TUTEN_KASH:
+        _update_frenzy(boss, health_percent, 30, 1, "Tuten'kash");
+        break;
+
+    case enemy_id::MORDRESH_FIRE_EYE:
+        _boss_greeting(boss, "Mordresh: You will burn!");
+        _update_frenzy(boss, health_percent, 25, 2, "Mordresh");
+        break;
+
+    case enemy_id::GLUTTON:
+        _boss_greeting(boss, "Glutton: Me hungry!");
+        _update_frenzy(boss, health_percent, 50, 2, "Glutton");
+        break;
+
+    case enemy_id::AMNENNAR_THE_COLDBRINGER:
+        // A Frozen Spectre at half health and another at a quarter; Frost Nova is in his table.
+        _boss_greeting(boss, "Amnennar: None leave alive!");
+
+        if(boss.phase == 1 && health_percent <= 50)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::FROZEN_SPECTRE);
+            _hud.message("Amnennar: Come, spirits!", ui::color::RED);
+        }
+
+        if(boss.phase == 2 && health_percent <= 25)
+        {
+            boss.phase = 3;
+            _summon_add(boss, enemy_id::FROZEN_SPECTRE);
+            _hud.message("Amnennar: Rise, my servants!", ui::color::RED);
+        }
+        break;
+
+    // --- Zul'Farrak --------------------------------------------------------------------------------
+
+    case enemy_id::ANTU_SUL:
+        // Her basilisk brood climbs out of the sand at three quarters and a quarter of her health.
+        _boss_greeting(boss, "Antu'sul: Lunch has arrived!");
+
+        if(boss.phase == 1 && health_percent <= 75)
+        {
+            boss.phase = 2;
+            _summon_add(boss, enemy_id::SULLITHUZ_BROODLING);
+            _hud.message("Antu'sul calls her brood!", ui::color::RED);
+        }
+
+        if(boss.phase == 2 && health_percent <= 25)
+        {
+            boss.phase = 3;
+            _summon_add(boss, enemy_id::SULLITHUZ_BROODLING);
+            _hud.message("Antu'sul calls her brood!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::THEKA_THE_MARTYR:
+        // Shield Wall, from his table, near the end.
+        _boss_greeting(boss, "Theka: My faith is my shield!");
+        break;
+
+    case enemy_id::WITCH_DOCTOR_ZUM_RAH:
+        // Raises a zombie from the graveyard at two thirds and one third of his health.
+        _boss_greeting(boss, "Zum'rah: Sands take you!");
+
+        if((boss.phase == 1 && health_percent <= 66) || (boss.phase == 2 && health_percent <= 33))
+        {
+            ++boss.phase;
+            _summon_add(boss, enemy_id::ZULFARRAK_ZOMBIE);
+            _hud.message("Zum'rah raises the dead!", ui::color::RED);
+        }
+        break;
+
+    case enemy_id::GAHZ_RILLA:
+        _update_frenzy(boss, health_percent, 30, 1, "Gahz'rilla");
+        break;
+
+    case enemy_id::NEKRUM_GUTCHEWER:
+        _update_frenzy(boss, health_percent, 30, 1, "Nekrum");
+        break;
+
+    case enemy_id::RUUZLU:
+        _boss_greeting(boss, "Ruuzlu: For Ukorz!");
+        _update_frenzy(boss, health_percent, 30, 2, "Ruuzlu");
+        break;
+
+    case enemy_id::CHIEF_UKORZ_SANDSCALP:
+        // Ruuzlu, his guard, joins the fight.
+        if(boss.phase == 0)
+        {
+            int ruuzlu = _find_enemy(enemy_id::RUUZLU);
+
+            if(ruuzlu >= 0 && _enemies.at(ruuzlu).state == enemy_state::IDLE)
+            {
+                _enemies.aggro(ruuzlu);
+            }
+        }
+
+        _boss_greeting(boss, "Ukorz: Who dares enter here?");
+        _update_frenzy(boss, health_percent, 25, 2, "Ukorz");
+        break;
+
     default:
         break;
     }
@@ -4147,6 +4306,8 @@ bool combat::boss_update(int index)
 
 void combat::_boss_killed(const enemy& boss)
 {
+    _event_boss_killed(boss);
+
     switch(boss.id)
     {
 

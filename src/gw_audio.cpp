@@ -58,6 +58,9 @@ namespace
         case music_id::STRANGLETHORN:
             return bn::music_items::stranglethorn;
 
+        case music_id::TANARIS:
+            return bn::music_items::tanaris;
+
         default:
             return bn::nullopt;
         }

@@ -72,6 +72,11 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Goblins on the docks of Booty Bay](docs/screenshots/m21_booty_bay.png)
 ![Herod winds up a Whirlwind in the Armory](docs/screenshots/m21_herod.png)
 ![Whitemane raises Mograine and casts Deep Sleep](docs/screenshots/m21_whitemane.png)
+![Gadgetzan, a goblin town in the deserts of Tanaris](docs/screenshots/m22_gadgetzan.png)
+![The boat from Steamwheedle Port back to Booty Bay](docs/screenshots/m22_boat.png)
+![Pozzik's Mirage Raceway in Thousand Needles](docs/screenshots/m22_mirage_raceway.png)
+![The third ring of the gong brings Tuten'kash](docs/screenshots/m22_tuten_kash.png)
+![Sandfury trolls climb the pyramid of Zul'Farrak](docs/screenshots/m22_pyramid.png)
 
 ## Status
 
@@ -80,27 +85,30 @@ Human Warrior or Mage, a Dwarf Warrior or Hunter, or a Night Elf Warrior or Hunt
 subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Marksmanship or Survival),
 then walk freely from Northshire Abbey down to Goldshire, west to the city of Stormwind, south to
 Westfall, east to the Redridge Mountains and south to Duskwood, ride the tram to Ironforge and go on
-to the Wetlands, Darkshore, the Hillsbrad Foothills and the jungle of Stranglethorn Vale, take on 118
-quests from Northshire to Booty Bay, fight with auto-attack and your subclass's abilities, loot and equip about 620 items, buy and sell at vendors, carry as much
+to the Wetlands, Darkshore, the Hillsbrad Foothills and the jungle of Stranglethorn Vale, sail from
+Booty Bay to Tanaris and Thousand Needles, take on 138 quests from Northshire to Gadgetzan, fight with auto-attack and your subclass's abilities, loot and equip about 770 items, buy and sell at vendors, carry as much
 as you like in bags sorted by type, quality, level or age, use 19 ability slots on three bars and 4
 item slots, buy new abilities and ranks from your class trainer, spend talent points from level 10,
 face the elites Princess, Hogger, Gath'Ilzogg, Mor'Ladim, Stitches, Balgaras, Nek'rosh, Gravis
-Slipknot, Bloodfang, King Bangalash and Fleet Master Firallon, clear the kobolds out of Echo Ridge and
-Fargodeep mines, hunt for 40 hidden
+Slipknot, Bloodfang, King Bangalash, Fleet Master Firallon, Caliph Scorpidsting and Andre Firebeard, clear the kobolds out of Echo Ridge and
+Fargodeep mines, hunt for 46 hidden
 treasure chests, fish in Lake Everstill, hearth home to an inn, ride from level 30, fly by gryphon
 between Stormwind, Sentinel Hill, Lakeshire, Darkshire, Silverpine Forest, Ironforge, Menethil Harbor,
-Southshore, the Argent Watch in Tirisfal and Booty Bay, take the Deeprun Tram and the boat to Auberdine, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
+Southshore, the Argent Watch in Tirisfal, Booty Bay and Gadgetzan, take the Deeprun Tram and the boats to
+Auberdine and Tanaris, tame a pet as a Beast Mastery hunter, fight through the Deadmines to Sneed and
 Edwin VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, keep the night
 off Darkshire, climb Shadowfang Keep to Archmage Arugal, light the braziers of Blackfathom Deeps for
 Aku'mai, take Gnomeregan back from Mekgineer Thermaplugg, clear all four wings of the Scarlet
-Monastery up to High Inquisitor Whitemane, and save to the cartridge. Every zone has
+Monastery up to High Inquisitor Whitemane, break Razorfen Kraul, ring the gong of Razorfen Downs, storm the
+pyramid of Zul'Farrak up to Chief Ukorz Sandscalp, and save to the cartridge. Every zone has
 its own music, and elite fights switch to a boss tune.
 
 Following the quests in order takes a hero to level 15 at the end of Westfall, about 19 after
 Redridge, 20 after the Deadmines, 21 in the Stockade, about 25 at the door of Shadowfang Keep, 26
 after Arugal, about 28 after the Wetlands, 30 after Thermaplugg, 33 after Hillsbrad, 35 after
-Arcanist Doan, about 37 halfway through Stranglethorn, 39 after King Bangalash and 40 after High
-Inquisitor Whitemane, without grinding. The level cap is
+Arcanist Doan, about 37 halfway through Stranglethorn, 39 after King Bangalash, 40 after High
+Inquisitor Whitemane, about 41 after Razorfen Kraul, 43 after Amnennar the Coldbringer and 45 after
+Chief Ukorz Sandscalp, without grinding. The level cap is
 60: the road there is planned in [docs/level-60-roadmap.md](docs/level-60-roadmap.md) (milestones M12
 to M26).
 
@@ -128,7 +136,8 @@ to M26).
 | M19 Ironforge and the Wetlands | Ironforge, Dun Morogh, the Wetlands and Darkshore (25 to 30), 22 quests, Blackfathom Deeps with its braziers, Gnomeregan with radiation and Walking Bombs | Done |
 | M20 Hillsbrad and Scarlet Monastery 1 | The Hillsbrad Foothills and Southshore (30 to 35), Tirisfal's Argent Watch, 18 quests, the Graveyard and the Library with six bosses | Done |
 | M21 Stranglethorn and Scarlet Monastery 2 | Stranglethorn Vale with the Rebel Camp, Nesingwary's Expedition and Booty Bay (35 to 40), 19 quests, the Armory and the Cathedral with four bosses | Done |
-| M22 to M26 | Tanaris to the Plaguelands, 11 new dungeons, Onyxia and the new ending | Planned |
+| M22 Tanaris and the Razorfens | Kalimdor by boat from Booty Bay: Tanaris with Gadgetzan and Thousand Needles' Mirage Raceway (40 to 45), 20 quests, Razorfen Kraul, Razorfen Downs with its gong and Zul'Farrak with its gong and pyramid | Done |
+| M23 to M26 | Feralas to the Plaguelands, 8 new dungeons, Onyxia and the new ending | Planned |
 
 ## Controls
 
@@ -174,7 +183,7 @@ Strike, Pyroblast, Wyvern Sting and others). Class trainers unlearn talents for 
 
 The hearthstone in your bags takes you back to your home inn every ten minutes; innkeepers in
 Goldshire, Stormwind's Trade District, at Sentinel Hill, in Lakeshire, in Darkshire, in Ironforge, in
-Menethil Harbor and in Auberdine can make their inn your home.
+Menethil Harbor, in Auberdine and in Gadgetzan can make their inn your home.
 
 Rested experience: ask an innkeeper to let you rest a while (or save and switch off inside an inn).
 Every six minutes played since your last rest becomes 5% of a level of rested experience, up to a
@@ -189,7 +198,7 @@ tunnels, and in clearings reached by secret paths through the forests (look for 
 trunks). Walk up to a chest and press A to open it for money, an item and sometimes a potion. Each
 chest opens once per hero. The world map (Start, then the World Map page) shows where you are, quest
 givers with a `!` or `?`, the chests you have already opened, the flight masters you know, and how
-many of the 34 you have found; left and right show the other zones. B steps out to the whole
+many of them you have found; left and right show the other zones. B steps out to the whole
 continent: the D-pad picks a zone (its levels, or "Coming later" for zones of later chapters), A
 opens its map, and Select turns to Kalimdor. Brann Bronzebeard in Stormwind pays for five opened
 chests.
@@ -199,13 +208,15 @@ gold. Mount (on the Buffs bar) puts a Human on a horse, a Dwarf on a ram and a N
 nightsaber, 60% faster out of combat; a blow, any other ability, eating, the hearthstone or going
 indoors gets you off. Gryphon masters (Dungar Longdrink in the Valley of Heroes, Thor at Sentinel
 Hill, Ariena Stormfeather in Lakeshire, Felicia Maline in Darkshire, Gryphon Rider Hask at the scouts'
-camp in Silverpine, Gryth Thurden in Ironforge, Shellei Brondir in Menethil Harbor; on Kalimdor, the
-hippogryph master Caylais Moonfeather in Auberdine) remember you the first time you talk to them and
+camp in Silverpine, Gryth Thurden in Ironforge, Shellei Brondir in Menethil Harbor, Darla Harris in
+Southshore, Gyll in Booty Bay; on Kalimdor, the hippogryph master Caylais Moonfeather in Auberdine and
+Bera Stonehammer in Gadgetzan) remember you the first time you talk to them and
 fly you to any other one you have met, for a price that grows with the distance: the gryphon crosses
 the continent while the map scrolls under it. The Deeprun Tram leaves from the station house in
 Stormwind's Dwarven District. Its far end is Ironforge Station, whose stairs climb to Tinker Town in
 Ironforge. Boats work the same way: walk to the end of Menethil Harbor's pier to sail to Auberdine on
-Darkshore, and back from Auberdine's dock.
+Darkshore, and back from Auberdine's dock; Booty Bay's south pier sails to Steamwheedle Port on the
+coast of Tanaris, and back. Flights stay on their own continent.
 
 Pets: a Beast Mastery hunter gets *Taming the Beast* from Einris Brightspear at level 10. Tame Beast
 (Utility bar) channels for six seconds on a beast of your level or lower, which fights back
@@ -337,6 +348,35 @@ the Cathedral, High Inquisitor Fairbanks waits in the Chamber of Atonement, and 
 Mograine guards the altar. Whitemane prays there after he falls; strike her and at half health she
 raises him and puts you to sleep with Deep Sleep. Raleigh the Devout in Southshore takes the news, and
 the chapter ends with new pages for the jungle and the Crusade.
+
+Tanaris and Thousand Needles: from level 38, Baron Revilgaz's *Steamwheedle Business* sends you
+across the sea: the boat from Booty Bay's south pier lands at Steamwheedle Port on the coast of
+Tanaris, and the road runs inland to Gadgetzan, a goblin town with an inn, a vendor, a smith with
+level 40 gear and Bera Stonehammer's gryphons. Engineer Bilgewhizzle and Fizzledowser want the
+Wastewander bandits out of the oases and their leader, the elite Caliph Scorpidsting, dead in the
+Noonshade Ruins; Stoley wants the Southsea pirates out of Lost Rigger Cove, with their elite captain
+Andre Firebeard; Trenton Lighthammer sends you after the Dunemaul ogres (and Omgorn the Lost, a rare
+ogre mage), and Tran'rek after the Sandfury trolls of Sandsorrow Watch. The road north climbs into
+Thousand Needles, where Pozzik's Mirage Raceway on the Shimmering Flats is short of hands against the
+Galak centaurs and the saltstone basilisks.
+
+The Razorfens: Fizzle Brassbolts at the raceway sends you into Razorfen Kraul, the quilboar warren
+to the north-west. Aggem Thorncurse calls his boar Agam'ar at half health, Death Speaker Jargba
+casts Shadow Bolt and Fear, Overlord Ramtusk and Agathelos the Raging frenzy, and Charlga Razorflank
+heals herself (interrupt her), drops Forked Lightning where you stand and calls a quilguard. Argent
+Guard Dalen sends you into Razorfen Downs, where the quilboar dead serve a lich. The great gong in
+the middle of the Downs (press A beside it) calls a wave of tomb fiends each time it rings; the
+third ring brings Tuten'kash, a giant spider. Mordresh Fire Eye and Glutton guard the way down to
+Amnennar the Coldbringer, who casts Frost Nova and calls a Frozen Spectre at half and a quarter of
+his health. His fall ends the chapter with a new page.
+
+Zul'Farrak: the troll city in the west of Tanaris is level 43 to 46. Antu'sul calls basilisk
+broodlings, Theka the Martyr strikes with Mortal Strike and raises Shield Wall, and Witch Doctor
+Zum'rah raises zombies from the graveyard. The gong at the pool wakes the hydra Gahz'rilla, whose scale Wizzle
+Brassbolts wants. Opening the cage on the pyramid brings three waves of Sandfury slaves and drudges
+up the stairs, then Nekrum Gutchewer and Shadowpriest Sezz'ziz; Chief Ukorz Sandscalp and Ruuzlu
+wait at the top of the city. Tran'rek takes the news, and the chapter ends with a new page for the
+desert.
 
 Auto-attack keeps going after a kill if another enemy is on you, and turns to whoever is hitting you
 when your target is out of reach.

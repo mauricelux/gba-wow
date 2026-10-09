@@ -20,6 +20,8 @@
 #include "gw_map_gnomeregan.h"
 #include "gw_map_hillsbrad.h"
 #include "gw_map_ironforge.h"
+#include "gw_map_razorfen_downs.h"
+#include "gw_map_razorfen_kraul.h"
 #include "gw_map_redridge.h"
 #include "gw_map_shadowfang.h"
 #include "gw_map_silverpine.h"
@@ -30,9 +32,12 @@
 #include "gw_map_stranglethorn.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
+#include "gw_map_tanaris.h"
+#include "gw_map_thousand_needles.h"
 #include "gw_map_tirisfal.h"
 #include "gw_map_westfall.h"
 #include "gw_map_wetlands.h"
+#include "gw_map_zul_farrak.h"
 #include "gw_menu_layout.h"
 #include "gw_save.h"
 #include "gw_types.h"
@@ -104,6 +109,16 @@ namespace
         { "Hall of Champions", map_id::SM_ARMORY, { 512, 140 } },
         { "SM Cathedral", map_id::SM_CATHEDRAL, map_data::sm_cathedral::entry },
         { "The Crimson Cathedral", map_id::SM_CATHEDRAL, { 512, 160 } },
+        { "Gadgetzan", map_id::TANARIS, map_data::tanaris::gadgetzan_respawn },
+        { "Steamwheedle Port", map_id::TANARIS, map_data::tanaris::steamwheedle_respawn },
+        { "Mirage Raceway", map_id::THOUSAND_NEEDLES, map_data::thousand_needles::raceway_respawn },
+        { "Razorfen Kraul", map_id::RAZORFEN_KRAUL, map_data::razorfen_kraul::entry },
+        { "Charlga's Sanctum", map_id::RAZORFEN_KRAUL, { 180, 240 } },
+        { "Razorfen Downs", map_id::RAZORFEN_DOWNS, map_data::razorfen_downs::entry },
+        { "The Gong Chamber", map_id::RAZORFEN_DOWNS, { 512, 480 } },
+        { "Zul'Farrak", map_id::ZUL_FARRAK, map_data::zul_farrak::entry },
+        { "The Pyramid", map_id::ZUL_FARRAK, { 512, 480 } },
+        { "Zul'Farrak's Gate", map_id::TANARIS, map_data::tanaris::zf_exit },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);

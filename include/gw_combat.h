@@ -185,6 +185,11 @@ public:
 
     void on_map_change();
 
+    // A gong rung or a cage opened inside an event area (event_area_at): starts its dungeon event
+    // (gw_combat_events.cpp), or says it is over. Returns false when the area has no event here or
+    // enemies are fighting the hero.
+    bool start_event(area_id area);
+
     // Recomputes stats after gear, level or buff changes.
     void refresh_stats();
 
@@ -273,6 +278,12 @@ private:
     bool _select_used = true;                // the same for Select and its quick use
     bn::string<24> _hearth_text;             // "Ready in N minutes", kept for use_item's error
     bn::fixed_point _fear_from;              // who feared the player
+    int8_t _event = -1;                      // the running dungeon event, -1 for none
+    int8_t _event_wave = 0;                  // its waves sent, then one more for its bosses
+    int8_t _event_rings = 0;                 // how many waves (and bosses) it may send so far
+    bool _event_beaten = false;              // the hero has been told the last wave is beaten
+    int _event_timer = 0;                    // frames until the next wave
+    uint8_t _events_done = 0;                // a bit per event beaten since the map was loaded
 
     void _read_input();
     void _cycle_target();
@@ -301,6 +312,8 @@ private:
     void _launch_bomb();
     void _boss_greeting(enemy& boss, const char* message);
     void _boss_killed(const enemy& boss);
+    void _update_event();
+    void _event_boss_killed(const enemy& boss);
     [[nodiscard]] int _find_enemy(enemy_id id) const;
     void _gain_rage(int damage, bool dealt);
     void _spend(int cost);

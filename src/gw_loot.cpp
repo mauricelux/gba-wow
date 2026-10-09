@@ -302,6 +302,90 @@ namespace
         // 96 High Inquisitor Whitemane
         { { { i::SUPERIOR_HEALING_POTION, 100, 2, 3 }, none, none }, true,
           { i::GAUNTLETS_OF_DIVINITY, i::WHITEMANES_GLOVES, i::GRIPS_OF_RESURRECTION } },
+        // 97 Wastewander bandits
+        { { { i::RUNECLOTH, 35, 1, 2 }, { i::SPARKLING_DESERT_WATER, 8, 1, 1 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 98 scorpids
+        { { { i::SCORPID_STINGER, 50, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 99 hyenas, basilisks and boars
+        { { { i::THICK_FUR, 45, 1, 1 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 100 Dunemaul ogres
+        { { { i::OGRE_TOOTH, 40, 1, 1 }, { i::RUNECLOTH, 35, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 101 Southsea pirates
+        { { { i::RUNECLOTH, 40, 1, 2 }, { i::SPARKLING_DESERT_WATER, 8, 1, 1 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 102 Sandfury trolls
+        { { { i::TROLL_TUSK, 40, 1, 1 }, { i::RUNECLOTH, 35, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 103 Galak centaurs
+        { { { i::RUNECLOTH, 30, 1, 2 }, { i::THICK_FUR, 25, 1, 1 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 104 Razorfen quilboar
+        { { { i::QUILBOAR_TUSK, 40, 1, 1 }, { i::RUNECLOTH, 30, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 105 the Scourge in the Downs
+        { { { i::BONE_FRAGMENTS, 40, 1, 2 }, { i::RUNECLOTH, 30, 1, 2 }, { i::MAJOR_HEALING_POTION, 5, 1, 1 } },
+          true, { i::NONE, i::NONE, i::NONE } },
+        // 106 tomb fiends and zombies
+        { { { i::BONE_FRAGMENTS, 40, 1, 2 }, none, none }, false, { i::NONE, i::NONE, i::NONE } },
+        // 107 Caliph Scorpidsting
+        { { { i::RUNECLOTH, 100, 2, 3 }, { i::MAJOR_HEALING_POTION, 60, 1, 2 }, none }, true,
+          { i::SCORPIDSTING_GAUNTLETS, i::CALIPHS_GLOVES, i::SANDSTALKER_GRIPS } },
+        // 108 Andre Firebeard
+        { { { i::RUNECLOTH, 100, 2, 3 }, { i::MAJOR_HEALING_POTION, 60, 1, 2 }, none }, true,
+          { i::ANDRES_SABATONS, i::CAPTAINS_SLIPPERS, i::FIREBEARD_BOOTS } },
+        // 109 Omgorn the Lost
+        { { { i::OGRE_TOOTH, 100, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::OMGORNS_LEGPLATES, i::LEGGINGS_OF_THE_LOST, i::OGRE_HIDE_BREECHES } },
+        // 110 Aggem Thorncurse
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::QUILBOAR_TUSK, 100, 1, 2 }, none }, true,
+          { i::THORNCURSE_GAUNTLETS, i::THORNWEAVE_GLOVES, i::BRAMBLEHIDE_GRIPS } },
+        // 111 Death Speaker Jargba
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::QUILBOAR_TUSK, 100, 1, 2 }, none }, true,
+          { i::DEATH_SPEAKER_HELM, i::JARGBAS_COWL, i::SPEAKERS_MASK } },
+        // 112 Overlord Ramtusk
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::QUILBOAR_TUSK, 100, 1, 2 }, none }, true,
+          { i::RAMTUSKS_CLEAVER, i::RAMSTAFF, i::TUSKER_LONGBOW } },
+        // 113 Agathelos the Raging
+        { { { i::THICK_FUR, 100, 2, 3 }, none, none }, false,
+          { i::STAMPEDE_SABATONS, i::AGAM_AR_SLIPPERS, i::BOARHIDE_BOOTS } },
+        // 114 Charlga Razorflank
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, none, none }, true,
+          { i::RAZORFLANK_HAUBERK, i::CHARLGAS_ROBE, i::CRONES_VEST } },
+        // 115 Tuten'kash
+        { { { i::SPIDER_SILK, 100, 2, 3 }, none, none }, false,
+          { i::SILK_WRAPPED_LEGGUARDS, i::SPIDERSILK_LEGGINGS, i::FIENDHIDE_PANTS } },
+        // 116 Mordresh Fire Eye
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::BONE_FRAGMENTS, 100, 1, 2 }, none }, true,
+          { i::MORDRESHS_BLADE, i::STAFF_OF_THE_FIRE_EYE, i::BONE_LONGBOW } },
+        // 117 Glutton
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::BONE_FRAGMENTS, 100, 1, 2 }, none }, true,
+          { i::GLUTTONOUS_SABATONS, i::LARDER_SLIPPERS, i::BUTCHERS_BOOTS } },
+        // 118 Amnennar the Coldbringer
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, none, none }, true,
+          { i::COLDBRINGER_HELM, i::COLDBRINGER_COWL, i::FROSTBITTEN_MASK } },
+        // 119 Antu'sul
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::TROLL_TUSK, 100, 1, 2 }, none }, true,
+          { i::ANTUSULS_GAUNTLETS, i::SANDFURY_WRAPS, i::SCARABSKIN_GRIPS } },
+        // 120 Theka the Martyr
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::TROLL_TUSK, 100, 1, 2 }, none }, true,
+          { i::MARTYRS_BREASTPLATE, i::THEKAS_ROBE, i::MARTYRS_VEST } },
+        // 121 Witch Doctor Zum'rah
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::TROLL_TUSK, 100, 1, 2 }, none }, true,
+          { i::WITCH_DOCTOR_MACHETE, i::WITCH_DOCTOR_STAFF, i::VOODOO_LONGBOW } },
+        // 122 Gahz'rilla
+        { { { i::MAJOR_HEALING_POTION, 100, 1, 2 }, none, none }, false,
+          { i::HYDRA_LEGPLATES, i::GAHZ_RILLA_LEGGINGS, i::HYDRAHIDE_PANTS } },
+        // 123 Nekrum Gutchewer and Shadowpriest Sezz'ziz
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::RUNECLOTH, 100, 2, 3 }, none }, true,
+          { i::GUTCHEWER_SABATONS, i::SHADOWPRIEST_SLIPPERS, i::SEZZ_ZIZS_BOOTS } },
+        // 124 Ruuzlu
+        { { { i::MAJOR_HEALING_POTION, 60, 1, 2 }, { i::TROLL_TUSK, 100, 1, 2 }, none }, true,
+          { i::RUUZLUS_AXE, i::SANDFURY_SPIRE, i::RUUZLUS_RECURVE } },
+        // 125 Chief Ukorz Sandscalp
+        { { { i::MAJOR_HEALING_POTION, 100, 2, 3 }, { i::TROLL_TUSK, 100, 1, 2 }, none }, true,
+          { i::SANDSCALP_HELM, i::CHIEFTAINS_HEADDRESS, i::SANDSCALP_MASK } },
     };
 
     // Uncommon items any enemy of a level band may drop.
@@ -321,6 +405,8 @@ namespace
     constexpr item_id band_8[] = { i::EMBERFORGED_HELM, i::STARSILK_ROBE, i::JUNGLESTALKER_LEGGINGS,
                                    i::CRESCENT_GREATSWORD, i::SERPENTWOOD_STAFF, i::THORNROOT_LONGBOW,
                                    i::BULWARK_OF_THE_VALE };
+    constexpr item_id band_9[] = { i::SANDSTORM_HELM, i::MIRAGE_ROBE, i::DUNESHADOW_LEGGINGS, i::SCORCHING_GREATSWORD,
+                                   i::STAFF_OF_THE_DUNES, i::SIROCCO_LONGBOW, i::SANDSTONE_BULWARK };
 
     constexpr int world_drop_chance = 3;
     constexpr int elite_world_drop_chance = 35;
@@ -376,7 +462,12 @@ namespace
             return pick(band_7);
         }
 
-        return pick(band_8);
+        if(level <= 40)
+        {
+            return pick(band_8);
+        }
+
+        return pick(band_9);
     }
 
     void add(enemy& item, item_id loot, int count)

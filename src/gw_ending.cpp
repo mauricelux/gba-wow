@@ -79,6 +79,14 @@ namespace
           "Mograine and Whitemane lie dead before the altar, and the Scarlet Monastery is silent. "
           "Across the sea, the deserts of Tanaris and the Razorfen thorns of Kalimdor wait.",
           quest_id::IN_THE_NAME_OF_THE_LIGHT },
+        { "The Razorfen Fall",
+          "Amnennar the Coldbringer is dust, and the dead of the Razorfen Downs lie still. Argent Guard "
+          "Dalen raises the Dawn's banner over the barrows, and the Mirage Raceway runs a quiet race.",
+          quest_id::BRING_THE_LIGHT },
+        { "The Sands Settle",
+          "Chief Ukorz Sandscalp lies dead on his throne, and the Sandfury turn on each other. "
+          "Gadgetzan toasts you with real water. To the west, the forests of Feralas wait.",
+          quest_id::CHIEF_UKORZ_SANDSCALP },
     };
 
     constexpr int story_page_total = sizeof(story_pages) / sizeof(story_pages[0]);

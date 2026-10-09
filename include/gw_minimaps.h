@@ -14,6 +14,8 @@
 #include "bn_sprite_items_minimap_gnomeregan.h"
 #include "bn_sprite_items_minimap_hillsbrad.h"
 #include "bn_sprite_items_minimap_ironforge.h"
+#include "bn_sprite_items_minimap_razorfen_downs.h"
+#include "bn_sprite_items_minimap_razorfen_kraul.h"
 #include "bn_sprite_items_minimap_redridge.h"
 #include "bn_sprite_items_minimap_shadowfang.h"
 #include "bn_sprite_items_minimap_silverpine.h"
@@ -24,9 +26,12 @@
 #include "bn_sprite_items_minimap_stockade.h"
 #include "bn_sprite_items_minimap_stormwind.h"
 #include "bn_sprite_items_minimap_stranglethorn.h"
+#include "bn_sprite_items_minimap_tanaris.h"
+#include "bn_sprite_items_minimap_thousand_needles.h"
 #include "bn_sprite_items_minimap_tirisfal.h"
 #include "bn_sprite_items_minimap_westfall.h"
 #include "bn_sprite_items_minimap_wetlands.h"
+#include "bn_sprite_items_minimap_zul_farrak.h"
 
 #include "gw_ids.h"
 
@@ -61,6 +66,8 @@ constexpr minimap_def minimaps[] = {
     { map_id::HILLSBRAD, bn::sprite_items::minimap_hillsbrad, 8, 19, 1280 },
     { map_id::TIRISFAL, bn::sprite_items::minimap_tirisfal, 8, 26, 768 },
     { map_id::STRANGLETHORN, bn::sprite_items::minimap_stranglethorn, 26, 8, 1536 },
+    { map_id::TANARIS, bn::sprite_items::minimap_tanaris, 26, 8, 1536 },
+    { map_id::THOUSAND_NEEDLES, bn::sprite_items::minimap_thousand_needles, 8, 8, 1024 },
     { map_id::ECHO_RIDGE, bn::sprite_items::minimap_echo_ridge, 8, 8, 512 },
     { map_id::FARGODEEP, bn::sprite_items::minimap_fargodeep, 8, 26, 768 },
     { map_id::DEADMINES, bn::sprite_items::minimap_deadmines, 8, 36, 1024 },
@@ -72,6 +79,9 @@ constexpr minimap_def minimaps[] = {
     { map_id::SM_LIBRARY, bn::sprite_items::minimap_sm_library, 8, 36, 1024 },
     { map_id::SM_ARMORY, bn::sprite_items::minimap_sm_armory, 8, 36, 1024 },
     { map_id::SM_CATHEDRAL, bn::sprite_items::minimap_sm_cathedral, 8, 36, 1024 },
+    { map_id::RAZORFEN_KRAUL, bn::sprite_items::minimap_razorfen_kraul, 8, 22, 1024 },
+    { map_id::RAZORFEN_DOWNS, bn::sprite_items::minimap_razorfen_downs, 8, 22, 1024 },
+    { map_id::ZUL_FARRAK, bn::sprite_items::minimap_zul_farrak, 8, 8, 1024 },
 };
 
 constexpr int minimap_count = sizeof(minimaps) / sizeof(minimaps[0]);

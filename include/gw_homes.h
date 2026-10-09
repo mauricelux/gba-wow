@@ -21,6 +21,7 @@ enum class home_id : uint8_t
     AUBERDINE,
     SOUTHSHORE,
     BOOTY_BAY,
+    GADGETZAN,
     COUNT
 };
 

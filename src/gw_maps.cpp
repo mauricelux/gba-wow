@@ -28,6 +28,10 @@
 #include "bn_regular_bg_items_map_inn_overhead.h"
 #include "bn_regular_bg_items_map_ironforge_ground.h"
 #include "bn_regular_bg_items_map_ironforge_overhead.h"
+#include "bn_regular_bg_items_map_razorfen_downs_ground.h"
+#include "bn_regular_bg_items_map_razorfen_downs_overhead.h"
+#include "bn_regular_bg_items_map_razorfen_kraul_ground.h"
+#include "bn_regular_bg_items_map_razorfen_kraul_overhead.h"
 #include "bn_regular_bg_items_map_redridge_ground.h"
 #include "bn_regular_bg_items_map_redridge_overhead.h"
 #include "bn_regular_bg_items_map_shadowfang_ground.h"
@@ -48,12 +52,18 @@
 #include "bn_regular_bg_items_map_stockade_overhead.h"
 #include "bn_regular_bg_items_map_stormwind_ground.h"
 #include "bn_regular_bg_items_map_stormwind_overhead.h"
+#include "bn_regular_bg_items_map_tanaris_ground.h"
+#include "bn_regular_bg_items_map_tanaris_overhead.h"
+#include "bn_regular_bg_items_map_thousand_needles_ground.h"
+#include "bn_regular_bg_items_map_thousand_needles_overhead.h"
 #include "bn_regular_bg_items_map_tirisfal_ground.h"
 #include "bn_regular_bg_items_map_tirisfal_overhead.h"
 #include "bn_regular_bg_items_map_westfall_ground.h"
 #include "bn_regular_bg_items_map_westfall_overhead.h"
 #include "bn_regular_bg_items_map_wetlands_ground.h"
 #include "bn_regular_bg_items_map_wetlands_overhead.h"
+#include "bn_regular_bg_items_map_zul_farrak_ground.h"
+#include "bn_regular_bg_items_map_zul_farrak_overhead.h"
 
 #include "gw_map_abbey.h"
 #include "gw_map_blackfathom_deeps.h"
@@ -69,6 +79,8 @@
 #include "gw_map_hillsbrad.h"
 #include "gw_map_inn.h"
 #include "gw_map_ironforge.h"
+#include "gw_map_razorfen_downs.h"
+#include "gw_map_razorfen_kraul.h"
 #include "gw_map_redridge.h"
 #include "gw_map_shadowfang.h"
 #include "gw_map_silverpine.h"
@@ -79,9 +91,12 @@
 #include "gw_map_stranglethorn.h"
 #include "gw_map_stockade.h"
 #include "gw_map_stormwind.h"
+#include "gw_map_tanaris.h"
+#include "gw_map_thousand_needles.h"
 #include "gw_map_tirisfal.h"
 #include "gw_map_westfall.h"
 #include "gw_map_wetlands.h"
+#include "gw_map_zul_farrak.h"
 
 namespace gw
 {
@@ -125,6 +140,12 @@ namespace
                                                         map_data::stranglethorn::booty_bay_respawn };
     constexpr point_def sm_armory_graveyards[] = { map_data::sm_armory::respawn };
     constexpr point_def sm_cathedral_graveyards[] = { map_data::sm_cathedral::respawn };
+    constexpr point_def tanaris_graveyards[] = { map_data::tanaris::gadgetzan_respawn,
+                                                 map_data::tanaris::steamwheedle_respawn };
+    constexpr point_def thousand_needles_graveyards[] = { map_data::thousand_needles::raceway_respawn };
+    constexpr point_def razorfen_kraul_graveyards[] = { map_data::razorfen_kraul::respawn };
+    constexpr point_def razorfen_downs_graveyards[] = { map_data::razorfen_downs::respawn };
+    constexpr point_def zul_farrak_graveyards[] = { map_data::zul_farrak::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
@@ -177,6 +198,11 @@ namespace
         GW_MAP_INFO(STRANGLETHORN, stranglethorn, false, false),
         GW_MAP_INFO(SM_ARMORY, sm_armory, true, true),
         GW_MAP_INFO(SM_CATHEDRAL, sm_cathedral, true, true),
+        GW_MAP_INFO(TANARIS, tanaris, false, false),
+        GW_MAP_INFO(THOUSAND_NEEDLES, thousand_needles, false, false),
+        GW_MAP_INFO(RAZORFEN_KRAUL, razorfen_kraul, true, true),
+        GW_MAP_INFO(RAZORFEN_DOWNS, razorfen_downs, true, true),
+        GW_MAP_INFO(ZUL_FARRAK, zul_farrak, true, true),
     };
 
     [[nodiscard]] int count_chests()
@@ -250,7 +276,7 @@ const area_def* area_at(const map_info& map, int x, int y)
 
     for(const area_def& area : map.areas)
     {
-        if(area.id == area_id::RADIATION)
+        if(area.id == area_id::RADIATION || area.id == area_id::GONG || area.id == area_id::CAGE)
         {
             continue;
         }
@@ -268,6 +294,20 @@ const area_def* area_at(const map_info& map, int x, int y)
     }
 
     return result;
+}
+
+area_id event_area_at(const map_info& map, int x, int y)
+{
+    for(const area_def& area : map.areas)
+    {
+        if((area.id == area_id::GONG || area.id == area_id::CAGE) && x >= area.x && y >= area.y &&
+           x < area.x + area.width && y < area.y + area.height)
+        {
+            return area.id;
+        }
+    }
+
+    return area_id::NONE;
 }
 
 bool in_radiation(const map_info& map, int x, int y)

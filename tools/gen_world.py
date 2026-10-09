@@ -4141,6 +4141,8 @@ def gen_stranglethorn():
     m.npc('KEBOK', 808, 1404)
     m.npc('SEAHORN', 864, 1404)
     m.point('booty_bay_respawn', 776, 1396)
+    m.point('from_tanaris', 720, 1440)
+    m.warp(708, 1488, 24, 8, 'tanaris', 'from_booty_bay', ride='boat')
     m.area(600, 1260, 360, 220, 'Booty Bay')
 
     # --- trees, and a hidden glade under the eastern cliffs -------------------------------------------
@@ -4305,6 +4307,869 @@ def gen_sm_cathedral():
     return m
 
 
+# ---------------------------------------------------------------------------------------------
+# Tanaris and Thousand Needles
+# ---------------------------------------------------------------------------------------------
+
+DESERT_PROPS = ('rock', 'tall_grass', 'rock', 'big_rock', 'tall_grass', 'stump')
+
+
+def cactus(m, x, y, variant=0):
+    """A saguaro, 16x32, on the overhead layer with a shadow at its foot. Solid at the foot. Returns
+    False where it would share a tile with another overhead bank or stand on a road."""
+    x, y = x // 8 * 8, y // 8 * 8
+    paths = m.corners.get('path')
+    if paths is not None:
+        near = paths[max(y // 16 - 1, 0):(y + 32) // 16 + 2, max(x // 16 - 1, 0):(x + 16) // 16 + 2]
+        if near.max() > 0:
+            return False
+    inside = np.zeros((32, 16), dtype=bool)
+    inside[2:31, 5:11] = True
+    if variant % 2 == 0:
+        inside[8:17, 1:4] = True
+        inside[14:17, 1:6] = True
+        inside[5:14, 12:15] = True
+        inside[11:14, 10:15] = True
+    else:
+        inside[10:19, 12:15] = True
+        inside[16:19, 10:15] = True
+    part = np.zeros((32, 16), dtype=np.uint8)
+    part[inside] = m.o('leaf_2')
+    cols = np.arange(16)[None, :].repeat(32, axis=0)
+    part[inside & ((cols == 6) | (cols == 2) | (cols == 13))] = m.o('leaf_3')
+    part[inside & ((cols == 9) | (cols == 3))] = m.o('leaf_1')
+    part[wg.outline_of(inside)] = m.o('outline')
+    if not wg.bank_fits(m.overhead, part, x, y):
+        return False
+    m.stamp(m.overhead, part, x, y)
+    m.ground[y + 30:y + 32, x + 3:x + 13] = m.g('shadow')
+    m.block(x + 4, y + 24, 8, 8)
+    return True
+
+
+def paint_salt(m, kind='salt'):
+    """Salt flats, painted like paths: 'foam' white with 'flower' grey speckles and a pale rim. Paint
+    them after the roads."""
+    c = wg.corners(m, kind)
+    for my in range(m.metas_y):
+        for mx in range(m.metas_x):
+            if c[my:my + 2, mx:mx + 2].max() == 0:
+                continue
+            tile = m.ground[my * 16:(my + 1) * 16, mx * 16:(mx + 1) * 16]
+            f = np.ones((16, 16)) if c[my:my + 2, mx:mx + 2].min() == 1 else wg.corner_field(c, mx, my)
+            # Roads painted before keep their dirt; the salt takes the ground around them.
+            ground = np.isin(tile, [m.g(role) for role in ('grass_d', 'grass_m', 'grass_l', 'grass_h', 'flower',
+                                                            'foam', 'shadow')])
+            inner = (f > 0.6) & ground
+            tile[(f > 0.42) & (f <= 0.6) & ground] = m.g('grass_h')
+            tile[inner] = m.g('foam')
+            tile[inner & (wg.SPECKLE > 0.9)] = m.g('flower')
+
+
+def adobe_wall(m, x, y, w, h, gate=48):
+    """Gadgetzan's town wall: a ring of adobe 16 px thick, with brick faces 24 px tall on the north and
+    south sides, a gate in the middle of each side and square towers at the corners. Solid."""
+    g = m.ground
+    gx, gy = x + w // 2 - gate // 2, y + h // 2 - gate // 2
+    for wy in (y, y + h - 24):
+        for sx, sw in ((x, gx - x), (gx + gate, x + w - gx - gate)):
+            wg.bricks(m, g, sx, wy, sw, 24, 'stone_d', 'stone_m', 'stone_l')
+            g[wy:wy + 3, sx:sx + sw] = m.g('stone_h')
+            g[wy + 23, sx:sx + sw] = m.g('outline')
+            m.block(sx, wy, sw, 24)
+    for wx in (x, x + w - 16):
+        for sy, sh in ((y + 24, gy - y - 24), (gy + gate, y + h - 24 - gy - gate)):
+            g[sy:sy + sh, wx:wx + 16] = m.g('stone_m')
+            g[sy:sy + sh, wx + 2:wx + 14] = m.g('stone_l')
+            g[sy:sy + sh:8, wx + 2:wx + 14] = m.g('stone_m')
+            g[sy:sy + sh, wx] = m.g('outline')
+            g[sy:sy + sh, wx + 15] = m.g('outline')
+            m.block(wx, sy, 16, sh)
+    for tx, ty in ((x, y), (x + w - 32, y), (x, y + h - 40), (x + w - 32, y + h - 40)):
+        wg.bricks(m, g, tx, ty, 32, 40, 'stone_d', 'stone_m', 'stone_l')
+        g[ty:ty + 16, tx:tx + 32] = m.g('stone_h')
+        g[ty + 4:ty + 12, tx + 4:tx + 28] = m.g('stone_l')
+        g[ty + 15, tx:tx + 32] = m.g('stone_d')
+        g[ty:ty + 40, tx] = m.g('outline')
+        g[ty:ty + 40, tx + 31] = m.g('outline')
+        g[ty + 39, tx:tx + 32] = m.g('outline')
+        m.block(tx, ty, 32, 40)
+    # Steamwheedle banners either side of each gate on the north and south walls.
+    for wy in (y, y + h - 24):
+        for bx in (gx - 16, gx + gate + 8):
+            g[wy + 4:wy + 22, bx:bx + 8] = m.g('banner')
+            g[wy + 4:wy + 22, bx] = m.g('banner_d')
+            g[wy + 10:wy + 14, bx + 2:bx + 6] = m.g('gold')
+
+
+def bramble_gate(m, x, y, w, h):
+    """A mound of giant thorns with a dark hole at its foot: the way into the Razorfen warrens. x, y,
+    w, h are multiples of 8. Returns the opening's bottom-center."""
+    g = m.ground
+    ys, xs = np.mgrid[y:y + h, x:x + w]
+    d = np.hypot((xs + 0.5 - x - w / 2) / (w / 2), (ys + 0.5 - y - h) / h)
+    mound = d < 1
+    vines = np.full((h, w), m.g('trunk_m'), dtype=np.uint8)
+    u, v = xs % 16, ys % 16
+    vines[(u + v) % 16 < 2] = m.g('trunk_d')
+    vines[(u - v) % 16 == 7] = m.g('trunk_d')
+    vines[((u + v) % 16 == 2) & (v % 4 == 1)] = m.g('grass_h')
+    vines[((u * 3 + v * 5) % 16 == 0)] = m.g('grass_d')
+    area = g[y:y + h, x:x + w]
+    area[mound] = vines[mound]
+    area[mound & ~np.pad(mound, 1)[2:, 1:-1]] = m.g('shadow')
+    ox = x + w // 2 - 16
+    g[y + h - 32:y + h, ox:ox + 32] = m.g('shadow')
+    g[y + h - 34:y + h - 32, ox + 4:ox + 28] = m.g('trunk_d')
+    for py in range(y, y + h, 8):
+        for px in range(x, x + w, 8):
+            if mound[py - y:py - y + 8, px - x:px - x + 8].sum() >= 32:
+                m.block(px, py, 8, 8)
+    m.unblock(ox, y + h - 24, 32, 24)
+    return (ox + 16, y + h)
+
+
+def gen_tanaris():
+    m = Map('tanaris', 1024, 1536,
+            Palette([wg.TERRAIN_TANARIS, wg.BUILDINGS_GADGETZAN, wg.FARM, wg.ROCK_TANARIS]),
+            Palette([wg.OVERHEAD_LEAVES_DESERT, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    # --- sandstone: Zul'Farrak's plateau in the northwest, the ridge to the north, the south edge ----
+    rock = wg.corners(m, 'rock')
+    rock[0:20, 0:24] = 1
+    rock[20:28, 0:4] = 1
+    rock[:, 0:2] = 1
+    rock[0:2, :] = 1
+    rock[0:3, 36:42] = 0                # the pass north into Thousand Needles
+    rock[91:, :] = 1
+    for cx, cy, rx, ry in ((340, 760, 40, 28), (160, 980, 56, 32), (720, 880, 36, 24), (580, 1360, 48, 30),
+                           (880, 160, 40, 30), (400, 600, 28, 20)):
+        wg.corners_ellipse(m, 'rock', cx, cy, rx, ry)
+    wg.paint_cliffs(m)
+
+    # --- the sea along the east coast, Steamwheedle Port's bay and Lost Rigger Cove ------------------
+    wg.corners_rect(m, 'water', 976, 0, 48, 1536)
+    wg.corners_along(m, 'water', [(1008, 0), (968, 300), (984, 500), (960, 640), (976, 900), (960, 1100),
+                                  (984, 1300), (1008, 1440)], 2.0)
+    wg.corners_ellipse(m, 'water', 948, 704, 92, 52)
+    wg.corners_ellipse(m, 'water', 944, 1296, 112, 64)
+    wg.corners_ellipse(m, 'water', 656, 700, 56, 32)     # Waterspring Field's pond
+    wg.paint_water(m)
+
+    # --- roads ----------------------------------------------------------------------------------------
+    roads = [
+        [(624, 0), (624, 120), (624, 240)],                                          # from Thousand Needles
+        [(624, 512), (624, 600), (560, 700), (520, 820), (480, 960), (440, 1060)],    # south to Dunemaul
+        [(784, 376), (840, 420), (872, 520), (872, 600)],                            # Steamwheedle Port
+        [(840, 420), (880, 330)],                                                    # Noonshade Ruins
+        [(464, 376), (360, 400), (260, 400), (208, 384)],                            # Zul'Farrak's gate
+        [(520, 820), (680, 960), (760, 1100), (820, 1240)],                          # Lost Rigger Cove
+        [(260, 400), (200, 520)],                                                    # Sandsorrow Watch
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.1)
+    wg.paint_paths(m)
+
+    # --- Gadgetzan --------------------------------------------------------------------------------------
+    adobe_wall(m, 464, 240, 320, 272)
+    rust = dict(roof_colors=('roof_d', 'roof_m', 'roof_l'), roof_ridge='roof_h', roof_outline='outline')
+    inn = wg.house(m, 488, 272, 112, 96, style='stone', **rust)
+    hall = wg.house(m, 656, 272, 104, 96, style='stone', **rust)
+    shop = wg.house(m, 488, 392, 80, 80, style='stone', roof_colors=('red_d', 'red_m', 'red_l'),
+                    roof_ridge='red_l', roof_outline='o2')
+    wg.well(m, 608, 400)
+    wg.cobbles(m, 672, 424, 64, 48)
+    wg.anvil(m, 680, 432)
+    wg.crates(m, 736, 448)
+    m.npc('BILGEWHIZZLE', hall[0], hall[1] + 4)
+    m.npc('FIZZGRIMBLE', inn[0], inn[1] + 4)
+    m.npc('BLIZRIK', shop[0], shop[1] + 4)
+    m.npc('KRINKLE', 712, 456)
+    m.npc('TRENTON', 600, 452)
+    m.npc('FIZZLEDOWSER', 576, 384)
+    m.npc('TRANREK', 528, 386)
+    m.npc('BERA', 744, 400)
+    m.point('flight', 744, 416)
+    m.npc('GADGETZAN_BRUISER', 588, 482)
+    m.npc('GADGETZAN_BRUISER', 664, 228)
+    m.point('gadgetzan_respawn', 624, 492)
+    m.area(464, 240, 320, 272, 'Gadgetzan')
+
+    # --- Steamwheedle Port --------------------------------------------------------------------------------
+    port = wg.house(m, 808, 488, 104, 96, style='stone', **rust)
+    wg.pier(m, 896, 616, 32, 72)
+    wg.crates(m, 816, 600)
+    m.npc('STOLEY', port[0], port[1] + 4)
+    m.point('steamwheedle_respawn', 872, 604)
+    m.point('from_booty_bay', 912, 628)
+    m.warp(900, 680, 24, 8, 'stranglethorn', 'from_tanaris', ride='boat')
+    m.area(790, 470, 200, 260, 'Steamwheedle Port')
+
+    # --- Zul'Farrak's gate under the plateau ----------------------------------------------------------
+    gate = mountain_gate(m, 144, 304, 128, 72, gate_w=40)
+    m.warp(gate[0] - 16, gate[1] - 12, 32, 8, 'zul_farrak', 'entry')
+    m.point('zf_exit', gate[0], gate[1] + 18)
+    m.area(0, 0, 384, 400, "Zul'Farrak")
+
+    # --- Sandsorrow Watch: the Sandfury trolls ---------------------------------------------------------
+    for rx, ry, seed in ((96, 480, 31), (224, 560, 32), (112, 600, 33)):
+        ruin(m, rx, ry, 80, 32, seed=seed)
+    m.spawn_group('SANDFURY_HIDESKINNER', 180, 520, 5, 70, seed=201)
+    m.spawn_group('SANDFURY_AXE_THROWER', 150, 620, 4, 50, seed=202)
+    m.area(60, 430, 300, 240, 'Sandsorrow Watch')
+
+    # --- Noonshade Ruins: the Wastewander bandits -------------------------------------------------------
+    ruin(m, 824, 232, 96, 32, seed=34)
+    ruin(m, 896, 296, 64, 32, seed=35)
+    m.spawn_group('WASTEWANDER_BANDIT', 860, 320, 5, 60, seed=203)
+    m.spawn_group('WASTEWANDER_THIEF', 820, 280, 3, 40, seed=204)
+    m.spawn('CALIPH_SCORPIDSTING', 920, 260)
+    m.area(800, 200, 176, 220, 'Noonshade Ruins')
+
+    # --- Waterspring Field: the shadow mages at the pond -------------------------------------------------
+    m.spawn_group('WASTEWANDER_SHADOW_MAGE', 640, 760, 3, 50, seed=205)
+    m.spawn_group('WASTEWANDER_BANDIT', 540, 680, 3, 40, seed=206)
+    m.area(480, 600, 260, 220, 'Waterspring Field')
+
+    # --- the open desert: hyenas west, scorpids in the middle ---------------------------------------------
+    m.spawn_group('BLISTERPAW_HYENA', 200, 800, 6, 90, seed=207)
+    m.area(60, 700, 300, 260, 'Broken Pillar')
+    m.spawn_group('SCORPID_HUNTER', 400, 860, 7, 90, seed=208)
+    m.area(320, 780, 200, 200, 'The Gaping Chasm')
+
+    # --- Dunemaul Compound: the ogres and Omgorn the Lost -----------------------------------------------
+    wg.camp(m, 296, 1072, 224, 112, tents=[(304, 1080), (472, 1080)], fire=(392, 1128))
+    wg.crates(m, 352, 1152)
+    m.spawn_group('DUNEMAUL_BRUTE', 400, 1150, 6, 90, seed=209)
+    m.spawn_group('DUNEMAUL_OGRE_MAGE', 330, 1180, 3, 50, seed=210)
+    m.spawn('OMGORN_THE_LOST', 408, 1100)
+    m.area(240, 1020, 340, 220, 'Dunemaul Compound')
+
+    # --- the Eastmoon Ruins: scorpid reavers ---------------------------------------------------------------
+    ruin(m, 584, 1168, 96, 32, seed=36)
+    m.spawn_group('SCORPID_REAVER', 640, 1220, 6, 90, seed=211)
+    m.area(540, 1120, 220, 200, 'Eastmoon Ruins')
+
+    # --- Lost Rigger Cove: the Southsea pirates ---------------------------------------------------------
+    wg.camp(m, 712, 1248, 128, 96, tents=[(720, 1256), (800, 1256)], fire=(768, 1304))
+    wg.pier(m, 840, 1280, 32, 64)
+    m.spawn_group('SOUTHSEA_PIRATE', 760, 1330, 5, 60, seed=212)
+    m.spawn_group('SOUTHSEA_CANNONEER', 820, 1220, 3, 40, seed=213)
+    m.spawn('ANDRE_FIREBEARD', 776, 1272)
+    m.chest(47, 728, 1336, 44)
+    m.area(700, 1200, 300, 200, 'Lost Rigger Cove')
+
+    # --- palms at the pond and the port, a hidden grove in the far south --------------------------------
+    for i, (px, py) in enumerate(((600, 624), (704, 628), (720, 704), (576, 712), (776, 568), (936, 448))):
+        wg.tree(m, trees, px, py, i, kind='palm')
+    wg.forest(m, trees, 64, 1320, 128, 112, kinds=('palm', 'small'), holes=[(96, 1352, 48, 48)],
+              secrets=[(144, 1368, 56, 32)])
+    m.chest(46, 120, 1388, 43)
+    rng = np.random.default_rng(53)
+    placed = 0
+    for _ in range(3000):
+        if placed >= 60:
+            break
+        x, y = int(rng.uniform(48, 940)), int(rng.uniform(420, 1420))
+        if m.area_free(x, y, 16, 32) and not any(cx - 16 <= x <= cx + cw and cy - 32 <= y <= cy + ch for
+                                                    cx, cy, cw, ch in ((464, 240, 320, 272), (700, 1200, 300, 200),
+                                                                       (240, 1020, 340, 220), (790, 470, 200, 260))):
+            if cactus(m, x, y, placed):
+                placed += 1
+    wg.scatter_props(m, rng, 70, DESERT_PROPS, (48, 420, 900, 1000),
+                     avoid=[(464, 240, 320, 272), (790, 470, 200, 260), (700, 1200, 300, 200)])
+
+    m.point('from_needles', 624, 28)
+    m.warp(600, 0, 48, 8, 'thousand_needles', 'from_tanaris')
+    m.area(0, 0, 1024, 1536, 'Tanaris')
+    m.music = 'TANARIS'
+    m.save()
+    return m
+
+
+def gen_thousand_needles():
+    m = Map('thousand_needles', 1024, 1024,
+            Palette([wg.TERRAIN_NEEDLES, wg.BUILDINGS_GADGETZAN, wg.FARM, wg.ROCK_NEEDLES]),
+            Palette([wg.OVERHEAD_LEAVES_DESERT, wg.OVERHEAD_ROOFS]))
+    wg.fill_grass(m)
+    trees = wg.Trees(m)
+
+    # --- the mesas and needles of the western canyons; cliffs along the north --------------------------
+    rock = wg.corners(m, 'rock')
+    rock[0:4, :] = 1
+    rock[:, 0:2] = 1
+    rock[:, 63:] = 1
+    rock[62:, 0:42] = 1
+    rock[4:6, 4:16] = 1
+    rock[0:6, 20:32] = 1
+    rock[4:7, 0:4] = 1
+    rng = np.random.default_rng(61)
+    needles = [(96, 360), (200, 300), (320, 260), (440, 330), (120, 520), (260, 760), (420, 880), (140, 880),
+               (480, 640), (340, 420), (80, 700), (220, 940), (600, 200), (760, 140), (900, 230), (680, 300),
+               (540, 120)]
+    for cx, cy in needles:
+        wg.corners_ellipse(m, 'rock', cx, cy, int(rng.integers(24, 44)), int(rng.integers(18, 30)))
+    wg.paint_cliffs(m)
+
+    # --- roads ------------------------------------------------------------------------------------------------
+    roads = [
+        [(744, 1024), (744, 900), (768, 760)],                                       # from Tanaris
+        [(672, 656), (560, 600), (400, 560), (300, 600), (240, 640)],                # west into the canyons
+        [(400, 560), (380, 400), (400, 220), (432, 132)],                            # north to the Downs
+        [(380, 400), (260, 220), (176, 172)],                                        # northwest to the Kraul
+    ]
+    for points in roads:
+        wg.corners_along(m, 'path', points, 1.0)
+    wg.paint_paths(m)
+
+    # --- the Shimmering Flats -------------------------------------------------------------------------------
+    wg.corners_ellipse(m, 'salt', 810, 690, 190, 290)
+    wg.corners_along(m, 'salt', [(720, 430), (860, 400), (960, 470), (984, 700), (950, 900), (860, 984),
+                                 (720, 1000), (650, 900), (624, 700), (650, 520), (720, 430)], 3.0)
+    paint_salt(m)
+
+    # --- the Mirage Raceway: a track around the goblins' and gnomes' camp ------------------------------------
+    # Drawn on bare salt and mirrored about a tile corner, so its tiles repeat in flips.
+    g = m.ground
+    quarter = wg.SPECKLE[:8, :8]
+    speckle = np.block([[quarter, quarter[:, ::-1]], [quarter[::-1], quarter[::-1, ::-1]]])
+    g[552:760, 664:936] = np.where(np.tile(speckle, (13, 17)) > 0.9, m.g('flower'), m.g('foam'))
+    ys, xs = np.mgrid[0:m.height, 0:m.width]
+    d = np.hypot((xs + 0.5 - 800) / 128.0, (ys + 0.5 - 656) / 96.0)
+    g[(d > 0.84) & (d <= 1.0)] = m.g('dirt_m')
+    g[((d > 0.81) & (d <= 0.84)) | ((d > 1.0) & (d <= 1.04))] = m.g('dirt_d')
+    g[(d > 0.91) & (d <= 0.93) & np.isin(xs % 8, (2, 3, 4, 5))] = m.g('dirt_l')
+    wg.camp(m, 736, 616, 128, 80, tents=[(744, 624), (824, 624)], fire=(792, 664))
+    wg.crates(m, 744, 664)
+    m.npc('POZZIK', 800, 644)
+    m.npc('KRAVEL', 800, 716)
+    m.npc('FIZZLE_BRASSBOLTS', 728, 700)
+    m.npc('WIZZLE_BRASSBOLTS', 752, 710)
+    m.npc('ARGENT_GUARD_DALEN', 864, 704)
+    m.point('raceway_respawn', 816, 728)
+    m.area(648, 536, 304, 240, 'Mirage Raceway')
+    m.spawn_group('SALTSTONE_BASILISK', 820, 880, 6, 90, seed=221)
+    m.spawn_group('SALTSTONE_BASILISK', 880, 500, 3, 50, seed=222)
+    m.spawn_group('GALAK_WINDCHASER', 760, 240, 3, 60, seed=226)
+    m.area(560, 360, 464, 664, 'The Shimmering Flats')
+
+    # --- Camp E'thok: the Galak centaurs --------------------------------------------------------------------
+    wg.camp(m, 192, 600, 176, 88, tents=[(200, 608), (320, 608)], fire=(264, 648))
+    m.spawn_group('GALAK_SCOUT', 280, 700, 5, 70, seed=223)
+    m.spawn_group('GALAK_WINDCHASER', 220, 560, 4, 60, seed=224)
+    m.spawn_group('GALAK_SCOUT', 520, 480, 2, 40, seed=225)
+    m.area(150, 520, 300, 240, "Camp E'thok")
+
+    # --- the Razorfen gates -----------------------------------------------------------------------------
+    kraul = bramble_gate(m, 112, 112, 128, 64)
+    m.warp(kraul[0] - 16, kraul[1] - 12, 32, 8, 'razorfen_kraul', 'entry')
+    m.point('rfk_exit', kraul[0], kraul[1] + 18)
+    m.spawn('RAZORFEN_QUILGUARD', kraul[0] - 40, kraul[1] + 24)
+    m.spawn('RAZORFEN_QUILGUARD', kraul[0] + 40, kraul[1] + 24)
+    m.area(64, 64, 240, 200, 'Razorfen Kraul')
+    downs = bramble_gate(m, 368, 72, 128, 64)
+    m.warp(downs[0] - 16, downs[1] - 12, 32, 8, 'razorfen_downs', 'entry')
+    m.point('rfd_exit', downs[0], downs[1] + 18)
+    m.spawn('DEATHS_HEAD_ACOLYTE', downs[0] - 40, downs[1] + 28)
+    m.area(320, 64, 220, 180, 'Razorfen Downs')
+
+    # --- a few dry trees, and a cache in a dead-end canyon ------------------------------------------------
+    for i, (tx, ty) in enumerate(((160, 400), (520, 360), (300, 860), (480, 760), (120, 760))):
+        wg.tree(m, trees, tx, ty, i, kind='small')
+    m.chest(48, 56, 600, 41)
+    placed = 0
+    for _ in range(2000):
+        if placed >= 24:
+            break
+        x, y = int(rng.uniform(40, 560)), int(rng.uniform(180, 960))
+        if m.area_free(x, y, 16, 32) and not (150 <= x + 16 and x <= 450 and 520 <= y + 32 and y <= 760):
+            if cactus(m, x, y, placed):
+                placed += 1
+    wg.scatter_props(m, rng, 50, DESERT_PROPS, (40, 180, 520, 780), avoid=[(150, 520, 300, 240)])
+
+    m.point('from_tanaris', 744, 988)
+    m.warp(720, 1016, 48, 8, 'tanaris', 'from_needles')
+    m.area(0, 0, 1024, 1024, 'Thousand Needles')
+    m.music = 'TANARIS'
+    m.save()
+    return m
+
+
+# ---------------------------------------------------------------------------------------------
+# Razorfen Kraul, Razorfen Downs and Zul'Farrak
+# ---------------------------------------------------------------------------------------------
+
+# The Kraul: bramble masses for wall tops, earthen walls with roots, a packed-earth floor.
+KRAUL = [
+    ('outline', (20, 16, 12)), ('top_d', (36, 52, 24)), ('top_m', (60, 80, 36)),
+    ('wall_d', (72, 52, 36)), ('wall_m', (104, 76, 48)), ('wall_l', (136, 104, 64)),
+    ('floor_d', (92, 72, 48)), ('floor_m', (120, 96, 64)), ('floor_l', (148, 122, 84)),
+    ('iron_d', (40, 36, 30)), ('iron_l', (204, 196, 172)), ('straw', (196, 168, 96)),
+    ('wood', (112, 72, 40)), ('flame', (244, 184, 72)), ('red', (152, 44, 36)),
+]
+
+KRAUL_OVERHEAD = [
+    ('outline', (20, 16, 12)), ('top_d', (36, 52, 24)), ('top_m', (60, 80, 36)),
+    ('wall_d', (72, 52, 36)), ('wall_m', (104, 76, 48)), ('wall_l', (136, 104, 64)),
+]
+
+# The Downs: the quilboar's barrows taken by the Scourge. Cold grey stone, icy candles, violet cloth.
+DOWNS = [
+    ('outline', (14, 16, 22)), ('top_d', (30, 36, 46)), ('top_m', (46, 54, 66)),
+    ('wall_d', (64, 72, 88)), ('wall_m', (92, 102, 118)), ('wall_l', (128, 138, 152)),
+    ('floor_d', (70, 72, 80)), ('floor_m', (94, 96, 106)), ('floor_l', (120, 122, 132)),
+    ('iron_d', (34, 36, 44)), ('iron_l', (192, 196, 204)), ('straw', (200, 168, 96)),
+    ('wood', (90, 64, 44)), ('flame', (140, 220, 248)), ('red', (104, 52, 120)),
+]
+
+DOWNS_OVERHEAD = [
+    ('outline', (14, 16, 22)), ('top_d', (30, 36, 46)), ('top_m', (46, 54, 66)),
+    ('wall_d', (64, 72, 88)), ('wall_m', (92, 102, 118)), ('wall_l', (128, 138, 152)),
+]
+
+# Zul'Farrak: a troll city of sandstone under the sun, gold and red paint.
+ZULFARRAK = [
+    ('outline', (40, 24, 16)), ('top_d', (96, 60, 36)), ('top_m', (124, 84, 52)),
+    ('wall_d', (156, 108, 64)), ('wall_m', (192, 144, 92)), ('wall_l', (220, 180, 124)),
+    ('floor_d', (176, 136, 88)), ('floor_m', (204, 168, 116)), ('floor_l', (228, 196, 148)),
+    ('iron_d', (60, 40, 28)), ('iron_l', (176, 168, 152)), ('straw', (236, 196, 72)),
+    ('wood', (120, 80, 44)), ('flame', (252, 228, 136)), ('red', (176, 56, 40)),
+]
+
+ZULFARRAK_OVERHEAD = [
+    ('outline', (40, 24, 16)), ('top_d', (96, 60, 36)), ('top_m', (124, 84, 52)),
+    ('wall_d', (156, 108, 64)), ('wall_m', (192, 144, 92)), ('wall_l', (220, 180, 124)),
+]
+
+# Gahz'rilla's pool, in a bank of its own.
+ZF_WATER = [
+    ('water_d', (24, 72, 104)), ('water_m', (40, 104, 140)), ('water_l', (96, 164, 196)),
+    ('lip', (236, 204, 152)), ('lip_d', (144, 100, 60)), ('lip_o', (32, 20, 12)),
+]
+
+
+class Temple(Monastery):
+    """The Monastery's halls and props in another dungeon's colors. The Kraul is thorny: its wall tops
+    are brambles and its walls are earth held together by roots."""
+
+    def __init__(self, name, width, height, palette, overhead, extra=(), thorny=False):
+        self.m = Map(name, width, height, Palette([palette, *extra]), Palette([overhead]))
+        self.floor = np.zeros((height // 8, width // 8), dtype=bool)
+        self.face = np.zeros_like(self.floor)
+        self.thorny = thorny
+
+    def _top(self, layer, x, y, w, h, pal):
+        if not self.thorny:
+            super()._top(layer, x, y, w, h, pal)
+            return
+        ys, xs = np.mgrid[y:y + h, x:x + w]
+        u, v = xs % 16, ys % 16
+        pattern = np.full((h, w), pal('top_m'), dtype=np.uint8)
+        pattern[(u + v) % 16 < 2] = pal('top_d')
+        pattern[(u - v) % 16 == 5] = pal('top_d')
+        pattern[((u + v) % 16 == 2) & (v % 4 == 0)] = pal('outline')
+        layer[y:y + h, x:x + w] = pattern
+
+    def _face(self, layer, x, y, w, row, pal):
+        if not self.thorny:
+            super()._face(layer, x, y, w, row, pal)
+            return
+        ys, xs = np.mgrid[y:y + 8, x:x + w]
+        u = xs % 16
+        band = np.full((8, w), pal('wall_m'), dtype=np.uint8)
+        band[(u * 7 + (ys % 8) * 3) % 13 == 0] = pal('wall_l')
+        band[(u == 3) | ((u == 11) & (ys % 8 < 5))] = pal('wall_d')
+        layer[y:y + 8, x:x + w] = band
+        if row == 0:
+            layer[y, x:x + w] = pal('outline')
+            layer[y + 1, x:x + w:3] = pal('top_m')
+        if row == self.FACE - 1:
+            layer[y + 6, x:x + w] = pal('wall_d')
+            layer[y + 7, x:x + w] = pal('outline')
+
+    # --- props ---------------------------------------------------------------------------------------
+
+    def thorns(self, x, y, w, h):
+        """A wall of brambles grown across the floor. Solid."""
+        g, m = self.m.ground, self.m
+        ys, xs = np.mgrid[y:y + h, x:x + w]
+        u, v = xs % 16, ys % 16
+        part = np.full((h, w), m.g('top_m'), dtype=np.uint8)
+        part[(u + v) % 16 < 2] = m.g('top_d')
+        part[(u - v) % 16 == 5] = m.g('outline')
+        part[((u * 5 + v * 3) % 16 == 0)] = m.g('red')
+        part[-2:, :] = m.g('outline')
+        g[y:y + h, x:x + w] = part
+        self.m.block(x, y, w, h)
+
+    def totem(self, x, y):
+        """A quilboar totem pole, 8x32: carved wood, red paint and a tusked top."""
+        g, m = self.m.ground, self.m
+        g[y:y + 32, x + 1:x + 7] = m.g('outline')
+        g[y + 1:y + 31, x + 2:x + 6] = m.g('wood')
+        for ty in (y + 6, y + 16):
+            g[ty:ty + 3, x + 2:x + 6] = m.g('red')
+        g[y + 2:y + 4, x:x + 2] = m.g('iron_l')
+        g[y + 2:y + 4, x + 6:x + 8] = m.g('iron_l')
+        g[y + 10:y + 12, x + 3:x + 5] = m.g('straw')
+        self.m.block(x, y + 24, 8, 8)
+
+    def gong(self, x, y):
+        """A great bronze gong in a wooden frame, 32x32."""
+        g, m = self.m.ground, self.m
+        for px in (x, x + 28):
+            g[y:y + 32, px:px + 4] = m.g('wood')
+            g[y:y + 32, px + 3] = m.g('outline')
+        g[y:y + 4, x - 2:x + 34] = m.g('wood')
+        g[y + 3, x - 2:x + 34] = m.g('outline')
+        ys, xs = np.mgrid[0:24, 0:22]
+        d = np.hypot(xs - 10.5, ys - 11.5)
+        disc = g[y + 5:y + 29, x + 5:x + 27]
+        disc[d < 11] = m.g('outline')
+        disc[d < 10] = m.g('straw')
+        disc[(d < 6) & (d >= 4)] = m.g('wood')
+        disc[d < 2] = m.g('flame')
+        self.m.block(x - 2, y + 20, 36, 12)
+
+    def cage(self, x, y, w, h):
+        """An iron cage seen from the front: a roof bar, bars and a floor rail. Solid."""
+        g, m = self.m.ground, self.m
+        g[y:y + 4, x:x + w] = m.g('iron_d')
+        g[y, x:x + w] = m.g('outline')
+        for bx in range(x, x + w, 6):
+            g[y + 4:y + h, bx] = m.g('iron_l')
+            g[y + 4:y + h, bx + 1] = m.g('iron_d')
+        g[y + h - 3:y + h, x:x + w] = m.g('iron_d')
+        g[y + h - 1, x:x + w] = m.g('outline')
+        self.m.block(x, y + 8, w, h - 8)
+
+    def idol(self, x, y):
+        """A troll idol on a plinth, 16x32, with a gold mask."""
+        g, m = self.m.ground, self.m
+        g[y + 20:y + 32, x:x + 16] = m.g('outline')
+        g[y + 21:y + 31, x + 1:x + 15] = m.g('wall_m')
+        g[y + 21, x + 1:x + 15] = m.g('wall_l')
+        g[y:y + 21, x + 3:x + 13] = m.g('outline')
+        g[y + 1:y + 20, x + 4:x + 12] = m.g('wall_l')
+        g[y + 3:y + 9, x + 4:x + 12] = m.g('straw')
+        g[y + 5, x + 5:x + 7] = m.g('outline')
+        g[y + 5, x + 9:x + 11] = m.g('outline')
+        g[y + 8:y + 12, x + 3] = m.g('iron_l')
+        g[y + 8:y + 12, x + 12] = m.g('iron_l')
+        self.m.block(x, y + 20, 16, 12)
+
+    def web(self, x, y):
+        """A spider web strung across a corner, 16x16."""
+        g, m = self.m.ground, self.m
+        for i in range(16):
+            g[y + i, x + i // 2] = m.g('iron_l')
+            g[y + i // 2, x + i] = m.g('iron_l')
+            g[y + i, x + i] = m.g('iron_l')
+        for r in (5, 10):
+            g[y + r, x:x + r + 1:2] = m.g('iron_l')
+            g[y:y + r + 1:2, x + r] = m.g('iron_l')
+
+    def pyramid(self, x, y, w, h, top_w, top_h, steps):
+        """A stepped pyramid seen from above: rings of sandstone around a flat top, with a stairway
+        steps px wide down the middle of its south side. Solid but for the top and the stairs."""
+        g, m = self.m.ground, self.m
+        cx = x + w // 2
+        rings = 4
+        for r in range(rings):
+            rx0 = x + r * (w - top_w) // (2 * rings)
+            rx1 = x + w - r * (w - top_w) // (2 * rings)
+            ry0 = y + r * (h - top_h) // (2 * rings)
+            ry1 = y + h - r * (h - top_h) // (2 * rings)
+            g[ry0:ry1, rx0:rx1] = m.g('wall_m' if r % 2 == 0 else 'wall_l')
+            g[ry0, rx0:rx1] = m.g('wall_l')
+            g[ry1 - 3:ry1, rx0:rx1] = m.g('wall_d')
+            g[ry1 - 1, rx0:rx1] = m.g('outline')
+            g[ry0:ry1, rx0] = m.g('outline')
+            g[ry0:ry1, rx1 - 1] = m.g('outline')
+        tx, ty = cx - top_w // 2, y + (h - top_h) // 2
+        g[ty:ty + top_h, tx:tx + top_w] = m.g('floor_l')
+        g[ty:ty + top_h:8, tx:tx + top_w] = m.g('floor_m')
+        sx = cx - steps // 2
+        for sy in range(ty + top_h, y + h, 4):
+            g[sy:sy + 4, sx:sx + steps] = m.g('wall_l' if (sy // 4) % 2 == 0 else 'wall_m')
+            g[sy + 3, sx:sx + steps] = m.g('wall_d')
+        g[ty + top_h:y + h, sx] = m.g('outline')
+        g[ty + top_h:y + h, sx + steps - 1] = m.g('outline')
+        self.m.block(x, y, w, h)
+        self.m.unblock(tx, ty, top_w, top_h)
+        self.m.unblock(sx + 2, ty + top_h, steps - 4, y + h - ty - top_h)
+
+    def pool(self, x, y, w, h):
+        """Deep water with a sandstone lip, drawn in the water bank. Solid."""
+        g, m = self.m.ground, self.m
+        ys, xs = np.mgrid[y:y + h, x:x + w]
+        water = np.full((h, w), m.g('water_m'), dtype=np.uint8)
+        water[((xs % 16) * 3 + (ys % 16) * 5) % 16 == 0] = m.g('water_l')
+        water[(ys - y) < 8] = m.g('water_d')
+        g[y:y + h, x:x + w] = water
+        g[y:y + 3, x:x + w] = m.g('lip')
+        g[y + 3, x:x + w] = m.g('lip_o')
+        g[y + h - 3:y + h, x:x + w] = m.g('lip')
+        g[y + h - 1, x:x + w] = m.g('lip_d')
+        g[y:y + h, x:x + 3] = m.g('lip')
+        g[y:y + h, x + w - 3:x + w] = m.g('lip')
+        g[y + 4:y + h - 3, x + 3] = m.g('lip_d')
+        self.m.block(x, y + 4, w, h - 6)
+        self.m.water[(y + 8) // 8:(y + h - 8) // 8, (x + 8) // 8:(x + w - 8) // 8] = True
+
+
+def gen_razorfen_kraul():
+    c = Temple('razorfen_kraul', 1024, 768, KRAUL, KRAUL_OVERHEAD, thorny=True)
+    m = c.m
+    c.rect(448, 640, 128, 104)      # the warren's mouth
+    c.rect(488, 744, 48, 24)        # the way out
+    c.rect(488, 560, 48, 80)        # tunnel north
+    c.rect(352, 400, 320, 160)      # the central warren, Jargba's
+    c.rect(256, 456, 96, 48)        # tunnel west
+    c.rect(64, 384, 192, 224)       # the boar pens, Aggem's
+    c.rect(672, 456, 96, 48)        # tunnel east
+    c.rect(768, 360, 208, 248)      # the war hall, Ramtusk's
+    c.rect(848, 608, 48, 24)        # a hidden burrow
+    c.rect(816, 632, 112, 88)
+    c.rect(488, 320, 48, 80)        # tunnel north
+    c.rect(384, 184, 256, 136)      # the beast pen, Agathelos's
+    c.rect(296, 224, 88, 48)        # tunnel west
+    c.rect(64, 40, 232, 248)        # the sanctum, Charlga's
+    c.render()
+    c.exit(488, 760, 'thousand_needles', 'rfk_exit')
+
+    # Thorn walls narrow the tunnels.
+    c.thorns(488, 592, 16, 16)
+    c.thorns(520, 608, 16, 16)
+    c.thorns(352, 520, 64, 24)
+    c.thorns(600, 432, 64, 16)
+    c.thorns(152, 496, 104, 16)
+    c.thorns(800, 520, 72, 16)
+    c.thorns(904, 440, 72, 16)
+    c.thorns(520, 232, 120, 16)
+    c.thorns(72, 160, 96, 16)
+    for x, y in ((392, 404), (624, 404), (464, 652), (552, 652)):
+        c.torch(x, y)
+    for x in (96, 200):
+        c.straw(x, 560)
+    c.bucket(160, 568)
+    for x in (432, 576):
+        c.totem(x, 440)
+    for x in (800, 928):
+        c.rack(x, 364)
+    c.table(840, 432, 80, 20)
+    c.secret(848, 608, 48, 0)
+    m.chest(49, 896, 708, 41)
+    c.crate(840, 680)
+    for x, y in ((416, 260), (560, 270)):
+        c.bones(x, y)
+    for x in (104, 248):
+        c.totem(x, 60)
+    c.altar(148, 64, 64, 24)
+    for x in (80, 264):
+        c.torch(x, 44)
+
+    m.spawn('RAZORFEN_QUILGUARD', 472, 680)
+    m.spawn('RAZORFEN_QUILGUARD', 552, 680)
+    for x, y in ((400, 460), (460, 520), (620, 520), (640, 460)):
+        m.spawn('RAZORFEN_GEOMANCER' if x in (460, 640) else 'RAZORFEN_QUILGUARD', x, y)
+    m.spawn('DEATH_SPEAKER_JARGBA', 512, 456)
+    for x, y in ((120, 440), (200, 470), (110, 530)):
+        m.spawn('RAGING_AGAMAR', x, y)
+    m.spawn('AGGEM_THORNCURSE', 168, 420)
+    for x, y in ((820, 400), (930, 420), (820, 480), (900, 560)):
+        m.spawn('RAZORFEN_QUILGUARD' if y < 450 else 'RAZORFEN_TOTEMIC', x, y)
+    m.spawn('OVERLORD_RAMTUSK', 872, 470)
+    m.spawn('RAZORFEN_QUILGUARD', 512, 352)
+    for x, y in ((430, 240), (590, 290)):
+        m.spawn('RAGING_AGAMAR', x, y)
+    m.spawn('AGATHELOS_THE_RAGING', 512, 280)
+    for x, y in ((100, 120), (260, 120), (110, 230), (250, 230)):
+        m.spawn('RAZORFEN_TOTEMIC' if y < 200 else 'RAZORFEN_GEOMANCER', x, y)
+    m.spawn('CHARLGA_RAZORFLANK', 180, 104)
+    m.area(0, 0, 1024, 768, 'Razorfen Kraul')
+    m.area(352, 400, 320, 160, 'The Central Warren')
+    m.area(64, 384, 192, 224, 'The Boar Pens')
+    m.area(768, 360, 208, 248, 'The War Hall')
+    m.area(384, 184, 256, 136, 'The Beast Pen')
+    m.area(64, 40, 232, 248, "Charlga's Sanctum")
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
+def gen_razorfen_downs():
+    c = Temple('razorfen_downs', 1024, 768, DOWNS, DOWNS_OVERHEAD)
+    m = c.m
+    c.rect(448, 640, 128, 104)      # the barrow's door
+    c.rect(488, 744, 48, 24)        # the way out
+    c.rect(488, 544, 48, 96)        # corridor north
+    c.rect(384, 352, 256, 192)      # the gong chamber
+    c.rect(256, 424, 128, 48)       # corridor west
+    c.rect(48, 320, 208, 256)       # the bone pits, Mordresh's
+    c.rect(640, 424, 128, 48)       # corridor east
+    c.rect(768, 320, 208, 256)      # the larder, Glutton's
+    c.rect(848, 576, 48, 24)        # a hidden crypt
+    c.rect(816, 600, 112, 80)
+    c.rect(488, 256, 48, 96)        # corridor north
+    c.rect(320, 40, 384, 216)       # the Coldbringer's crypt
+    c.render()
+    c.exit(488, 760, 'thousand_needles', 'rfd_exit')
+
+    c.gong(408, 356)
+    for x, y in ((464, 356), (560, 356), (616, 356)):
+        c.candles(x, y)
+    for x, y in ((392, 520), (616, 520)):
+        c.web(x, y)
+    for x in (72, 136, 200):
+        c.slab(x, 360)
+    for x, y in ((80, 480), (180, 520), (120, 420)):
+        c.bones(x, y)
+    for x in (800, 920):
+        c.chains(x, 324)
+    c.table(816, 420, 96, 20)
+    c.barrel(936, 520)
+    c.barrel(784, 520)
+    c.secret(848, 576, 48, 0)
+    m.chest(50, 896, 668, 43)
+    c.slab(840, 620)
+    c.rug(488, 96, 48, 160)
+    c.altar(480, 52, 64, 24)
+    for x in (360, 648):
+        c.candles(x, 44)
+    for x in (344, 400, 600, 656):
+        c.slab(x, 140)
+    for x, y in ((336, 60), (672, 60)):
+        c.web(x, y)
+
+    m.spawn('DEATHS_HEAD_ACOLYTE', 472, 680)
+    m.spawn('WITHERED_QUILGUARD', 552, 680)
+    for x, y in ((420, 470), (600, 470)):
+        m.spawn('WITHERED_QUILGUARD', x, y)
+    for x, y in ((80, 380), (220, 400), (140, 540)):
+        m.spawn('SKELETAL_FROSTWEAVER' if x == 140 else 'SPLINTERBONE_WARRIOR', x, y)
+    m.spawn('MORDRESH_FIRE_EYE', 152, 460)
+    for x, y in ((800, 380), (940, 400), (860, 540)):
+        m.spawn('WITHERED_QUILGUARD' if y < 500 else 'DEATHS_HEAD_ACOLYTE', x, y)
+    m.spawn('GLUTTON', 872, 460)
+    m.spawn('SPLINTERBONE_WARRIOR', 512, 300)
+    for x, y in ((360, 200), (660, 200), (420, 100), (600, 100)):
+        m.spawn('SKELETAL_FROSTWEAVER' if y < 150 else 'SPLINTERBONE_WARRIOR', x, y)
+    m.spawn('AMNENNAR_THE_COLDBRINGER', 512, 92)
+    # The gong: struck, it calls three waves of spiders and Tuten'kash from the chamber's corners.
+    m.point('wave_a', 400, 424)
+    m.point('wave_b', 624, 424)
+    m.point('wave_c', 400, 528)
+    m.point('wave_d', 624, 528)
+    m.point('event_boss', 512, 520)
+    m.area(392, 352, 72, 64, '', 'GONG')
+    m.area(0, 0, 1024, 768, 'Razorfen Downs')
+    m.area(384, 352, 256, 192, 'The Gong Chamber')
+    m.area(48, 320, 208, 256, 'The Bone Pits')
+    m.area(768, 320, 208, 256, "Glutton's Larder")
+    m.area(320, 40, 384, 216, "The Coldbringer's Crypt")
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
+def gen_zul_farrak():
+    c = Temple('zul_farrak', 1024, 1024, ZULFARRAK, ZULFARRAK_OVERHEAD, extra=(ZF_WATER,))
+    m = c.m
+    c.rect(384, 832, 256, 168)      # the gate court
+    c.rect(488, 1000, 48, 24)       # the way out
+    c.rect(320, 880, 64, 56)        # passage west
+    c.rect(48, 600, 272, 336)       # Gahz'rilla's pool
+    c.rect(152, 520, 56, 80)        # passage north
+    c.rect(48, 232, 288, 288)       # the scorpid basin, Antu'sul's
+    c.rect(488, 752, 48, 80)        # passage north
+    c.rect(352, 336, 320, 416)      # the plaza and the pyramid
+    c.rect(672, 480, 32, 56)        # passage east
+    c.rect(704, 400, 272, 224)      # the martyr's court, Theka's
+    c.rect(904, 624, 48, 24)        # a hidden shrine
+    c.rect(872, 648, 112, 88)
+    c.rect(808, 336, 56, 64)        # passage north
+    c.rect(704, 96, 272, 240)       # the graveyard, Zum'rah's
+    c.rect(488, 256, 48, 80)        # passage north
+    c.rect(384, 40, 256, 216)       # the throne of Ukorz
+    c.render()
+    c.exit(488, 1016, 'tanaris', 'zf_exit')
+
+    for x in (392, 616):
+        c.idol(x, 836)
+    c.pool(96, 640, 176, 120)
+    c.gong(264, 776)
+    for x in (64, 288):
+        c.torch(x, 604)
+    for x, y in ((80, 260), (290, 300), (120, 460), (260, 440)):
+        c.bones(x, y)
+    c.pyramid(400, 384, 224, 248, 112, 72, 48)
+    c.cage(480, 432, 64, 32)
+    for x in (360, 648):
+        c.idol(x, 344)
+    for x in (712, 952):
+        c.torch(x, 404)
+    c.altar(896, 404, 64, 24)
+    c.secret(904, 624, 48, 0)
+    m.chest(51, 952, 724, 45)
+    c.idol(888, 660)
+    for x in (728, 792, 856, 920):
+        c.slab(x, 160)
+        c.slab(x, 240)
+    for x in (712, 952):
+        c.candles(x, 100)
+    c.rug(488, 96, 48, 160)
+    c.altar(480, 48, 64, 24)
+    for x in (400, 616):
+        c.idol(x, 48)
+    for x in (456, 552):
+        c.banner(x, 44)
+
+    m.spawn('SANDFURY_HIDESKINNER', 440, 880)
+    m.spawn('SANDFURY_AXE_THROWER', 584, 880)
+    for x, y in ((120, 820), (240, 880), (80, 900)):
+        m.spawn('SANDFURY_SHADOWCASTER' if x == 240 else 'SANDFURY_BLOOD_DRINKER', x, y)
+    for x, y in ((100, 300), (240, 320), (160, 420)):
+        m.spawn('SCARAB' if x != 160 else 'SANDFURY_BLOOD_DRINKER', x, y)
+    for x, y in ((112, 384), (280, 436), (232, 484), (88, 468)):
+        m.spawn('SCARAB', x, y)
+    m.spawn('ANTU_SUL', 192, 280)
+    for x, y in ((380, 700), (640, 700), (380, 400), (640, 400)):
+        m.spawn('SANDFURY_BLOOD_DRINKER' if y > 500 else 'SANDFURY_SHADOWCASTER', x, y)
+    for x, y in ((740, 560), (940, 560), (760, 460)):
+        m.spawn('SANDFURY_HIDESKINNER' if x != 760 else 'SANDFURY_SHADOWCASTER', x, y)
+    m.spawn('THEKA_THE_MARTYR', 880, 480)
+    for x, y in ((740, 300), (940, 300), (800, 200), (900, 140)):
+        m.spawn('ZULFARRAK_ZOMBIE', x, y)
+    m.spawn('WITCH_DOCTOR_ZUM_RAH', 840, 128)
+    m.spawn('SANDFURY_BLOOD_DRINKER', 512, 292)
+    for x, y in ((420, 120), (604, 120)):
+        m.spawn('SANDFURY_SHADOWCASTER' if x < 512 else 'SANDFURY_BLOOD_DRINKER', x, y)
+    m.spawn('RUUZLU', 456, 96)
+    m.spawn('CHIEF_UKORZ_SANDSCALP', 512, 88)
+    # The cage on the pyramid: opened, it brings three waves of trolls up the stairs, then Nekrum and
+    # Sezz'ziz. The gong at the pool calls Gahz'rilla out of the water.
+    m.point('wave_a', 432, 700)
+    m.point('wave_b', 512, 720)
+    m.point('wave_c', 592, 700)
+    m.point('event_boss', 512, 690)
+    m.point('gahzrilla', 184, 784)
+    m.area(472, 416, 80, 72, '', 'CAGE')
+    m.area(248, 760, 64, 64, '', 'GONG')
+    m.area(0, 0, 1024, 1024, "Zul'Farrak")
+    m.area(48, 600, 272, 336, "Gahz'rilla's Pool")
+    m.area(48, 232, 288, 288, 'The Scarab Basin')
+    m.area(352, 336, 320, 416, 'The Pyramid')
+    m.area(704, 400, 272, 224, "The Martyr's Court")
+    m.area(704, 96, 272, 240, 'The Graveyard')
+    m.area(384, 40, 256, 216, 'The Throne of Ukorz')
+    m.music = 'DUNGEON'
+    m.save()
+    return m
+
+
 GENERATORS = {
     'abbey': gen_abbey,
     'inn': gen_inn,
@@ -4333,6 +5198,11 @@ GENERATORS = {
     'stranglethorn': gen_stranglethorn,
     'sm_armory': gen_sm_armory,
     'sm_cathedral': gen_sm_cathedral,
+    'tanaris': gen_tanaris,
+    'thousand_needles': gen_thousand_needles,
+    'razorfen_kraul': gen_razorfen_kraul,
+    'razorfen_downs': gen_razorfen_downs,
+    'zul_farrak': gen_zul_farrak,
 }
 
 
@@ -4345,7 +5215,8 @@ def main():
     starts = {'elwynn': 'start', 'westfall': 'from_elwynn', 'stormwind': 'from_elwynn', 'redridge': 'from_elwynn',
               'duskwood': 'from_elwynn', 'silverpine': 'flight', 'dun_morogh': 'from_ironforge',
               'wetlands': 'from_dun_morogh', 'darkshore': 'from_menethil', 'hillsbrad': 'from_wetlands',
-              'tirisfal': 'flight', 'stranglethorn': 'from_duskwood'}
+              'tirisfal': 'flight', 'stranglethorn': 'from_duskwood', 'tanaris': 'from_booty_bay',
+              'thousand_needles': 'from_tanaris'}
     for name, m in maps.items():
         m.check_reachable(starts.get(name, 'entry'))
     write_minimaps(maps)
@@ -4354,9 +5225,10 @@ def main():
 # Maps with a picture on the world map page, in the order D-pad left and right go through them.
 # Interiors show the map their door leads to.
 MINIMAPS = ['elwynn', 'stormwind', 'westfall', 'redridge', 'duskwood', 'silverpine', 'ironforge', 'dun_morogh',
-            'wetlands', 'darkshore', 'hillsbrad', 'tirisfal', 'stranglethorn', 'echo_ridge', 'fargodeep', 'deadmines',
-            'stockade', 'shadowfang', 'blackfathom_deeps', 'gnomeregan', 'sm_graveyard', 'sm_library', 'sm_armory',
-            'sm_cathedral']
+            'wetlands', 'darkshore', 'hillsbrad', 'tirisfal', 'stranglethorn', 'tanaris', 'thousand_needles',
+            'echo_ridge', 'fargodeep', 'deadmines', 'stockade', 'shadowfang', 'blackfathom_deeps', 'gnomeregan',
+            'sm_graveyard', 'sm_library', 'sm_armory', 'sm_cathedral', 'razorfen_kraul', 'razorfen_downs',
+            'zul_farrak']
 
 
 def write_minimaps(maps):
