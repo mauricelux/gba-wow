@@ -1013,7 +1013,10 @@ def gen_stormwind():
         wg.anvil(m, ax, 196)
     m.npc('EINRIS', 950, 210)
     m.npc('BRANN', forge_door[0] - 40, forge_door[1] + 4)
-    wg.house(m, 744, 296, 104, 96, style='stone', **SLATE)
+    # The Deeprun Tram's station house: stairs down to the tram to Ironforge.
+    tram_door = wg.house(m, 744, 296, 104, 96, style='stone', **SLATE)
+    m.warp(tram_door[0] - 12, tram_door[1] - 8, 24, 8, 'deeprun_tram', 'entry')
+    m.point('tram_exit', tram_door[0], tram_door[1] + 12)
     wg.house(m, 872, 296, 104, 96, style='stone', **RED)
     m.area(720, 48, 272, 352, 'Dwarven District')
 
@@ -1632,6 +1635,93 @@ def gen_stockade():
     return m
 
 
+class Station(Prison):
+    """The Deeprun Tram's stations: a stone hall with the track along its north wall and the tram
+    car waiting at the platform."""
+
+    def track(self, x0, x1, y):
+        """The pit with the rails, 32 px deep, under the hall's north wall. Solid."""
+        g, m = self.m.ground, self.m
+        g[y:y + 32, x0:x1] = m.g('top_d')
+        for x in range(x0, x1, 8):
+            g[y + 4:y + 30, x + 2:x + 5] = m.g('wood')
+            g[y + 4:y + 30, x + 4] = m.g('outline')
+        for ry in (y + 9, y + 23):
+            g[ry, x0:x1] = m.g('iron_l')
+            g[ry + 1, x0:x1] = m.g('iron_d')
+        # The platform's edge, with a yellow line to stand behind.
+        g[y + 30:y + 32, x0:x1] = m.g('outline')
+        g[y + 34:y + 36, x0:x1] = m.g('flame')
+        m.block(x0, y, x1 - x0, 32)
+
+    def car(self, x, y, w=112):
+        """The tram car on the track, 48 px tall from its roof at y. Returns the door's x: a 24 px
+        opening in the middle of its side."""
+        g, m = self.m.ground, self.m
+        door = x + w // 2 - 12
+        g[y:y + 44, x:x + w] = m.g('outline')
+        g[y + 1:y + 6, x + 2:x + w - 2] = m.g('top_m')                 # roof
+        g[y + 6:y + 30, x + 1:x + w - 1] = m.g('wall_l')                # side
+        g[y + 30:y + 42, x + 1:x + w - 1] = m.g('wall_m')
+        g[y + 26:y + 30, x + 1:x + w - 1] = m.g('red')                  # stripe
+        g[y + 41, x + 1:x + w - 1] = m.g('wall_d')
+        left = list(range(door - 18, x + 5, -16))
+        for wx in left + [2 * door + 24 - 10 - lx for lx in left]:      # the same on both sides
+            g[y + 10:y + 22, wx:wx + 10] = m.g('outline')
+            g[y + 11:y + 21, wx + 1:wx + 9] = m.g('flame')             # lit windows
+            g[y + 11:y + 13, wx + 1:wx + 9] = m.g('straw')
+        g[y + 8:y + 44, door:door + 24] = m.g('outline')                # the open door
+        g[y + 9:y + 44, door + 1:door + 23] = m.g('top_d')
+        g[y + 9:y + 11, door + 1:door + 23] = m.g('iron_d')
+        for wx in (x + 10, x + 26, x + w - 34, x + w - 18):             # wheels on the rails
+            g[y + 40:y + 47, wx:wx + 8] = m.g('outline')
+            g[y + 41:y + 46, wx + 1:wx + 7] = m.g('iron_d')
+            g[y + 43, wx + 3:wx + 5] = m.g('iron_l')
+        return door
+
+    def bench(self, x, y):
+        """A wooden bench on the platform, 32x12."""
+        g, m = self.m.ground, self.m
+        g[y:y + 6, x:x + 32] = m.g('outline')
+        g[y + 1:y + 5, x + 1:x + 31] = m.g('wood')
+        g[y + 1, x + 1:x + 31] = m.g('straw')
+        for lx in (x + 3, x + 26):
+            g[y + 6:y + 12, lx:lx + 3] = m.g('outline')
+        m.block(x, y + 4, 32, 8)
+
+
+def gen_deeprun_tram():
+    c = Station('deeprun_tram', 768, 256)
+    m = c.m
+    halls = {'stormwind': 48, 'ironforge': 432}
+    for x in halls.values():
+        c.rect(x, 48, 288, 136)
+    c.rect(168, 184, 48, 64)        # stairs up to Stormwind's Dwarven District
+    c.rect(552, 184, 48, 40)        # the lift to Ironforge, closed for now
+    c.render()
+    # The way out first: the world map shows the map an interior's first warp leads to.
+    c.exit(168, 248, 'stormwind', 'tram_exit')
+
+    other = {'stormwind': 'ironforge', 'ironforge': 'stormwind'}
+    for name, x in halls.items():
+        c.track(x, x + 288, 72)
+        door = c.car(x + 64, 56, 160)
+        m.warp(door, 96, 24, 16, 'deeprun_tram', f'{other[name]}_platform', ride='tram')
+        m.point(f'{name}_platform', door + 12, 140)
+        for tx in (x + 24, x + 248):
+            c.torch(tx, 52)
+        c.bench(x + 16, 152)
+        c.bench(x + 240, 152)
+    c.bars(552, 200, 48)
+    m.npc('MONTY', 584, 196)
+    m.area(0, 0, 768, 256, 'Deeprun Tram')
+    m.area(32, 32, 320, 224, 'Stormwind Station')
+    m.area(416, 32, 320, 224, 'Ironforge Station')
+    m.music = 'TOWN'
+    m.save()
+    return m
+
+
 GENERATORS = {
     'abbey': gen_abbey,
     'inn': gen_inn,
@@ -1642,6 +1732,7 @@ GENERATORS = {
     'fargodeep': gen_fargodeep,
     'stormwind': gen_stormwind,
     'stockade': gen_stockade,
+    'deeprun_tram': gen_deeprun_tram,
 }
 
 

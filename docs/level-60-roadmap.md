@@ -133,15 +133,22 @@ system is needed.
 
 Twelve zones need faster travel. All of these are new and small:
 
-- **Flight masters** in every hub. Talking to one opens a list of discovered flight paths. The hero
+- **Flight masters** in every hub ✓. Talking to one opens a list of discovered flight paths. The hero
   rides a gryphon across the world map screen, then fades into the destination.
-- **Boats and the Deeprun Tram** as door warps with a short travel scene.
-- **A mount at level 30** (WoW's level 40, moved down because GBA zones are smaller): a horse, ram
+- **Boats and the Deeprun Tram** ✓ as door warps with a short travel scene.
+- **A mount at level 30** ✓ (WoW's level 40, moved down because GBA zones are smaller): a horse, ram
   or nightsaber depending on race. Bought in Stormwind, Ironforge or from a nightsaber trainer, it
   lets you move 60% faster outside combat. Mounting is on the buff bar (section 5).
 - **The hearthstone** already exists and keeps working.
-- **The world map page** already exists. It gets a second level: Eastern Kingdoms and Kalimdor,
+- **The world map page** ✓ already exists. It gets a second level: Eastern Kingdoms and Kalimdor,
   then the zone.
+
+M16 built these on the current world: gryphon masters in Stormwind and at Sentinel Hill, the riding
+trainer in Stormwind, the continent level of the world map (zones of later chapters are on it,
+marked "Coming later"), and the Deeprun Tram from Stormwind to an Ironforge Station whose lift stays
+shut until M19 opens Ironforge. The boat scene is in the engine (a warp with `ride='boat'`); the
+first boats arrive with Menethil Harbor in M19 and Booty Bay in M21. Each hub's chapter adds its
+flight master to `src/gw_travel.cpp` and its zone to the continent pictures in `gen_travel.py`.
 
 ---
 
@@ -337,7 +344,7 @@ introduces an ability earlier.
 | Ice Barrier ✓ (talent) | Absorb shield | 30, 40, 46, 52, 58 |
 | Cold Snap (talent) | Reset every frost cooldown | 30 |
 | Ice Block | Encase yourself: immune for 10 s, can't act | 30 |
-| Summon Water Elemental (talent capstone, inspired by TBC) | A frost pet for 45 s that casts Frostbolt and Freeze | 40 |
+| Summon Water Elemental ✓ (talent capstone, inspired by TBC) | A frost pet for 45 s that casts Frostbolt and Freeze | 40 |
 
 ### Arcane
 
@@ -371,18 +378,21 @@ introduces an ability earlier.
 This is the one new system the subclass brings: a **pet** that follows you, attacks your target and
 can be told to stay passive. At level 10 you get the quest *Taming the Beast* and tame a wolf, boar,
 cat or spider out in the world (any beast type the game already draws). The pet has its own small
-health bar under yours and levels with you. Pet commands go on the utility bar.
+health bar under yours and levels with you. Pet commands go on the utility bar. Since M16 the pet
+also holds the attention of what it bites: enemies keep a threat for the hunter and one for the pet
+and swing at the higher. Pet Passive is the "stay passive" command, and the first pet is a young wolf
+or any other beast up to the hunter's level.
 
 | Ability | What it does | Ranks |
 | --- | --- | --- |
-| Call / Dismiss Pet | | 10 |
-| Revive Pet | | 10 |
-| Mend Pet | Heal the pet over time | 12, 20, 28, 36, 44, 52, 60 |
+| Call / Dismiss Pet ✓ | | 10 |
+| Revive Pet ✓ | | 10 |
+| Mend Pet ✓ | Heal the pet over time | 12, 20, 28, 36, 44, 52, 60 |
 | Serpent Sting ✓ | Poison over 15 s | 4, 10, 18, 26, 34, 42, 50, 58 |
 | Arcane Shot ✓ | Instant shot | 6, 12, 20, 28, 36, 44, 52, 60 |
-| Kill Command | The pet hits hard (inspired by TBC) | 20, 40, 60 |
-| Intimidation (talent) | The pet stuns the target | 30 |
-| Aspect of the Beast | You and your pet hit harder (replaces Hawk for BM) | 30 |
+| Kill Command ✓ | The pet hits hard (inspired by TBC) | 20, 40, 60 |
+| Intimidation ✓ (talent) | The pet stuns the target | 30 |
+| Aspect of the Beast ✓ | You and your pet hit harder (replaces Hawk for BM) | 30 |
 | Bestial Wrath ✓ (talent capstone) | Pet goes berserk, you attack 40% faster for 15 s | 40 |
 
 ### Marksmanship

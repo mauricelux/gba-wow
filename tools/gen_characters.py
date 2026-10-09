@@ -1103,6 +1103,9 @@ HUMANOID_LOOKS = {
                                                        lower_face=(200, 120, 56))),
     'riding_trainer': ('hum_plain', humanoid_palette(hair=(96, 64, 32), armor=(136, 96, 56), tabard=(56, 104, 64),
                                                      trim=(200, 168, 96))),
+    'tram_conductor': ('dwarf_sword', humanoid_palette(skin=SKIN_DWARF, hair=(160, 160, 168), armor=(56, 64, 104),
+                                                       tabard=(176, 136, 56), trim=(232, 200, 96),
+                                                       lower_face=(160, 160, 168))),
 }
 
 CREATURE_LOOKS = {

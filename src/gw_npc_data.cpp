@@ -113,6 +113,8 @@ namespace
           "Sentinel Hill's gryphons are saddled. Where to?" },
         { "Randal Hunter", "Riding Trainer", l::RIDING_TRAINER, trainer, any_class, 0,
           "Reach level 30, bring 5 gold, and I'll teach you to ride." },
+        { "Monty", "Deeprun Tram", l::TRAM_CONDUCTOR, 0, c::WARRIOR, 0,
+          "The lift up to Ironforge is shut for repairs. The tram still runs back to Stormwind!" },
     };
 
     static_assert(sizeof(npcs) / sizeof(npcs[0]) == int(npc_id::COUNT));

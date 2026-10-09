@@ -12,6 +12,15 @@ struct point_def
     int16_t y;
 };
 
+// How a warp takes the player: through a door, or aboard a boat or the Deeprun Tram, which play a
+// short travel scene first.
+enum class vehicle : uint8_t
+{
+    NONE,
+    BOAT,
+    TRAM
+};
+
 // Touching the rectangle moves the player to (target_x, target_y) on the target map.
 struct warp_def
 {
@@ -22,6 +31,7 @@ struct warp_def
     map_id target;
     int16_t target_x;
     int16_t target_y;
+    vehicle ride = vehicle::NONE;
 };
 
 struct npc_def

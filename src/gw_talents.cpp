@@ -196,7 +196,7 @@ namespace
             { "Serpent's Swiftness", "You attack 2% faster.", e::HASTE_PERCENT, 2, 5, 5, a::NONE },
             { "Animal Handler", "Raises attack power and ranged attack power by 8.", e::ATTACK_POWER, 8, 3, 5,
               a::NONE },
-            { "Bestial Wrath", "Learn Bestial Wrath: attack 40% faster for 15 seconds.", e::ABILITY, 0, 1, 6,
+            { "Bestial Wrath", "Learn Bestial Wrath: you and your pet attack 40% faster.", e::ABILITY, 0, 1, 6,
               a::BESTIAL_WRATH },
             { "The Beast Within", "You deal 3% more damage.", e::DAMAGE_PERCENT, 3, 2, 6, a::NONE },
         },

@@ -50,6 +50,7 @@ enum class look_id : uint8_t
     BAZIL_THREDD,
     GRYPHON_MASTER,
     RIDING_TRAINER,
+    TRAM_CONDUCTOR,
     YOUNG_WOLF,
     TIMBER_WOLF,
     BOAR,

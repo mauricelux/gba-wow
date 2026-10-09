@@ -2,6 +2,8 @@
 
 #include "bn_regular_bg_items_map_abbey_ground.h"
 #include "bn_regular_bg_items_map_abbey_overhead.h"
+#include "bn_regular_bg_items_map_deeprun_tram_ground.h"
+#include "bn_regular_bg_items_map_deeprun_tram_overhead.h"
 #include "bn_regular_bg_items_map_deadmines_ground.h"
 #include "bn_regular_bg_items_map_deadmines_overhead.h"
 #include "bn_regular_bg_items_map_echo_ridge_ground.h"
@@ -21,6 +23,7 @@
 
 #include "gw_map_abbey.h"
 #include "gw_map_deadmines.h"
+#include "gw_map_deeprun_tram.h"
 #include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
@@ -51,6 +54,7 @@ namespace
     constexpr point_def fargodeep_graveyards[] = { map_data::fargodeep::respawn };
     constexpr point_def stormwind_graveyards[] = { map_data::stormwind::respawn };
     constexpr point_def stockade_graveyards[] = { map_data::stockade::respawn };
+    constexpr point_def deeprun_tram_graveyards[] = { map_data::deeprun_tram::respawn };
 
 #define GW_MAP_INFO(ID, NAME, DUNGEON, INDOORS) \
     map_info{ \
@@ -82,6 +86,7 @@ namespace
         GW_MAP_INFO(FARGODEEP, fargodeep, true, true),
         GW_MAP_INFO(STORMWIND, stormwind, false, false),
         GW_MAP_INFO(STOCKADE, stockade, true, true),
+        GW_MAP_INFO(DEEPRUN_TRAM, deeprun_tram, false, true),
     };
 
     [[nodiscard]] int count_chests()

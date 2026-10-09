@@ -112,6 +112,12 @@ public:
         return _buffs[int(buff)];
     }
 
+    // What a buff gives while it lasts (Bestial Wrath's haste), 0 when it's off.
+    [[nodiscard]] int buff_value(buff_id buff) const
+    {
+        return _buffs[int(buff)] > 0 ? _buff_values[int(buff)] : 0;
+    }
+
     // Called by enemies. percent scales the hit (special attacks). Returns true if it landed.
     bool enemy_attacks(int index, int percent = 100);
 

@@ -148,10 +148,12 @@ namespace gw::map_data::stormwind
     constexpr point_def inn = { 128, 470 };
     constexpr point_def respawn = { 504, 248 };
     constexpr point_def stockade_exit = { 112, 980 };
+    constexpr point_def tram_exit = { 792, 410 };
 
     constexpr warp_def warps[] = {
         { 1016, 472, 8, 80, map_id::ELWYNN, 24, 968 },
         { 100, 960, 24, 8, map_id::STOCKADE, 512, 480 },
+        { 780, 390, 24, 8, map_id::DEEPRUN_TRAM, 192, 224 },
     };
 
     constexpr npc_def npcs[] = {

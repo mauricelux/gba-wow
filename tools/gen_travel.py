@@ -2,7 +2,9 @@
 
 Outputs:
   graphics/continent_<name>.bmp  128x128 pictures in four 64x64 sprite frames, like the minimaps
-  graphics/fx_travel.bmp         16x16 frames: the gryphon (two wing beats), the boat and the tram
+  graphics/fx_travel.bmp         16x16 frames: the gryphon, two wing beats
+  graphics/fx_vehicles.bmp       32x32 frames of the boat and tram scenes: the boat, the tram car, the moon
+  graphics/fx_scene.bmp          64x32 strips that scroll past them: the sea and the tram's tunnel
   include/gw_continents.h        the continents, their zones (name, levels, spot on the picture) and zone_id
 
 The pictures are cartoon maps drawn from polygons: every zone of the Alliance route, and the land
@@ -174,7 +176,7 @@ def save_picture(name, picture):
         PREVIEW / f'continent_{name}.png')
 
 
-# --- the flight scene's vehicles (16x16, facing left) -----------------------------------------------
+# --- the flight scene's gryphon (16x16, facing left) -----------------------------------------------
 
 V = {'clear': 0, 'out': 1, 'body_d': 2, 'body': 3, 'body_l': 4, 'white': 5, 'beak': 6, 'wood_d': 7,
      'wood': 8, 'sail': 9, 'metal_d': 10, 'metal': 11, 'red': 12, 'window': 13}
@@ -216,35 +218,152 @@ def vehicle(kind, frame):
         img[wing] = V['body_d'] if frame == 0 else V['body_l']
         img[rect(8, 11, 8, 12) | rect(11, 11, 11, 12)] = V['beak']               # claws
         return outlined(img)
-    if kind == 'boat':
-        bob = frame
-        img[poly_mask([(1, 10 + bob), (15, 10 + bob), (13, 14 + bob), (3, 14 + bob)], 16)] = V['wood']
-        img[rect(2, 10 + bob, 14, 10 + bob)] = V['wood_d']
-        img[rect(7, 1 + bob, 7, 10 + bob)] = V['wood_d']                          # mast
-        img[poly_mask([(8, 2 + bob), (13, 7 + bob), (8, 9 + bob)], 16)] = V['sail']
-        img[poly_mask([(6, 3 + bob), (6, 9 + bob), (2, 9 + bob)], 16)] = V['sail']
-        img[rect(7, 0 + bob, 9, 1 + bob)] = V['red']                              # flag
-        return outlined(img)
-    # The Deeprun Tram: a car on a rail.
-    img[rect(0, 13, 15, 13)] = V['metal_d']
-    img[rect(1, 5, 14, 11)] = V['metal']
-    img[rect(1, 5, 14, 5)] = V['red']
-    for x in (3, 7, 11):
-        img[rect(x, 7, x + 2, 9)] = V['window']
-    img[ellipse(4, 12 + frame * 0, 1.5, 1.5) | ellipse(12, 12, 1.5, 1.5)] = V['metal_d']
-    return outlined(img)
+    raise ValueError(kind)
 
 
 def write_vehicles():
-    frames = [vehicle('gryphon', 0), vehicle('gryphon', 1), vehicle('boat', 0), vehicle('boat', 1),
-              vehicle('tram', 0), vehicle('tram', 1)]
+    frames = [vehicle('gryphon', 0), vehicle('gryphon', 1)]
     save_indexed_bmp(GRAPHICS / 'fx_travel.bmp', np.concatenate(frames, axis=0), VEHICLE_PALETTE,
                      allow_duplicates=True)
     (GRAPHICS / 'fx_travel.json').write_text('{\n    "type": "sprite",\n    "height": 16\n}\n')
     lut = np.array(VEHICLE_PALETTE, dtype=np.uint8)
     lut[0] = (40, 72, 136)
-    Image.fromarray(lut[np.concatenate(frames, axis=1)], 'RGB').resize((16 * 6 * 6, 16 * 6), Image.NEAREST).save(
+    Image.fromarray(lut[np.concatenate(frames, axis=1)], 'RGB').resize((16 * 2 * 6, 16 * 6), Image.NEAREST).save(
         PREVIEW / 'fx_travel.png')
+
+
+# --- the boat and tram scenes ------------------------------------------------------------------------
+# A side view on the dark panel: the vehicle (32x32, facing right, zoomed 2x) stays in the middle while
+# strips of sea or tunnel (64x32, seamless left to right) scroll past it.
+
+def big_vehicle(kind):
+    img = np.zeros((32, 32), dtype=np.uint8)
+    ys, xs = np.mgrid[0:32, 0:32]
+
+    def rect(x0, y0, x1, y1):
+        return (xs >= x0) & (xs <= x1) & (ys >= y0) & (ys <= y1)
+
+    def disc(cx, cy, r):
+        return (xs + 0.5 - cx) ** 2 + (ys + 0.5 - cy) ** 2 <= r * r
+
+    if kind == 'boat':
+        # A cog under one square sail, its bow to the right.
+        img[poly_mask([(1, 19), (31, 19), (27, 27), (6, 27)], 32)] = V['wood']
+        img[rect(1, 19, 30, 20)] = V['wood_d']
+        img[rect(5, 23, 27, 23)] = V['wood_d']
+        img[rect(2, 15, 8, 18)] = V['wood']                                   # the stern castle
+        img[rect(2, 15, 8, 15)] = V['wood_d']
+        img[rect(4, 16, 5, 17)] = V['window']
+        img[rect(15, 2, 16, 18)] = V['wood_d']                                # mast
+        img[poly_mask([(9, 4), (23, 4), (24, 15), (8, 15)], 32)] = V['sail']
+        img[rect(9, 9, 23, 9)] = V['white']
+        img[rect(14, 6, 17, 7) | rect(14, 12, 17, 13)] = V['red']            # the lion on the sail
+        img[rect(17, 1, 21, 3)] = V['red']                                    # pennant
+        img[rect(26, 16, 30, 17)] = V['wood_d']                               # bowsprit
+        return outlined(img)
+    if kind == 'tram':
+        # The Deeprun Tram's car: a riveted carriage with lit windows, its rounded nose to the right.
+        img[poly_mask([(1, 8), (26, 8), (31, 14), (31, 24), (1, 24)], 32)] = V['metal']
+        img[rect(1, 8, 27, 9)] = V['metal_d']
+        img[rect(1, 19, 31, 20)] = V['red']
+        img[rect(1, 24, 31, 25)] = V['metal_d']
+        for wx in (3, 10, 17):
+            img[rect(wx, 11, wx + 4, 16)] = V['window']
+        img[poly_mask([(25, 11), (28, 11), (30, 15), (30, 16), (25, 16)], 32)] = V['window']
+        for wx in (6, 24):
+            img[disc(wx, 26.5, 2.6)] = V['metal_d']
+            img[disc(wx, 26.5, 1)] = V['metal']
+        img[rect(13, 4, 14, 7)] = V['metal_d']                                # the pole to the wire
+        return outlined(img)
+    # The moon over the sea.
+    img[disc(16, 16, 9)] = V['sail']
+    img[disc(13, 13, 2) | disc(19, 19, 1.5) | disc(20, 11, 1)] = V['white']
+    return outlined(img)
+
+
+S = {'clear': 0, 'out': 1, 'sea_d': 2, 'sea_m': 3, 'sea_l': 4, 'foam': 5, 'rock_d': 6, 'rock_m': 7,
+     'rock_l': 8, 'rail': 9, 'tie': 10, 'lamp': 11, 'glow': 12}
+SCENE_PALETTE = [(255, 0, 255), (16, 16, 24), (16, 32, 72), (32, 64, 128), (72, 112, 176), (208, 224, 240),
+                 (40, 36, 44), (68, 62, 70), (100, 92, 96), (160, 164, 176), (88, 60, 36), (248, 208, 96),
+                 (152, 120, 64)]
+
+
+def scene_strip(kind):
+    img = np.zeros((32, 64), dtype=np.uint8)
+    ys, xs = np.mgrid[0:32, 0:64]
+    if kind == 'sea_top':
+        # Waves with a crest every 32 pixels; above them, the sky shows through.
+        crest = np.round(7 + 2.5 * np.sin(xs * 2 * np.pi / 32)).astype(int)
+        img[ys >= crest] = S['sea_m']
+        img[(ys >= crest + 1) & (ys <= crest + 2)] = S['sea_l']
+        img[ys == crest] = S['foam']
+        img[(ys > 12) & ((xs * 3 + ys * 7) % 41 == 0)] = S['sea_l']
+        img[(ys > 18) & ((xs * 5 + ys * 3) % 37 < 2 + (ys - 18) // 2)] = S['sea_d']
+        img[ys >= 28] = S['sea_d']
+        img[(ys >= 28) & ((xs * 7 + ys * 5) % 43 < 3)] = S['sea_m']
+        return img
+    if kind == 'sea_deep':
+        img[:] = S['sea_d']
+        img[(xs * 7 + ys * 5) % 43 < 3] = S['sea_m']
+        img[(xs * 3 + ys * 11) % 97 == 0] = S['sea_l']
+        return img
+    if kind == 'tunnel_top':
+        # The tunnel's vault: big stones, and a lamp hanging every 64 pixels.
+        img[:] = S['rock_m']
+        img[ys % 8 == 7] = S['rock_d']
+        img[(xs + (ys // 8) * 12) % 24 == 0] = S['rock_d']
+        img[(ys % 8 == 0) & ((xs + (ys // 8) * 12) % 24 > 2)] = S['rock_l']
+        img[ys >= 24] = 0
+        img[ys == 24] = S['out']
+        img[(ys >= 24) & (ys <= 26) & (xs >= 31) & (xs <= 32)] = S['out']
+        img[(ys >= 26) & (ys <= 30) & (xs >= 28) & (xs <= 35)] = S['out']
+        img[(ys >= 27) & (ys <= 29) & (xs >= 29) & (xs <= 34)] = S['lamp']
+        img[(ys == 31) & (xs >= 27) & (xs <= 36)] = S['glow']
+        return img
+    # The tunnel's floor: the rail on its ties, then rock.
+    img[:] = S['rock_m']
+    img[ys % 8 == 7] = S['rock_d']
+    img[(xs + (ys // 8) * 16) % 32 == 0] = S['rock_d']
+    img[ys < 8] = 0
+    img[(ys >= 4) & (ys <= 7) & (xs % 16 < 6)] = S['tie']
+    img[ys == 2] = S['rail']
+    img[ys == 3] = S['out']
+    img[ys == 8] = S['out']
+    return img
+
+
+def write_scenes():
+    frames = [big_vehicle('boat'), big_vehicle('tram'), big_vehicle('moon')]
+    save_indexed_bmp(GRAPHICS / 'fx_vehicles.bmp', np.concatenate(frames, axis=0), VEHICLE_PALETTE,
+                     allow_duplicates=True)
+    (GRAPHICS / 'fx_vehicles.json').write_text('{\n    "type": "sprite",\n    "height": 32\n}\n')
+    strips = [scene_strip(kind) for kind in ('sea_top', 'sea_deep', 'tunnel_top', 'tunnel_bottom')]
+    save_indexed_bmp(GRAPHICS / 'fx_scene.bmp', np.concatenate(strips, axis=0), SCENE_PALETTE + [(0, 0, 0)] * 3,
+                     allow_duplicates=True)
+    (GRAPHICS / 'fx_scene.json').write_text('{\n    "type": "sprite",\n    "height": 32\n}\n')
+
+    # Previews of both scenes as the game lays them out, on the panel's color.
+    panel = (24, 28, 48)
+    for name, rows, vehicle_frame in (('boat', [(None, 0), (0, 1), (1, 2), (1, 3)], 0),
+                                      ('tram', [(2, 1), (None, 2), (3, 3)], 1)):
+        canvas = np.zeros((160, 256, 3), dtype=np.uint8)
+        canvas[:] = panel
+        lut = np.array(SCENE_PALETTE, dtype=np.uint8)
+        for strip, row in rows:
+            if strip is None:
+                continue
+            tile = np.tile(strips[strip], (1, 4))
+            y = row * 32 + (16 if name == 'boat' else 8)
+            part = canvas[y:y + 32]
+            mask = tile[:part.shape[0]] != 0
+            part[mask] = lut[tile[:part.shape[0]]][mask]
+        big = np.kron(frames[vehicle_frame], np.ones((2, 2), dtype=np.uint8))
+        vlut = np.array(VEHICLE_PALETTE, dtype=np.uint8)
+        y = 64 if name == 'boat' else 40
+        part = canvas[y:y + 64, 96:160]
+        mask = big != 0
+        part[mask] = vlut[big][mask]
+        Image.fromarray(canvas, 'RGB').resize((512, 320), Image.NEAREST).save(PREVIEW / f'scene_{name}.png')
 
 
 def zone_enum(name):
@@ -263,6 +382,7 @@ def main():
                 continue
             zone_rows.append((zone, index, x, y, levels, map_name))
     write_vehicles()
+    write_scenes()
 
     out = ['// Generated by tools/gen_travel.py. Do not edit by hand.',
            '// Include only from the world map and the flight scene: it pulls in both continent pictures.',

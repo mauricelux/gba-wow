@@ -42,3 +42,11 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
   every enemy in a fight (casts, strikes, charges, fleeing, calls for help) and puts debuffs on the
   player; elites' scripted moves stay in `combat::boss_update`. A new debuff goes at the end of
   `buff_id` (`gw_buffs.h`) with an icon in `buff_icons` (`gw_hud.cpp`).
+- Travel: flight paths are data in `src/gw_travel.cpp` (`flight_id` append-only, known ones are bits
+  in `character().flights`); a flight master is an NPC with `npc_flag::FLIGHT_MASTER` whose `master`
+  is set there. A warp in `gen_world.py` with `ride='boat'` or `ride='tram'` plays the `voyage`
+  scene before it lands. `gen_travel.py` draws the continent pictures (zones and their levels, for
+  the world map and the flight) and the travel scenes' art.
+- The pet (`src/gw_pet.cpp`) is the Beast Mastery hunter's tamed beast or the Water Elemental. Enemies
+  keep a threat for the player and for the pet and swing at whichever is higher; the pet takes hits
+  through `combat::enemy_attacks_pet`.

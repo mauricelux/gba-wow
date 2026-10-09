@@ -9,6 +9,7 @@
 #include "gw_hud.h"
 #include "gw_input.h"
 #include "gw_map_deadmines.h"
+#include "gw_map_deeprun_tram.h"
 #include "gw_map_echo_ridge.h"
 #include "gw_map_elwynn.h"
 #include "gw_map_fargodeep.h"
@@ -57,6 +58,7 @@ namespace
         { "Stormwind Gryphons", map_id::STORMWIND, map_data::stormwind::flight },
         { "Sentinel Gryphons", map_id::WESTFALL, map_data::westfall::flight },
         { "Dwarven District", map_id::STORMWIND, { 930, 240 } },
+        { "Deeprun Tram", map_id::DEEPRUN_TRAM, map_data::deeprun_tram::entry },
     };
 
     constexpr int destination_count = sizeof(destinations) / sizeof(destinations[0]);

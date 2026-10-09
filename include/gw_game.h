@@ -20,6 +20,7 @@
 #include "gw_npcs.h"
 #include "gw_pet.h"
 #include "gw_player.h"
+#include "gw_voyage.h"
 #include "gw_zone_banner.h"
 
 namespace gw
@@ -54,6 +55,8 @@ private:
     menu _menu;
     ending _ending;
     flight _flight;
+    voyage _voyage;
+    warp_def _ride = {};        // the boat or tram warp being travelled
     const area_def* _area = nullptr;
     const warp_def* _warp = nullptr;
     warp_def _teleport = {};
@@ -77,6 +80,7 @@ private:
     static void _on_level_up(void* context);
     void _start_teleport(map_id map, int x, int y);
     void _land();
+    void _arrive(map_id map, const point_def& point);
     void _loot(int index);
     void _update_death();
     void _save_position();

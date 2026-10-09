@@ -112,6 +112,14 @@ jobs:
             hold:R:6 hold:RA:2 hold:R:4 wait:50 shot:screenshots/26_pet_fights.ppm \
             hold:S:2 wait:10 hold:A:2 wait:10 hold:S:2 wait:10
           python3 tools/headless/check_save.py pet.sav subclass="Beast Mastery" pet=1
+          # The hunter and the wolf take the Deeprun Tram from Stormwind Station to Ironforge Station.
+          MGBA_SAVE=pet.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:S:2 wait:6 hold:l:2 wait:6 hold:D:2 wait:4 hold:A:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:90 hold:U:100 wait:120 shot:screenshots/27_tram.ppm wait:260 \
+            shot:screenshots/28_ironforge_station.ppm hold:S:2 wait:10 hold:A:2 wait:10 hold:S:2 wait:10
+          python3 tools/headless/check_save.py pet.sav map=10 pet=1
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm
 

@@ -61,7 +61,8 @@ game::game() :
     _combat(_player, _enemies, _texts, _effects, _hud),
     _dialog(_combat, _hud, _npcs),
     _menu(_combat, _hud, _npcs),
-    _flight(_text_generator)
+    _flight(_text_generator),
+    _voyage(_text_generator)
 {
     // The UI layer goes first so it owns the first palette banks and tile block.
     ui::init();
@@ -221,6 +222,16 @@ bool game::_update_overlays()
         return true;
     }
 
+    if(_voyage.is_open())
+    {
+        if(! _voyage.update())
+        {
+            _arrive(_ride.target, point_def{ _ride.target_x, _ride.target_y });
+        }
+
+        return true;
+    }
+
     if(_ending.is_open())
     {
         if(! _ending.update())
@@ -263,12 +274,16 @@ void game::_start_teleport(map_id map, int x, int y)
 
 void game::_land()
 {
-    // The flight ended on a black screen: load the destination and fade in like after a door.
-    flight_id destination = _flight.destination();
-    const flight_def& def = get_flight(destination);
+    const flight_def& def = get_flight(_flight.destination());
+    _arrive(def.map, def.landing);
+}
+
+void game::_arrive(map_id map, const point_def& point)
+{
+    // A flight or a crossing ended on a black screen: load the far end and fade in like after a door.
     _set_paused(false);
-    _load_map(def.map, bn::fixed_point(def.landing.x, def.landing.y));
-    _teleport = warp_def{ 0, 0, 0, 0, def.map, def.landing.x, def.landing.y };
+    _load_map(map, bn::fixed_point(point.x, point.y));
+    _teleport = warp_def{ 0, 0, 0, 0, map, point.x, point.y };
     _warp = &_teleport;
     _warp_frames = warp_fade_frames;
 }
@@ -518,6 +533,18 @@ void game::_check_warps()
     {
         if(right >= warp.x && bottom >= warp.y && left < warp.x + warp.width && top < warp.y + warp.height)
         {
+            if(warp.ride != vehicle::NONE)
+            {
+                // Aboard a boat or the tram: its scene plays first, named after the far end.
+                const area_def* area = area_at(get_map(warp.target), warp.target_x, warp.target_y);
+                _set_paused(true);
+                _combat.dismount();
+                _combat.clear_target();
+                _ride = warp;
+                _voyage.open(warp.ride, area ? area->name : "");
+                return;
+            }
+
             _warp = &warp;
             _warp_frames = 0;
             return;

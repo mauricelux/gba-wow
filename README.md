@@ -36,21 +36,32 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![Princess charges and stuns a hunter](docs/screenshots/m15_charge_stun.png)
 ![A Riverpaw Brute becomes enraged](docs/screenshots/m15_enrage.png)
 ![A murloc calls for help](docs/screenshots/m15_call_for_help.png)
+![A Dwarf hunter riding a ram through Goldshire, the wolf at heel](docs/screenshots/m16_mount.png)
+![Dungar Longdrink's flight paths](docs/screenshots/m16_flight_master.png)
+![A gryphon flies to Sentinel Hill](docs/screenshots/m16_flight.png)
+![The Eastern Kingdoms on the world map](docs/screenshots/m16_continent.png)
+![Taming a young wolf](docs/screenshots/m16_taming.png)
+![A tamed wolf fights beside its hunter at Jangolode Farm](docs/screenshots/m16_pet.png)
+![A Frost mage's Water Elemental freezes a convict](docs/screenshots/m16_water_elemental.png)
+![On the Deeprun Tram](docs/screenshots/m16_tram.png)
+![Ironforge Station, where the lift is still shut](docs/screenshots/m16_ironforge_station.png)
 
 ## Status
 
 Every milestone of the roadmap is in. From the title screen, continue your saved hero or create a
 Human Warrior or Mage, a Dwarf Warrior or Hunter, or a Night Elf Warrior or Hunter in one of three
-subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Marksmanship or
-Survival), then walk freely from Northshire Abbey down to Goldshire,
-west to the city of Stormwind and south to Westfall, take on 29 quests from Northshire to the
-Stockade, fight with auto-attack and your subclass's abilities, loot and equip about 170 items, buy and
-sell at vendors, carry as much as you like in bags sorted by type, quality, level or age, use 19
-ability slots on three bars and 4 item slots, buy new abilities and ranks from your class trainer, spend talent points from level 10, face the
-elites Princess and Hogger, clear the kobolds out of Echo Ridge and Fargodeep mines, hunt for 17
-hidden treasure chests, hearth home to an inn, fight through the Deadmines to Sneed and Edwin
-VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, see the story's
-end, and save to the cartridge. Every zone has its own music, and elite fights switch to a boss tune.
+subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Marksmanship or Survival),
+then walk freely from Northshire Abbey down to Goldshire, west to the city of Stormwind and south to
+Westfall, take on 29 quests from Northshire to the Stockade, fight with auto-attack and your
+subclass's abilities, loot and equip about 170 items, buy and sell at vendors, carry as much as you
+like in bags sorted by type, quality, level or age, use 19 ability slots on three bars and 4 item
+slots, buy new abilities and ranks from your class trainer, spend talent points from level 10, face
+the elites Princess and Hogger, clear the kobolds out of Echo Ridge and Fargodeep mines, hunt for 17
+hidden treasure chests, hearth home to an inn, ride from level 30, fly by gryphon between Stormwind
+and Sentinel Hill, take the Deeprun Tram, tame a pet as a Beast Mastery hunter, fight through the
+Deadmines to Sneed and Edwin VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil
+Thredd, see the story's end, and save to the cartridge. Every zone has its own music, and elite fights
+switch to a boss tune.
 
 Following the quests in order takes a hero to about level 17 at the Deadmines and to level 20 in the
 Stockade, without grinding. The level cap is 60: the road there is planned in
@@ -74,7 +85,7 @@ Stockade, without grinding. The level cap is 60: the road there is planned in
 | M13 Subclasses and ranks | Subclass choice, 9 kits, ability ranks, 18-talent trees | Done |
 | M14 Keybinds and bags | Utility, Buffs and Items bars, buff reminder, unlimited sorted bags | Done |
 | M15 Enemy abilities | Shared enemy ability table, cast bars, interrupts, flee and call for help | Done |
-| M16 Travel and the pet | Flight masters, boats, tram, mount, two-level world map, hunter pet | Planned |
+| M16 Travel and the pet | Flight masters, boats, tram, mount, two-level world map, hunter pet | Done |
 | M17 to M26 | Redridge to the Plaguelands, 18 new dungeons, Onyxia and the new ending | Planned |
 
 ## Controls
@@ -134,8 +145,31 @@ Treasure chests are hidden around the world: under roofs, behind buildings, at t
 tunnels, and in clearings reached by secret paths through the forests (look for gaps between tree
 trunks). Walk up to a chest and press A to open it for money, an item and sometimes a potion. Each
 chest opens once per hero. The world map (Start, then the World Map page) shows where you are, quest
-givers with a `!` or `?`, the chests you have already opened, and how many of the 17 you have found;
-left and right show the other zones. Brann Bronzebeard in Stormwind pays for five opened chests.
+givers with a `!` or `?`, the chests you have already opened, the flight masters you know, and how
+many of the 17 you have found; left and right show the other zones. B steps out to the whole
+continent: the D-pad picks a zone (its levels, or "Coming later" for zones of later chapters), A
+opens its map, and Select turns to Kalimdor. Brann Bronzebeard in Stormwind pays for five opened
+chests.
+
+Getting around: from level 30, Randal Hunter in Stormwind's Valley of Heroes teaches riding for 5
+gold. Mount (on the Buffs bar) puts a Human on a horse, a Dwarf on a ram and a Night Elf on a
+nightsaber, 60% faster out of combat; a blow, any other ability, eating, the hearthstone or going
+indoors gets you off. Gryphon masters (Dungar Longdrink in the Valley of Heroes, Thor at Sentinel
+Hill) remember you the first time you talk to them and fly you to any other one you have met, for a
+price that grows with the distance: the gryphon crosses the continent while the map scrolls under it.
+The Deeprun Tram leaves from the station house in Stormwind's Dwarven District. Its far end is
+Ironforge Station, where the lift up to Ironforge stays shut until the Ironforge chapter. Boats work
+the same way and arrive with the harbors of later chapters.
+
+Pets: a Beast Mastery hunter gets *Taming the Beast* from Einris Brightspear at level 10. Tame Beast
+(Utility bar) channels for six seconds on a beast of your level or lower, which fights back
+meanwhile; then it is yours, follows you everywhere and grows with you. It bites what you fight and
+holds the attention of what it bites, so enemies turn on it instead of you. Its health shows under
+yours. Call Pet sends it away or brings it back, Pet Passive keeps it out of fights, Revive Pet
+brings it back from the dead, Mend Pet heals it, Kill Command makes its next bite hit hard, and the
+Intimidation talent makes it stun. Aspect of the Beast adds 10% damage for both of you. A Frost
+mage's last talent, Water Elemental, calls a pet for 45 seconds that casts Frostbolt at your target
+and freezes enemies that reach you.
 
 Enemies: many of them now do more than swing. Defias Thugs open wounds that bleed, Forest Spiders
 poison, Kobold Tunnelers throw the candles off their helmets, Defias Trappers throw nets that root

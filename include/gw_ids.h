@@ -73,6 +73,7 @@ enum class map_id : uint16_t
     FARGODEEP,
     STORMWIND,
     STOCKADE,
+    DEEPRUN_TRAM,
     COUNT
 };
 
@@ -142,6 +143,7 @@ enum class npc_id : uint16_t
     DUNGAR,
     THOR,
     RANDAL,
+    MONTY,
     COUNT
 };
 

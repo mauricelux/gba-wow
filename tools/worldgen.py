@@ -163,8 +163,9 @@ class Map:
 
     # --- metadata ------------------------------------------------------------------------------
 
-    def warp(self, x, y, w, h, target_map, target_point):
-        self.warps.append((x, y, w, h, target_map, target_point))
+    def warp(self, x, y, w, h, target_map, target_point, ride=None):
+        """ride is 'boat' or 'tram' for a warp that plays a travel scene first."""
+        self.warps.append((x, y, w, h, target_map, target_point, ride))
 
     def npc(self, npc_id, x, y):
         self.npcs.append((npc_id, x, y))
@@ -230,8 +231,12 @@ class Map:
             reach = grown
 
     def check_reachable(self, start, step=4):
-        """Every chest and NPC must be in range of a spot the player can walk to from start."""
+        """Every chest and NPC must be in range of a spot the player can walk to from start, or from
+        where a warp to this same map (the tram) puts them."""
         reach = self.reachable_from(*self.points[start], step=step)
+        for *_, target, point, _ in self.warps:
+            if target == self.name:
+                reach |= self.reachable_from(*self.points[point], step=step)
         ys, xs = np.nonzero(reach)
         targets = [(f'chest {c}', x, y - 4, 20) for c, x, y, _ in self.chests]
         targets += [(npc, x, y, 28) for npc, x, y in self.npcs]
@@ -305,9 +310,10 @@ class Map:
             out.append(f'    constexpr point_def {name} = {{ {x}, {y} }};')
         out.append('')
         out.append('    constexpr warp_def warps[] = {')
-        for x, y, w, h, target, tp in self.warps:
+        for x, y, w, h, target, tp, ride in self.warps:
             tx, ty = maps[target].points[tp]
-            out.append(f'        {{ {x}, {y}, {w}, {h}, map_id::{target.upper()}, {tx}, {ty} }},')
+            vehicle = f', vehicle::{ride.upper()}' if ride else ''
+            out.append(f'        {{ {x}, {y}, {w}, {h}, map_id::{target.upper()}, {tx}, {ty}{vehicle} }},')
         if not self.warps:
             out.append('        { 0, 0, 0, 0, map_id::NONE, 0, 0 },')
         out.append('    };')

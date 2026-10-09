@@ -555,6 +555,12 @@ void pet::_bite(int index)
     _attack_timer = def.attack_speed * 6;
     _direction = facing_towards(_position, target.position);
 
+    // Bestial Wrath sends the pet into the same frenzy as the hunter.
+    if(int haste = _combat->buff_value(buff_id::BESTIAL_WRATH))
+    {
+        _attack_timer = _attack_timer * 100 / (100 + haste);
+    }
+
     if(_sprite)
     {
         _sprite->play_attack();

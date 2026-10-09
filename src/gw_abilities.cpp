@@ -115,7 +115,7 @@ namespace
         { "Counterattack", "Right after you dodge: strike and pin the target in place.", c::HUNTER, SURV,
           i::COUNTERATTACK, TALENT | REACTIVE, 30, 5 * seconds, 0, 0, 30, 3, v::DAMAGE, 5 * seconds, a::ENEMY,
           s::PHYSICAL, p::NONE, { 30, 42, 54 } },
-        { "Bestial Wrath", "Attack 40% faster for 15 seconds.", c::HUNTER, BEAST, i::BESTIAL_WRATH, TALENT, 0,
+        { "Bestial Wrath", "You and your pet attack 40% faster for 15 seconds.", c::HUNTER, BEAST, i::BESTIAL_WRATH, TALENT, 0,
           120 * seconds, 0, 0, 40, 0, v::LEVEL, 15 * seconds, a::SELF, s::NATURE, p::NONE, { 40 } },
 
         // warrior, from the subclasses on

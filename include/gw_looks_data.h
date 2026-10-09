@@ -72,6 +72,7 @@ constexpr look_def look_table[] = {
     { bn::sprite_items::char_hum_sword, palettes::bazil_thredd, false },
     { bn::sprite_items::char_dwarf_sword, palettes::gryphon_master, false },
     { bn::sprite_items::char_hum_plain, palettes::riding_trainer, false },
+    { bn::sprite_items::char_dwarf_sword, palettes::tram_conductor, false },
     { bn::sprite_items::char_wolf, palettes::young_wolf, true },
     { bn::sprite_items::char_wolf, palettes::timber_wolf, true },
     { bn::sprite_items::char_boar, palettes::boar, true },
