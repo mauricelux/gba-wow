@@ -30,3 +30,10 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
 - Abilities (`src/gw_abilities.cpp`) list the levels of their ranks and the kits (subclasses) that get
   them; `rank_value` scales a rank with the level until the next rank. Talents are saved by their
   position in the subclass's tree, so reorder a tree only together with a save migration.
+- A new ability needs a `default_bar` (Combat, Utility or Buffs) in `gw_abilities.cpp`; long buffs the
+  hud should remind about go in `combat::missing_buff`.
+- Bags are packed rows (`character().bags`, `bag_row_count()`): change them only through
+  `add_item`, `remove_item` and `remove_from_row`, which keep them without gaps. Lists of the bags
+  for the player go through `bag_view` (sorted, with headings).
+- Menus and the HUD share the UI layer (BG priority 0); HUD icons are sprites at priority 1 so text
+  can sit on top of them.

@@ -519,6 +519,15 @@ void combat::update(bool input_enabled)
 {
     character_data& data = character();
 
+    if(! input_enabled || _dead)
+    {
+        // Releases while busy don't count as taps.
+        _held_bar = held_bar::NONE;
+        _l_used = true;
+        _select_used = true;
+        _chord = false;
+    }
+
     if(_dead)
     {
         return;
@@ -637,48 +646,107 @@ void combat::update(bool input_enabled)
     }
 }
 
+bool combat::bar_keys_held()
+{
+    return bn::keypad::l_held() || bn::keypad::r_held() || bn::keypad::select_held();
+}
+
 void combat::_read_input()
 {
-    if(bn::keypad::r_held())
+    bool l = bn::keypad::l_held();
+    bool r = bn::keypad::r_held();
+
+    // L within a few frames of R is the two pressed together, not R's L slot. L and Select only
+    // count as taps when let go quickly: holding them to look at their bar does nothing.
+    constexpr int chord_frames = 8;
+    constexpr int tap_frames = 20;
+    _r_frames = r ? _r_frames + 1 : 0;
+    _l_frames = l ? _l_frames + 1 : _l_frames;
+    _select_frames = bn::keypad::select_held() ? _select_frames + 1 : _select_frames;
+
+    if(bn::keypad::l_pressed())
     {
-        if(bn::keypad::a_pressed())
+        _l_used = r;
+        _l_frames = 1;
+
+        if(r && _r_frames > chord_frames && ! _chord)
         {
-            _use_slot(0);
+            _use_slot(bar_id::COMBAT, 2);
         }
-        else if(bn::keypad::b_pressed())
+        else if(r)
         {
-            _use_slot(1);
-        }
-        else if(bn::keypad::l_pressed())
-        {
-            _use_slot(2);
-        }
-        else if(bn::keypad::up_pressed())
-        {
-            _use_slot(3);
-        }
-        else if(bn::keypad::right_pressed())
-        {
-            _use_slot(4);
-        }
-        else if(bn::keypad::down_pressed())
-        {
-            _use_slot(5);
-        }
-        else if(bn::keypad::left_pressed())
-        {
-            _use_slot(6);
+            _chord = true;
         }
     }
-    else if(bn::keypad::l_pressed())
+
+    if(bn::keypad::r_pressed() && l)
+    {
+        _chord = true;
+        _l_used = true;
+    }
+
+    if(! l || ! r)
+    {
+        _chord = false;
+    }
+
+    if(bn::keypad::l_released() && ! _l_used && ! r && _l_frames <= tap_frames)
     {
         _cycle_target();
     }
+
+    // Select: an Items bar on its own, a quick use when tapped.
+    if(bn::keypad::select_pressed())
+    {
+        _select_used = l || r;
+        _select_frames = 1;
+    }
+
+    if(bn::keypad::select_held() && ! l && ! r)
+    {
+        _held_bar = held_bar::ITEMS;
+        int slot = bn::keypad::up_pressed() ? 0 : bn::keypad::right_pressed() ? 1 :
+                   bn::keypad::down_pressed() ? 2 : bn::keypad::left_pressed() ? 3 : -1;
+
+        if(slot >= 0)
+        {
+            _select_used = true;
+            use_item_slot(slot);
+        }
+
+        return;
+    }
+
+    if(bn::keypad::select_released() && ! _select_used && ! l && ! r && _select_frames <= tap_frames)
+    {
+        quick_use();
+    }
+
+    _held_bar = _chord ? held_bar::BUFFS : r ? held_bar::COMBAT : l ? held_bar::UTILITY : held_bar::NONE;
+
+    if(_held_bar == held_bar::NONE)
+    {
+        return;
+    }
+
+    bar_id bar = _held_bar == held_bar::BUFFS ? bar_id::BUFFS :
+                 _held_bar == held_bar::UTILITY ? bar_id::UTILITY : bar_id::COMBAT;
+
+    // Slots in action bar order: A, B, (L), up, right, down, left.
+    int slot = bn::keypad::a_pressed() ? 0 : bn::keypad::b_pressed() ? 1 : bn::keypad::up_pressed() ? 3 :
+               bn::keypad::right_pressed() ? 4 : bn::keypad::down_pressed() ? 5 :
+               bn::keypad::left_pressed() ? 6 : -1;
+
+    if(slot >= 0)
+    {
+        _l_used = _l_used || l;
+        _use_slot(bar, slot);
+    }
 }
 
-void combat::_use_slot(int slot)
+void combat::_use_slot(bar_id bar, int slot)
 {
-    ability_id ability = character().action_bar[slot];
+    ability_id ability = character().action_bars[int(bar)][slot];
 
     if(ability != ability_id::NONE)
     {
@@ -2358,12 +2426,93 @@ bool combat::use_item(item_id item, const char** error)
         _hud.message(def.type == item_type::FOOD ? "Eating..." : "Drinking...", ui::color::GREEN);
         break;
 
+    case item_type::HEARTHSTONE:
+    {
+        if(in_combat())
+        {
+            return fail("You are in combat");
+        }
+
+        if(data.play_frames < data.hearthstone_ready)
+        {
+            int minutes = int((data.hearthstone_ready - data.play_frames) / 3600) + 1;
+            _hearth_text = "Ready in ";
+            _hearth_text += bn::to_string<4>(minutes);
+            _hearth_text += minutes == 1 ? " minute" : " minutes";
+            return fail(_hearth_text.c_str());
+        }
+
+        // The game takes the player home, as after Teleport.
+        const home_def& home = get_home(home_id(data.home));
+        data.hearthstone_ready = data.play_frames + hearthstone_cooldown;
+        teleport_map = home.map;
+        teleport_point = bn::fixed_point(home.point.x, home.point.y);
+        return true;
+    }
+
     default:
         return false;
     }
 
     remove_item(item, 1);
     return true;
+}
+
+ability_id combat::missing_buff() const
+{
+    if(_dead || in_combat())
+    {
+        return ability_id::NONE;
+    }
+
+    struct reminder
+    {
+        ability_id ability;
+        buff_id buffs[3];   // any of them will do
+    };
+
+    // Each mage knows one armor, each hunter can pick any aspect.
+    constexpr reminder reminders[] = {
+        { ability_id::BATTLE_SHOUT, { buff_id::BATTLE_SHOUT, buff_id::BATTLE_SHOUT, buff_id::BATTLE_SHOUT } },
+        { ability_id::ARCANE_INTELLECT, { buff_id::ARCANE_INTELLECT, buff_id::ARCANE_INTELLECT,
+                                          buff_id::ARCANE_INTELLECT } },
+        { ability_id::MOLTEN_ARMOR, { buff_id::MOLTEN_ARMOR, buff_id::MAGE_ARMOR, buff_id::FROST_ARMOR } },
+        { ability_id::MAGE_ARMOR, { buff_id::MOLTEN_ARMOR, buff_id::MAGE_ARMOR, buff_id::FROST_ARMOR } },
+        { ability_id::FROST_ARMOR, { buff_id::MOLTEN_ARMOR, buff_id::MAGE_ARMOR, buff_id::FROST_ARMOR } },
+        { ability_id::TRUESHOT_AURA, { buff_id::TRUESHOT_AURA, buff_id::TRUESHOT_AURA, buff_id::TRUESHOT_AURA } },
+        { ability_id::ASPECT_OF_THE_HAWK, { buff_id::ASPECT_OF_THE_HAWK, buff_id::ASPECT_OF_THE_MONKEY,
+                                            buff_id::ASPECT_OF_THE_CHEETAH } },
+        { ability_id::ASPECT_OF_THE_MONKEY, { buff_id::ASPECT_OF_THE_HAWK, buff_id::ASPECT_OF_THE_MONKEY,
+                                              buff_id::ASPECT_OF_THE_CHEETAH } },
+    };
+
+    for(const reminder& item : reminders)
+    {
+        if(knows_ability(item.ability) && ! _buffs[int(item.buffs[0])] && ! _buffs[int(item.buffs[1])] &&
+           ! _buffs[int(item.buffs[2])])
+        {
+            return item.ability;
+        }
+    }
+
+    return ability_id::NONE;
+}
+
+bool combat::use_item_slot(int slot)
+{
+    item_id item = item_bar_item(slot);
+
+    if(item == item_id::NONE)
+    {
+        constexpr const char* missing[] = { "No healing potions", "No food", "No drinks", "No hearthstone" };
+        item_type type = character().item_bar[slot] != item_id::NONE ? get_item(character().item_bar[slot]).type :
+                                                                       item_bar_default(slot);
+        int index = type == item_type::POTION ? 0 : type == item_type::FOOD ? 1 : type == item_type::DRINK ? 2 : 3;
+        _hud.message(missing[index], ui::color::RED);
+        return false;
+    }
+
+    return use_item(item);
 }
 
 bool combat::quick_use()
@@ -2392,11 +2541,12 @@ bool combat::quick_use()
     // The best one the player can use.
     item_id best = item_id::NONE;
 
-    for(const item_stack& slot : data.bags)
+    for(int row = 0, rows = bag_row_count(); row < rows; ++row)
     {
+        const item_stack& slot = data.bags[row];
         const item_def& def = get_item(slot.item);
 
-        if(slot.item != item_id::NONE && def.type == wanted && def.level <= data.level &&
+        if(def.type == wanted && def.level <= data.level &&
            (best == item_id::NONE || def.min_damage > get_item(best).min_damage))
         {
             best = slot.item;

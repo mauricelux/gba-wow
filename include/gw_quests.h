@@ -67,7 +67,7 @@ struct quest_def
 void accept_quest(quest_id quest);
 
 // Marks the quest turned in and hands out its money and the chosen reward item (experience is
-// given by the caller through combat so level ups show). Returns false if the bags are full.
+// given by the caller through combat so level ups show). Returns false if every bag row is in use.
 bool turn_in_quest(quest_id quest, int reward_index);
 
 // Gives up the quest: its progress is lost and it can be picked up again.

@@ -32,6 +32,8 @@ void vendor_screen::open(npc_id npc)
     _npc = npc;
     _selling = false;
     _cursor = list_cursor();
+    _bags.rebuild();
+    _bags.reset();
     _status = status_line();
     _dirty = true;
     ui::clear();
@@ -39,31 +41,7 @@ void vendor_screen::open(npc_id npc)
 
 int vendor_screen::_count() const
 {
-    if(! _selling)
-    {
-        return vendor_stock(get_npc_info(_npc).vendor).size();
-    }
-
-    return bag_slots - free_bag_slots();
-}
-
-int vendor_screen::_bag_slot(int row) const
-{
-    // The row-th occupied bag slot.
-    for(int index = 0; index < bag_slots; ++index)
-    {
-        if(character().bags[index].item != item_id::NONE)
-        {
-            if(row == 0)
-            {
-                return index;
-            }
-
-            --row;
-        }
-    }
-
-    return -1;
+    return vendor_stock(get_npc_info(_npc).vendor).size();
 }
 
 bool vendor_screen::update()
@@ -78,15 +56,17 @@ bool vendor_screen::update()
     {
         _selling = ! _selling;
         _cursor = list_cursor();
+        _bags.rebuild();
+        _bags.reset();
         _dirty = true;
     }
 
-    if(_cursor.update(_count(), list_rows))
+    if(_selling ? _bags.update(list_rows) : _cursor.update(_count(), list_rows))
     {
         _dirty = true;
     }
 
-    if(bn::keypad::a_pressed() && _count() > 0)
+    if(bn::keypad::a_pressed() && (_selling ? ! _bags.empty() : _count() > 0))
     {
         if(_selling)
         {
@@ -112,7 +92,11 @@ bool vendor_screen::update()
 
     if(_dirty)
     {
-        _cursor.clamp(_count(), list_rows);
+        if(! _selling)
+        {
+            _cursor.clamp(_count(), list_rows);
+        }
+
         _draw();
         _dirty = false;
     }
@@ -134,7 +118,7 @@ void vendor_screen::_buy()
 
     if(add_item(item) > 0)
     {
-        _status.show("Inventory is full", ui::color::RED);
+        _status.show("Your bags are full", ui::color::RED);
         return;
     }
 
@@ -147,39 +131,43 @@ void vendor_screen::_buy()
 
 void vendor_screen::_sell()
 {
-    int slot_index = _bag_slot(_cursor.index);
+    int row = _bags.selected_row();
 
-    if(slot_index < 0)
+    if(row < 0)
     {
         return;
     }
 
-    item_stack& slot = character().bags[slot_index];
+    const item_stack& stack = character().bags[row];
 
-    if(! sell_price(slot.item))
+    if(! sell_price(stack.item))
     {
         _status.show("They won't buy that", ui::color::RED);
         return;
     }
 
-    character().money += sell_price(slot.item) * slot.count;
+    // The whole stack at once.
+    character().money += sell_price(stack.item) * stack.count;
     play_sound(sound_id::COIN);
     bn::string<48> text = "Sold ";
-    text += get_item(slot.item).name;
+    text += get_item(stack.item).name;
     _status.show(text, ui::color::YELLOW);
-    slot = item_stack();
+    remove_from_row(row, stack.count);
+    _bags.rebuild();
 }
 
 void vendor_screen::_sell_junk()
 {
     int total = 0;
 
-    for(item_stack& slot : character().bags)
+    for(int row = bag_row_count() - 1; row >= 0; --row)
     {
-        if(slot.item != item_id::NONE && get_item(slot.item).quality == item_quality::POOR)
+        const item_stack& stack = character().bags[row];
+
+        if(get_item(stack.item).quality == item_quality::POOR)
         {
-            total += sell_price(slot.item) * slot.count;
-            slot = item_stack();
+            total += sell_price(stack.item) * stack.count;
+            remove_from_row(row, stack.count);
         }
     }
 
@@ -192,6 +180,7 @@ void vendor_screen::_sell_junk()
     character().money += total;
     play_sound(sound_id::COIN);
     _status.show("Sold all junk", ui::color::YELLOW);
+    _bags.rebuild();
 }
 
 void vendor_screen::_draw()
@@ -207,62 +196,57 @@ void vendor_screen::_draw()
     ui::divider(1, hint_row - 1, ui::columns - 2);
     _status.draw(details_top - 1);
 
-    int count = _count();
     item_id selected = item_id::NONE;
     int selected_count = 1;
 
-    for(int row = 0; row < list_rows; ++row)
+    if(_selling)
     {
-        int index = _cursor.scroll + row;
+        _bags.draw(list_top, list_rows);
+        int row = _bags.selected_row();
 
-        if(index >= count)
+        if(row >= 0)
         {
-            break;
-        }
-
-        item_id item;
-        int stack = 1;
-
-        if(_selling)
-        {
-            const item_stack& slot = data.bags[_bag_slot(index)];
-            item = slot.item;
-            stack = slot.count;
-        }
-        else
-        {
-            item = vendor_stock(info.vendor)[index];
-        }
-
-        const item_def& def = get_item(item);
-        bool usable = (def.slot == equip_slot::NONE || can_equip(data.player_class, def)) && def.level <= data.level;
-        int y = list_top + row;
-
-        if(index == _cursor.index)
-        {
-            ui::cursor(2, y);
-            selected = item;
-            selected_count = stack;
-        }
-
-        int width = ui::text(4, y, def.name, usable ? ui::color(quality_color(def.quality)) : ui::color::RED, true);
-
-        if(stack > 1)
-        {
-            bn::string<8> text = "x";
-            text += bn::to_string<4>(stack);
-            ui::text(5 + width, y, text, ui::color::GRAY, true);
+            selected = data.bags[row].item;
+            selected_count = data.bags[row].count;
         }
     }
-
-    if(_cursor.scroll > 0)
+    else
     {
-        ui::scroll_arrow(28, list_top, true);
-    }
+        int count = _count();
 
-    if(_cursor.scroll + list_rows < count)
-    {
-        ui::scroll_arrow(28, list_top + list_rows - 1, false);
+        for(int row = 0; row < list_rows; ++row)
+        {
+            int index = _cursor.scroll + row;
+
+            if(index >= count)
+            {
+                break;
+            }
+
+            item_id item = vendor_stock(info.vendor)[index];
+            const item_def& def = get_item(item);
+            bool usable = (def.slot == equip_slot::NONE || can_equip(data.player_class, def)) &&
+                          def.level <= data.level;
+            int y = list_top + row;
+
+            if(index == _cursor.index)
+            {
+                ui::cursor(2, y);
+                selected = item;
+            }
+
+            ui::text(4, y, def.name, usable ? ui::color(quality_color(def.quality)) : ui::color::RED, true);
+        }
+
+        if(_cursor.scroll > 0)
+        {
+            ui::scroll_arrow(28, list_top, true);
+        }
+
+        if(_cursor.scroll + list_rows < count)
+        {
+            ui::scroll_arrow(28, list_top + list_rows - 1, false);
+        }
     }
 
     _details.clear();

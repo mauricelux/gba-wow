@@ -729,6 +729,20 @@ def subclass_icons(out):
     c.fill(c.ellipse(11, 4, 2, 2), I['yellow'])
     out['bestial_wrath'] = c
 
+    # items and the hud
+    c = icon_base('blue_d')
+    c.fill(c.ellipse(8, 8.5, 5, 5.5), I['lgray'], I['out'])
+    c.fill(c.ellipse(7, 7, 2.5, 2), I['white'])
+    c.fill(c.line(6, 10, 10, 10, 1) | c.line(8, 8, 8, 12, 1), I['blue_l'])
+    out['hearthstone'] = c
+    c = Canvas(16)
+    arm = c.rect(6, 2, 10, 14) | c.rect(2, 6, 14, 10)
+    c.fill(arm, I['dgray'], I['out'])
+    c.fill(c.rect(7, 7, 9, 9), I['out'])
+    for x, y in ((7, 3), (7, 11), (3, 7), (11, 7)):
+        c.px(x, y, I['lgray'])
+    out['dpad'] = c
+
 
 def main():
     write('target', target_ring(), TARGET_PALETTE, 16)

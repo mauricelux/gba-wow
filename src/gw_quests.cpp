@@ -526,7 +526,7 @@ bool turn_in_quest(quest_id quest, int reward_index)
         reward = def.rewards[reward_index];
     }
 
-    if(reward != item_id::NONE && free_bag_slots() == 0 && item_count(reward) == 0)
+    if(reward != item_id::NONE && bag_row_count() >= bag_rows && item_count(reward) == 0)
     {
         return false;
     }

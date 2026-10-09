@@ -10,8 +10,10 @@ namespace gw
 {
 
 constexpr int max_level = 60;
-constexpr int bag_slots = 16;
-constexpr int action_slots = 7;
+constexpr int bag_rows = 400;     // different stacks the bags hold: more than a whole game's loot
+constexpr int max_stack = 999;
+constexpr int action_slots = 7;     // A, B, L, up, right, down, left (L only on the Combat bar)
+constexpr int item_slots = 4;       // up, right, down, left
 constexpr int max_quests = 256;
 constexpr int max_talents = 24;
 constexpr int quest_objectives = 3;
@@ -27,7 +29,17 @@ constexpr int rest_max_percent = 150;
 struct item_stack
 {
     item_id item = item_id::NONE;
-    uint8_t count = 0;
+    uint16_t count = 0;
+};
+
+// How the Bags page lists the bags. Saves store it by value: only append.
+enum class bag_sort : uint8_t
+{
+    TYPE,
+    QUALITY,
+    LEVEL,
+    NEWEST,
+    COUNT
 };
 
 enum class quest_status : uint8_t
@@ -60,10 +72,11 @@ struct character_data
     map_id map = map_id::ELWYNN;
     int16_t x = 0;
     int16_t y = 0;
-    item_stack bags[bag_slots];
+    item_stack bags[bag_rows];      // the rows in use come first, oldest first; no gaps
     item_id equipment[int(equip_slot::COUNT)] = {};
     uint8_t ability_ranks[ability_count] = {};  // the rank known of each ability, 0 = not known
-    ability_id action_bar[action_slots] = {};
+    ability_id action_bars[bar_count][action_slots] = {};   // by bar_id
+    item_id item_bar[item_slots] = {};  // NONE: the slot's usual kind (see item_bar_default)
     uint8_t talents[max_talents] = {};  // the rank of each talent of the subclass's tree
     quest_progress quests[max_quests];  // indexed by quest_id
     uint32_t flags[max_story_flags / 32] = {};      // bit per story_flag
@@ -73,6 +86,7 @@ struct character_data
     uint32_t chests_opened[max_chests / 32] = {};   // bit per chest_def::id
     int32_t rest_xp = 0;            // kills give this much extra experience before it runs out
     uint32_t last_rest = 0;         // play_frames at the last rest at an inn
+    bag_sort sort = bag_sort::TYPE;
 };
 
 // One-off story events. Saves store them by value: only append.
@@ -87,6 +101,9 @@ enum class story_flag : uint8_t
 };
 
 [[nodiscard]] character_data& character();
+
+// Back to a blank character, in place (the data is too large to copy through the stack).
+void reset_character();
 
 [[nodiscard]] const char* race_name(race_id race);
 
@@ -128,11 +145,25 @@ void set_chest_opened(int chest);
 // The rank known, 0 if the ability isn't known.
 [[nodiscard]] int ability_rank(ability_id ability);
 
-// Learns the rank (and the ones below it). A new ability goes on the first free action slot.
+// Learns the rank (and the ones below it). A new ability goes on a free slot of its default bar,
+// or of another bar if that one is full.
 void learn_ability(ability_id ability, int rank = 1);
 
-// Forgets the ability and takes it off the action bar (unlearning talents).
+// Forgets the ability and takes it off the bars (unlearning talents).
 void forget_ability(ability_id ability);
+
+// Whether the bar has the slot: L is the Combat bar's own, since L opens the other two.
+[[nodiscard]] constexpr bool bar_has_slot(bar_id bar, int slot)
+{
+    return bar == bar_id::COMBAT || slot != 2;
+}
+
+// Puts the ability on the slot, taking it off wherever it was before. A slot of -1 only takes it off.
+void set_bar_slot(bar_id bar, int slot, ability_id ability);
+
+// For saves from before the Utility and Buffs bars: moves buffs and utility abilities off the
+// Combat bar to their own bars, and puts known abilities that were on no bar on one.
+void arrange_bars();
 
 // The ability's value at the known rank and the character's level.
 [[nodiscard]] int ability_value(ability_id ability);
@@ -222,30 +253,50 @@ struct stats
 
 [[nodiscard]] stats compute_stats(const stat_bonus& bonus = stat_bonus());
 
-// Adds items to the bags. Returns how many did not fit.
+// Adds items to the bags: stackable items to their row (up to max_stack), the others to a new row
+// each. Returns how many did not fit, which only happens with all bag_rows in use.
 int add_item(item_id item, int count = 1);
 
 // Removes up to count items from the bags. Returns how many were removed.
 int remove_item(item_id item, int count = 1);
 
+// Removes up to count items from one row; the rows after it move up if it empties.
+void remove_from_row(int row, int count);
+
 [[nodiscard]] int item_count(item_id item);
 
-[[nodiscard]] int free_bag_slots();
+// The rows of the bags in use.
+[[nodiscard]] int bag_row_count();
+
+// Merges rows of the same stackable item and closes gaps (after loading a save).
+void tidy_bags();
+
+[[nodiscard]] bool stackable(item_id item);
+
+// Items with a use from the bags or the Items bar: potions, food, drink and the hearthstone.
+[[nodiscard]] bool usable_item(item_id item);
+
+// What an Items bar slot holds when it was never set: healing potion up, food right, drink down and
+// the hearthstone left.
+[[nodiscard]] item_type item_bar_default(int slot);
+
+// The item an Items bar slot uses now: the one set if it is still in the bags, otherwise the best
+// of the same kind the character can use. NONE if there is nothing to use.
+[[nodiscard]] item_id item_bar_item(int slot);
 
 enum class equip_result : uint8_t
 {
     OK,
     NOT_EQUIPMENT,
     WRONG_CLASS,
-    LEVEL_TOO_LOW,
-    BAGS_FULL
+    LEVEL_TOO_LOW
 };
 
-// Puts on the item in the bag slot; whatever it replaces goes back to the bags. Two-handed weapons
+// Puts on the item in the bag row; whatever it replaces goes back to the bags. Two-handed weapons
 // also take off the shield, and a shield takes off a two-handed weapon.
-equip_result equip_item(int bag_index);
+equip_result equip_item(int row);
 
-// Takes the item off into the bags. Returns false if the bags are full.
+// Takes the item off into the bags. Returns false if nothing is in the slot.
 bool unequip_item(equip_slot slot);
 
 // Vendors sell for four times what they pay.

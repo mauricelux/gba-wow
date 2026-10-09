@@ -388,4 +388,64 @@ bool in_kit(ability_id ability, subclass_id subclass)
     return def.kits & (1 << subclass_index(subclass));
 }
 
+bar_id default_bar(ability_id ability)
+{
+    switch(ability)
+    {
+
+    case ability_id::BATTLE_SHOUT:
+    case ability_id::FROST_ARMOR:
+    case ability_id::ARCANE_INTELLECT:
+    case ability_id::CONJURE_WATER:
+    case ability_id::CONJURE_FOOD:
+    case ability_id::TELEPORT_STORMWIND:
+    case ability_id::MOLTEN_ARMOR:
+    case ability_id::MAGE_ARMOR:
+    case ability_id::ASPECT_OF_THE_HAWK:
+    case ability_id::ASPECT_OF_THE_MONKEY:
+    case ability_id::ASPECT_OF_THE_CHEETAH:
+    case ability_id::TRUESHOT_AURA:
+        return bar_id::BUFFS;
+
+    case ability_id::HAMSTRING:
+    case ability_id::LAST_STAND:
+    case ability_id::PUMMEL:
+    case ability_id::SHIELD_BASH:
+    case ability_id::INTIMIDATING_SHOUT:
+    case ability_id::RETALIATION:
+    case ability_id::SWEEPING_STRIKES:
+    case ability_id::WHIRLING_BLADES:
+    case ability_id::BERSERKER_RAGE:
+    case ability_id::DEMORALIZING_SHOUT:
+    case ability_id::RECKLESSNESS:
+    case ability_id::DEATH_WISH:
+    case ability_id::DISARM:
+    case ability_id::SHIELD_WALL:
+    case ability_id::ICE_BARRIER:
+    case ability_id::ARCANE_POWER:
+    case ability_id::BLINK:
+    case ability_id::COUNTERSPELL:
+    case ability_id::POLYMORPH:
+    case ability_id::FIRE_WARD:
+    case ability_id::COMBUSTION:
+    case ability_id::COLD_SNAP:
+    case ability_id::ICE_BLOCK:
+    case ability_id::MANA_SHIELD:
+    case ability_id::EVOCATION:
+    case ability_id::PRESENCE_OF_MIND:
+    case ability_id::BESTIAL_WRATH:
+    case ability_id::FEIGN_DEATH:
+    case ability_id::RAPID_FIRE:
+    case ability_id::SCATTER_SHOT:
+    case ability_id::FREEZING_TRAP:
+    case ability_id::FROST_TRAP:
+    case ability_id::DETERRENCE:
+    case ability_id::WYVERN_STING:
+        return bar_id::UTILITY;
+
+    default:
+        return bar_id::COMBAT;
+    }
+}
+
 }

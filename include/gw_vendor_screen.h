@@ -1,6 +1,7 @@
 #ifndef GW_VENDOR_SCREEN_H
 #define GW_VENDOR_SCREEN_H
 
+#include "gw_bag_view.h"
 #include "gw_ids.h"
 #include "gw_list_cursor.h"
 #include "gw_status_line.h"
@@ -24,13 +25,13 @@ public:
 private:
     npc_id _npc = npc_id::NONE;
     bool _selling = false;
-    list_cursor _cursor;
+    list_cursor _cursor;    // the vendor's goods
+    bag_view _bags;         // the player's, to sell
     text_page _details;
     status_line _status;
     bool _dirty = true;
 
     [[nodiscard]] int _count() const;
-    [[nodiscard]] int _bag_slot(int row) const;
     void _buy();
     void _sell();
     void _sell_junk();

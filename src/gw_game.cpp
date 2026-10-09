@@ -98,7 +98,8 @@ void game::update()
     bool warping = _warp != nullptr || _rest_frames > 0;
     bool dead = _combat.dead();
     bool input = ! warping && ! dead;
-    bool abilities_held = bn::keypad::r_held();
+    // L, R and Select hold the bars: the buttons and the D-pad belong to them meanwhile.
+    bool abilities_held = combat::bar_keys_held();
 
     if(input && ! abilities_held && bn::keypad::a_pressed())
     {
@@ -109,11 +110,6 @@ void game::update()
             ui::commit();
             return;
         }
-    }
-
-    if(input && ! abilities_held && bn::keypad::select_pressed())
-    {
-        _combat.quick_use();
     }
 
     if(input && bn::keypad::start_pressed())

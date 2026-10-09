@@ -48,13 +48,17 @@ namespace
         QUESTS,
         STORY_FLAGS,
         CHESTS,
-        TALENT_TREE     // the subclass's tree
+        TALENT_TREE,    // the subclass's tree
+        ITEM_BAR
     };
 
     BN_DATA_EWRAM_BSS uint8_t payload[max_payload];
 
     // For characters from before subclasses: the subclass whose tree had the most talent points.
     subclass_id suggestion = subclass_id::NONE;
+
+    // Saves from before the Utility and Buffs bars had only the Combat bar.
+    bool combat_bar_only = false;
 
     void suggest_subclass(const uint8_t* old_talents)
     {
@@ -215,14 +219,16 @@ namespace
         out.put32(uint32_t(data.rest_xp));
         out.put32(data.last_rest);
         out.put8(int(data.subclass));
+        out.put8(int(data.sort));
         out.end();
 
+        // Only the rows in use.
         out.begin(chunk::BAGS);
 
-        for(const item_stack& slot : data.bags)
+        for(int row = 0, rows = bag_row_count(); row < rows; ++row)
         {
-            out.put16(int(slot.item));
-            out.put16(slot.count);
+            out.put16(int(data.bags[row].item));
+            out.put16(data.bags[row].count);
         }
 
         out.end();
@@ -245,11 +251,24 @@ namespace
 
         out.end();
 
+        // Combat, then Utility and Buffs.
         out.begin(chunk::ACTION_BAR);
 
-        for(ability_id ability : data.action_bar)
+        for(const auto& bar : data.action_bars)
         {
-            out.put16(int(ability));
+            for(ability_id ability : bar)
+            {
+                out.put16(int(ability));
+            }
+        }
+
+        out.end();
+
+        out.begin(chunk::ITEM_BAR);
+
+        for(item_id item : data.item_bar)
+        {
+            out.put16(int(item));
         }
 
         out.end();
@@ -331,13 +350,21 @@ namespace
             {
                 data.subclass = subclass_id::NONE;
             }
+
+            data.sort = bag_sort(bn::min(in.get8(), int(bag_sort::COUNT) - 1));
             break;
 
         case chunk::BAGS:
+            // Older saves wrote every slot, empty ones too: tidy_bags() closes the gaps after.
             for(item_stack& slot : data.bags)
             {
+                if(in.remaining() <= 0)
+                {
+                    break;
+                }
+
                 slot.item = item_id(in.get16());
-                slot.count = uint8_t(in.get16());
+                slot.count = uint16_t(in.get16());
             }
             break;
 
@@ -356,9 +383,27 @@ namespace
             break;
 
         case chunk::ACTION_BAR:
-            for(ability_id& ability : data.action_bar)
+            for(auto& bar : data.action_bars)
             {
-                ability = ability_id(in.get16());
+                for(ability_id& ability : bar)
+                {
+                    int value = in.get16();
+                    ability = value < ability_count ? ability_id(value) : ability_id::NONE;
+                }
+
+                if(&bar == &data.action_bars[0] && in.remaining() <= 0)
+                {
+                    combat_bar_only = true;
+                    break;
+                }
+            }
+            break;
+
+        case chunk::ITEM_BAR:
+            for(item_id& item : data.item_bar)
+            {
+                int value = in.get16();
+                item = value < int(item_id::COUNT) ? item_id(value) : item_id::NONE;
             }
             break;
 
@@ -462,8 +507,9 @@ namespace
 
     void parse_payload(int size)
     {
-        character() = character_data();
+        reset_character();
         suggestion = subclass_id::NONE;
+        combat_bar_only = false;
         int position = 0;
 
         while(position + 4 <= size)
@@ -480,6 +526,13 @@ namespace
             reader in(payload + position, length);
             read_chunk(tag, in);
             position += length;
+        }
+
+        tidy_bags();
+
+        if(combat_bar_only)
+        {
+            arrange_bars();
         }
     }
 
@@ -567,8 +620,8 @@ namespace
 
         void migrate(const character_data& old)
         {
+            reset_character();
             gw::character_data& data = character();
-            data = gw::character_data();
             data.race = race_id(old.race);
             data.player_class = class_id(old.player_class);
             data.level = old.level;
@@ -602,7 +655,7 @@ namespace
 
             for(int index = 0; index < 7; ++index)
             {
-                data.action_bar[index] = ability_id(old.action_bar[index]);
+                data.action_bars[0][index] = ability_id(old.action_bar[index]);
             }
 
             suggest_subclass(old.talents);
@@ -626,10 +679,13 @@ namespace
 
             // Rested experience starts building from here.
             data.last_rest = old.play_frames;
+
+            tidy_bags();
+            arrange_bars();
         }
     }
 
-    static_assert(bag_slots >= 16 && int(equip_slot::COUNT) >= 8 && action_slots >= 7 && ability_count >= 32 &&
+    static_assert(bag_rows >= 16 && int(equip_slot::COUNT) >= 8 && action_slots >= 7 && ability_count >= 32 &&
                   max_quests >= 32 && max_chests >= 64, "legacy::migrate copies the old lists whole");
 }
 

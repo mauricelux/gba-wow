@@ -1,7 +1,7 @@
 #include "gw_hud.h"
 
-#include "bn_keypad.h"
 #include "bn_affine_mat_attributes.h"
+#include "bn_math.h"
 
 #include "bn_sprite_items_fx_icons.h"
 
@@ -17,10 +17,57 @@ namespace
     constexpr int message_frames = 150;
     constexpr int message_row = 3;      // the first of the message lines
     constexpr int cast_row = 13;
-    constexpr int action_label_row = 18;
     constexpr int xp_row = 19;
 
-    constexpr char slot_labels[7] = { 'A', 'B', 'L', '^', '>', 'v', '<' };
+    constexpr char slot_labels[action_slots] = { 'A', 'B', 'L', '^', '>', 'v', '<' };
+
+    // Where each slot's icon sits (its top left cell): A and B to the right like the buttons, L at
+    // the top left, and the D-pad slots around a small cross at the bottom left. A label (key or
+    // cooldown) goes over the bottom row of the icon.
+    struct cell
+    {
+        int8_t x;
+        int8_t y;
+    };
+
+    constexpr cell slot_cells[action_slots] = { { 26, 13 }, { 23, 15 }, { 0, 10 }, { 3, 11 }, { 5, 13 },
+                                                { 3, 15 }, { 1, 13 } };
+    constexpr cell cross_cell = { 3, 13 };
+    constexpr int bar_name_row = 17;
+
+    // The parts of the screen the bars use, to clear.
+    constexpr int left_area_x = 0;
+    constexpr int left_area_y = 10;
+    constexpr int left_area_width = 8;
+    constexpr int left_area_height = 8;
+    constexpr int right_area_x = 22;
+    constexpr int right_area_y = 13;
+    constexpr int right_area_width = 7;
+    constexpr int right_area_height = 4;
+
+    // By held_bar.
+    constexpr const char* bar_names[] = { "", "Combat", "Utility", "Buffs", "Items" };
+
+    // Items bar slots go on the D-pad slots: up, right, down, left.
+    constexpr int first_item_slot = 3;
+
+    [[nodiscard]] bn::fixed_point cell_position(cell at)
+    {
+        return bn::fixed_point(at.x * 8 + 8 - 120, at.y * 8 + 8 - 80);
+    }
+
+    [[nodiscard]] icon_id item_icon(item_type type)
+    {
+        return type == item_type::POTION ? icon_id::POTION : type == item_type::FOOD ? icon_id::FOOD :
+               type == item_type::DRINK ? icon_id::DRINK : icon_id::HEARTHSTONE;
+    }
+
+    // The type an Items bar slot uses, set or by default.
+    [[nodiscard]] item_type item_slot_type(int slot)
+    {
+        item_id set = character().item_bar[slot];
+        return set != item_id::NONE ? get_item(set).type : item_bar_default(slot);
+    }
 
     // By buff_id.
     constexpr icon_id buff_icons[] = {
@@ -35,11 +82,6 @@ namespace
     };
 
     static_assert(sizeof(buff_icons) / sizeof(buff_icons[0]) == int(buff_id::COUNT), "an icon per buff");
-
-    [[nodiscard]] int slot_x(int slot)
-    {
-        return 5 + slot * 3;
-    }
 }
 
 hud::hud() = default;
@@ -88,7 +130,8 @@ void hud::set_visible(bool visible)
     {
         _icons.clear();
         _buff_icons.clear();
-        _action_bar_shown = false;
+        _reminder.reset();
+        _bar_shown = 0;
     }
 }
 
@@ -109,8 +152,9 @@ void hud::update(const combat& combat_ref, const enemies& enemies_ref)
         _cast = -1;
         _buff_mask = -1;
         _message_dirty = true;
-        _action_bar_shown = false;
+        _bar_shown = 0;
         _icons.clear();
+        _reminder_ability = -1;
         _dirty = false;
     }
 
@@ -155,7 +199,9 @@ void hud::update(const combat& combat_ref, const enemies& enemies_ref)
         _message_dirty = false;
     }
 
-    _update_action_bar(combat_ref);
+    ++_frame;
+    _update_bar(combat_ref);
+    _update_reminder(combat_ref);
     _update_buffs(combat_ref);
 }
 
@@ -275,91 +321,175 @@ void hud::_draw_message()
     }
 }
 
-void hud::_update_action_bar(const combat& combat_ref)
+void hud::_update_bar(const combat& combat_ref)
 {
-    bool show = bn::keypad::r_held() && ! combat_ref.dead();
+    held_bar bar = combat_ref.dead() ? held_bar::NONE : combat_ref.shown_bar();
     const character_data& data = character();
+    bool items = bar == held_bar::ITEMS;
+    const ability_id* abilities = bar == held_bar::UTILITY ? data.action_bars[int(bar_id::UTILITY)] :
+                                  bar == held_bar::BUFFS ? data.action_bars[int(bar_id::BUFFS)] :
+                                                           data.action_bars[int(bar_id::COMBAT)];
 
-    if(! show)
-    {
-        if(_action_bar_shown)
-        {
-            _icons.clear();
-            ui::clear_rect(0, action_label_row, ui::columns, 1);
-            _action_bar_shown = false;
-        }
-
-        return;
-    }
-
-    if(! _action_bar_shown)
+    if(int(bar) != _bar_shown)
     {
         _icons.clear();
+        ui::clear_rect(left_area_x, left_area_y, left_area_width, left_area_height);
+        ui::clear_rect(right_area_x, right_area_y, right_area_width, right_area_height);
+        _bar_shown = int(bar);
+
+        if(bar == held_bar::NONE)
+        {
+            return;
+        }
+
+        auto add_icon = [this](cell at, icon_id icon)
+        {
+            bn::sprite_ptr sprite = bn::sprite_items::fx_icons.create_sprite(cell_position(at), int(icon));
+
+            // Under the UI layer, so labels show on top.
+            sprite.set_bg_priority(1);
+            _icons.push_back(bn::move(sprite));
+        };
+
+        add_icon(cross_cell, icon_id::DPAD);
+        ui::text(left_area_x, bar_name_row, bar_names[int(bar)], ui::color::YELLOW);
 
         for(int slot = 0; slot < action_slots; ++slot)
         {
-            ability_id ability = data.action_bar[slot];
-            int frame = ability == ability_id::NONE ? -1 : int(get_ability(ability).icon);
+            _slot_icons[slot] = -1;
+            _bar_state[slot] = -1;
 
-            if(frame >= 0)
+            if(items)
             {
-                bn::sprite_ptr icon = bn::sprite_items::fx_icons.create_sprite(
-                            slot_x(slot) * 8 + 8 - 120, 136 - 80, frame);
-                icon.set_bg_priority(0);
-                _icons.push_back(bn::move(icon));
+                if(slot >= first_item_slot)
+                {
+                    _slot_icons[slot] = _icons.size();
+                    add_icon(slot_cells[slot], item_icon(item_slot_type(slot - first_item_slot)));
+                }
             }
-
-            _action_bar_state[slot] = -1;
+            else if(abilities[slot] != ability_id::NONE)
+            {
+                _slot_icons[slot] = _icons.size();
+                add_icon(slot_cells[slot], get_ability(abilities[slot]).icon);
+            }
         }
-
-        _action_bar_shown = true;
     }
 
-    int icon_index = 0;
+    if(bar == held_bar::NONE)
+    {
+        return;
+    }
 
     for(int slot = 0; slot < action_slots; ++slot)
     {
-        ability_id ability = data.action_bar[slot];
+        int icon_index = _slot_icons[slot];
 
-        if(ability == ability_id::NONE)
+        if(icon_index < 0)
         {
             continue;
         }
 
-        int cooldown = combat_ref.cooldown(ability);
-        int seconds_left = (cooldown + 59) / 60;
-        bool usable = combat_ref.usable(ability);
-        int state = (usable ? 1000 : 0) + (cooldown > global_cooldown ? seconds_left : 0);
+        // What the label says: a cooldown in seconds (minutes from 100), an item count, or the key.
+        bool usable;
+        int seconds_left = 0;
+        int count = -1;
 
-        if(state != _action_bar_state[slot])
+        if(items)
         {
-            _action_bar_state[slot] = state;
-            bn::sprite_ptr& icon = _icons[icon_index];
-            icon.set_palette(usable ? bn::sprite_items::fx_icons.palette_item() : palettes::icons_gray);
+            int item_slot = slot - first_item_slot;
+            item_id item = item_bar_item(item_slot);
+            item_type type = item_slot_type(item_slot);
+            count = item != item_id::NONE ? item_count(item) : 0;
 
-            ui::clear_rect(slot_x(slot), action_label_row, 2, 1);
-
-            if(cooldown > global_cooldown)
+            if(type == item_type::HEARTHSTONE)
             {
-                // Two characters: seconds, or minutes for long cooldowns.
-                bn::string<4> left = seconds_left < 100 ? bn::to_string<4>(seconds_left) :
-                                                          bn::to_string<4>((seconds_left + 59) / 60);
-
-                if(seconds_left >= 100)
-                {
-                    left += "m";
-                }
-
-                ui::text(slot_x(slot), action_label_row, left, ui::color::RED);
+                int frames = int(data.hearthstone_ready) - int(data.play_frames);
+                seconds_left = frames > 0 ? (frames + 59) / 60 : 0;
+                count = -1;
             }
-            else
+            else if(type == item_type::POTION)
             {
-                char label[2] = { slot_labels[slot], 0 };
-                ui::text(slot_x(slot), action_label_row, label, ui::color::YELLOW);
+                seconds_left = (combat_ref.potion_cooldown() + 59) / 60;
             }
+
+            usable = item != item_id::NONE && seconds_left == 0;
+        }
+        else
+        {
+            ability_id ability = abilities[slot];
+            int cooldown = combat_ref.cooldown(ability);
+            seconds_left = cooldown > global_cooldown ? (cooldown + 59) / 60 : 0;
+            usable = combat_ref.usable(ability);
         }
 
-        ++icon_index;
+        int state = (usable ? 1 << 20 : 0) + (seconds_left << 10) + (count + 1);
+
+        if(state == _bar_state[slot])
+        {
+            continue;
+        }
+
+        _bar_state[slot] = state;
+        _icons[icon_index].set_palette(usable ? bn::sprite_items::fx_icons.palette_item() : palettes::icons_gray);
+
+        cell at = slot_cells[slot];
+        int label_y = at.y + 1;
+        ui::clear_rect(bn::max(0, at.x - 1), label_y, at.x == 0 ? 2 : 3, 1);
+
+        if(seconds_left > 0)
+        {
+            // Two characters: seconds, or minutes for long cooldowns.
+            bn::string<4> left = seconds_left < 100 ? bn::to_string<4>(seconds_left) :
+                                                      bn::to_string<4>((seconds_left + 59) / 60);
+
+            if(seconds_left >= 100)
+            {
+                left += "m";
+            }
+
+            ui::text_right(at.x + 1, label_y, left, ui::color::RED);
+        }
+        else if(count >= 0)
+        {
+            ui::text_right(at.x + 1, label_y, bn::to_string<4>(count), count ? ui::color::WHITE : ui::color::RED);
+        }
+        else if(slot < first_item_slot)
+        {
+            char label[2] = { slot_labels[slot], 0 };
+            ui::text(at.x + 1, label_y, label, ui::color::YELLOW);
+        }
+    }
+}
+
+void hud::_update_reminder(const combat& combat_ref)
+{
+    // Blinks the icon of a missing long buff beside the player frame, while no bar is held.
+    ability_id missing = combat_ref.shown_bar() == held_bar::NONE ? combat_ref.missing_buff() : ability_id::NONE;
+
+    if(int(missing) != _reminder_ability)
+    {
+        _reminder_ability = int(missing);
+        _reminder.reset();
+        _buff_mask = 0xFFFFFFFF;    // the buffs move over to make room
+
+        if(missing != ability_id::NONE)
+        {
+            if(! _small)
+            {
+                bn::affine_mat_attributes attributes;
+                attributes.set_scale(0.5);
+                _small = bn::sprite_affine_mat_ptr::create(attributes);
+            }
+
+            _reminder = bn::sprite_items::fx_icons.create_sprite(-120 + 4, -80 + 20, int(get_ability(missing).icon));
+            _reminder->set_bg_priority(0);
+            _reminder->set_affine_mat(*_small);
+        }
+    }
+
+    if(_reminder)
+    {
+        _reminder->set_visible((_frame / 30) % 2 == 0);
     }
 }
 
@@ -390,7 +520,7 @@ void hud::_update_buffs(const combat& combat_ref)
         _small = bn::sprite_affine_mat_ptr::create(attributes);
     }
 
-    int x = 0;
+    int x = _reminder ? 1 : 0;
 
     for(int index = 0; index < int(buff_id::COUNT) && ! _buff_icons.full(); ++index)
     {

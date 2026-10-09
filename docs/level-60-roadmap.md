@@ -458,7 +458,7 @@ harder combinations for the abilities you use less often.
 What changes for buttons you already know:
 
 - **L alone** still switches target, but on release, and only if you didn't press anything while
-  holding it. A quick tap of L feels the same as today.
+  holding it and let go quickly. A quick tap of L feels the same as today.
 - **Tapping Select** still uses the best consumable for the moment, as today.
 - **B** still runs when nothing else is held.
 - While a bar is held, the HUD shows that bar's icons around a small cross so you can see which
@@ -529,8 +529,9 @@ In the Bags page, **Select cycles the sort order** and the order is remembered:
 4. **Newest first**.
 
 Headings ("Weapons", "Consumables", "Junk") show between groups, and the list scrolls with
-up/down, with L/R jumping a whole group. Dropping an item moves from Select to a small menu on A
-(Use / Equip / Drop). Vendors keep "sell all junk".
+up/down, with left/right on the D-pad jumping a whole group (L and R still switch menu pages).
+Dropping an item moves from Select to a small menu on A (Use / Equip / Item bar / Drop). Vendors
+keep "sell all junk".
 
 ### Items for 60 levels
 

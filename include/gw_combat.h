@@ -2,6 +2,7 @@
 #define GW_COMBAT_H
 
 #include "bn_fixed_point.h"
+#include "bn_string.h"
 #include "bn_vector.h"
 
 #include "gw_abilities.h"
@@ -55,6 +56,16 @@ enum class buff_id : uint8_t
 
 static_assert(int(buff_id::COUNT) <= 32, "the hud keeps a bit per buff");
 
+// The bar whose button is held, which the hud shows around its cross.
+enum class held_bar : uint8_t
+{
+    NONE,
+    COMBAT,     // R
+    UTILITY,    // L
+    BUFFS,      // L and R
+    ITEMS       // Select
+};
+
 // Lasts until death or until replaced (aspects).
 constexpr int permanent_buff = 0x7FFFFFFF;
 
@@ -80,8 +91,16 @@ class combat
 public:
     combat(player& player_ref, enemies& enemies_ref, floating_texts& texts, effects& fx, hud& hud_ref);
 
-    // Reads targeting and ability input (unless disabled) and advances timers.
+    // Reads targeting, bar and item input (unless disabled) and advances timers.
     void update(bool input_enabled);
+
+    [[nodiscard]] held_bar shown_bar() const
+    {
+        return _held_bar;
+    }
+
+    // Whether L, R or Select hold the buttons for a bar, so they don't move or talk.
+    [[nodiscard]] static bool bar_keys_held();
 
     // A: target the nearest enemy and start attacking it.
     void engage();
@@ -159,12 +178,25 @@ public:
     // Food and drink: restore health and mana over 18 seconds while standing still.
     void start_eating(int health, int mana);
 
-    // Uses food, drink or a potion from the bags. When it can't, the reason goes to error if given,
-    // otherwise to the HUD.
+    // Uses food, drink, a potion or the hearthstone from the bags. When it can't, the reason goes to
+    // error if given, otherwise to the HUD.
     bool use_item(item_id item, const char** error = nullptr);
 
-    // Select: a potion in combat, otherwise food when hurt or a drink when low on mana.
+    // Frames until a potion can be drunk again.
+    [[nodiscard]] int potion_cooldown() const
+    {
+        return _potion_cooldown;
+    }
+
+    // A long buff (shout, intellect, armor, aspect) the player knows but lacks, outside combat; NONE
+    // otherwise. The hud blinks its icon as a reminder.
+    [[nodiscard]] ability_id missing_buff() const;
+
+    // Tapping Select: a potion in combat, otherwise food when hurt or a drink when low on mana.
     bool quick_use();
+
+    // Holding Select and pressing a direction: the item of that Items bar slot.
+    bool use_item_slot(int slot);
 
     // Called when an enemy dies with the killer being the player. Set by the game (quests, loot).
     void (*on_kill)(void* context, int index) = nullptr;
@@ -208,9 +240,18 @@ private:
     bn::vector<projectile_hit, 8> _arrived;
     bn::vector<ground_zone, 4> _zones;
 
+    held_bar _held_bar = held_bar::NONE;
+    int _r_frames = 0;                       // frames R has been held
+    int _l_frames = 0;                       // the same for L and Select
+    int _select_frames = 0;
+    bool _chord = false;                     // L and R pressed together: the Buffs bar
+    bool _l_used = true;                     // L did something while held, so releasing it doesn't target
+    bool _select_used = true;                // the same for Select and its quick use
+    bn::string<24> _hearth_text;             // "Ready in N minutes", kept for use_item's error
+
     void _read_input();
     void _cycle_target();
-    void _use_slot(int slot);
+    void _use_slot(bar_id bar, int slot);
     bool _use_ability(ability_id ability);
     void _finish_cast();
     void _apply_ability(ability_id ability, int target);

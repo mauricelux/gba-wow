@@ -4,7 +4,9 @@
 Usage: check_save.py SAVE [key=value ...]
   Prints the newest save's version and character, then fails if any key=value doesn't match.
   Keys: version, race, class, level, xp, money, map, minutes (played), rested and subclass (version 4;
-  'None' before subclasses were chosen).
+  'None' before subclasses were chosen), sort (of the Bags page), bag_rows (rows in use), combat, utility
+  and buffs (abilities on each bar; a save from before the Utility and Buffs bars has only combat), and
+  item_bar (Items bar slots set to an item).
 
 Version 4 saves are two slots of chunks (see src/gw_save.cpp); versions 2 and 3 are one struct at the
 start of SRAM.
@@ -18,6 +20,7 @@ SLOT_SIZE = 16 * 1024
 HEADER = struct.Struct('<8siIiI')    # magic, version, checksum, size, sequence
 RACES = ['Human', 'Dwarf', 'Night Elf']
 CLASSES = ['Warrior', 'Mage', 'Hunter']
+SORTS = ['Type', 'Quality', 'Level', 'Newest']
 SUBCLASSES = ['None', 'Arms', 'Fury', 'Protection', 'Arcane', 'Fire', 'Frost', 'Beast Mastery', 'Marksmanship',
               'Survival']
 
@@ -42,6 +45,7 @@ def read_v4(sram):
     if best is None:
         return None
     sequence, slot, payload = best
+    character = None
     position = 0
     while position + 4 <= len(payload):
         tag, length = struct.unpack_from('<HH', payload, position)
@@ -54,11 +58,24 @@ def read_v4(sram):
             play_frames, = struct.unpack_from('<I', payload, position + 22)
             rest_xp, = struct.unpack_from('<i', payload, position + 31)
             subclass = payload[position + 39] if length > 39 else 0
-            return {'version': 4, 'slot': slot, 'sequence': sequence, 'race': RACES[race],
-                    'class': CLASSES[player_class], 'level': level, 'xp': xp, 'money': money, 'map': map_id,
-                    'minutes': play_frames // 3600, 'rested': rest_xp, 'subclass': SUBCLASSES[subclass]}
+            sort = payload[position + 40] if length > 40 else 0
+            character = {'version': 4, 'slot': slot, 'sequence': sequence, 'race': RACES[race],
+                         'class': CLASSES[player_class], 'level': level, 'xp': xp, 'money': money, 'map': map_id,
+                         'minutes': play_frames // 3600, 'rested': rest_xp, 'subclass': SUBCLASSES[subclass],
+                         'sort': SORTS[min(sort, len(SORTS) - 1)]}
+        elif tag == 2 and character:    # BAGS: rows of item and count
+            rows = struct.unpack_from(f'<{length // 2}H', payload, position)
+            character['bag_rows'] = sum(1 for item in rows[0::2] if item)
+        elif tag == 5 and character:    # ACTION_BAR: Combat, then Utility and Buffs
+            slots = struct.unpack_from(f'<{length // 2}H', payload, position)
+            for index, name in enumerate(('combat', 'utility', 'buffs')):
+                bar = slots[index * 7:index * 7 + 7]
+                if bar:
+                    character[name] = sum(1 for ability in bar if ability)
+        elif tag == 11 and character:   # ITEM_BAR: an item per slot, 0 for the slot's usual kind
+            character['item_bar'] = sum(1 for item in struct.unpack_from(f'<{length // 2}H', payload, position) if item)
         position += length
-    return None
+    return character
 
 
 def read_legacy(sram):

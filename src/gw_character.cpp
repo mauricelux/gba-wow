@@ -1,5 +1,7 @@
 #include "gw_character.h"
 
+#include <new>
+
 #include "bn_math.h"
 
 #include "gw_map_elwynn.h"
@@ -78,6 +80,12 @@ namespace
 character_data& character()
 {
     return data;
+}
+
+void reset_character()
+{
+    // Trivially destructible: a new one in place of the old.
+    new(&data) character_data();
 }
 
 const char* race_name(race_id race)
@@ -192,7 +200,7 @@ namespace
 
 void new_character(race_id race, class_id player_class, subclass_id subclass)
 {
-    data = character_data();
+    reset_character();
     data.race = race;
     data.player_class = player_class;
     data.subclass = subclass;
@@ -301,11 +309,14 @@ void choose_subclass(subclass_id subclass)
         }
     }
 
-    for(ability_id& slot : data.action_bar)
+    for(auto& bar : data.action_bars)
     {
-        if(! knows_ability(slot))
+        for(ability_id& slot : bar)
         {
-            slot = ability_id::NONE;
+            if(! knows_ability(slot))
+            {
+                slot = ability_id::NONE;
+            }
         }
     }
 
@@ -322,6 +333,61 @@ int ability_rank(ability_id ability)
     return int(ability) < ability_count ? data.ability_ranks[int(ability)] : 0;
 }
 
+namespace
+{
+    [[nodiscard]] bool on_a_bar(ability_id ability)
+    {
+        for(const auto& bar : data.action_bars)
+        {
+            for(ability_id slot : bar)
+            {
+                if(slot == ability)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // A free slot of the bar, in button order; false if it is full.
+    bool place_on(bar_id bar, ability_id ability)
+    {
+        for(int slot = 0; slot < action_slots; ++slot)
+        {
+            ability_id& own = data.action_bars[int(bar)][slot];
+
+            if(own == ability_id::NONE && bar_has_slot(bar, slot))
+            {
+                own = ability;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Its own bar first, then the others: Combat, Utility, Buffs.
+    void place(ability_id ability)
+    {
+        bar_id own = default_bar(ability);
+
+        if(place_on(own, ability))
+        {
+            return;
+        }
+
+        for(int bar = 0; bar < bar_count; ++bar)
+        {
+            if(bar_id(bar) != own && place_on(bar_id(bar), ability))
+            {
+                return;
+            }
+        }
+    }
+}
+
 void learn_ability(ability_id ability, int rank)
 {
     if(ability == ability_id::NONE || int(ability) >= ability_count)
@@ -333,18 +399,9 @@ void learn_ability(ability_id ability, int rank)
     uint8_t& own = data.ability_ranks[int(ability)];
     own = uint8_t(bn::max(int(own), bn::clamp(rank, 1, bn::max(1, rank_count(ability)))));
 
-    if(known)
+    if(! known && ! on_a_bar(ability))
     {
-        return;
-    }
-
-    for(ability_id& slot : data.action_bar)
-    {
-        if(slot == ability_id::NONE)
-        {
-            slot = ability;
-            return;
-        }
+        place(ability);
     }
 }
 
@@ -355,11 +412,66 @@ void forget_ability(ability_id ability)
         data.ability_ranks[int(ability)] = 0;
     }
 
-    for(ability_id& slot : data.action_bar)
+    for(auto& bar : data.action_bars)
     {
-        if(slot == ability)
+        for(ability_id& slot : bar)
         {
-            slot = ability_id::NONE;
+            if(slot == ability)
+            {
+                slot = ability_id::NONE;
+            }
+        }
+    }
+}
+
+void set_bar_slot(bar_id bar, int slot, ability_id ability)
+{
+    if(ability != ability_id::NONE)
+    {
+        for(auto& other : data.action_bars)
+        {
+            for(ability_id& own : other)
+            {
+                if(own == ability)
+                {
+                    own = ability_id::NONE;
+                }
+            }
+        }
+    }
+
+    if(slot >= 0 && slot < action_slots && bar_has_slot(bar, slot))
+    {
+        data.action_bars[int(bar)][slot] = ability;
+    }
+}
+
+void arrange_bars()
+{
+    ability_id* combat = data.action_bars[int(bar_id::COMBAT)];
+
+    for(int slot = 0; slot < action_slots; ++slot)
+    {
+        ability_id ability = combat[slot];
+
+        if(ability != ability_id::NONE && default_bar(ability) != bar_id::COMBAT)
+        {
+            combat[slot] = ability_id::NONE;
+
+            if(! place_on(default_bar(ability), ability))
+            {
+                combat[slot] = ability;
+            }
+        }
+    }
+
+    for(int index = 1; index < ability_count; ++index)
+    {
+        auto ability = ability_id(index);
+
+        if(knows_ability(ability) && ! on_a_bar(ability))
+        {
+            place(ability);
         }
     }
 }
@@ -664,53 +776,109 @@ stats compute_stats(const stat_bonus& bonus)
     return s;
 }
 
-int add_item(item_id item, int count)
+bool stackable(item_id item)
 {
-    const item_def& def = get_item(item);
-    int stack = def.stack ? def.stack : 1;
+    return get_item(item).stack > 1;
+}
 
-    // Top up existing stacks first, then use empty slots.
-    for(item_stack& slot : data.bags)
+int bag_row_count()
+{
+    // Rows are packed, so the first empty one ends the list.
+    int low = 0;
+    int high = bag_rows;
+
+    while(low < high)
     {
-        if(count && slot.item == item && slot.count < stack)
+        int middle = (low + high) / 2;
+
+        if(data.bags[middle].item != item_id::NONE)
         {
-            int added = bn::min(count, stack - int(slot.count));
-            slot.count += added;
-            count -= added;
+            low = middle + 1;
+        }
+        else
+        {
+            high = middle;
         }
     }
 
-    for(item_stack& slot : data.bags)
+    return low;
+}
+
+int add_item(item_id item, int count)
+{
+    if(item == item_id::NONE || count <= 0)
     {
-        if(count && slot.item == item_id::NONE)
+        return count;
+    }
+
+    int rows = bag_row_count();
+
+    if(stackable(item))
+    {
+        // Tops up its row first.
+        for(int row = 0; row < rows && count; ++row)
         {
-            int added = bn::min(count, stack);
-            slot.item = item;
-            slot.count = added;
-            count -= added;
+            item_stack& stack = data.bags[row];
+
+            if(stack.item == item && stack.count < max_stack)
+            {
+                int added = bn::min(count, max_stack - int(stack.count));
+                stack.count += added;
+                count -= added;
+            }
         }
+    }
+
+    while(count && rows < bag_rows)
+    {
+        int added = stackable(item) ? bn::min(count, max_stack) : 1;
+        data.bags[rows].item = item;
+        data.bags[rows].count = uint16_t(added);
+        count -= added;
+        ++rows;
     }
 
     return count;
+}
+
+void remove_from_row(int row, int count)
+{
+    int rows = bag_row_count();
+
+    if(row < 0 || row >= rows || count <= 0)
+    {
+        return;
+    }
+
+    item_stack& stack = data.bags[row];
+    stack.count = uint16_t(bn::max(0, int(stack.count) - count));
+
+    if(stack.count == 0)
+    {
+        for(int index = row; index < rows - 1; ++index)
+        {
+            data.bags[index] = data.bags[index + 1];
+        }
+
+        data.bags[rows - 1] = item_stack();
+    }
 }
 
 int remove_item(item_id item, int count)
 {
     int removed = 0;
 
-    for(item_stack& slot : data.bags)
+    // From the newest rows, so a stack bought just now goes first.
+    for(int row = bag_row_count() - 1; row >= 0 && count; --row)
     {
-        if(count && slot.item == item)
+        item_stack& stack = data.bags[row];
+
+        if(stack.item == item)
         {
-            int taken = bn::min(count, int(slot.count));
-            slot.count -= taken;
+            int taken = bn::min(count, int(stack.count));
             count -= taken;
             removed += taken;
-
-            if(slot.count == 0)
-            {
-                slot.item = item_id::NONE;
-            }
+            remove_from_row(row, taken);
         }
     }
 
@@ -721,38 +889,136 @@ int item_count(item_id item)
 {
     int count = 0;
 
-    for(const item_stack& slot : data.bags)
+    for(int row = 0, rows = bag_row_count(); row < rows; ++row)
     {
-        if(slot.item == item)
+        if(data.bags[row].item == item)
         {
-            count += slot.count;
+            count += data.bags[row].count;
         }
     }
 
     return count;
 }
 
-int free_bag_slots()
+void tidy_bags()
 {
-    int count = 0;
+    int rows = 0;
 
-    for(const item_stack& slot : data.bags)
+    for(int index = 0; index < bag_rows; ++index)
     {
-        if(slot.item == item_id::NONE)
+        item_stack stack = data.bags[index];
+        data.bags[index] = item_stack();
+
+        if(stack.item == item_id::NONE || stack.count == 0 || stack.item >= item_id::COUNT)
         {
-            ++count;
+            continue;
+        }
+
+        if(! stackable(stack.item))
+        {
+            data.bags[rows++] = item_stack{ stack.item, 1 };
+            continue;
+        }
+
+        int count = bn::min(int(stack.count), max_stack);
+
+        for(int row = 0; row < rows && count; ++row)
+        {
+            item_stack& own = data.bags[row];
+
+            if(own.item == stack.item && own.count < max_stack)
+            {
+                int added = bn::min(count, max_stack - int(own.count));
+                own.count += added;
+                count -= added;
+            }
+        }
+
+        if(count && rows < bag_rows)
+        {
+            data.bags[rows++] = item_stack{ stack.item, uint16_t(count) };
+        }
+    }
+}
+
+bool usable_item(item_id item)
+{
+    switch(get_item(item).type)
+    {
+
+    case item_type::FOOD:
+    case item_type::DRINK:
+    case item_type::POTION:
+    case item_type::HEARTHSTONE:
+        return item != item_id::NONE;
+
+    default:
+        return false;
+    }
+}
+
+item_type item_bar_default(int slot)
+{
+    constexpr item_type defaults[item_slots] = {
+        item_type::POTION, item_type::FOOD, item_type::DRINK, item_type::HEARTHSTONE
+    };
+
+    return defaults[slot];
+}
+
+item_id item_bar_item(int slot)
+{
+    item_id set = data.item_bar[slot];
+
+    if(set != item_id::NONE && item_count(set) > 0)
+    {
+        return set;
+    }
+
+    item_type type = set != item_id::NONE ? get_item(set).type : item_bar_default(slot);
+    item_id best = item_id::NONE;
+
+    // The strongest one the character can use; any, if none is low enough.
+    for(int row = 0, rows = bag_row_count(); row < rows; ++row)
+    {
+        item_id own = data.bags[row].item;
+        const item_def& def = get_item(own);
+
+        if(def.type != type)
+        {
+            continue;
+        }
+
+        if(best == item_id::NONE)
+        {
+            best = own;
+            continue;
+        }
+
+        const item_def& best_def = get_item(best);
+        bool fits = def.level <= data.level;
+        bool best_fits = best_def.level <= data.level;
+
+        if(fits != best_fits ? fits : def.min_damage > best_def.min_damage)
+        {
+            best = own;
         }
     }
 
-    return count;
+    return best;
 }
 
-equip_result equip_item(int bag_index)
+equip_result equip_item(int row)
 {
-    item_stack& slot = data.bags[bag_index];
-    const item_def& item = get_item(slot.item);
+    if(row < 0 || row >= bag_row_count())
+    {
+        return equip_result::NOT_EQUIPMENT;
+    }
 
-    if(slot.item == item_id::NONE || item.slot == equip_slot::NONE)
+    item_id new_item = data.bags[row].item;
+    const item_def& item = get_item(new_item);
+
+    if(item.slot == equip_slot::NONE)
     {
         return equip_result::NOT_EQUIPMENT;
     }
@@ -773,16 +1039,8 @@ equip_result equip_item(int bag_index)
     bool frees_main_hand = item.slot == equip_slot::OFF_HAND && main_hand != item_id::NONE &&
             is_two_handed(get_item(main_hand));
 
-    // The item leaves its bag slot, so one extra item always fits there.
-    if((frees_off_hand || frees_main_hand) && data.equipment[int(item.slot)] != item_id::NONE &&
-       free_bag_slots() == 0)
-    {
-        return equip_result::BAGS_FULL;
-    }
-
-    item_id new_item = slot.item;
     item_id old_item = data.equipment[int(item.slot)];
-    slot = item_stack();
+    remove_from_row(row, 1);
     data.equipment[int(item.slot)] = new_item;
 
     if(old_item != item_id::NONE)
@@ -809,12 +1067,11 @@ bool unequip_item(equip_slot slot)
 {
     item_id& equipped = data.equipment[int(slot)];
 
-    if(equipped == item_id::NONE || free_bag_slots() == 0)
+    if(equipped == item_id::NONE || add_item(equipped) > 0)
     {
         return false;
     }
 
-    add_item(equipped);
     equipped = item_id::NONE;
     return true;
 }

@@ -69,6 +69,18 @@ jobs:
             hold:A:2 wait:4 hold:A:2 wait:60 hold:S:2 wait:6 shot:screenshots/12_old_save_character.ppm
           python3 tools/headless/check_save.py old.sav version=4 race=Dwarf class=Hunter level=12 money=100000 \
             subclass=Marksmanship
+          # A level 20 Frost mage saved before the Utility and Buffs bars: loading moves Blink and Polymorph
+          # to Utility and the armor, intellect, conjures and Teleport to Buffs. Then the bags get loot.
+          python3 -c "d = open('tools/headless/saves/v4_human_frost_mage_20.sav', 'rb').read(); open('bars.sav', 'wb').write(d + b'\xff' * (32768 - len(d)))"
+          python3 tools/headless/check_save.py bars.sav level=20 subclass=Frost combat=7 bag_rows=3
+          MGBA_SAVE=bars.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:80 hold:l:20 shot:screenshots/13_utility_bar.ppm \
+            wait:4 hold:lr:20 shot:screenshots/14_buffs_bar.ppm wait:4 hold:E:20 shot:screenshots/15_items_bar.ppm \
+            wait:4 hold:S:2 wait:6 hold:l:2 wait:6 \
+            hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
+            hold:A:2 wait:4 hold:U:2 wait:3 hold:U:2 wait:3 hold:U:2 wait:3 hold:U:2 wait:3 hold:U:2 wait:3 \
+            hold:U:2 wait:3 hold:A:2 wait:10 hold:r:2 wait:4 hold:r:2 wait:6 shot:screenshots/16_bags.ppm
+          python3 tools/headless/check_save.py bars.sav level=20 combat=4 utility=2 buffs=5 sort=Type
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm
 

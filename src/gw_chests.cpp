@@ -125,9 +125,10 @@ bool chests::open(int index, hud& hud_ref)
 {
     chest& item = _chests[index];
 
-    if(free_bag_slots() == 0)
+    // Only with every bag row in use, which a whole game's loot doesn't reach.
+    if(bag_row_count() >= bag_rows)
     {
-        hud_ref.message("Inventory is full", ui::color::RED);
+        hud_ref.message("Your bags are full", ui::color::RED);
         return false;
     }
 

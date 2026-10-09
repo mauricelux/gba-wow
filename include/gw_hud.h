@@ -17,7 +17,8 @@ class combat;
 class enemies;
 
 // The heads-up display on the UI layer: player and target frames, experience bar, cast bar,
-// error and loot messages, buffs and the action bar shown while R is held.
+// error and loot messages, buffs, a reminder of missing long buffs, and the bar whose button is held
+// (R, L, L and R, or Select), its icons around a small cross like the buttons that use them.
 class hud
 {
 
@@ -64,10 +65,14 @@ private:
     static constexpr int message_lines = 3;
     line _messages[message_lines];   // newest last
     bool _message_dirty = false;
-    bool _action_bar_shown = false;
-    int _action_bar_state[7] = {};
-    bn::vector<bn::sprite_ptr, 7> _icons;
+    int _bar_shown = 0;                 // a held_bar
+    int _bar_state[7] = {};             // by slot, to redraw labels only when they change
+    int _slot_icons[7] = {};            // by slot, the index in _icons or -1
+    int _reminder_ability = 0;          // the long buff missing, an ability_id
+    int _frame = 0;
+    bn::vector<bn::sprite_ptr, 8> _icons;
     bn::vector<bn::sprite_ptr, 8> _buff_icons;
+    bn::optional<bn::sprite_ptr> _reminder;
     bn::optional<bn::sprite_affine_mat_ptr> _small;
 
     void _draw_player();
@@ -75,7 +80,8 @@ private:
     void _draw_xp();
     void _draw_cast(const combat& combat_ref);
     void _draw_message();
-    void _update_action_bar(const combat& combat_ref);
+    void _update_bar(const combat& combat_ref);
+    void _update_reminder(const combat& combat_ref);
     void _update_buffs(const combat& combat_ref);
 };
 

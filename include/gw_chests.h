@@ -37,7 +37,7 @@ public:
         return _chests[index].position;
     }
 
-    // Opens the chest. Returns false (and leaves it closed) if the bags are full.
+    // Opens the chest. Returns false (and leaves it closed) if every bag row is in use.
     bool open(int index, hud& hud_ref);
 
 private:

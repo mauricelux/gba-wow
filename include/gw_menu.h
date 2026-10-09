@@ -5,6 +5,7 @@
 #include "bn_sprite_ptr.h"
 #include "bn_vector.h"
 
+#include "gw_bag_view.h"
 #include "gw_ids.h"
 #include "gw_list_cursor.h"
 #include "gw_quest_ids.h"
@@ -75,7 +76,10 @@ private:
     // Sub-modes (L, R and B belong to the page while one is active)
     quest_id _quest = quest_id::NONE;   // quest whose details are shown
     bool _confirm = false;              // abandon quest or drop item
-    int _assign_slot = -1;              // spellbook: choosing an action bar slot
+    int _item_action = -1;              // bags: the cursor in an item's action list
+    bool _item_bar_pick = false;        // bags: choosing an Items bar slot
+    int _assign_slot = -1;              // spellbook: choosing a bar slot
+    int _assign_bar = 0;                // spellbook: the bar_id it goes on
     bool _teleport_list = false;        // system: choosing a destination
 
     // World map page: the picture, its markers and the blinking player dot.
@@ -91,10 +95,11 @@ private:
     void _update_character();
     void _draw_character();
 
+    bag_view _bags;
+
     void _update_bags();
     void _draw_bags();
-    [[nodiscard]] int _bag_slot(int row) const;
-    void _use_hearthstone();
+    void _do_item_action(int action);
 
     void _update_spells();
     void _draw_spells();

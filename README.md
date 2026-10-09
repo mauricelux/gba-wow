@@ -27,6 +27,10 @@ written in C++ with [Butano](https://github.com/GValiente/butano). It will never
 ![The Fire talent tree](docs/screenshots/m13_talents.png)
 ![A polymorphed wolf and Mana Shield](docs/screenshots/m13_polymorph.png)
 ![An old save chooses its subclass](docs/screenshots/m13_old_save.png)
+![The Buffs bar around its cross, held with L and R](docs/screenshots/m14_buffs_bar.png)
+![The Items bar, held with Select](docs/screenshots/m14_items_bar.png)
+![Bags sorted by type, with an item's actions](docs/screenshots/m14_bags.png)
+![Placing a spell on a bar in the spellbook](docs/screenshots/m14_spellbook.png)
 
 ## Status
 
@@ -36,7 +40,8 @@ subclasses (Arms, Fury or Protection; Arcane, Fire or Frost; Beast Mastery, Mark
 Survival), then walk freely from Northshire Abbey down to Goldshire,
 west to the city of Stormwind and south to Westfall, take on 29 quests from Northshire to the
 Stockade, fight with auto-attack and your subclass's abilities, loot and equip about 170 items, buy and
-sell at vendors, buy new abilities and ranks from your class trainer, spend talent points from level 10, face the
+sell at vendors, carry as much as you like in bags sorted by type, quality, level or age, use 19
+ability slots on three bars and 4 item slots, buy new abilities and ranks from your class trainer, spend talent points from level 10, face the
 elites Princess and Hogger, clear the kobolds out of Echo Ridge and Fargodeep mines, hunt for 17
 hidden treasure chests, hearth home to an inn, fight through the Deadmines to Sneed and Edwin
 VanCleef, put down the riot in Stormwind's Stockade and its leader Bazil Thredd, see the story's
@@ -62,7 +67,7 @@ Stockade, without grinding. The level cap is 60: the road there is planned in
 | M11 The Stockade | Second dungeon under Stormwind, three bosses, final quest chain and new ending | Done |
 | M12 Systems for 60 | Level cap 60, XP curve to 60, rested XP, 16-bit ids, save version 4 | Done |
 | M13 Subclasses and ranks | Subclass choice, 9 kits, ability ranks, 18-talent trees | Done |
-| M14 Keybinds and bags | Utility, Buffs and Items bars, buff reminder, unlimited sorted bags | Planned |
+| M14 Keybinds and bags | Utility, Buffs and Items bars, buff reminder, unlimited sorted bags | Done |
 | M15 Enemy abilities | Shared enemy ability table, cast bars, interrupts, flee and call for help | Planned |
 | M16 Travel and the pet | Flight masters, boats, tram, mount, two-level world map, hunter pet | Planned |
 | M17 to M26 | Redridge to the Plaguelands, 18 new dungeons, Onyxia and the new ending | Planned |
@@ -74,10 +79,27 @@ Stockade, without grinding. The level cap is 60: the road there is planned in
 | D-pad | Walk (8 directions) |
 | B (hold) | Run (out of combat) |
 | A | Talk to someone next to you, loot a corpse, or attack the nearest enemy |
-| L | Switch target |
-| R (hold) | Show the action bar; then A, B, L or a D-pad direction uses that slot |
-| Select | A healing potion in combat, otherwise food or drink |
+| L (tap) | Switch target |
+| R (hold) | Combat bar: then A, B, L or a D-pad direction uses that slot |
+| L (hold) | Utility bar: then A, B or a D-pad direction |
+| L and R (hold) | Buffs bar: then A, B or a D-pad direction |
+| Select (hold) | Items bar: then a D-pad direction (healing potion, food, drink, hearthstone unless changed) |
+| Select (tap) | A healing potion in combat, otherwise food or drink |
 | Start | Menu: character, bags, spellbook, talents, quest log, world map and system pages (L and R switch pages) |
+
+Bars: holding a bar's buttons shows its icons around a small cross, placed like the buttons that use
+them, with cooldowns and item counts on the icons. New abilities go on their own bar: your rotation
+on Combat, interrupts, crowd control and long cooldowns on Utility, and long buffs, conjuring and
+Teleport on Buffs. In the spellbook, A puts a spell on any slot: L and R pick the bar, left and right
+the slot, Select takes it off. While one of your long buffs (shout, intellect, armor, aspect) is
+missing out of combat, its icon blinks beside the health bar. Saves from before the three bars move
+their buffs and utility abilities off the Combat bar the first time they load.
+
+Bags: they never fill up. Each item takes one row with its count (up to 999 per row). On the Bags
+page, Select sorts by type (with headings from Head to Junk), quality, required level or newest
+first, and the game remembers the choice; up and down move one row, left and right a whole group.
+A opens the item's actions: Use, Equip, Item bar (choose a direction for the Items bar) or Drop.
+Vendors list the bags the same way, and Select there still sells all junk.
 
 Subclasses: each class has three, chosen when creating the hero. A subclass decides which abilities
 the class trainer teaches (a Fire Mage never sees Frostbolt) and which talent tree you get. Warriors
@@ -128,8 +150,8 @@ On the title screen, Continue loads your hero; New Game asks before it replaces 
 out of character creation returns to the title.
 
 The game saves itself whenever you change zones or turn in a quest, and from the system page. The
-system page also has debug options for testing: teleport, level up, extra gold and gear for your level
-(without the epic quest rewards).
+system page also has debug options for testing: teleport, level up, extra gold, gear for your level
+(without the epic quest rewards), every rank the trainer would teach, and a bagful of random loot.
 
 Saves from every earlier version load: the first time an old save is loaded it is converted, and the
 old copy stays on the cartridge until the game has saved twice in the new format. The game keeps two

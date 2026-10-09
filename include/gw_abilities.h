@@ -110,6 +110,17 @@ enum class ability_id : uint8_t
     COUNT
 };
 
+// The three ability bars: Combat (hold R), Utility (hold L) and Buffs (hold L and R).
+enum class bar_id : uint8_t
+{
+    COMBAT,
+    UTILITY,
+    BUFFS,
+    COUNT
+};
+
+constexpr int bar_count = int(bar_id::COUNT);
+
 enum class ability_target : uint8_t
 {
     ENEMY,      // needs a hostile target in range
@@ -210,6 +221,10 @@ constexpr int ability_count = int(ability_id::COUNT);
 
 // Whether the subclass gets the ability.
 [[nodiscard]] bool in_kit(ability_id ability, subclass_id subclass);
+
+// The bar a newly learned ability goes on: long buffs and travel on Buffs, interrupts, crowd
+// control and long cooldowns on Utility, the rest on Combat.
+[[nodiscard]] bar_id default_bar(ability_id ability);
 
 // Pixels counted as melee range between two characters' feet.
 constexpr int melee_range = 22;

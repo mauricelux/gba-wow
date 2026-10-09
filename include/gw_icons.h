@@ -106,6 +106,8 @@ enum class icon_id : uint8_t
     WYVERN_STING,
     COUNTERATTACK,
     BESTIAL_WRATH,
+    HEARTHSTONE,
+    DPAD,
     COUNT
 };
 

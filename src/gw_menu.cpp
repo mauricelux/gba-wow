@@ -17,6 +17,7 @@
 #include "gw_map_westfall.h"
 #include "gw_menu_layout.h"
 #include "gw_save.h"
+#include "gw_types.h"
 #include "gw_ui.h"
 
 namespace gw
@@ -68,11 +69,12 @@ namespace
         GOLD,
         GEAR,
         TRAIN,
+        LOOT,
         COUNT
     };
 
     constexpr const char* system_names[] = { "Save game", "Debug: teleport", "Debug: level up", "Debug: +10 gold",
-                                             "Debug: gear up", "Debug: train all" };
+                                             "Debug: gear up", "Debug: train all", "Debug: loot" };
 
     // Learns every rank the trainer would teach now, for free.
     void train_all()
@@ -84,6 +86,22 @@ namespace
             while(int rank = trainable_rank(ability))
             {
                 learn_ability(ability, rank);
+            }
+        }
+    }
+
+    // A bagful of random items up to the character's level, to try the bags with.
+    void loot()
+    {
+        for(int count = 0; count < 30; ++count)
+        {
+            auto item = item_id(random_range(1, int(item_id::COUNT) - 1));
+            const item_def& def = get_item(item);
+
+            if(def.level <= character().level && def.quality != item_quality::EPIC && def.type != item_type::QUEST &&
+               def.type != item_type::HEARTHSTONE)
+            {
+                add_item(item, stackable(item) ? random_range(1, 5) : 1);
             }
         }
     }
@@ -161,9 +179,12 @@ void menu::open()
     _dirty = true;
     _quest = quest_id::NONE;
     _confirm = false;
+    _item_action = -1;
+    _item_bar_pick = false;
     _assign_slot = -1;
     _teleport_list = false;
     _cursor = list_cursor();
+    _bags.rebuild();
     _status = status_line();
     teleport = teleport_request();
     _map_zone = -1;
@@ -172,7 +193,8 @@ void menu::open()
 
 bool menu::_in_submode() const
 {
-    return _quest != quest_id::NONE || _confirm || _assign_slot >= 0 || _teleport_list;
+    return _quest != quest_id::NONE || _confirm || _item_action >= 0 || _item_bar_pick || _assign_slot >= 0 ||
+           _teleport_list;
 }
 
 bool menu::update()
@@ -296,6 +318,7 @@ void menu::_switch_tab(int direction)
     _clear_map();
     _tab = tab((int(_tab) + count + direction) % count);
     _cursor = list_cursor();
+    _bags.rebuild();
     _map_zone = -1;
     _dirty = true;
 }
@@ -335,7 +358,7 @@ void menu::_update_character()
         }
         else
         {
-            _status.show("Inventory is full", ui::color::RED);
+            _status.show("Your bags are full", ui::color::RED);
         }
 
         _dirty = true;
@@ -522,6 +545,11 @@ void menu::_update_system()
         _status.show("Trained every rank", ui::color::YELLOW);
         break;
 
+    case system_entry::LOOT:
+        loot();
+        _status.show("Bags filled", ui::color::YELLOW);
+        break;
+
     default:
         break;
     }
@@ -562,11 +590,11 @@ void menu::_draw_system()
 
     int y = content_top + int(system_entry::COUNT) + 1;
     ui::text(2, y, "Controls", ui::color::YELLOW, true);
-    ui::text(2, y + 1, "A     Talk, loot, attack", ui::color::WHITE, true);
-    ui::text(2, y + 2, "B     Run", ui::color::WHITE, true);
-    ui::text(2, y + 3, "L     Next target", ui::color::WHITE, true);
-    ui::text(2, y + 4, "R+key Use action bar", ui::color::WHITE, true);
-    ui::text(2, y + 5, "SEL   Potion / food", ui::color::WHITE, true);
+    ui::text(2, y + 1, "A    Talk, loot, attack", ui::color::WHITE, true);
+    ui::text(2, y + 2, "B    Run     L tap Target", ui::color::WHITE, true);
+    ui::text(2, y + 3, "R+   Combat  L+    Utility", ui::color::WHITE, true);
+    ui::text(2, y + 4, "L+R+ Buffs   SEL+  Items", ui::color::WHITE, true);
+    ui::text(2, y + 5, "SEL tap: potion or food", ui::color::WHITE, true);
 
     bn::string<32> played = "Played ";
     int minutes = int(character().play_frames / 3600);
