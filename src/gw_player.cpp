@@ -7,6 +7,7 @@
 #include "bn_sprite_items_mount_saber.h"
 
 #include "gw_night.h"
+#include "gw_sprite_palettes.h"
 #include "gw_world.h"
 
 namespace gw
@@ -65,32 +66,40 @@ void player::set_position(const bn::fixed_point& feet_position)
 void player::mount(race_id race)
 {
     const mount_look& look = mount_looks[int(race)];
-    bn::sprite_ptr mount = look.sheet.create_sprite(0, 0);
-
-    if(const bn::optional<bn::camera_ptr>& camera = _sprite.sprite().camera())
-    {
-        mount.set_camera(*camera);
-    }
-
-    mount.set_bg_priority(_sprite.sprite().bg_priority());
-    _mount = bn::move(mount);
+    _mount.reset();
     _mount_item = &look.sheet;
     _mount_lift = look.lift;
-    _mount_frame = 0;
     _update_sprites(false);
 }
 
 void player::dismount()
 {
     _mount.reset();
+    _mount_item = nullptr;
     _sprite.set_offset(0, 0);
     _update_sprites(false);
 }
 
 void player::_update_sprites(bool moving)
 {
+    if(_mount_item && ! _mount && sprite_palettes::fits(_mount_item->palette_item()))
+    {
+        bn::sprite_ptr mount = _mount_item->create_sprite(0, 0);
+
+        if(const bn::optional<bn::camera_ptr>& camera = _sprite.sprite().camera())
+        {
+            mount.set_camera(*camera);
+        }
+
+        mount.set_bg_priority(_sprite.sprite().bg_priority());
+        _mount = bn::move(mount);
+        _mount_frame = 0;
+    }
+
+    // Until the mount can be drawn the rider stands on the ground.
     if(! _mount)
     {
+        _sprite.set_offset(0, 0);
         _sprite.update(_position, _facing, moving, _walk_counter);
         return;
     }

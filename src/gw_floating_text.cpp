@@ -1,12 +1,18 @@
 #include "gw_floating_text.h"
 
-#include "bn_color.h"
 #include "bn_math.h"
-#include "bn_sprite_palette_item.h"
+#include "bn_sprite_text_generator.h"
 #include "bn_string.h"
 
+#include "bn_sprite_items_fx_text_blue.h"
+#include "bn_sprite_items_fx_text_green.h"
+#include "bn_sprite_items_fx_text_purple.h"
+#include "bn_sprite_items_fx_text_red.h"
+#include "bn_sprite_items_fx_text_white.h"
+#include "bn_sprite_items_fx_text_yellow.h"
 #include "common_fixed_8x8_sprite_font.h"
 
+#include "gw_sprite_palettes.h"
 #include "gw_world.h"
 
 namespace gw
@@ -16,35 +22,32 @@ namespace
 {
     constexpr int lifetime = 48;
 
-    constexpr bn::color colors[][16] = {
-        { bn::color(31, 0, 31), bn::color(31, 31, 31), bn::color(2, 2, 3) },
-        { bn::color(31, 0, 31), bn::color(31, 27, 8), bn::color(6, 3, 0) },
-        { bn::color(31, 0, 31), bn::color(31, 9, 7), bn::color(6, 0, 0) },
-        { bn::color(31, 0, 31), bn::color(11, 30, 9), bn::color(0, 5, 0) },
-        { bn::color(31, 0, 31), bn::color(15, 25, 31), bn::color(1, 3, 8) },
-        { bn::color(31, 0, 31), bn::color(25, 16, 31), bn::color(5, 1, 8) },
-    };
+    // Butano's fixed 8x8 font drawn in each style's colors (tools/gen_effects.py). The sheets share one
+    // palette, so every style on screen together takes a single sprite palette.
+    constexpr bn::utf8_characters_map_ref characters = common::fixed_8x8_sprite_font_utf8_characters_map.reference();
 
-    constexpr bn::sprite_palette_item palettes[] = {
-        bn::sprite_palette_item(colors[0], bn::bpp_mode::BPP_4),
-        bn::sprite_palette_item(colors[1], bn::bpp_mode::BPP_4),
-        bn::sprite_palette_item(colors[2], bn::bpp_mode::BPP_4),
-        bn::sprite_palette_item(colors[3], bn::bpp_mode::BPP_4),
-        bn::sprite_palette_item(colors[4], bn::bpp_mode::BPP_4),
-        bn::sprite_palette_item(colors[5], bn::bpp_mode::BPP_4),
+    constexpr bn::sprite_font fonts[] = {
+        bn::sprite_font(bn::sprite_items::fx_text_white, characters),
+        bn::sprite_font(bn::sprite_items::fx_text_yellow, characters),
+        bn::sprite_font(bn::sprite_items::fx_text_red, characters),
+        bn::sprite_font(bn::sprite_items::fx_text_green, characters),
+        bn::sprite_font(bn::sprite_items::fx_text_blue, characters),
+        bn::sprite_font(bn::sprite_items::fx_text_purple, characters),
     };
 }
 
 floating_texts::floating_texts(const bn::camera_ptr& camera) :
-    _camera(camera),
-    _generator(common::fixed_8x8_sprite_font)
+    _camera(camera)
 {
-    _generator.set_center_alignment();
-    _generator.set_bg_priority(1);   // over tree tops, under the ui layer (menus, dialog)
 }
 
 void floating_texts::show(const bn::fixed_point& world_position, const bn::string_view& text, style text_style)
 {
+    if(! sprite_palettes::fits(bn::sprite_items::fx_text_white.palette_item()))
+    {
+        return;
+    }
+
     if(_entries.full())
     {
         _entries.erase(_entries.begin());
@@ -64,10 +67,12 @@ void floating_texts::show(const bn::fixed_point& world_position, const bn::strin
 
     entry& new_entry = _entries.emplace_back();
     new_entry.position = position;
-    _generator.set_palette_item(palettes[int(text_style)]);
+    bn::sprite_text_generator generator(fonts[int(text_style)]);
+    generator.set_center_alignment();
+    generator.set_bg_priority(1);   // over tree tops, under the ui layer (menus, dialog)
 
     bn::fixed_point screen = world::to_screen_space(position);
-    _generator.generate(screen, text.substr(0, bn::min(text.size(), max_length)), new_entry.sprites);
+    generator.generate(screen, text.substr(0, bn::min(text.size(), max_length)), new_entry.sprites);
 
     for(bn::sprite_ptr& sprite : new_entry.sprites)
     {

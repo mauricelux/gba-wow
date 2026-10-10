@@ -4,7 +4,6 @@
 #include "bn_camera_ptr.h"
 #include "bn_fixed_point.h"
 #include "bn_sprite_ptr.h"
-#include "bn_sprite_text_generator.h"
 #include "bn_string_view.h"
 #include "bn_vector.h"
 
@@ -50,7 +49,6 @@ private:
     };
 
     bn::camera_ptr _camera;
-    bn::sprite_text_generator _generator;
     bn::vector<entry, 8> _entries;
 };
 

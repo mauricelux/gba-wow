@@ -124,6 +124,7 @@ void game::update()
     if(input && bn::keypad::start_pressed())
     {
         _set_paused(true);
+        _release_world_sprites();
         _menu.open();
         ui::commit();
         return;
@@ -207,6 +208,7 @@ bool game::_update_overlays()
                 _set_paused(true);
                 _combat.dismount();
                 _combat.clear_target();
+                _release_world_sprites();
                 _flight.open(_dialog.flight_from, _dialog.flight_requested);
                 _dialog.flight_requested = flight_id::COUNT;
             }
@@ -253,6 +255,7 @@ bool game::_update_overlays()
         if(! _menu.update())
         {
             _set_paused(false);
+            _refresh_world_sprites();
 
             if(_menu.teleport.map != map_id::NONE)
             {
@@ -292,6 +295,26 @@ void game::_arrive(map_id map, const point_def& point)
     _teleport = warp_def{ 0, 0, 0, 0, map, point.x, point.y };
     _warp = &_teleport;
     _warp_frames = warp_fade_frames;
+}
+
+void game::_release_world_sprites()
+{
+    // The menu's map pictures and marks, and the flight's and the voyage's pictures and labels, may need
+    // sprite palettes the world's characters hold. They come back with _refresh_world_sprites, or when the
+    // map loads again after a flight or a voyage.
+    _enemies.release_sprites();
+    _npcs.release_sprites();
+    _chests.release_sprites();
+    _texts.clear();
+    _banner.hide();
+}
+
+void game::_refresh_world_sprites()
+{
+    // On the frame the menu closes, so no one blinks out for a frame.
+    _enemies.refresh_sprites(_player.position());
+    _npcs.update(_player.position());
+    _chests.update(_player.position());
 }
 
 void game::_set_paused(bool paused)
@@ -678,6 +701,7 @@ void game::_check_warps()
                 _set_paused(true);
                 _combat.dismount();
                 _combat.clear_target();
+                _release_world_sprites();
                 _ride = warp;
                 _voyage.open(warp.ride, area ? area->name : "");
                 return;

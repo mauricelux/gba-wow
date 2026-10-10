@@ -11,6 +11,7 @@
 #include "gw_hud.h"
 #include "gw_items.h"
 #include "gw_loot.h"
+#include "gw_sprite_palettes.h"
 #include "gw_types.h"
 #include "gw_ui.h"
 #include "gw_night.h"
@@ -85,6 +86,16 @@ namespace
 chests::chests(const bn::camera_ptr& camera) :
     _camera(camera)
 {
+}
+
+void chests::release_sprites()
+{
+    for(chest& item : _chests)
+    {
+        item.sprite.reset();
+        item.sparkle.reset();
+        item.frame = -1;
+    }
 }
 
 void chests::load(const map_info& map)
@@ -274,6 +285,11 @@ void chests::_update_sprite(chest& item, const bn::fixed_point& player_feet)
 
     if(! item.sprite)
     {
+        if(! sprite_palettes::character_fits(bn::sprite_items::fx_chest.palette_item()))
+        {
+            return;
+        }
+
         item.sprite = bn::sprite_items::fx_chest.create_sprite(x, y - 8, frame);
         item.sprite->set_camera(_camera);
         item.sprite->set_bg_priority(chest_bg_priority);
@@ -306,6 +322,11 @@ void chests::_update_sprite(chest& item, const bn::fixed_point& player_feet)
 
     if(! item.sparkle)
     {
+        if(! sprite_palettes::fits(bn::sprite_items::fx_markers.palette_item()))
+        {
+            return;
+        }
+
         item.sparkle = bn::sprite_items::fx_markers.create_sprite(x + 4, y - 14, sparkle_frame);
         item.sparkle->set_camera(_camera);
         item.sparkle->set_bg_priority(sparkle_bg_priority);

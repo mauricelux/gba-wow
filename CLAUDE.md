@@ -166,3 +166,12 @@ the plan from level 20 to 60 (M12 to M26) is docs/level-60-roadmap.md.
 - Dungeon sets live in `gw_item_sets.cpp`: `item_set_drop(boss)` gives the boss's piece of the
   hero's class in place of the world drop, `add_item_set_bonuses` is applied in `compute_stats`,
   and the tooltip lists the set with the bonuses that are on in green.
+- Sprite palettes (`src/gw_sprite_palettes.cpp`): the GBA has 16 and Butano stops the game when a sprite
+  needs a 17th (M26 did, fighting Redridge's gnolls with a pet). Every sprite made while the world runs
+  checks first: effects and hud sprites with `sprite_palettes::fits`, NPCs with `npc_fits`, enemies, the
+  pet and chests with `character_fits` (which keeps a palette free for each fight effect not on screen
+  yet), and they go without or wait when there is no room. The hud holds `fx_icons`' palette for the whole
+  game. Effects that come in several colors are frames or sheets of one shared palette (`gen_effects.py`):
+  the target rings, the area circles, the cast and pet bars, and the six `fx_text_*` fonts of the
+  floating combat text. The menu, flights and voyages drop the map's sprites (`_release_world_sprites`)
+  before making theirs; closing the menu makes them again on the same frame.

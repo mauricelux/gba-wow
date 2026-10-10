@@ -2,6 +2,10 @@
 
 Outputs graphics/fx_*.bmp and include/gw_icons.h (icon frame indices). Like the other generators
 this is placeholder art drawn from simple shapes.
+
+The GBA has 16 sprite palettes for everything on screen, characters included, so effects that come in
+several colors draw each color as its own frame (or sheet) of one shared palette instead of swapping
+palettes: the target ring, the area circle, the cast and pet bars and the floating combat text.
 """
 
 import numpy as np
@@ -73,17 +77,22 @@ def write(name, frames, palette, size):
 
 # --- target ring (32x16): drawn under the target's feet ---------------------------------------------
 
-def target_ring():
+def target_ring(dark, light):
     c = Canvas(32)
     outer = c.ellipse(16, 8, 13, 5.5)
     inner = c.ellipse(16, 8, 10.5, 3.5)
     ring = outer & ~inner
-    c.img[ring] = 2
-    c.img[ring & (c.ys > 8)] = 1
-    return [c.img[:16, :]]
+    c.img[ring] = light
+    c.img[ring & (c.ys > 8)] = dark
+    return c.img[:16, :]
 
 
-TARGET_PALETTE = [(255, 0, 255), (176, 32, 32), (248, 96, 72)] + [(0, 0, 0)] * 13
+def target_rings():
+    # Frame 0 for an enemy, frame 1 for a friend.
+    return [target_ring(1, 2), target_ring(3, 4)]
+
+
+TARGET_PALETTE = [(255, 0, 255), (176, 32, 32), (248, 96, 72), (32, 160, 32), (96, 240, 80)] + [(0, 0, 0)] * 11
 
 
 # --- projectiles and hits (16x16) ---------------------------------------------------------------------
@@ -414,8 +423,10 @@ def map_marks():
 # --- enemy cast bar (32x8): 17 fills that can be interrupted, then 17 gray ones that can't ----------
 
 CB = {'out': 1, 'bg': 2, 'fill': 3, 'light': 4, 'gray': 5, 'gray_l': 6}
-CASTBAR_PALETTE = [(255, 0, 255), (16, 12, 16), (56, 44, 64), (232, 160, 32), (248, 232, 120), (136, 136, 152),
-                   (208, 208, 216)] + [(0, 0, 0)] * 9
+# The cast bar and the pet bar share this palette.
+BAR_PALETTE = [(255, 0, 255), (16, 12, 16), (56, 44, 64), (232, 160, 32), (248, 232, 120), (136, 136, 152),
+               (208, 208, 216), (40, 48, 40), (64, 168, 64), (152, 224, 120), (120, 120, 128), (200, 168, 120),
+               (136, 104, 64)] + [(0, 0, 0)] * 3
 CASTBAR_STEPS = 16
 
 
@@ -436,9 +447,7 @@ def castbars():
 
 # --- pet health bar (32x8): a paw, then 17 fills, then a gray one for a dead pet ----------------------
 
-PB = {'out': 1, 'bg': 2, 'fill': 3, 'light': 4, 'gray': 5, 'paw': 6, 'paw_d': 7}
-PETBAR_PALETTE = [(255, 0, 255), (16, 12, 16), (40, 48, 40), (64, 168, 64), (152, 224, 120), (120, 120, 128),
-                  (200, 168, 120), (136, 104, 64)] + [(0, 0, 0)] * 8
+PB = {'out': 1, 'bg': 7, 'fill': 8, 'light': 9, 'gray': 10, 'paw': 11, 'paw_d': 12}
 PETBAR_STEPS = 16
 
 
@@ -466,18 +475,47 @@ def petbars():
 
 # --- area circle (64x64): telegraphed boss attacks and frost nova -------------------------------------
 
-def circle():
+def circle(first):
     c = Canvas(64)
     outer = c.ellipse(32, 32, 31, 31)
     inner = c.ellipse(32, 32, 28, 28)
-    c.img[outer & ~inner] = 2
-    c.img[c.ellipse(32, 32, 29.5, 29.5) & ~inner] = 3
+    c.img[outer & ~inner] = first + 1
+    c.img[c.ellipse(32, 32, 29.5, 29.5) & ~inner] = first + 2
     dots = inner & (((c.xs.astype(int) + c.ys.astype(int)) % 4) == 0) & ((c.ys.astype(int) % 2) == 0)
-    c.img[dots] = 1
-    return [c.img]
+    c.img[dots] = first
+    return c.img
 
 
-CIRCLE_PALETTE = [(255, 0, 255), (152, 32, 24), (200, 40, 32), (248, 120, 88)] + [(0, 0, 0)] * 12
+def circles():
+    # Frames: a boss's telegraph (red), frost, fire and a trap (green); see circle_style in gw_effects.h.
+    return [circle(first) for first in (1, 4, 7, 10)]
+
+
+CIRCLE_PALETTE = [(255, 0, 255), (152, 32, 24), (200, 40, 32), (248, 120, 88),
+                  (64, 128, 224), (112, 176, 248), (208, 240, 248),
+                  (224, 96, 16), (248, 160, 32), (248, 224, 96),
+                  (48, 128, 48), (96, 208, 80), (176, 248, 128)] + [(0, 0, 0)] * 3
+
+# --- floating combat text (8x8): Butano's fixed 8x8 font, a sheet per color ---------------------------
+
+# Fill and outline of each floating_texts::style, in its order.
+TEXT_COLORS = [((248, 248, 248), (16, 16, 24)), ((248, 216, 64), (48, 24, 0)), ((248, 72, 56), (48, 0, 0)),
+               ((88, 240, 72), (0, 40, 0)), ((120, 200, 248), (8, 24, 64)), ((200, 128, 248), (40, 8, 64))]
+TEXT_NAMES = ['white', 'yellow', 'red', 'green', 'blue', 'purple']
+TEXT_PALETTE = [(255, 0, 255)] + [c for pair in TEXT_COLORS for c in pair] + [(0, 0, 0)] * 3
+
+
+def text_fonts():
+    from PIL import Image
+    font = np.array(Image.open(GRAPHICS.parent / 'butano' / 'common' / 'graphics' / 'common_fixed_8x8_font.bmp'))
+    sheets = []
+    for index in range(len(TEXT_COLORS)):
+        # The font draws its fill with color 1 and its outline with color 2.
+        sheet = np.zeros_like(font)
+        sheet[font == 1] = 1 + index * 2
+        sheet[font == 2] = 2 + index * 2
+        sheets.append([sheet[y:y + 8] for y in range(0, sheet.shape[0], 8)])
+    return sheets
 
 # --- ability and item icons (16x16) ---------------------------------------------------------------
 
@@ -1003,12 +1041,14 @@ def travel_and_pet_icons(out):
 
 
 def main():
-    write('target', target_ring(), TARGET_PALETTE, 16)
+    write('target', target_rings(), TARGET_PALETTE, 16)
     write('projectiles', projectiles(), PROJECTILE_PALETTE, 16)
     write('markers', markers(), MARKER_PALETTE, 16)
-    write('circle', circle(), CIRCLE_PALETTE, 64)
-    write('castbar', castbars(), CASTBAR_PALETTE, 8)
-    write('petbar', petbars(), PETBAR_PALETTE, 8)
+    write('circle', circles(), CIRCLE_PALETTE, 64)
+    write('castbar', castbars(), BAR_PALETTE, 8)
+    write('petbar', petbars(), BAR_PALETTE, 8)
+    for name, frames in zip(TEXT_NAMES, text_fonts()):
+        write(f'text_{name}', frames, TEXT_PALETTE, 8)
     write('chest', [chest(False), chest(True), brazier(False), brazier(True), brazier(True, 1), pylon(True),
                     pylon(True, 1), pylon(False)], CHEST_PALETTE, 16)
     write('map_marks', map_marks(), MARKER_PALETTE, 8)

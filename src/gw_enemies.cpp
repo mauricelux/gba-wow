@@ -11,6 +11,7 @@
 #include "gw_combat.h"
 #include "gw_loot.h"
 #include "gw_quests.h"
+#include "gw_sprite_palettes.h"
 #include "gw_world.h"
 
 namespace gw
@@ -76,6 +77,25 @@ bool enemy::has_loot() const
 enemies::enemies(const bn::camera_ptr& camera) :
     _camera(camera)
 {
+}
+
+void enemies::release_sprites()
+{
+    for(enemy& item : _enemies)
+    {
+        item.sprite.reset();
+        item.sparkle.reset();
+        item.status.reset();
+        item.cast_bar.reset();
+    }
+}
+
+void enemies::refresh_sprites(const bn::fixed_point& player_feet)
+{
+    for(enemy& item : _enemies)
+    {
+        _update_sprite(item, player_feet);
+    }
 }
 
 void enemies::load(const map_info& map)
@@ -711,6 +731,11 @@ void enemies::_update_sprite(enemy& item, const bn::fixed_point& player_feet)
 
     if(! item.sparkle)
     {
+        if(! sprite_palettes::fits(bn::sprite_items::fx_markers.palette_item()))
+        {
+            return;
+        }
+
         item.sparkle = bn::sprite_items::fx_markers.create_sprite(0, 0, frame);
         item.sparkle->set_camera(_camera);
         item.sparkle->set_bg_priority(sparkle_bg_priority);
@@ -779,6 +804,11 @@ void enemies::_update_status(enemy& item)
 
     if(! item.status)
     {
+        if(! sprite_palettes::fits(bn::sprite_items::fx_icons.palette_item()))
+        {
+            return;
+        }
+
         item.status = bn::sprite_items::fx_icons.create_sprite(0, 0, int(icon));
         item.status->set_camera(_camera);
         item.status->set_bg_priority(sparkle_bg_priority);
@@ -809,6 +839,11 @@ void enemies::_update_cast_bar(enemy& item, const bn::fixed_point& screen)
 
     if(! item.cast_bar)
     {
+        if(! sprite_palettes::fits(bn::sprite_items::fx_castbar.palette_item()))
+        {
+            return;
+        }
+
         item.cast_bar = bn::sprite_items::fx_castbar.create_sprite(0, 0, frame);
         item.cast_bar->set_camera(_camera);
         item.cast_bar->set_bg_priority(sparkle_bg_priority);

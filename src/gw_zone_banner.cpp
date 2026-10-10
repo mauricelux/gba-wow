@@ -1,5 +1,7 @@
 #include "gw_zone_banner.h"
 
+#include "gw_sprite_palettes.h"
+
 namespace gw
 {
 
@@ -22,6 +24,14 @@ zone_banner::zone_banner(bn::sprite_text_generator& text_generator) :
 void zone_banner::show(const bn::string_view& zone_name)
 {
     _sprites.clear();
+    _frames_left = 0;
+
+    // In a crowd the name waits for the next place instead of taking the last free palettes.
+    if(! sprite_palettes::fits(_text_generator.palette_item()))
+    {
+        return;
+    }
+
     _text_generator.set_center_alignment();
     _text_generator.generate(0, banner_y, zone_name, _sprites);
 

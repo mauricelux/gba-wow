@@ -81,6 +81,8 @@ private:
     [[nodiscard]] bool _water_ahead(bn::fixed_point& spot) const;
     void _update_fishing();
     bool _update_overlays();
+    void _release_world_sprites();
+    void _refresh_world_sprites();
     void _set_paused(bool paused);
     static void _on_kill(void* context, int index);
     static void _on_level_up(void* context);
