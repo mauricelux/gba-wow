@@ -2,10 +2,10 @@
 
 #include "bn_sprite_double_size_mode.h"
 #include "bn_sprite_palette_ptr.h"
-#include "bn_sprite_palettes.h"
 #include "bn_sprite_tiles_ptr.h"
 
 #include "gw_night.h"
+#include "gw_sprite_palettes.h"
 #include "gw_world.h"
 
 namespace gw
@@ -41,9 +41,7 @@ namespace
 
 bool actor_sprite::can_create(look_id look)
 {
-    // Keep two palettes free for effects, icons and floating text.
-    int needed = get_look(look).palette.find_palette() ? 32 : 48;
-    return bn::sprite_palettes::available_colors_count() >= needed;
+    return sprite_palettes::character_fits(get_look(look).palette);
 }
 
 actor_sprite::actor_sprite(look_id look, const bn::camera_ptr& camera, bn::fixed scale) :

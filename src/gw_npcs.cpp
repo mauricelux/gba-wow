@@ -6,6 +6,7 @@
 
 #include "gw_character.h"
 #include "gw_npc_data.h"
+#include "gw_sprite_palettes.h"
 #include "gw_world.h"
 
 namespace gw
@@ -48,6 +49,15 @@ namespace
 npcs::npcs(const bn::camera_ptr& camera) :
     _camera(camera)
 {
+}
+
+void npcs::release_sprites()
+{
+    for(npc& item : _npcs)
+    {
+        item.sprite.reset();
+        item.marker_sprite.reset();
+    }
 }
 
 void npcs::load(const map_info& map)
@@ -153,7 +163,7 @@ void npcs::_update_sprite(npc& item, const bn::fixed_point& player_feet)
     {
         look_id look = get_npc_info(item.id).look;
 
-        if(! actor_sprite::can_create(look))
+        if(! sprite_palettes::npc_fits(get_look(look).palette))
         {
             return;
         }
@@ -170,6 +180,11 @@ void npcs::_update_sprite(npc& item, const bn::fixed_point& player_feet)
 
     if(! item.marker_sprite)
     {
+        if(! sprite_palettes::fits(bn::sprite_items::fx_markers.palette_item()))
+        {
+            return;
+        }
+
         item.marker_sprite = bn::sprite_items::fx_markers.create_sprite(0, 0, marker_frame(item.marker));
         item.marker_sprite->set_camera(_camera);
         item.marker_sprite->set_bg_priority(marker_bg_priority);

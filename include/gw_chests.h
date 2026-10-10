@@ -28,6 +28,10 @@ public:
 
     void load(const map_info& map);
 
+    // Drops the sprites of the whole map, for a full-screen scene that needs the sprite palettes; the
+    // next update makes them again for those near the player.
+    void release_sprites();
+
     void update(const bn::fixed_point& player_feet);
 
     // The closest closed chest within max_distance pixels; -1 if none.

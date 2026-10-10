@@ -3,6 +3,7 @@
 
 #include "bn_optional.h"
 #include "bn_sprite_affine_mat_ptr.h"
+#include "bn_sprite_palette_ptr.h"
 #include "bn_sprite_ptr.h"
 #include "bn_string.h"
 #include "bn_string_view.h"
@@ -71,6 +72,7 @@ private:
     int _slot_icons[7] = {};            // by slot, the index in _icons or -1
     int _reminder_ability = 0;          // the long buff missing, an ability_id
     int _frame = 0;
+    bn::sprite_palette_ptr _icons_palette;   // held for the whole game, so icons always have room
     bn::vector<bn::sprite_ptr, 8> _icons;
     bn::vector<bn::sprite_ptr, 8> _buff_icons;
     bn::vector<bn::sprite_ptr, 6> _debuff_icons;

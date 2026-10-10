@@ -3,12 +3,12 @@
 #include "bn_color.h"
 #include "bn_math.h"
 #include "bn_sprite_double_size_mode.h"
-#include "bn_sprite_palette_item.h"
 
 #include "bn_sprite_items_fx_circle.h"
 #include "bn_sprite_items_fx_projectiles.h"
 #include "bn_sprite_items_fx_target.h"
 
+#include "gw_sprite_palettes.h"
 #include "gw_world.h"
 
 namespace gw
@@ -39,37 +39,9 @@ namespace
     // Spells and sparks are drawn over the overhead layer so tree tops never hide them.
     constexpr int effect_bg_priority = 1;
 
-    constexpr bn::color friendly_ring_colors[] = {
-        bn::color(31, 0, 31), bn::color(4, 20, 4), bn::color(12, 30, 10),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0)
-    };
-    constexpr bn::sprite_palette_item friendly_ring(friendly_ring_colors, bn::bpp_mode::BPP_4);
-
-    constexpr bn::color frost_circle_colors[] = {
-        bn::color(31, 0, 31), bn::color(8, 16, 28), bn::color(14, 22, 31), bn::color(26, 30, 31),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0)
-    };
-    constexpr bn::sprite_palette_item frost_circle(frost_circle_colors, bn::bpp_mode::BPP_4);
-
-    constexpr bn::color fire_circle_colors[] = {
-        bn::color(31, 0, 31), bn::color(28, 12, 2), bn::color(31, 20, 4), bn::color(31, 28, 12),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0)
-    };
-    constexpr bn::sprite_palette_item fire_circle(fire_circle_colors, bn::bpp_mode::BPP_4);
-
-    constexpr bn::color trap_circle_colors[] = {
-        bn::color(31, 0, 31), bn::color(6, 16, 6), bn::color(12, 26, 10), bn::color(22, 31, 16),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0),
-        bn::color(0, 0, 0), bn::color(0, 0, 0), bn::color(0, 0, 0)
-    };
-    constexpr bn::sprite_palette_item trap_circle(trap_circle_colors, bn::bpp_mode::BPP_4);
+    // Frames of fx_target and fx_circle: each color is its own frame of one shared palette.
+    constexpr int hostile_ring = 0;
+    constexpr int friendly_ring = 1;
 
     [[nodiscard]] int burst_frame(projectile_kind kind)
     {
@@ -145,21 +117,23 @@ void effects::set_target(const bn::fixed_point* feet, bool hostile)
         return;
     }
 
+    int frame = hostile ? hostile_ring : friendly_ring;
+
     if(! _target_ring)
     {
-        _target_ring = bn::sprite_items::fx_target.create_sprite(0, 0);
+        if(! sprite_palettes::fits(bn::sprite_items::fx_target.palette_item()))
+        {
+            return;
+        }
+
+        _target_ring = bn::sprite_items::fx_target.create_sprite(0, 0, frame);
         _target_ring->set_camera(_camera);
         _target_ring->set_bg_priority(2);
         _target_ring->set_z_order(32000);   // behind every character
     }
-
-    if(hostile)
-    {
-        _target_ring->set_palette(bn::sprite_items::fx_target.palette_item());
-    }
     else
     {
-        _target_ring->set_palette(friendly_ring);
+        _target_ring->set_tiles(bn::sprite_items::fx_target.tiles_item(), frame);
     }
 
     _place(*_target_ring, bn::fixed_point(feet->x(), feet->y() - 1));
@@ -167,6 +141,11 @@ void effects::set_target(const bn::fixed_point* feet, bool hostile)
 
 void effects::spark(const bn::fixed_point& world_position)
 {
+    if(! sprite_palettes::fits(bn::sprite_items::fx_projectiles.palette_item()))
+    {
+        return;
+    }
+
     if(_sparks.full())
     {
         _sparks.erase(_sparks.begin());
@@ -186,6 +165,11 @@ void effects::burst(const bn::fixed_point& world_position, projectile_kind kind)
     if(kind == projectile_kind::ARROW || kind == projectile_kind::NONE)
     {
         spark(world_position);
+        return;
+    }
+
+    if(! sprite_palettes::fits(bn::sprite_items::fx_projectiles.palette_item()))
+    {
         return;
     }
 
@@ -212,32 +196,19 @@ int effects::circle(const bn::fixed_point& world_position, int radius, int frame
     }
 
     int id = _next_circle++;
-    _circles.push_back(
-        timed_sprite{ bn::sprite_items::fx_circle.create_sprite(0, 0), world_position, 0, 0, 1, frames, id });
+
+    if(! sprite_palettes::fits(bn::sprite_items::fx_circle.palette_item()))
+    {
+        return id;
+    }
+
+    // The frames follow circle_style.
+    _circles.push_back(timed_sprite{ bn::sprite_items::fx_circle.create_sprite(0, 0, int(style)), world_position, 0,
+                                     0, 1, frames, id });
     timed_sprite& item = _circles.back();
     item.sprite.set_camera(_camera);
     item.sprite.set_bg_priority(2);
     item.sprite.set_z_order(31000);
-
-    switch(style)
-    {
-
-    case circle_style::FROST:
-        item.sprite.set_palette(frost_circle);
-        break;
-
-    case circle_style::FIRE:
-        item.sprite.set_palette(fire_circle);
-        break;
-
-    case circle_style::TRAP:
-        item.sprite.set_palette(trap_circle);
-        break;
-
-    default:
-        break;
-    }
-
     item.sprite.set_double_size_mode(bn::sprite_double_size_mode::ENABLED);
     item.sprite.set_scale(bn::fixed(radius) / 32);
     _place(item.sprite, world_position);
@@ -263,13 +234,20 @@ void effects::launch(const bn::fixed_point& from, projectile_kind kind, const pr
         return;
     }
 
+    // Without room for its palette the projectile still flies and hits, unseen.
     int frame = kind == projectile_kind::ARROW ? arrow_right : flight_frame(kind);
-    _projectiles.push_back(
-        projectile{ bn::sprite_items::fx_projectiles.create_sprite(0, 0, frame), from, kind, hit, 0 });
-    projectile& item = _projectiles.back();
-    item.sprite.set_camera(_camera);
-    item.sprite.set_bg_priority(effect_bg_priority);
-    _place(item.sprite, from);
+    projectile& item = _projectiles.emplace_back();
+    item.position = from;
+    item.kind = kind;
+    item.hit = hit;
+
+    if(sprite_palettes::fits(bn::sprite_items::fx_projectiles.palette_item()))
+    {
+        item.sprite = bn::sprite_items::fx_projectiles.create_sprite(0, 0, frame);
+        item.sprite->set_camera(_camera);
+        item.sprite->set_bg_priority(effect_bg_priority);
+        _place(*item.sprite, from);
+    }
 }
 
 bool effects::_move_projectile(projectile& item, const bn::fixed_point& target)
@@ -287,23 +265,30 @@ bool effects::_move_projectile(projectile& item, const bn::fixed_point& target)
     item.position += bn::fixed_point(dx * projectile_speed / length, dy * projectile_speed / length);
     ++item.frames;
 
+    if(! item.sprite)
+    {
+        return false;
+    }
+
+    bn::sprite_ptr& sprite = *item.sprite;
+
     if(item.kind == projectile_kind::ARROW)
     {
         // Pick the arrow frame closest to the flight direction and mirror it as needed.
         bn::fixed ax = bn::abs(dx);
         bn::fixed ay = bn::abs(dy);
         int frame = ax > ay * 2 ? arrow_right : ay > ax * 2 ? arrow_down : arrow_diagonal;
-        item.sprite.set_tiles(bn::sprite_items::fx_projectiles.tiles_item(), frame);
-        item.sprite.set_horizontal_flip(dx < 0);
-        item.sprite.set_vertical_flip(dy < 0 && frame != arrow_right);
+        sprite.set_tiles(bn::sprite_items::fx_projectiles.tiles_item(), frame);
+        sprite.set_horizontal_flip(dx < 0);
+        sprite.set_vertical_flip(dy < 0 && frame != arrow_right);
     }
     else
     {
-        item.sprite.set_tiles(bn::sprite_items::fx_projectiles.tiles_item(),
-                              flight_frame(item.kind) + ((item.frames / 4) & 1));
+        sprite.set_tiles(bn::sprite_items::fx_projectiles.tiles_item(),
+                         flight_frame(item.kind) + ((item.frames / 4) & 1));
     }
 
-    _place(item.sprite, item.position);
+    _place(sprite, item.position);
     return false;
 }
 

@@ -93,10 +93,10 @@ public:
 private:
     struct projectile
     {
-        bn::sprite_ptr sprite;
+        bn::optional<bn::sprite_ptr> sprite;
         bn::fixed_point position;
-        projectile_kind kind;
-        projectile_hit hit;
+        projectile_kind kind = projectile_kind::NONE;
+        projectile_hit hit = {};
         int frames = 0;
     };
 

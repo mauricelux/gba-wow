@@ -36,6 +36,10 @@ public:
 
     void load(const map_info& map);
 
+    // Drops the sprites of the whole map, for a full-screen scene that needs the sprite palettes; the
+    // next update makes them again for those near the player.
+    void release_sprites();
+
     void update(const bn::fixed_point& player_feet);
 
     // Recomputes the quest markers after quest progress changed.

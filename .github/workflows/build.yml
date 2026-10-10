@@ -543,6 +543,37 @@ jobs:
             hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
             hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 hold:D:2 wait:3 \
             hold:A:2 wait:90 shot:screenshots/80_wyrmbog.ppm
+          # A level 20 Beast Mastery hunter and the wolf fight the Shadowhide gnolls in Redridge with every
+          # Combat and Utility ability. M26 ran out of sprite palettes there (the gnoll looks, the pet, the
+          # pet bar, cast bars, rings and six colors of combat text) and stopped with a Butano error, so
+          # the save after the fight must carry the experience of the gnolls killed.
+          python3 -c "d = open('tools/headless/saves/v4_dwarf_beast_hunter_20_redridge.sav', 'rb').read(); open('gnolls.sav', 'wb').write(d + b'\xff' * (32768 - len(d)))"
+          MGBA_SAVE=gnolls.sav ./mgba_script gba-wow.gba \
+            wait:40 hold:A:2 wait:90 hold:U:50 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            shot:screenshots/81_redridge_gnolls.ppm \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            hold:A:2 wait:5 hold:r:10 hold:rA:3 hold:r:20 hold:rB:3 hold:r:20 hold:rU:3 hold:r:20 hold:rD:3 hold:r:20 hold:rR:3 hold:r:20 hold:rL:3 hold:r:10 hold:l:10 hold:lA:3 hold:l:10 hold:lU:3 hold:l:10 \
+            shot:screenshots/82_redridge_gnolls_after.ppm \
+            hold:S:2 wait:10 hold:A:2 wait:10 hold:S:2 wait:10
+          python3 tools/headless/check_save.py gnolls.sav map=11 pet=1 xp=315
 
           python3 -c "import glob; from PIL import Image; [Image.open(f).save(f[:-4] + '.png') for f in glob.glob('screenshots/*.ppm')]"
           rm screenshots/*.ppm

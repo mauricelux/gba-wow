@@ -10,6 +10,7 @@
 #include "gw_enemies.h"
 #include "gw_icons.h"
 #include "gw_pet.h"
+#include "gw_sprite_palettes.h"
 
 namespace gw
 {
@@ -137,7 +138,10 @@ namespace
     static_assert(sizeof(buff_icons) / sizeof(buff_icons[0]) == int(buff_id::COUNT), "an icon per buff");
 }
 
-hud::hud() = default;
+hud::hud() :
+    _icons_palette(bn::sprite_items::fx_icons.palette_item().create_palette())
+{
+}
 
 void hud::message(const bn::string_view& text, ui::color color)
 {
@@ -279,7 +283,8 @@ void hud::_update_pet(const combat& combat_ref)
         frame = (companion->health() * pet_bar_steps + max - 1) / max;
     }
 
-    if(frame == _pet_frame)
+    // Without a sprite the bar is tried again until there is room for its palette.
+    if(frame == _pet_frame && (frame < 0 || _pet_bar))
     {
         return;
     }
@@ -300,7 +305,7 @@ void hud::_update_pet(const combat& combat_ref)
     {
         _pet_bar->set_tiles(bn::sprite_items::fx_petbar.tiles_item(), frame);
     }
-    else
+    else if(sprite_palettes::fits(bn::sprite_items::fx_petbar.palette_item()))
     {
         _pet_bar = bn::sprite_items::fx_petbar.create_sprite(pet_bar_x, pet_bar_y, frame);
         _pet_bar->set_bg_priority(0);
@@ -555,7 +560,12 @@ void hud::_update_bar(const combat& combat_ref)
         }
 
         _bar_state[slot] = state;
-        _icons[icon_index].set_palette(usable ? bn::sprite_items::fx_icons.palette_item() : palettes::icons_gray);
+        // Without room for the gray palette an icon that can't be used yet keeps its colors; its cooldown
+        // still counts down under it.
+        if(usable || sprite_palettes::fits(palettes::icons_gray))
+        {
+            _icons[icon_index].set_palette(usable ? bn::sprite_items::fx_icons.palette_item() : palettes::icons_gray);
+        }
 
         cell at = slot_cells[slot];
         int label_y = at.y + 1;

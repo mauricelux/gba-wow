@@ -79,13 +79,13 @@ public:
 
     [[nodiscard]] bool mounted() const
     {
-        return _mount.has_value();
+        return _mount_item != nullptr;
     }
 
 private:
     bn::fixed_point _position;
     actor_sprite _sprite;
-    bn::optional<bn::sprite_ptr> _mount;
+    bn::optional<bn::sprite_ptr> _mount;   // made once there is room for its palette
     const bn::sprite_item* _mount_item = nullptr;
     int _mount_lift = 0;
     int _mount_frame = -1;
